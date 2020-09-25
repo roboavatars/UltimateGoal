@@ -5,4 +5,6 @@ dependencies {
     implementation 'org.firstinspires.ftc:FtcCommon:6.0.1'
     implementation (name: 'tfod-release', ext:'aar')
     implementation (name: 'tensorflow-lite-0.0.0-nightly', ext:'aar')
+    implementation group: 'org.ejml', name: 'ejml-all', version: '0.39'
+    implementation 'com.acmerobotics.dashboard:dashboard:0.3.10'
 }
