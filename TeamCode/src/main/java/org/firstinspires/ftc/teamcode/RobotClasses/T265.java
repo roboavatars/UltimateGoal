@@ -56,6 +56,10 @@ public class T265 {
         t265Cam.setPose(pose);
     }
 
+    public void sendOdometryData (double vx, double vy) {
+        t265Cam.sendOdometry(vx, vy);
+    }
+
     public void updateCamPose() {
         t265Cam.getLastReceivedCameraUpdate();
     }

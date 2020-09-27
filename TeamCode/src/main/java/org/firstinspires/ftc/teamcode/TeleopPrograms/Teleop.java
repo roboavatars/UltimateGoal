@@ -3,19 +3,29 @@ package org.firstinspires.ftc.teamcode.TeleopPrograms;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.RobotClasses.Logger;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
+
+import java.util.Arrays;
 
 @Config
 public class Teleop extends LinearOpMode {
 
     public static int startX = 9;
     public static int startY = 111;
+    public static int startTheta = 0;
 
+    private Robot robot;
     private final boolean robotCentric = true;
 
     @Override
     public void runOpMode() {
-        Robot robot = new Robot(startX, startY, 0, this);
+        double[] initialPosition = Logger.readPos();
+        telemetry.addData("Starting Position", Arrays.toString(initialPosition));
+        telemetry.update();
+
+        robot = new Robot(this, startX, startY, startTheta); // Robot(this, initialPosition[0], initialPosition[1], initialPosition[2])
+        robot.logger.startLogging();
 
         waitForStart();
 
@@ -29,5 +39,6 @@ public class Teleop extends LinearOpMode {
 
             robot.update();
         }
+        robot.logger.stopLogging();
     }
 }

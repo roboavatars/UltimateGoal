@@ -8,7 +8,7 @@ public class Auto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        Robot robot = new Robot(9, 111, 0, this);
+        Robot robot = new Robot(this, 9, 111, 0);
 
         waitForStart();
 
