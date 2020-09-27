@@ -10,6 +10,8 @@ public class Auto extends LinearOpMode {
     public void runOpMode() {
         Robot robot = new Robot(9, 111, 0, this);
 
+        waitForStart();
+
         while(opModeIsActive()) {
             robot.update();
         }

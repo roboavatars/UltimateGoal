@@ -8,7 +8,7 @@ public class Robot {
 
     public MecanumDrivetrain drivetrain;
     public Shooter yeet;
-    public Intake intake;
+    public IntakeIndex intakeIndex;
 
     private LinearOpMode op;
     private FtcDashboard dashboard;
@@ -16,12 +16,13 @@ public class Robot {
 
     public Robot(double x, double y, double theta, LinearOpMode op) {
         drivetrain = new MecanumDrivetrain(op, x,y, theta, true);
-        yeet = new Shooter();
-        intake = new Intake();
+        yeet = new Shooter(op);
+        intakeIndex = new IntakeIndex(op);
 
         this.op = op;
         dashboard = FtcDashboard.getInstance();
         packet = new TelemetryPacket();
+        op.telemetry.update();
     }
 
     public void update() {
@@ -33,12 +34,16 @@ public class Robot {
         sendPacket();
     }
 
-    public void drawRobot(double robotx, double roboty, double robottheta) {
+    public void shoot() { // aim for x=108,y=144
+
+    }
+
+    public void drawRobot(double robotX, double robotY, double robotTheta) {
         double r = 9 * Math.sqrt(2);
         double pi = Math.PI;
-        double x = 72 - roboty;
-        double y = robotx - 72;
-        double theta = pi/2 + robottheta;
+        double x = 72 - robotY;
+        double y = robotX - 72;
+        double theta = pi/2 + robotTheta;
         double[] ycoords = {r * Math.sin(pi/4 + theta) + y, r * Math.sin(3 * pi/4 + theta) + y, r * Math.sin(5 * pi/4 + theta) + y, r * Math.sin(7 * pi/4 + theta) + y};
         double[] xcoords = {r * Math.cos(pi/4 + theta) + x, r * Math.cos(3 * pi/4 + theta) + x, r * Math.cos(5 * pi/4 + theta) + x, r * Math.cos(7 * pi/4 + theta) + x};
         packet.fieldOverlay().fillPolygon(xcoords,ycoords);
