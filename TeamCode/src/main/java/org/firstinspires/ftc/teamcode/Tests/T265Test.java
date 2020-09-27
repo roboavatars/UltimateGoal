@@ -8,7 +8,7 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
 import org.firstinspires.ftc.teamcode.RobotClasses.T265;
 
-@TeleOp(name="T265 Test")
+@TeleOp(name = "T265 Test")
 public class T265Test extends LinearOpMode {
 
     private T265 t265;
