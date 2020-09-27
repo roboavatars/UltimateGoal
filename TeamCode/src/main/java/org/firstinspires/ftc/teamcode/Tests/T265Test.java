@@ -21,6 +21,9 @@ public class T265Test extends LinearOpMode {
     public void runOpMode() {
         t265 = new T265(this, 9, 111, Math.PI/2);
 
+        dashboard = FtcDashboard.getInstance();
+        packet = new TelemetryPacket();
+
         waitForStart();
         t265.startCam();
 
