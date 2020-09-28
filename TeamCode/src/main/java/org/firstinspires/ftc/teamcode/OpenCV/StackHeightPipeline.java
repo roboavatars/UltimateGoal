@@ -20,7 +20,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Config
-class HeightDetectorPipeline extends OpenCvPipeline {
+class StackHeightPipeline extends OpenCvPipeline {
     public enum RingCases {None, One, Four}
 
     public static double min = 85;
@@ -43,7 +43,7 @@ class HeightDetectorPipeline extends OpenCvPipeline {
     Mat region1_Cb;
 
     // Clear Old Images
-    public HeightDetectorPipeline() {
+    public StackHeightPipeline() {
         File dir = new File("/sdcard/EasyOpenCV");
         String[] children = dir.list();
         if (children != null) {

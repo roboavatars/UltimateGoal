@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpenCV;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 
 
 import org.openftc.easyopencv.OpenCvCamera;
@@ -9,25 +8,19 @@ import org.openftc.easyopencv.OpenCvCameraFactory;
 import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvInternalCamera;
 
-public class HeightDetector {
+public class StackHeightDetector {
 
-    // Electronics
     private OpenCvCamera cam;
+    private StackHeightPipeline pipeline;
 
-    private HeightDetectorPipeline pipeline;
+    public StackHeightDetector(LinearOpMode op) {
 
-    // OpMode Stuff
-    private LinearOpMode op;
-    private HardwareMap hardwareMap;
+        int cameraMonitorViewId = op.hardwareMap.appContext.getResources()
+                .getIdentifier("cameraMonitorViewId", "id", op.hardwareMap.appContext.getPackageName());
+        cam = OpenCvCameraFactory.getInstance()
+                .createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
 
-    public HeightDetector(LinearOpMode op) {
-        this.op = op;
-        this.hardwareMap = op.hardwareMap;
-
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName());
-        cam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
-
-        pipeline = new HeightDetectorPipeline();
+        pipeline = new StackHeightPipeline();
 
         cam.setPipeline(pipeline);
     }

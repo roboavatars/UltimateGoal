@@ -5,19 +5,19 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.OpenCV.HeightDetector;
+import org.firstinspires.ftc.teamcode.OpenCV.StackHeightDetector;
 
 @TeleOp(name = "OpenCV Height Detector Test")
 public class HeightDetectorTest extends LinearOpMode {
 
-    private HeightDetector detector;
+    private StackHeightDetector detector;
 
     private FtcDashboard dashboard;
     private TelemetryPacket packet;
 
     @Override
     public void runOpMode() {
-        detector = new HeightDetector(this);
+        detector = new StackHeightDetector(this);
 
         dashboard = FtcDashboard.getInstance();
         packet = new TelemetryPacket();
