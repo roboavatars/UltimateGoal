@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpenCV;
 
+import com.acmerobotics.dashboard.FtcDashboard;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 
@@ -28,15 +29,13 @@ public class StackHeightDetector {
     public void start() {
         cam.openCameraDeviceAsync(() ->
                 cam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT));
-    }
-
-    public void pause() {
-        cam.stopStreaming();
+        FtcDashboard.getInstance().startCameraStream(cam, 0);
     }
 
     public void stop() {
-        pause();
+        cam.stopStreaming();
         cam.closeCameraDevice();
+        FtcDashboard.getInstance().stopCameraStream();
     }
 
     public int getFrameCount() {
