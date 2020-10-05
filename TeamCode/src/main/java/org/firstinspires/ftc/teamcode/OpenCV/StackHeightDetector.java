@@ -62,7 +62,11 @@ public class StackHeightDetector {
         return cam.getCurrentPipelineMaxFps();
     }
 
-    public double getResult() {
+    public StackHeightPipeline.RingCase getResult() {
         return pipeline.getResult();
+    }
+
+    public double getRawResult() {
+        return pipeline.getRawResult();
     }
 }

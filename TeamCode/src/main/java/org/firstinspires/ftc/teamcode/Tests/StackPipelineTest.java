@@ -7,8 +7,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.OpenCV.StackHeightDetector;
 
-@TeleOp(name = "OpenCV Height Detector Test")
-public class HeightDetectorTest extends LinearOpMode {
+@TeleOp(name = "Stack Height Pipeline Test")
+public class StackPipelineTest extends LinearOpMode {
 
     private StackHeightDetector detector;
 
@@ -28,6 +28,7 @@ public class HeightDetectorTest extends LinearOpMode {
         while (opModeIsActive()) {
             addPacket("Frame Count", detector.getFrameCount());
             addPacket("FPS", detector.getFPS());
+            addPacket("Raw Result", detector.getRawResult());
             addPacket("Result", detector.getResult());
             sendPacket();
         }
