@@ -3,11 +3,16 @@ package org.firstinspires.ftc.teamcode.RobotClasses;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.acmerobotics.dashboard.config.Config;
 
+@Config
 public class Shooter {
 
     private DcMotorEx shooterMotor;
     private Servo angleServo;
+
+    public static double OPEN_ANGLE = 0;
+    public static double CLOSE_ANGLE = 1;
 
     public Shooter(LinearOpMode op) {
         shooterMotor = op.hardwareMap.get(DcMotorEx.class, "shooter");
@@ -32,9 +37,12 @@ public class Shooter {
         return shooterMotor.getVelocity();
     }
 
-    public void setAngle(double angle) {
-        // positions and math
-        angleServo.setPosition(0);
+    public void open() {
+        angleServo.setPosition(OPEN_ANGLE);
+    }
+
+    public void close() {
+        angleServo.setPosition(CLOSE_ANGLE);
     }
 
 }
