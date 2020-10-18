@@ -21,10 +21,10 @@ import java.util.List;
 public class StackHeightPipeline extends OpenCvPipeline {
     public enum RingCase {None, One, Four}
 
-    public static double min = 80;
-    public static double max = 110;
-    public static int heightThreshold = 10;
-    public static int widthThreshold = 10;
+    public static double FILTER_MIN = 80;
+    public static double FILTER_MAX = 110;
+    public static int HEIGHT_THRESH = 10;
+    public static int WIDTH_THRESH = 10;
 
     private double result = 0;
     private RingCase ringCase = RingCase.None;
@@ -37,9 +37,9 @@ public class StackHeightPipeline extends OpenCvPipeline {
 //    static final Point REGION_ANCHOR_POINT = new Point(110,85);
 //    static final int REGION_WIDTH = 100;
 //    static final int REGION_HEIGHT = 60;
-//    Point region_pointA = new Point(REGION_ANCHOR_POINT.x, REGION_ANCHOR_POINT.y);
-//    Point region_pointB = new Point(REGION_ANCHOR_POINT.x + REGION_WIDTH, REGION_ANCHOR_POINT.y + REGION_HEIGHT);
-//    Mat region1_Cb;
+//    Point pointA = new Point(REGION_ANCHOR_POINT.x, REGION_ANCHOR_POINT.y);
+//    Point pointB = new Point(REGION_ANCHOR_POINT.x + REGION_WIDTH, REGION_ANCHOR_POINT.y + REGION_HEIGHT);
+//    Mat region_Cb;
 
     // Clear Old Images
     public StackHeightPipeline() {
@@ -60,13 +60,15 @@ public class StackHeightPipeline extends OpenCvPipeline {
         Core.extractChannel(yCrCb, cr, 1);
         Core.extractChannel(yCrCb, cb, 2);
 
-        Core.inRange(cb, new Scalar(min), new Scalar(max), mask);
+        Core.inRange(cb, new Scalar(FILTER_MIN), new Scalar(FILTER_MAX), mask);
+        Imgproc.morphologyEx(cb, cb, Imgproc.MORPH_OPEN, new Mat());
+        Imgproc.morphologyEx(cb, cb, Imgproc.MORPH_CLOSE, new Mat());
 
         // Temporary to See Average Cb Value
-//        region1_Cb = cb.submat(new Rect(region_pointA, region_pointB));
-//        int region_cb_mean = (int) Core.mean(region1_Cb).val[0];
+//        region_Cb = cb.submat(new Rect(pointA, pointB));
+//        int region_cb_mean = (int) Core.mean(region_Cb).val[0];
 //        log("Region Mean: " + region_cb_mean);
-//        Imgproc.rectangle(input, region_pointA, region_pointB, new Scalar(0, 0, 0), 2);
+//        Imgproc.rectangle(input, pointA, pointB, new Scalar(0, 0, 0), 2);
 
         List<MatOfPoint> contours = new ArrayList<>();
         Imgproc.findContours(mask, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
@@ -76,7 +78,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
         saveMatToDisk(y, "y");
         saveMatToDisk(cr, "cr");
         saveMatToDisk(cb, "cb");
-//        saveMatToDisk(region1_Cb, "region");
+//        saveMatToDisk(region_Cb, "region");
         saveMatToDisk(mask, "mask");
 
         int i = 0;
@@ -84,7 +86,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
             MatOfPoint2f areaPoints = new MatOfPoint2f(contour.toArray());
             RotatedRect boundingRect = Imgproc.minAreaRect(areaPoints);
 
-            if (boundingRect.size.height > heightThreshold && boundingRect.size.width > widthThreshold) {
+            if (boundingRect.size.height > HEIGHT_THRESH && boundingRect.size.width > WIDTH_THRESH) {
                 Imgproc.rectangle(input, boundingRect.boundingRect(), new Scalar(0, 255, 0), 4);
 
                 saveMatToDisk(input, "result" + i);
