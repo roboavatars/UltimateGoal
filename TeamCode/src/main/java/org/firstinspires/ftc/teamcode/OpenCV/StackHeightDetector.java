@@ -66,7 +66,7 @@ public class StackHeightDetector {
         return pipeline.getResult();
     }
 
-    public double getRawResult() {
+    public double[] getRawResult() {
         return pipeline.getRawResult();
     }
 }
