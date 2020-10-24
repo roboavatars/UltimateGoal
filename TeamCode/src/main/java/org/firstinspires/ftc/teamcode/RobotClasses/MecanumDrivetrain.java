@@ -24,23 +24,24 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 @SuppressWarnings("FieldCanBeLocal")
 public class MecanumDrivetrain {
 
-    //1440 ticks per encoder revolution
-    //4.3289 inches per wheel revolution
-    double encoderCountsPerRevolution = 537.6;
-
-    // Motors of the drivetrain
+    // Motors
     private DcMotorEx motorFrontRight;
     private DcMotorEx motorFrontLeft;
     private DcMotorEx motorBackRight;
     private DcMotorEx motorBackLeft;
 
-    // OpMode Stuff
-    private LinearOpMode opMode;
-    private HardwareMap hardwareMap;
-
-    // Objects for IMU and Rev Hub
+    // IMU and Rev Hub
     private LynxEmbeddedIMU imu;
     private LynxModule module;
+
+    // OpMode
+    private LinearOpMode opMode;
+
+    // Tracking X Y coordinate position
+    public double x = 0;
+    public double y = 0;
+    private double lastx = 0;
+    private double lasty = 0;
 
     // IMU related variables for storing states
     private Orientation angles;
@@ -48,9 +49,13 @@ public class MecanumDrivetrain {
     private double deltaheading = 0;
     public double theta = 0;
 
-    // Tracking X Y coordinate position
-    public double x = 0;
-    public double y = 0;
+    // Odometry
+    public double pod1 = 0;
+    public double pod2 = 0;
+    public double pod3 = 0;
+    public double deltapod1;
+    public double deltapod2;
+    public double deltapod3;
     private double lastpod1 = 0;
     private double lastpod2 = 0;
     private double lastpod3 = 0;
@@ -60,21 +65,6 @@ public class MecanumDrivetrain {
     private double yk = 0.15;
     private double thetak = 0.95;
 
-    // Constants
-    private final double xyTolerance = 1;
-    private final double thetaTolerance = Math.PI / 35;
-    private final double OdometryTrackWidth = 13.85;
-    private double OdometryHorizontalOffset = 3.165;
-    private final double OdometryHeadingThreshold = Math.PI / 8;
-
-    public double deltapod1;
-    public double deltapod2;
-    public double deltapod3;
-    private double lastx = 0;
-    private double lasty = 0;
-
-    private boolean isRed;
-
     // Motor Caching Stuff
     private double lastFRPower = 0;
     private double lastBRPower = 0;
@@ -82,16 +72,22 @@ public class MecanumDrivetrain {
     private double lastBLPower = 0;
     public static double motorUpdateTolerance = 0.05;
 
-    public double pod1 = 0;
-    public double pod2 = 0;
-    public double pod3 = 0;
+    // Constants
+    private final double xyTolerance = 1;
+    private final double thetaTolerance = Math.PI / 35;
+    private final double OdometryTrackWidth = 13.85;
+    private final double OdometryHorizontalOffset = 3.165;
+    private final double OdometryHeadingThreshold = Math.PI / 8;
+    // 1440 ticks per encoder revolution, 4.3289 inches per wheel revolution
+    private final double encoderCountsPerRevolution = 537.6;
 
+    private final boolean isRed;
     public boolean zeroStrafeCorrection = false;
 
     // Constructor
     public MecanumDrivetrain(LinearOpMode opMode, double initialX, double initialY, double initialTheta, boolean isRedAuto) {
         this.opMode = opMode;
-        this.hardwareMap = opMode.hardwareMap;
+        HardwareMap hardwareMap = opMode.hardwareMap;
 
         module = hardwareMap.get(LynxModule.class, "Drivetrain Hub");
 
@@ -113,10 +109,9 @@ public class MecanumDrivetrain {
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        imu = new LynxEmbeddedIMU(new MecanumDrivetrain.BetterI2cDeviceSynchImplOnSimple(
+        imu = new LynxEmbeddedIMU(new MecanumDrivetrain.BetterI2cDeviceSyncImplOnSimple(
                 new LynxI2cDeviceSynchV2(hardwareMap.appContext, module, 0), true
         ));
-
         imu.initialize(new BNO055IMU.Parameters());
 
         x = initialX;
@@ -129,43 +124,15 @@ public class MecanumDrivetrain {
         if (!isRed) {
             thetak = 1.15;
         }
-
-        opMode.telemetry.addLine("ExH Version: " + getConciseLynxFirmwareVersion(module));
-        opMode.telemetry.update();
     }
 
-    private class BetterI2cDeviceSynchImplOnSimple extends I2cDeviceSynchImplOnSimple {
-        private BetterI2cDeviceSynchImplOnSimple(I2cDeviceSynchSimple simple, boolean isSimpleOwned) {
-            super(simple, isSimpleOwned);
-        }
-
-        @Override
-        public void setReadWindow(ReadWindow window) {
-            // intentionally do nothing
-        }
-    }
-
-    private static String getConciseLynxFirmwareVersion(LynxModule module) {
-        String rawVersion = module.getFirmwareVersionString();
-        String[] parts = rawVersion.split(" ");
-        StringBuilder versionBuilder = new StringBuilder();
-        for (int i = 0; i < 3; i++) {
-            String part = parts[3 + 2 * i];
-            if (i == 2) {
-                versionBuilder.append(part);
-            } else {
-                versionBuilder.append(part, 0, part.length() - 1);
-                versionBuilder.append(".");
-            }
-        }
-        return versionBuilder.toString();
-    }
-
+    // robot centric movement
     public void setControls(double xdot, double ydot, double w) {
         double FRpower;
         double BLpower;
         double FLpower;
         double BRpower;
+
         if (!zeroStrafeCorrection) {
             FRpower = ydot + xdot + w;
             BLpower = ydot + xdot - w;
@@ -177,6 +144,7 @@ public class MecanumDrivetrain {
             FLpower = xdot - w;
             BRpower = xdot + w;
         }
+
         double maxpower = Math.max(Math.abs(FRpower), Math.max(Math.abs(BLpower), Math.max(Math.abs(FLpower), Math.abs(BRpower))));
 
         if (maxpower > 1) {
@@ -198,6 +166,7 @@ public class MecanumDrivetrain {
             lastFLPower = FLpower;
             lastBRPower = BRpower;
             lastBLPower = BLpower;
+
         } else if (Math.abs(FRpower - lastFRPower) > motorUpdateTolerance || Math.abs(FLpower - lastFLPower) > motorUpdateTolerance
                 || Math.abs(BRpower - lastBRPower) > motorUpdateTolerance || Math.abs(BLpower - lastBLPower) > motorUpdateTolerance) {
 
@@ -215,6 +184,14 @@ public class MecanumDrivetrain {
         }
     }
 
+    // field centric movement
+    public void setGlobalControls(double xvelocity, double yvelocity, double w) {
+        double xdot = xvelocity * Math.cos(-theta) - yvelocity * Math.sin(-theta);
+        double ydot = yvelocity * Math.cos(-theta) + xvelocity * Math.sin(-theta);
+        setControls(xdot, ydot, w);
+    }
+
+    // set target point (default K values0
     public void setTargetPoint(double xtarget, double ytarget, double thetatarget) {
         // Make Sure thetatarget is Between 0 and 2pi
         thetatarget = thetatarget % (Math.PI * 2);
@@ -236,6 +213,7 @@ public class MecanumDrivetrain {
         setGlobalControls(-xk * (x - xtarget), -yk * (y - ytarget), -thetak * (thetacontrol));
     }
 
+    // set target point (custom K values)
     public void setTargetPoint(double xtarget, double ytarget, double thetatarget, double xK, double yK, double thetaK) {
         // Make Sure thetatarget is Between 0 and 2pi
         thetatarget = thetatarget % (Math.PI * 2);
@@ -254,6 +232,7 @@ public class MecanumDrivetrain {
         setGlobalControls(-xK * (x - xtarget), -yK * (y - ytarget), -thetaK * (thetacontrol));
     }
 
+    // auto reflect of autonomous path points (don't think this works...)
     public void setTargetPointAuto(double xtarget, double ytarget, double thetatarget) {
         if (!isRed) {
             xtarget = 142 - xtarget;
@@ -262,7 +241,6 @@ public class MecanumDrivetrain {
 
         setTargetPoint(xtarget, ytarget, thetatarget);
     }
-
     public void setTargetPointAuto(double xtarget, double ytarget, double thetatarget, double xK, double yK, double thetaK) {
         if (!isRed) {
             xtarget = 142 - xtarget;
@@ -272,13 +250,22 @@ public class MecanumDrivetrain {
         setTargetPoint(xtarget, ytarget, thetatarget, xK, yK, thetaK);
     }
 
-    public void setGlobalControls(double xvelocity, double yvelocity, double w) {
-        double xdot = xvelocity * Math.cos(-theta) - yvelocity * Math.sin(-theta);
-        double ydot = yvelocity * Math.cos(-theta) + xvelocity * Math.sin(-theta);
-        setControls(xdot, ydot, w);
+    // check if robot is at a certain point/angle (default tolerance)
+    public boolean isAtPoseAuto(double targetx, double targety, double targettheta) {
+        return isAtPoseAuto(targetx, targety, targettheta, xyTolerance, xyTolerance, thetaTolerance);
     }
 
-    public LynxGetBulkInputDataResponse RevBulkData() {
+    // check if robot is at a certain point/angle (custom tolerance)
+    public boolean isAtPoseAuto(double targetx, double targety, double targettheta, double xtolerance, double ytolerance, double thetatolerance) {
+        if (!isRed) {
+            targetx = 144 - targetx;
+            targettheta = Math.PI - targettheta;
+        }
+        return (Math.abs(x - targetx) < xtolerance && Math.abs(y - targety) < ytolerance && Math.abs(theta - targettheta) < thetatolerance);
+    }
+
+    // odometry bulk read
+    public LynxGetBulkInputDataResponse revBulkData() {
         LynxGetBulkInputDataResponse response;
         try {
             LynxGetBulkInputDataCommand command = new LynxGetBulkInputDataCommand(module);
@@ -290,9 +277,10 @@ public class MecanumDrivetrain {
         return response;
     }
 
+    // update position from odometry
     public void updatePose() {
         try {
-            LynxGetBulkInputDataResponse response = RevBulkData();
+            LynxGetBulkInputDataResponse response = revBulkData();
             pod1 = -response.getEncoder(3) * 0.00300622055 * 2;
             pod2 = response.getEncoder(0) * 0.00300622055 * 2;
             pod3 = -response.getEncoder(2) * 0.00300622055 * 2;
@@ -337,6 +325,7 @@ public class MecanumDrivetrain {
         }
     }
 
+    // imu stuff (old)
     public double getHeadingImu() {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
         deltaheading = angles.firstAngle - lastheading;
@@ -353,22 +342,15 @@ public class MecanumDrivetrain {
 
         return theta;
     }
-
     public void resetHeadingIMU() {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
         lastheading = angles.firstAngle;
         theta = 0;
     }
-
-    public boolean isAtPoseAuto(double targetx, double targety, double targettheta) {
-        return isAtPoseAuto(targetx, targety, targettheta, xyTolerance, xyTolerance, thetaTolerance);
-    }
-
-    public boolean isAtPoseAuto(double targetx, double targety, double targettheta, double xtolerance, double ytolerance, double thetatolerance) {
-        if (!isRed) {
-            targetx = 144 - targetx;
-            targettheta = Math.PI - targettheta;
+    private class BetterI2cDeviceSyncImplOnSimple extends I2cDeviceSynchImplOnSimple {
+        private BetterI2cDeviceSyncImplOnSimple(I2cDeviceSynchSimple simple, boolean isSimpleOwned) {
+            super(simple, isSimpleOwned);
         }
-        return (Math.abs(x - targetx) < xtolerance && Math.abs(y - targety) < ytolerance && Math.abs(theta - targettheta) < thetatolerance);
+        @Override public void setReadWindow(ReadWindow window) { /*intentionally do nothing*/}
     }
 }
