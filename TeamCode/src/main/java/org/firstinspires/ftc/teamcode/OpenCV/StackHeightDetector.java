@@ -16,10 +16,8 @@ public class StackHeightDetector {
 
     public StackHeightDetector(LinearOpMode op) {
 
-        int cameraMonitorViewId = op.hardwareMap.appContext.getResources()
-                .getIdentifier("cameraMonitorViewId", "id", op.hardwareMap.appContext.getPackageName());
-        cam = OpenCvCameraFactory.getInstance()
-                .createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
+        int cameraMonitorViewId = op.hardwareMap.appContext.getResources().getIdentifier("cameraMonitorViewId", "id", op.hardwareMap.appContext.getPackageName());
+        cam = OpenCvCameraFactory.getInstance().createInternalCamera(OpenCvInternalCamera.CameraDirection.BACK, cameraMonitorViewId);
 
         pipeline = new StackHeightPipeline();
 
@@ -27,8 +25,7 @@ public class StackHeightDetector {
     }
 
     public void start() {
-        cam.openCameraDeviceAsync(() ->
-                cam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT));
+        cam.openCameraDeviceAsync(() -> cam.startStreaming(320, 240, OpenCvCameraRotation.UPRIGHT));
         FtcDashboard.getInstance().startCameraStream(cam, 0);
     }
 

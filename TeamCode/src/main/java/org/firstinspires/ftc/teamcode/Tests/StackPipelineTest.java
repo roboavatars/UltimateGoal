@@ -11,14 +11,12 @@ import org.firstinspires.ftc.teamcode.OpenCV.StackHeightDetector;
 public class StackPipelineTest extends LinearOpMode {
 
     private StackHeightDetector detector;
-
     private FtcDashboard dashboard;
     private TelemetryPacket packet;
 
     @Override
     public void runOpMode() {
         detector = new StackHeightDetector(this);
-
         dashboard = FtcDashboard.getInstance();
         packet = new TelemetryPacket();
 

@@ -27,21 +27,15 @@ public class StackHeightPipeline extends OpenCvPipeline {
     public static double FILTER_MAX = 110;
     public static int HEIGHT_THRESH = 15;
     public static int WIDTH_THRESH = 15;
+    public static double ONE_MAX = 0.7;
+    public static double FOUR_MAX = 1.1;
 
     private double[] result = new double[3];
     private RingCase ringCase = RingCase.None;
     private Mat yCrCb = new Mat();
     private Mat cb = new Mat();
+    private Mat processed = new Mat();
     private Mat mask = new Mat();
-
-    Mat y = new Mat();
-    Mat cr = new Mat();
-    /*static final Point REGION_ANCHOR_POINT = new Point(110,85);
-    static final int REGION_WIDTH = 100;
-    static final int REGION_HEIGHT = 60;
-    Point pointA = new Point(REGION_ANCHOR_POINT.x, REGION_ANCHOR_POINT.y);
-    Point pointB = new Point(REGION_ANCHOR_POINT.x + REGION_WIDTH, REGION_ANCHOR_POINT.y + REGION_HEIGHT);
-    Mat region_Cb;*/
 
     // Clear Old Images
     public StackHeightPipeline() {
@@ -56,53 +50,42 @@ public class StackHeightPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-
-        // crop 10% of each edges
-        input = input.submat(input.height()/10, input.height()-(input.height()/10),
-                input.width()/10, input.width()-(input.width()/10));
-
-        // convert to ycrcb color space
+        // Convert to YCrCb Color Space
         Imgproc.cvtColor(input, yCrCb, Imgproc.COLOR_RGB2YCrCb);
 
-        // extract cb channel
+        // Extract Cb
         Core.extractChannel(yCrCb, cb, 2);
-        Core.extractChannel(yCrCb, y, 0); Core.extractChannel(yCrCb, cr, 1);
 
-        // filter out all colors except ring color
-        Core.inRange(cb, new Scalar(FILTER_MIN), new Scalar(FILTER_MAX), mask);
+        // Filter Colors
+        Core.inRange(cb, new Scalar(FILTER_MIN), new Scalar(FILTER_MAX), processed);
 
-        // remove noise in image
-        Imgproc.morphologyEx(cb, cb, Imgproc.MORPH_OPEN, new Mat());
-        Imgproc.morphologyEx(cb, cb, Imgproc.MORPH_CLOSE, new Mat());
+        // Remove Noise
+        Imgproc.morphologyEx(processed, processed, Imgproc.MORPH_CLOSE, new Mat());
 
-        // Temporary to See Average Cb Value
-        /*region_Cb = cb.submat(new Rect(pointA, pointB));
-        int region_cb_mean = (int) Core.mean(region_Cb).val[0];
-        log("Region Mean: " + region_cb_mean);
-        Imgproc.rectangle(input, pointA, pointB, new Scalar(0, 0, 0), 2);*/
+        // Mask Image for Debugging
+        input.copyTo(mask, processed);
 
-        // find rings
+        // Find Contours
         List<MatOfPoint> contours = new ArrayList<>();
-        Imgproc.findContours(mask, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
+        Imgproc.findContours(processed, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
-        // save files for debug
+        // Save Images for Debug
         saveMatToDisk(input, "input");
         saveMatToDisk(yCrCb, "ycrcb");
-        saveMatToDisk(y, "y");
-        saveMatToDisk(cr, "cr");
         saveMatToDisk(cb, "cb");
+        saveMatToDisk(processed, "processed");
         saveMatToDisk(mask, "mask");
 
-        // go through detections
+        // Loop Through Contours
         int i = 0;
         for (MatOfPoint contour : contours) {
             MatOfPoint2f areaPoints = new MatOfPoint2f(contour.toArray());
             RotatedRect boundingRect = Imgproc.minAreaRect(areaPoints);
 
-            // throw out detections that are too small
+            // Reject Small Contours
             if (boundingRect.size.height > HEIGHT_THRESH && boundingRect.size.width > WIDTH_THRESH) {
 
-                // to get width and height of detection
+                // Get Detection Size
                 Imgproc.rectangle(input, boundingRect.boundingRect(), new Scalar(0, 255, 0), 4);
                 i++;
 
@@ -113,21 +96,21 @@ public class StackHeightPipeline extends OpenCvPipeline {
 
                 result = new double[]{width, height, wh_ratio};
 
-                // one ring generally rectangular, four rings generally more square like
-                // did this as heights were inconsistent in the sample images
-                // works as sample imgs were taken at a high camera angle
-                // this won't work for lower angles, height would be better then
-                if (wh_ratio < 0.9 || wh_ratio > 1.1) {
+                // Checking WH ratio because heights were inconsistent in testing images
+                // This works better at a higher camera angle but comparing the height would be better for a lower camera angle.
+                if (wh_ratio < ONE_MAX) {
                     ringCase = RingCase.One;
-                } else if (wh_ratio >= 0.9 || wh_ratio <= 1.1) {
+                } else if (wh_ratio >= ONE_MAX && wh_ratio <= FOUR_MAX) {
                     ringCase = RingCase.Four;
                 }
+
+                log("WH Ratio: " + wh_ratio);
             }
         }
 
         log("Total: " + contours.size() + " Passed threshold: " + i);
 
-        // no detections
+        // No Contours Detected
         if (i == 0) {
             result = new double[]{0,0,0};
             ringCase = RingCase.None;
