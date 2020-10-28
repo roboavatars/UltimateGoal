@@ -37,6 +37,10 @@ public class Shooter {
         return shooterMotor.getVelocity();
     }
 
+    public void setAngle(double angle) {
+        // angle math here
+    }
+
     public void open() {
         angleServo.setPosition(OPEN_ANGLE);
     }

@@ -25,6 +25,12 @@ public class Robot {
     private double x, y, theta, prevX, prevY, prevTheta, vx, vy, w, prevVx, prevVy, prevW, prevTime, ax, ay, a;
     public double startTime;
 
+    // Shooter Variables
+    private final double[] shootX = {76.5, 84, 91.5, 108};
+    private final double shootY = 144;
+    private final double[] shootZ = {24, 24, 24, 35.5};
+    private final double Inch_To_Meter = 0.0254;
+
     // OpMode Stuff
     private LinearOpMode op;
     private FtcDashboard dashboard;
@@ -74,13 +80,9 @@ public class Robot {
         }
 
         // Remember Old Motion Info
-        prevX = drivetrain.x;
-        prevY = drivetrain.y;
-        prevTheta = drivetrain.theta;
+        prevX = drivetrain.x; prevY = drivetrain.y; prevTheta = drivetrain.theta;
         prevTime = curTime;
-        prevVx = vx;
-        prevVy = vy;
-        prevW = w;
+        prevVx = vx; prevVy = vy; prevW = w;
 
         // Telemetry
         addPacket("X", x);
@@ -91,8 +93,58 @@ public class Robot {
         sendPacket();
     }
 
-    public void shoot() { // aim for x = 108, y = 144, z = 35.5
+    // left ps = 0, middle ps = 1, right ps = 2, high goal = 3
+    public void shoot(int targetNum) {
+        /*  power1- (76.5,144,24)
+            power2- (84,144,24)
+            power3- (91.5,144,24)
+            high goal- (108,144,35.5)
+         */
 
+        double targetX = shootX[targetNum];
+        double targetY = shootY;
+        double targetZ = shootZ[targetNum];
+        double robotX = drivetrain.x;
+        double robotY = drivetrain.y;
+
+        // Align to shoot
+        double alignRobotAngle = Math.atan((targetY - robotY) / (targetX - robotX));
+        if (robotX >= targetX) {
+            alignRobotAngle += Math.PI;
+        }
+        drivetrain.setTargetPoint(robotX, robotY, alignRobotAngle);
+        addPacket("Robot Angle", alignRobotAngle);
+
+        // Calculate shooter angle
+        // known variables
+        double x = (Math.sqrt(Math.pow(targetX - robotX, 2) + Math.pow(targetY - robotY, 2))) * Inch_To_Meter;
+        double y0 = 0.2032;
+        double y = targetZ * Inch_To_Meter;
+        double g = 9.8;
+        double v0 = 63; // or calculate tangential velocity?
+
+        // terms for quadratic equation
+        double a = (g * Math.pow(x, 2)) / (2 * Math.pow(v0, 2));
+        double b = -x;
+        double c = y0 - y - a;
+
+        // solve quadratic
+        double quadraticRes = (-b - Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a);
+
+        // get and set angle
+        double shooterAngle = -Math.toDegrees(Math.atan(quadraticRes));
+        shooter.setAngle(shooterAngle);
+        addPacket("Shooter Angle", shooterAngle);
+
+        // old (brute force method lol)
+        /*for (double ang = 8.0; ang < 30.0; ang += 0.025) {
+            double theta = Math.toRadians(ang);
+            double ypos = 0.2032 + 63*Math.sin(theta)*(x/(63*Math.cos(theta))) - 4.9*Math.pow((x/(63*Math.cos(theta))),2);
+            if (Math.abs(0.9-ypos) <= 0.001) {
+                System.out.println("a="+ang);
+                break;
+            }
+        }*/
     }
 
     public void drawRobot(double robotX, double robotY, double robotTheta) {
