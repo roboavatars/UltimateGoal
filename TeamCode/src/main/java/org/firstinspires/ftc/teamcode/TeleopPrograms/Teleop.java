@@ -22,12 +22,12 @@ public class Teleop extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-//        double[] initialPosition = Logger.readPos();
-//        telemetry.addData("Starting Position", Arrays.toString(initialPosition));
-//        telemetry.update();
+        /*double[] initialPosition = Logger.readPos();
+        telemetry.addData("Starting Position", Arrays.toString(initialPosition));
+        telemetry.update();*/
 
         robot = new Robot(this, startX, startY, startTheta); // Robot(this, initialPosition[0], initialPosition[1], initialPosition[2])
-//        robot.logger.startLogging();
+        // robot.logger.startLogging();
         robot.shooter.flywheelOn();
 
         waitForStart();
@@ -35,9 +35,9 @@ public class Teleop extends LinearOpMode {
         while(opModeIsActive()) {
 
             if (gamepad1.a) {
-                robot.shooter.close();
+
             } else {
-                robot.shooter.open();
+
             }
 
             if (robotCentric) {
@@ -48,6 +48,6 @@ public class Teleop extends LinearOpMode {
 
             robot.update();
         }
-//        robot.logger.stopLogging();
+        // robot.logger.stopLogging();
     }
 }

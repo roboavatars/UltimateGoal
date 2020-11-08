@@ -9,7 +9,7 @@ public class Robot {
 
     // Robot Classes
     public MecanumDrivetrain drivetrain;
-    public IntakeIndex intakeIndex;
+    public Intake intake;
     public Shooter shooter;
     public T265 t265;
     public Logger logger;
@@ -20,6 +20,7 @@ public class Robot {
     // State Variables
     private boolean firstLoop = true;
     private int cycleCounter = 0;
+    private boolean shot = false;
 
     // Motion Variables
     private double x, y, theta, prevX, prevY, prevTheta, vx, vy, w, prevVx, prevVy, prevW, prevTime, ax, ay, a;
@@ -39,7 +40,7 @@ public class Robot {
     // Constructor
     public Robot(LinearOpMode op, double x, double y, double theta) {
         drivetrain = new MecanumDrivetrain(op, x, y, theta, true);
-        intakeIndex = new IntakeIndex(op);
+        intake = new Intake(op);
         shooter = new Shooter(op);
         t265 = new T265(op, x, y, theta);
         logger = new Logger();
@@ -76,7 +77,8 @@ public class Robot {
 
         // Log Data
         if (cycleCounter % loggerUpdatePeriod == 0) {
-            logger.logData(System.currentTimeMillis()-startTime, x, y, theta, vx, vy, w, ax, ay, a);
+            logger.logData(System.currentTimeMillis()-startTime, x, y, theta, vx, vy, w, ax, ay, a, shot);
+            shot = false;
         }
 
         // Remember Old Motion Info
@@ -99,7 +101,7 @@ public class Robot {
             power2- (84,144,24)
             power3- (91.5,144,24)
             high goal- (108,144,35.5)
-         */
+        */
 
         double targetX = shootX[targetNum];
         double targetY = shootY;
@@ -135,6 +137,8 @@ public class Robot {
         double shooterAngle = -Math.toDegrees(Math.atan(quadraticRes));
         shooter.setAngle(shooterAngle);
         addPacket("Shooter Angle", shooterAngle);
+
+        shot = true;
 
         // old (brute force method lol)
         /*for (double ang = 8.0; ang < 30.0; ang += 0.025) {

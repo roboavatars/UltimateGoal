@@ -6,18 +6,16 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-public class IntakeIndex {
+public class Intake {
 
     private DcMotorEx intakeMotor;
-    private DcMotorEx indexMotor;
     private DistanceSensor ringSensor;
 
-    public IntakeIndex(LinearOpMode op) {
-        intakeMotor = op.hardwareMap.get(DcMotorEx.class, "intake");
-        indexMotor = op.hardwareMap.get(DcMotorEx.class, "index");
+    public Intake(LinearOpMode op) {
+        intakeMotor = op.hardwareMap.get(DcMotorEx.class, "intakeMotor");
         ringSensor = op.hardwareMap.get(DistanceSensor.class, "ringSensor");
 
-        op.telemetry.addData("Status", "Intake and Indexer initialized");
+        op.telemetry.addData("Status", "Intake initialized");
     }
 
     public void intakeOn() {
@@ -26,14 +24,6 @@ public class IntakeIndex {
 
     public void intakeOff() {
         intakeMotor.setPower(0);
-    }
-
-    public void indexRings() {
-        indexMotor.setPower(1);
-    }
-
-    public void stopIndex() {
-        indexMotor.setPower(0);
     }
 
     public double getDistance() {
