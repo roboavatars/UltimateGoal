@@ -15,11 +15,13 @@ public class Intake {
         intakeMotor = op.hardwareMap.get(DcMotorEx.class, "intakeMotor");
         ringSensor = op.hardwareMap.get(DistanceSensor.class, "ringSensor");
 
+        setPower(0);
+
         op.telemetry.addData("Status", "Intake initialized");
     }
 
-    public void intakeOn() {
-        intakeMotor.setPower(1);
+    public void setPower(double power) {
+        intakeMotor.setPower(power);
     }
 
     public void intakeOff() {

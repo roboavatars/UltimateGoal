@@ -28,7 +28,7 @@ public class Logger {
             data = "";
             File robotDataLog = new File(getLogName(true));
             fileWriter = new FileWriter(robotDataLog);
-            fileWriter.write("Timestamp,SinceStart,X,Y,Theta,VelocityX,VelocityY,VelocityTheta,AccelX,AccelY,AccelTheta,Shot\n");
+            fileWriter.write("Timestamp,SinceStart,X,Y,Theta,VelocityX,VelocityY,VelocityTheta,AccelX,AccelY,AccelTheta\n");
         } catch (Exception e) {e.printStackTrace();}
     }
 
@@ -58,10 +58,10 @@ public class Logger {
      * Adds data to string
      */
     public void logData(double timeSinceSt, double x, double y, double theta, double velocityX, double velocityY, double velocityTheta,
-                        double accelX, double accelY, double accelTheta, boolean shot) {
+                        double accelX, double accelY, double accelTheta) {
         @SuppressLint("SimpleDateFormat") SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss.SSS"); Date d = new Date();
         data += df.format(d)+","+timeSinceSt+","+x+","+y+","+theta+","+velocityX+","+velocityY+","+velocityTheta+","+
-                accelX+","+accelY+","+accelTheta+","+shot+"\n";
+                accelX+","+accelY+","+accelTheta+"\n";
     }
 
     /**

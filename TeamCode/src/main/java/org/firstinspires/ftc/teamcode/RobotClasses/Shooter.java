@@ -13,17 +13,24 @@ public class Shooter {
     private Servo magServo;
     private Servo feedServo;
 
-    public static double angleHome;
-    public static double magHome;
-    public static double magShoot;
-    public static double feedHome;
-    public static double feedShoot;
+    public static double angleHomePos;
+    public static double magHomePos;
+    public static double magShootPos;
+    public static double feedHomePos;
+    public static double feedShootPos;
+
+    public boolean magHome = true;
+    public boolean feedHome = true;
 
     public Shooter(LinearOpMode op) {
         shooterMotor = op.hardwareMap.get(DcMotorEx.class, "shooter");
         angleServo = op.hardwareMap.get(Servo.class, "angleServo");
         magServo = op.hardwareMap.get(Servo.class, "magServo");
         feedServo = op.hardwareMap.get(Servo.class, "feedServo");
+
+        angleHome();
+        feedHome();
+        magHome();
 
         op.telemetry.addData("Status", "Shooter initialized");
     }
@@ -50,23 +57,27 @@ public class Shooter {
     }
 
     public void angleHome() {
-        angleServo.setPosition(angleHome);
+        angleServo.setPosition(angleHomePos);
     }
 
     public void magHome() {
-        magServo.setPosition(magHome);
+        magServo.setPosition(magHomePos);
+        magHome = true;
     }
 
     public void magShoot() {
-        magServo.setPosition(magShoot);
+        magServo.setPosition(magShootPos);
+        magHome = false;
     }
 
     public void feedHome() {
-        feedServo.setPosition(feedHome);
+        feedServo.setPosition(feedHomePos);
+        feedHome = true;
     }
 
     public void feedShoot() {
-        feedServo.setPosition(feedShoot);
+        feedServo.setPosition(feedShootPos);
+        feedHome = false;
     }
 
 }

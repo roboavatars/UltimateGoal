@@ -20,7 +20,8 @@ public class Robot {
     // State Variables
     private boolean firstLoop = true;
     private int cycleCounter = 0;
-    private boolean shot = false;
+    public boolean shoot = false;
+    private int numRings = -1;
 
     // Motion Variables
     private double x, y, theta, prevX, prevY, prevTheta, vx, vy, w, prevVx, prevVy, prevW, prevTime, ax, ay, a;
@@ -58,6 +59,37 @@ public class Robot {
             firstLoop = false;
         }
 
+        /*
+        States (in progress)-
+        <3 rings, no shoot, mag home, feed home- nothing
+        3 rings, no shoot, mag home, feed home- mag to shoot
+
+        If shoot pressed------- (3x)
+        >0 rings, shoot, mag shoot, feed home- feed to shoot (shoot method takes care of dt align and servo angle)
+        >0 rings, shoot, mag shoot, feed shoot- feed to home
+        delay
+        ----------
+        mag home- 0 rings, mag shoot, feed home
+        */
+
+        if (numRings == 3 && !shoot && shooter.magHome && shooter.feedHome) {
+            shooter.magShoot();
+        }
+
+        else if (numRings > 0 && shoot && !shooter.magHome && shooter.feedHome) {
+            shooter.feedShoot();
+        }
+
+        else if (numRings > 0 && shoot && !shooter.magHome && !shooter.feedHome) {
+            shooter.feedHome();
+            numRings--;
+        }
+
+        else if (numRings == 0 && !shooter.magHome && shooter.feedHome && !shoot) {
+            shooter.magHome();
+            shoot = false;
+        }
+
         // Update Position
         drivetrain.updatePose();
         t265.updateCamPose();
@@ -77,8 +109,7 @@ public class Robot {
 
         // Log Data
         if (cycleCounter % loggerUpdatePeriod == 0) {
-            logger.logData(System.currentTimeMillis()-startTime, x, y, theta, vx, vy, w, ax, ay, a, shot);
-            shot = false;
+            logger.logData(System.currentTimeMillis()-startTime, x, y, theta, vx, vy, w, ax, ay, a);
         }
 
         // Remember Old Motion Info
@@ -137,8 +168,6 @@ public class Robot {
         double shooterAngle = -Math.toDegrees(Math.atan(quadraticRes));
         shooter.setAngle(shooterAngle);
         addPacket("Shooter Angle", shooterAngle);
-
-        shot = true;
 
         // old (brute force method lol)
         /*for (double ang = 8.0; ang < 30.0; ang += 0.025) {
