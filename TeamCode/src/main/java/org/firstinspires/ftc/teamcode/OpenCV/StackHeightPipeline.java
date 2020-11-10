@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpenCV;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -39,6 +40,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
 
     // Clear Old Images
     public StackHeightPipeline() {
+        @SuppressLint("SdCardPath")
         File dir = new File("/sdcard/EasyOpenCV");
         String[] children = dir.list();
         if (children != null) {

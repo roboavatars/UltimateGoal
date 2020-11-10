@@ -16,12 +16,16 @@ public class Robot {
 
     // Class Constants
     private final int loggerUpdatePeriod = 2;
+    private final int distUpdatePeriod = 15;
 
     // State Variables
     private boolean firstLoop = true;
     private int cycleCounter = 0;
+    private int numRings = 0;
+
+    private double shootTime;
+
     public boolean shoot = false;
-    private int numRings = -1;
 
     // Motion Variables
     private double x, y, theta, prevX, prevY, prevTheta, vx, vy, w, prevVx, prevVy, prevW, prevTime, ax, ay, a;
@@ -32,6 +36,8 @@ public class Robot {
     private final double shootY = 144;
     private final double[] shootZ = {24, 24, 24, 35.5};
     private final double Inch_To_Meter = 0.0254;
+
+    private final double feedHomeDelay = 100;
 
     // OpMode Stuff
     private LinearOpMode op;
@@ -59,35 +65,40 @@ public class Robot {
             firstLoop = false;
         }
 
+        if (cycleCounter % distUpdatePeriod == 0) {
+            numRings = shooter.ringsInMag();
+        }
+
         /*
         States (in progress)-
-        <3 rings, no shoot, mag home, feed home- nothing
-        3 rings, no shoot, mag home, feed home- mag to shoot
+        <3 rings, no shoot, mag home, feed home- nothing (default state)
+        3 rings, no shoot, mag home, feed home- mag to shoot, intake off
 
-        If shoot pressed------- (3x)
-        >0 rings, shoot, mag shoot, feed home- feed to shoot (shoot method takes care of dt align and servo angle)
-        >0 rings, shoot, mag shoot, feed shoot- feed to home
-        delay
-        ----------
-        mag home- 0 rings, mag shoot, feed home
+        >0 rings, shoot, mag shoot, feed home- feed to shoot, save time (maybe also dt align, servo angle, flywheel)
+        >0 rings, shoot, mag shoot, feed shoot, delay passed- feed to home, rings-1
+
+        0 rings, shoot, mag shoot, feed home- mag home, intake on
         */
 
         if (numRings == 3 && !shoot && shooter.magHome && shooter.feedHome) {
             shooter.magShoot();
+            intake.intakeOff();
         }
 
         else if (numRings > 0 && shoot && !shooter.magHome && shooter.feedHome) {
             shooter.feedShoot();
+            shootTime = System.currentTimeMillis();
         }
 
-        else if (numRings > 0 && shoot && !shooter.magHome && !shooter.feedHome) {
+        else if (numRings > 0 && shoot && !shooter.magHome && !shooter.feedHome && (System.currentTimeMillis()-shootTime)>feedHomeDelay) {
             shooter.feedHome();
             numRings--;
         }
 
-        else if (numRings == 0 && !shooter.magHome && shooter.feedHome && !shoot) {
+        else if (numRings == 0 && shoot && !shooter.magHome && shooter.feedHome) {
             shooter.magHome();
             shoot = false;
+            intake.setPower(1);
         }
 
         // Update Position
@@ -153,11 +164,10 @@ public class Robot {
         double x = (Math.sqrt(Math.pow(targetX - robotX, 2) + Math.pow(targetY - robotY, 2))) * Inch_To_Meter;
         double y0 = 0.2032;
         double y = targetZ * Inch_To_Meter;
-        double g = 9.8;
         double v0 = 63; // or calculate tangential velocity?
 
         // terms for quadratic equation
-        double a = (g * Math.pow(x, 2)) / (2 * Math.pow(v0, 2));
+        double a = (9.8 * Math.pow(x, 2)) / (2 * Math.pow(v0, 2));
         double b = -x;
         double c = y0 - y - a;
 
@@ -168,16 +178,6 @@ public class Robot {
         double shooterAngle = -Math.toDegrees(Math.atan(quadraticRes));
         shooter.setAngle(shooterAngle);
         addPacket("Shooter Angle", shooterAngle);
-
-        // old (brute force method lol)
-        /*for (double ang = 8.0; ang < 30.0; ang += 0.025) {
-            double theta = Math.toRadians(ang);
-            double ypos = 0.2032 + 63*Math.sin(theta)*(x/(63*Math.cos(theta))) - 4.9*Math.pow((x/(63*Math.cos(theta))),2);
-            if (Math.abs(0.9-ypos) <= 0.001) {
-                System.out.println("a="+ang);
-                break;
-            }
-        }*/
     }
 
     public void drawRobot(double robotX, double robotY, double robotTheta) {

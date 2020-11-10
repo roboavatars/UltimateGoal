@@ -3,8 +3,8 @@ package org.firstinspires.ftc.teamcode.Splines;
 import java.util.ArrayList;
 
 public class Path {
-    private ArrayList<Spline[]> splines = new ArrayList<Spline[]>();
-    private ArrayList<Double> waypointTimes = new ArrayList<Double>();
+    private ArrayList<Spline[]> splines = new ArrayList<>();
+    private ArrayList<Double> waypointTimes = new ArrayList<>();
     private ArrayList<Waypoint> waypoints;
     private double totaltime;
 

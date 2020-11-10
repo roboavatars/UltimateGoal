@@ -109,7 +109,7 @@ public class MecanumDrivetrain {
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        imu = new LynxEmbeddedIMU(new MecanumDrivetrain.BetterI2cDeviceSyncImplOnSimple(
+        imu = new LynxEmbeddedIMU(new BetterI2cDeviceSyncImplOnSimple(
                 new LynxI2cDeviceSynchV2(hardwareMap.appContext, module, 0), true
         ));
         imu.initialize(new BNO055IMU.Parameters());
@@ -347,7 +347,7 @@ public class MecanumDrivetrain {
         lastheading = angles.firstAngle;
         theta = 0;
     }
-    private class BetterI2cDeviceSyncImplOnSimple extends I2cDeviceSynchImplOnSimple {
+    private static class BetterI2cDeviceSyncImplOnSimple extends I2cDeviceSynchImplOnSimple {
         private BetterI2cDeviceSyncImplOnSimple(I2cDeviceSynchSimple simple, boolean isSimpleOwned) {
             super(simple, isSimpleOwned);
         }
