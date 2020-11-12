@@ -24,6 +24,7 @@ public class Robot {
     private int numRings = 0;
 
     private double shootTime;
+    private boolean timeSaved = false;
 
     public boolean shoot = false;
 
@@ -37,6 +38,7 @@ public class Robot {
     private final double[] shootZ = {24, 24, 24, 35.5};
     private final double Inch_To_Meter = 0.0254;
 
+    private final double feedShootDelay = 100;
     private final double feedHomeDelay = 100;
 
     // OpMode Stuff
@@ -76,6 +78,7 @@ public class Robot {
 
         >0 rings, shoot, mag shoot, feed home- feed to shoot, save time (maybe also dt align, servo angle, flywheel)
         >0 rings, shoot, mag shoot, feed shoot, delay passed- feed to home, rings-1
+        need delay before shoot again
 
         0 rings, shoot, mag shoot, feed home- mag home, intake on
         */
@@ -86,11 +89,14 @@ public class Robot {
         }
 
         else if (numRings > 0 && shoot && !shooter.magHome && shooter.feedHome) {
-            shooter.feedShoot();
-            shootTime = System.currentTimeMillis();
+            if (!timeSaved || (timeSaved && (System.currentTimeMillis()-shootTime)>feedHomeDelay)) {
+                shooter.feedShoot();
+                shootTime = System.currentTimeMillis();
+                timeSaved = true;
+            }
         }
 
-        else if (numRings > 0 && shoot && !shooter.magHome && !shooter.feedHome && (System.currentTimeMillis()-shootTime)>feedHomeDelay) {
+        else if (numRings > 0 && shoot && !shooter.magHome && !shooter.feedHome && (System.currentTimeMillis()-shootTime)>feedShootDelay) {
             shooter.feedHome();
             numRings--;
         }
@@ -98,7 +104,8 @@ public class Robot {
         else if (numRings == 0 && shoot && !shooter.magHome && shooter.feedHome) {
             shooter.magHome();
             shoot = false;
-            intake.setPower(1);
+            timeSaved = false;
+            intake.intakeOn();
         }
 
         // Update Position

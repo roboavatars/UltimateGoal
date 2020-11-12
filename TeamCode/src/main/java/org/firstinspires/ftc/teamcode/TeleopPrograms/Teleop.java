@@ -4,21 +4,23 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.RobotClasses.Logger;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
-
-import java.util.Arrays;
 
 @Config
 @TeleOp
 public class Teleop extends LinearOpMode {
 
-    public static int startX = 9;
-    public static int startY = 111;
-    public static int startTheta = 0;
+    public static int startX = 125;
+    public static int startY = 20;
+    public static double startTheta = Math.PI/2;
 
     private Robot robot;
     private final boolean robotCentric = true;
+
+    public boolean a = false;
+    public boolean b = false;
+    public boolean y = false;
+    public boolean x = false;
 
     @Override
     public void runOpMode() {
@@ -28,16 +30,40 @@ public class Teleop extends LinearOpMode {
 
         robot = new Robot(this, startX, startY, startTheta); // Robot(this, initialPosition[0], initialPosition[1], initialPosition[2])
         // robot.logger.startLogging();
-        robot.shooter.flywheelOn();
+        robot.intake.intakeOn();
 
         waitForStart();
 
         while(opModeIsActive()) {
 
-            if (gamepad1.a) {
+            if (a && gamepad1.a) {
+                robot.intake.intakeOff();
+                a = false;
+            } else if (!a && gamepad1.a) {
+                robot.intake.intakeOn();
+                a  = true;
+            }
 
+            if (gamepad1.left_bumper) {
+                robot.shooter.feedHome();
+                robot.shooter.magShoot();
+                robot.shooter.flywheelOn();
             } else {
+                robot.shooter.magHome();
+                robot.shooter.flywheelOff();
+            }
 
+            if (gamepad1.right_bumper) {
+                robot.shooter.feedShoot();
+            } else {
+                robot.shooter.feedHome();
+            }
+
+            if (gamepad1.dpad_up && robot.shooter.angleServo.getPosition() < 0.22) {
+                robot.shooter.angleServo.setPosition(robot.shooter.angleServo.getPosition()+0.01);
+            }
+            if (gamepad1.dpad_down && robot.shooter.angleServo.getPosition() > 0.03) {
+                robot.shooter.angleServo.setPosition(robot.shooter.angleServo.getPosition()-0.01);
             }
 
             if (robotCentric) {

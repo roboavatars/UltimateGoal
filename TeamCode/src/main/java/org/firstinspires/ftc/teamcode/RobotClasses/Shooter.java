@@ -13,17 +13,18 @@ public class Shooter {
 
     private DcMotorEx shooterMotor1;
     private DcMotorEx shooterMotor2;
-    private Servo angleServo;
+    public Servo angleServo;
     private Servo magServo;
     private Servo feedServo;
 
     private DistanceSensor ringSensor;
 
-    public static double angleHomePos;
-    public static double magHomePos;
-    public static double magShootPos;
-    public static double feedHomePos;
-    public static double feedShootPos;
+    public static double angleHomePos = 0;
+    public static double angleMaxPos = 0.25;
+    public static double magHomePos = 0.25;
+    public static double magShootPos = 0.50;
+    public static double feedHomePos = 0.50;
+    public static double feedShootPos = 0.65;
 
     public boolean magHome = true;
     public boolean feedHome = true;
@@ -34,7 +35,7 @@ public class Shooter {
         angleServo = op.hardwareMap.get(Servo.class, "angleServo");
         magServo = op.hardwareMap.get(Servo.class, "magServo");
         feedServo = op.hardwareMap.get(Servo.class, "feedServo");
-        ringSensor = op.hardwareMap.get(DistanceSensor.class, "ringSensor");
+        //ringSensor = op.hardwareMap.get(DistanceSensor.class, "ringSensor");
 
         angleHome();
         feedHome();
@@ -44,7 +45,7 @@ public class Shooter {
     }
 
     public void flywheelOn() {
-        shooterMotor1.setPower(1);
+        shooterMotor1.setPower(-1);
         shooterMotor2.setPower(-1);
     }
 
@@ -56,6 +57,10 @@ public class Shooter {
     public void setVelocity(double velocity) {
         shooterMotor1.setVelocity(velocity);
         shooterMotor2.setVelocity(-velocity);
+    }
+
+    public double[] getVelocity() {
+        return new double[] {shooterMotor1.getVelocity(), shooterMotor2.getVelocity()};
     }
 
     public void setAngle(double angle) {
