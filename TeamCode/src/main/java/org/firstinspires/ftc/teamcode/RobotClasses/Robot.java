@@ -169,21 +169,20 @@ public class Robot {
 
         // Calculate shooter angle
         // known variables
-        double x = (Math.sqrt(Math.pow(targetX - robotX, 2) + Math.pow(targetY - robotY, 2))) * Inch_To_Meter;
-        double y0 = 0.2032;
-        double y = targetZ * Inch_To_Meter;
+        double d = (Math.sqrt(Math.pow(targetX - robotX, 2) + Math.pow(targetY - robotY, 2))) * Inch_To_Meter;
+        double dz = targetZ * Inch_To_Meter - 0.2032;
         double v0 = 63; // or calculate tangential velocity?
 
         // terms for quadratic equation
-        double a = (9.8 * Math.pow(x, 2)) / (2 * Math.pow(v0, 2));
-        double b = -x;
-        double c = y0 - y - a;
+        double a = (9.8 * Math.pow(d, 2)) / (2 * Math.pow(v0, 2));
+        double b = d;
+        double c = -dz - a;
 
         // solve quadratic
         double quadraticRes = (-b - Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a);
 
         // get and set angle
-        double shooterAngle = Math.atan(quadraticRes);
+        double shooterAngle = 0.27 * (Math.atan(quadraticRes) - 5 * Math.PI / 36) * 3 / Math.PI;
         shooter.setAngle(shooterAngle);
         addPacket("Shooter Angle", shooterAngle);
     }

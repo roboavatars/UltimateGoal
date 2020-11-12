@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 @TeleOp
 public class Teleop extends LinearOpMode {
 
-    public static int startX = 125;
-    public static int startY = 20;
+    public static int startX = 135;
+    public static int startY = 9;
     public static double startTheta = Math.PI/2;
 
     private Robot robot;
@@ -51,7 +51,7 @@ public class Teleop extends LinearOpMode {
             } else {
                 robot.shooter.magHome();
                 robot.shooter.flywheelOff();
-            }
+            } 
 
             if (gamepad1.right_bumper) {
                 robot.shooter.feedShoot();
@@ -60,13 +60,15 @@ public class Teleop extends LinearOpMode {
             }
 
             if (gamepad1.dpad_up && robot.shooter.angleServo.getPosition() < 0.22) {
-                robot.shooter.angleServo.setPosition(robot.shooter.angleServo.getPosition()+0.01);
+                robot.shooter.angleServo.setPosition(robot.shooter.angleServo.getPosition() + 0.01);
             }
             if (gamepad1.dpad_down && robot.shooter.angleServo.getPosition() > 0.03) {
-                robot.shooter.angleServo.setPosition(robot.shooter.angleServo.getPosition()-0.01);
+                robot.shooter.angleServo.setPosition(robot.shooter.angleServo.getPosition() - 0.01);
             }
 
-            if (robotCentric) {
+            if (gamepad1.right_trigger > 0) {
+                robot.shoot(3);
+            } else if (robotCentric) {
                 robot.drivetrain.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
             } else {
                 robot.drivetrain.setGlobalControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
