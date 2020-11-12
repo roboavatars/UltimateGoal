@@ -63,9 +63,8 @@ public class Shooter {
         return new double[] {shooterMotor1.getVelocity(), shooterMotor2.getVelocity()};
     }
 
-    public void setAngle(double angle) {
-        // angle math here
-
+    public void setFlapAngle(double angle) {
+        angleServo.setPosition(angle);
     }
 
     public void angleHome() {

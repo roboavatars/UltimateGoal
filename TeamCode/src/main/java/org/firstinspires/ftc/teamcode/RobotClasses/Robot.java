@@ -146,7 +146,7 @@ public class Robot {
     }
 
     // left ps = 0, middle ps = 1, right ps = 2, high goal = 3
-    public void shoot(int targetNum) {
+    public double[] shoot(int targetNum) {
         /*  power1- (76.5,144,24)
             power2- (84,144,24)
             power3- (91.5,144,24)
@@ -159,32 +159,29 @@ public class Robot {
         double robotX = drivetrain.x;
         double robotY = drivetrain.y;
 
-        // Align to shoot
-        double alignRobotAngle = Math.atan((targetY - robotY) / (targetX - robotX));
+        // Calculate Robot Angle
+        double dx = targetX - robotX;
+        double dy = targetY - robotY;
+        double v = 63; // tangential velocity of ring when leaving flywheel
+        double p = v * dy;
+        double q = -v * dx;
+        double alignRobotAngle = Math.asin(((targetX - robotX) * vx - (targetY - robotY) * vy) / Math.sqrt(Math.pow(p, 2) + Math.pow(q, 2))) - Math.atan(q / p);
         if (robotX >= targetX) {
             alignRobotAngle += Math.PI;
         }
-        drivetrain.setTargetPoint(robotX, robotY, alignRobotAngle);
         addPacket("Robot Angle", alignRobotAngle);
 
-        // Calculate shooter angle
-        // known variables
+        // Calculate Shooter Angle
         double d = (Math.sqrt(Math.pow(targetX - robotX, 2) + Math.pow(targetY - robotY, 2))) * Inch_To_Meter;
         double dz = targetZ * Inch_To_Meter - 0.2032;
-        double v0 = 63; // or calculate tangential velocity?
-
-        // terms for quadratic equation
-        double a = (9.8 * Math.pow(d, 2)) / (2 * Math.pow(v0, 2));
+        double a = (9.8 * Math.pow(d, 2)) / (2 * Math.pow(v, 2));
         double b = d;
         double c = -dz - a;
-
-        // solve quadratic
         double quadraticRes = (-b - Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a);
-
-        // get and set angle
         double shooterAngle = 0.27 * (Math.atan(quadraticRes) - 5 * Math.PI / 36) * 3 / Math.PI;
-        shooter.setAngle(shooterAngle);
         addPacket("Shooter Angle", shooterAngle);
+
+        return new double[] {alignRobotAngle, shooterAngle};
     }
 
     public void drawRobot(double robotX, double robotY, double robotTheta) {

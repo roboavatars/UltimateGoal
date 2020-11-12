@@ -67,7 +67,9 @@ public class Teleop extends LinearOpMode {
             }
 
             if (gamepad1.right_trigger > 0) {
-                robot.shoot(3);
+                double[] angles = robot.shoot(3);
+                robot.drivetrain.setTargetPoint(robot.drivetrain.x, robot.drivetrain.y, angles[0]);
+                robot.shooter.setFlapAngle(angles[1]);
             } else if (robotCentric) {
                 robot.drivetrain.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
             } else {
