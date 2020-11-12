@@ -139,6 +139,7 @@ public class Robot {
         addPacket("X", x);
         addPacket("Y", y);
         addPacket("Theta", theta);
+        addPacket("Angle Pos", shooter.angleServo.getPosition());
         addPacket("Update Frequency (Hz)", 1 / timeDiff);
         drawRobot(x, y, theta);
         sendPacket();
@@ -182,7 +183,7 @@ public class Robot {
         double quadraticRes = (-b - Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a);
 
         // get and set angle
-        double shooterAngle = -Math.toDegrees(Math.atan(quadraticRes));
+        double shooterAngle = Math.atan(quadraticRes);
         shooter.setAngle(shooterAngle);
         addPacket("Shooter Angle", shooterAngle);
     }
