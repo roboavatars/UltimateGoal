@@ -36,7 +36,6 @@ public class Robot {
     private final double[] shootX = {76.5, 84, 91.5, 108};
     private final double shootY = 144;
     private final double[] shootZ = {24, 24, 24, 35.5};
-    private final double Inch_To_Meter = 0.0254;
 
     private final double feedShootDelay = 100;
     private final double feedHomeDelay = 100;
@@ -172,9 +171,9 @@ public class Robot {
         addPacket("Robot Angle", alignRobotAngle);
 
         // Calculate Shooter Angle
-        double d = (Math.sqrt(Math.pow(targetX - robotX, 2) + Math.pow(targetY - robotY, 2))) * Inch_To_Meter;
-        double dz = targetZ * Inch_To_Meter - 0.2032;
-        double a = (9.8 * Math.pow(d, 2)) / (2 * Math.pow(v, 2));
+        double d = Math.sqrt(Math.pow(targetX - robotX, 2) + Math.pow(targetY - robotY, 2));
+        double dz = targetZ - 8;
+        double a = (386 * Math.pow(d, 2)) / (2 * Math.pow(v, 2));
         double b = d;
         double c = -dz - a;
         double quadraticRes = (-b - Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a);
