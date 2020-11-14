@@ -1,22 +1,23 @@
 package org.firstinspires.ftc.teamcode.RobotClasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.Servo;
 
 public class Intake {
 
     private DcMotorEx intakeMotor;
-//    private Servo wobbleServo;
+//    private DcMotorEx wobbleMotor;
 
-//    private double wobbleHomePos = 0;
-//    private double wobbleUpPos = 0;
+//    private int wobbleHomePos = 0;
+//    private int wobbleUpPos = 0;
 
     public Intake(LinearOpMode op) {
         intakeMotor = op.hardwareMap.get(DcMotorEx.class, "intake");
-        //wobbleServo = op.hardwareMap.get(Servo.class, "wobbleServo");
-
-//        wobbleHome();
+//        wobbleMotor = op.hardwareMap.get(DcMotorEx.class, "wobbleMotor");
+//        wobbleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        wobbleMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         op.telemetry.addData("Status", "Intake initialized");
     }
@@ -34,11 +35,11 @@ public class Intake {
     }
 
 //    public void wobbleHome() {
-//        wobbleServo.setPosition(wobbleHomePos);
+//        wobbleMotor.setTargetPosition(wobbleHomePos);
 //    }
 //
 //    public void wobbleUp() {
-//        wobbleServo.setPosition(wobbleUpPos);
+//        wobbleMotor.setTargetPosition(wobbleUpPos);
 //    }
 
 }

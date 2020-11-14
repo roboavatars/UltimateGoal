@@ -21,8 +21,8 @@ public class Shooter {
 
     public static double angleHomePos = 0;
     public static double angleMaxPos = 0.25;
-    public static double magHomePos = 0.25;
-    public static double magShootPos = 0.50;
+    public static double magHomePos = 0.20;
+    public static double magShootPos = 0.48;
     public static double feedHomePos = 0.50;
     public static double feedShootPos = 0.65;
 
@@ -32,7 +32,7 @@ public class Shooter {
     public Shooter(LinearOpMode op) {
         shooterMotor1 = op.hardwareMap.get(DcMotorEx.class, "shooter1");
         shooterMotor2 = op.hardwareMap.get(DcMotorEx.class, "shooter2");
-        angleServo = op.hardwareMap.get(Servo.class, "angleServo");
+        angleServo = op.hardwareMap.get(Servo.class, "flapServo");
         magServo = op.hardwareMap.get(Servo.class, "magServo");
         feedServo = op.hardwareMap.get(Servo.class, "feedServo");
         //ringSensor = op.hardwareMap.get(DistanceSensor.class, "ringSensor");

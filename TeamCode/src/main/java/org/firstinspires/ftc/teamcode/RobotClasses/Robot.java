@@ -114,9 +114,12 @@ public class Robot {
         // Calculate Motion Info
         double curTime = (double) System.currentTimeMillis() / 1000;
         double timeDiff = curTime - prevTime;
-        x = (drivetrain.x + t265.getCamX()) / 2;
-        y = (drivetrain.y + t265.getCamY()) / 2;
-        theta = (drivetrain.theta + t265.getCamTheta()) / 2;
+//        x = (drivetrain.x + t265.getCamX()) / 2;
+//        y = (drivetrain.y + t265.getCamY()) / 2;
+//        theta = (drivetrain.theta + t265.getCamTheta()) / 2;
+        x = t265.getCamX();
+        y = t265.getCamY();
+        theta = t265.getCamTheta();
         vx = (x - prevX) / timeDiff;
         vy = (y - prevY) / timeDiff;
         w = (theta - prevTheta) / timeDiff;
@@ -130,7 +133,7 @@ public class Robot {
         }
 
         // Remember Old Motion Info
-        prevX = drivetrain.x; prevY = drivetrain.y; prevTheta = drivetrain.theta;
+        prevX = x; prevY = y; prevTheta = theta;
         prevTime = curTime;
         prevVx = vx; prevVy = vy; prevW = w;
 
@@ -155,8 +158,8 @@ public class Robot {
         double targetX = shootX[targetNum];
         double targetY = shootY;
         double targetZ = shootZ[targetNum];
-        double robotX = drivetrain.x;
-        double robotY = drivetrain.y;
+        double robotX = x;
+        double robotY = y;
 
         // Calculate Robot Angle
         double dx = targetX - robotX;

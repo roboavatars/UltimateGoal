@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 @TeleOp
 public class Teleop extends LinearOpMode {
 
-    public static int startX = 135;
-    public static int startY = 9;
+    public static int startX = 57;
+    public static int startY = 135;
     public static double startTheta = Math.PI/2;
 
     private Robot robot;
@@ -31,6 +31,7 @@ public class Teleop extends LinearOpMode {
         robot = new Robot(this, startX, startY, startTheta); // Robot(this, initialPosition[0], initialPosition[1], initialPosition[2])
         // robot.logger.startLogging();
         robot.intake.intakeOn();
+        robot.t265.startCam();
 
         waitForStart();
 
@@ -49,6 +50,7 @@ public class Teleop extends LinearOpMode {
                 robot.shooter.magShoot();
                 robot.shooter.flywheelOn();
             } else {
+                robot.shooter.feedHome();
                 robot.shooter.magHome();
                 robot.shooter.flywheelOff();
             } 
@@ -79,5 +81,6 @@ public class Teleop extends LinearOpMode {
             robot.update();
         }
         // robot.logger.stopLogging();
+        robot.t265.stopCam();
     }
 }
