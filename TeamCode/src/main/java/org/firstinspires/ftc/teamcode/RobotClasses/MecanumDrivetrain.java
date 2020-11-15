@@ -283,7 +283,7 @@ public class MecanumDrivetrain {
             LynxGetBulkInputDataResponse response = revBulkData();
             pod1 = -response.getEncoder(3) * 0.00300622055 * 2;
             pod2 = response.getEncoder(0) * 0.00300622055 * 2;
-            pod3 = -response.getEncoder(2) * 0.00300622055 * 2;
+            pod3 = response.getEncoder(2) * 0.00300622055 * 2;
 
             deltapod1 = pod1 - lastpod1;
             deltapod2 = pod2 - lastpod2;

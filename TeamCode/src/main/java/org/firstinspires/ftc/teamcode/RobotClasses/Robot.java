@@ -11,7 +11,7 @@ public class Robot {
     public MecanumDrivetrain drivetrain;
     public Intake intake;
     public Shooter shooter;
-    public T265 t265;
+//    public T265 t265;
     public Logger logger;
 
     // Class Constants
@@ -34,7 +34,7 @@ public class Robot {
 
     // Shooter Variables
     private final double[] shootX = {76.5, 84, 91.5, 108};
-    private final double shootY = 144;
+    private final double shootY = 146;
     private final double[] shootZ = {24, 24, 24, 35.5};
 
     private final double feedShootDelay = 100;
@@ -50,7 +50,7 @@ public class Robot {
         drivetrain = new MecanumDrivetrain(op, x, y, theta, true);
         intake = new Intake(op);
         shooter = new Shooter(op);
-        t265 = new T265(op, x, y, theta);
+//        t265 = new T265(op, x, y, theta);
         logger = new Logger();
 
         this.op = op;
@@ -109,17 +109,17 @@ public class Robot {
 
         // Update Position
         drivetrain.updatePose();
-        t265.updateCamPose();
+//        t265.updateCamPose();
 
         // Calculate Motion Info
         double curTime = (double) System.currentTimeMillis() / 1000;
         double timeDiff = curTime - prevTime;
-//        x = (drivetrain.x + t265.getCamX()) / 2;
-//        y = (drivetrain.y + t265.getCamY()) / 2;
-//        theta = (drivetrain.theta + t265.getCamTheta()) / 2;
-        x = t265.getCamX();
-        y = t265.getCamY();
-        theta = t265.getCamTheta();
+        x = drivetrain.x;
+        y = drivetrain.y;
+        theta = drivetrain.theta;
+//        x = t265.getCamX();
+//        y = t265.getCamY();
+//        theta = t265.getCamTheta();
         vx = (x - prevX) / timeDiff;
         vy = (y - prevY) / timeDiff;
         w = (theta - prevTheta) / timeDiff;
@@ -143,7 +143,7 @@ public class Robot {
         addPacket("Theta", theta);
         addPacket("Angle Pos", shooter.angleServo.getPosition());
         addPacket("Update Frequency (Hz)", 1 / timeDiff);
-        drawGoal(x, y, theta, "black");
+        drawGoal(x, y, "black");
         drawRobot(x, y, theta, "black");
         double[] calculated = shoot(3);
         drawRobot(x, y, calculated[0], "green");
@@ -170,10 +170,12 @@ public class Robot {
         double v = 63; // tangential velocity of ring when leaving flywheel
         double p = v * dy;
         double q = -v * dx;
-        double alignRobotAngle = Math.asin(((targetX - robotX) * vx - (targetY - robotY) * vy) / Math.sqrt(Math.pow(p, 2) + Math.pow(q, 2))) - Math.atan(q / p);
-        if (robotX >= targetX) {
-            alignRobotAngle += Math.PI;
-        }
+        double alignRobotAngle = Math.atan2((targetY - robotY), (targetX - robotX)) - Math.PI/38;
+
+//        double alignRobotAngle = Math.asin(((targetX - robotX) * vx - (targetY - robotY) * vy) / Math.sqrt(Math.pow(p, 2) + Math.pow(q, 2))) - Math.atan(q / p);
+//        if (robotX >= targetX) {
+//            alignRobotAngle += Math.PI;
+//        }
         addPacket("Robot Angle", alignRobotAngle);
 
         // Calculate Shooter Angle
@@ -189,18 +191,18 @@ public class Robot {
         return new double[] {alignRobotAngle, shooterAngle};
     }
 
-    public void drawGoal(double x, double y, double theta, String color) {
+    public void drawGoal(double x, double y, String color) {
         double[] xcoords = {72, 72, 78, 78};
         double[] ycoords = {-24, -48, -48, -24};
         packet.fieldOverlay().setFill(color).fillPolygon(xcoords, ycoords);
-        packet.fieldOverlay().setStroke(color).strokeLine(72 - x, 72 - y, 72, -36);
+        //packet.fieldOverlay().setStroke(color).strokeLine(72 - x, 72 - y, 72, -36);
     }
 
     public void drawRobot(double robotX, double robotY, double robotTheta, String color) {
         double r = 9 * Math.sqrt(2);
         double pi = Math.PI;
-        double x = 72 - robotX;
-        double y = 72 - robotY;
+        double x = robotY - 72;
+        double y = 72 - robotX;
         double theta = pi/2 + robotTheta;
         double[] ycoords = {r * Math.sin(pi/4 + theta) + y, r * Math.sin(3 * pi/4 + theta) + y, r * Math.sin(5 * pi/4 + theta) + y, r * Math.sin(7 * pi/4 + theta) + y};
         double[] xcoords = {r * Math.cos(pi/4 + theta) + x, r * Math.cos(3 * pi/4 + theta) + x, r * Math.cos(5 * pi/4 + theta) + x, r * Math.cos(7 * pi/4 + theta) + x};
