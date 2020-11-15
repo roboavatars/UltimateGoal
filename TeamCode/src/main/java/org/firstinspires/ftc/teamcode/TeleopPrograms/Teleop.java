@@ -10,8 +10,8 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 @TeleOp
 public class Teleop extends LinearOpMode {
 
-    public static int startX = 57;
-    public static int startY = 135;
+    public static int startX = 9;
+    public static int startY = 57;
     public static double startTheta = Math.PI/2;
 
     private Robot robot;
@@ -53,7 +53,7 @@ public class Teleop extends LinearOpMode {
                 robot.shooter.feedHome();
                 robot.shooter.magHome();
                 robot.shooter.flywheelOff();
-            } 
+            }
 
             if (gamepad1.right_bumper) {
                 robot.shooter.feedShoot();

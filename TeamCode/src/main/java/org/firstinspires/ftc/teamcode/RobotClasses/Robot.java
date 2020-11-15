@@ -143,7 +143,10 @@ public class Robot {
         addPacket("Theta", theta);
         addPacket("Angle Pos", shooter.angleServo.getPosition());
         addPacket("Update Frequency (Hz)", 1 / timeDiff);
-        drawRobot(x, y, theta);
+        drawGoal(x, y, theta, "black");
+        drawRobot(x, y, theta, "black");
+        double[] calculated = shoot(3);
+        drawRobot(x, y, calculated[0], "green");
         sendPacket();
     }
 
@@ -186,15 +189,22 @@ public class Robot {
         return new double[] {alignRobotAngle, shooterAngle};
     }
 
-    public void drawRobot(double robotX, double robotY, double robotTheta) {
+    public void drawGoal(double x, double y, double theta, String color) {
+        double[] xcoords = {72, 72, 78, 78};
+        double[] ycoords = {-24, -48, -48, -24};
+        packet.fieldOverlay().setFill(color).fillPolygon(xcoords, ycoords);
+        packet.fieldOverlay().setStroke(color).strokeLine(72 - x, 72 - y, 72, -36);
+    }
+
+    public void drawRobot(double robotX, double robotY, double robotTheta, String color) {
         double r = 9 * Math.sqrt(2);
         double pi = Math.PI;
-        double x = 72 - robotY;
-        double y = robotX - 72;
+        double x = 72 - robotX;
+        double y = 72 - robotY;
         double theta = pi/2 + robotTheta;
         double[] ycoords = {r * Math.sin(pi/4 + theta) + y, r * Math.sin(3 * pi/4 + theta) + y, r * Math.sin(5 * pi/4 + theta) + y, r * Math.sin(7 * pi/4 + theta) + y};
         double[] xcoords = {r * Math.cos(pi/4 + theta) + x, r * Math.cos(3 * pi/4 + theta) + x, r * Math.cos(5 * pi/4 + theta) + x, r * Math.cos(7 * pi/4 + theta) + x};
-        packet.fieldOverlay().fillPolygon(xcoords,ycoords);
+        packet.fieldOverlay().setFill(color).fillPolygon(xcoords, ycoords);
     }
 
     public void addPacket(String key, Object value) {

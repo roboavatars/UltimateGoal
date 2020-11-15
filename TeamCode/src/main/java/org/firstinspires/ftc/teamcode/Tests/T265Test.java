@@ -55,8 +55,8 @@ public class T265Test extends LinearOpMode {
     public void drawRobot(double robotx, double roboty, double robottheta) {
         double r = 9 * Math.sqrt(2);
         double pi = Math.PI;
-        double x = 72 - roboty;
-        double y = robotx - 72;
+        double x = 72 - robotx;
+        double y = 72 - roboty;
         double theta = pi/2 + robottheta;
         double[] ycoords = {r * Math.sin(pi/4 + theta) + y, r * Math.sin(3 * pi/4 + theta) + y, r * Math.sin(5 * pi/4 + theta) + y, r * Math.sin(7 * pi/4 + theta) + y};
         double[] xcoords = {r * Math.cos(pi/4 + theta) + x, r * Math.cos(3 * pi/4 + theta) + x, r * Math.cos(5 * pi/4 + theta) + x, r * Math.cos(7 * pi/4 + theta) + x};

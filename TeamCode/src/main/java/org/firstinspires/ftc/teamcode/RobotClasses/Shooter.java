@@ -21,9 +21,9 @@ public class Shooter {
 
     public static double angleHomePos = 0;
     public static double angleMaxPos = 0.25;
-    public static double magHomePos = 0.20;
-    public static double magShootPos = 0.48;
-    public static double feedHomePos = 0.50;
+    public static double magHomePos = 0.25;
+    public static double magShootPos = 0.50;
+    public static double feedHomePos = 0.45;
     public static double feedShootPos = 0.65;
 
     public boolean magHome = true;
