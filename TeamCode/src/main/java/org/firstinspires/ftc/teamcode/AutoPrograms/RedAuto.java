@@ -94,20 +94,20 @@ public class RedAuto extends LinearOpMode {
             if (!startStack) {
                 double curTime = Math.min(time.seconds(), startStackTime);
                 Pose curPose = startStackPath.getRobotPose(curTime);
-                double[] angles;
+                double[] target;
 
                 if (time.seconds() <= 0.3) {
-                    angles = robot.shoot(0);
-                    robot.drivetrain.setTargetPoint(curPose.getX(), curPose.getY(), angles[0]);
-                    robot.shooter.setFlapAngle(angles[1]);
+                    target = robot.shoot(0);
+                    robot.drivetrain.setTargetPoint(target[0], target[1], target[2]);
+                    robot.shooter.setFlapAngle(target[3]);
                 } else if (time.seconds() <= 0.6) {
-                    angles = robot.shoot(1);
-                    robot.drivetrain.setTargetPoint(curPose.getX(), curPose.getY(), angles[0]);
-                    robot.shooter.setFlapAngle(angles[1]);
+                    target = robot.shoot(1);
+                    robot.drivetrain.setTargetPoint(target[0], target[1], target[2]);
+                    robot.shooter.setFlapAngle(target[3]);
                 } else if (time.seconds() <= 0.9) {
-                    angles = robot.shoot(2);
-                    robot.drivetrain.setTargetPoint(curPose.getX(), curPose.getY(), angles[0]);
-                    robot.shooter.setFlapAngle(angles[1]);
+                    target = robot.shoot(2);
+                    robot.drivetrain.setTargetPoint(target[0], target[1], target[2]);
+                    robot.shooter.setFlapAngle(target[3]);
                 } else {
                     robot.intake.intakeOn();
                     robot.drivetrain.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta());
@@ -147,12 +147,12 @@ public class RedAuto extends LinearOpMode {
             else if (!wobbleTwo) {
                 double curTime = Math.min(time.seconds(), wobbleTwoTime);
                 Pose curPose = wobbleTwoPath.getRobotPose(curTime);
-                double[] angles;
+                double[] target;
 
                 if (time.seconds() <= 2) {
-                    angles = robot.shoot(3);
-                    robot.drivetrain.setTargetPoint(curPose.getX(), curPose.getY(), angles[0]);
-                    robot.shooter.setFlapAngle(angles[1]);
+                    target = robot.shoot(3);
+                    robot.drivetrain.setTargetPoint(target[0], target[1], target[2]);
+                    robot.shooter.setFlapAngle(target[3]);
                 } else {
                     robot.drivetrain.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta());
                 }

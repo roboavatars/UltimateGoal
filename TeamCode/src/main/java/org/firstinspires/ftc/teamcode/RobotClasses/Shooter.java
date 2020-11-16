@@ -13,18 +13,18 @@ public class Shooter {
 
     private DcMotorEx shooterMotor1;
     private DcMotorEx shooterMotor2;
-    public Servo angleServo;
+    public Servo flapServo;
     private Servo magServo;
     private Servo feedServo;
 
     private DistanceSensor ringSensor;
 
-    public static double angleHomePos = 0;
-    public static double angleMaxPos = 0.25;
-    public static double magHomePos = 0.25;
+    public static double flapHomePos = 0;
+    public static double flapMaxPos = 0.25;
+    public static double magHomePos = 0.255;
     public static double magShootPos = 0.50;
     public static double feedHomePos = 0.45;
-    public static double feedShootPos = 0.65;
+    public static double feedShootPos = 0.70;
 
     public boolean magHome = true;
     public boolean feedHome = true;
@@ -32,12 +32,12 @@ public class Shooter {
     public Shooter(LinearOpMode op) {
         shooterMotor1 = op.hardwareMap.get(DcMotorEx.class, "shooter1");
         shooterMotor2 = op.hardwareMap.get(DcMotorEx.class, "shooter2");
-        angleServo = op.hardwareMap.get(Servo.class, "flapServo");
+        flapServo = op.hardwareMap.get(Servo.class, "flapServo");
         magServo = op.hardwareMap.get(Servo.class, "magServo");
         feedServo = op.hardwareMap.get(Servo.class, "feedServo");
         //ringSensor = op.hardwareMap.get(DistanceSensor.class, "ringSensor");
 
-        angleHome();
+        flapHome();
         feedHome();
         magHome();
 
@@ -54,21 +54,25 @@ public class Shooter {
         shooterMotor2.setPower(0);
     }
 
-    public void setVelocity(double velocity) {
+    public void setShooterVelocity(double velocity) {
         shooterMotor1.setVelocity(velocity);
-        shooterMotor2.setVelocity(-velocity);
+        shooterMotor2.setVelocity(velocity);
     }
 
-    public double[] getVelocity() {
-        return new double[] {shooterMotor1.getVelocity(), shooterMotor2.getVelocity()};
+    public double getShooterVelocity() {
+        return (shooterMotor1.getVelocity() + shooterMotor2.getVelocity()) / 2;
     }
 
     public void setFlapAngle(double angle) {
-        angleServo.setPosition(angle);
+        flapServo.setPosition(angle);
     }
 
-    public void angleHome() {
-        angleServo.setPosition(angleHomePos);
+    public double getFlapAngle() {
+        return flapServo.getPosition();
+    }
+
+    public void flapHome() {
+        flapServo.setPosition(flapHomePos);
     }
 
     public void magHome() {

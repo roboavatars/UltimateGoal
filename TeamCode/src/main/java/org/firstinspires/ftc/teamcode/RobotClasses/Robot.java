@@ -141,12 +141,12 @@ public class Robot {
         addPacket("X", x);
         addPacket("Y", y);
         addPacket("Theta", theta);
-        addPacket("Angle Pos", shooter.angleServo.getPosition());
+        addPacket("Angle Pos", shooter.flapServo.getPosition());
         addPacket("Update Frequency (Hz)", 1 / timeDiff);
-        drawGoal(x, y, "black");
+        drawGoal("black");
         drawRobot(x, y, theta, "black");
         double[] calculated = shoot(3);
-        drawRobot(x, y, calculated[0], "green");
+        drawRobot(calculated[0], calculated[1], calculated[2], "green");
         sendPacket();
     }
 
@@ -161,41 +161,57 @@ public class Robot {
         double targetX = shootX[targetNum];
         double targetY = shootY;
         double targetZ = shootZ[targetNum];
-        double robotX = x;
-        double robotY = y;
+        double shooterX = x + 6.5 * Math.sin(theta);
+        double shooterY = y - 6.5 * Math.cos(theta);
 
         // Calculate Robot Angle
-        double dx = targetX - robotX;
-        double dy = targetY - robotY;
+        double dx = targetX - shooterX;
+        double dy = targetY - shooterY;
         double v = 63; // tangential velocity of ring when leaving flywheel
         double p = v * dy;
         double q = -v * dx;
-        double alignRobotAngle = Math.atan2((targetY - robotY), (targetX - robotX)) - Math.PI/38;
 
-//        double alignRobotAngle = Math.asin(((targetX - robotX) * vx - (targetY - robotY) * vy) / Math.sqrt(Math.pow(p, 2) + Math.pow(q, 2))) - Math.atan(q / p);
-//        if (robotX >= targetX) {
-//            alignRobotAngle += Math.PI;
-//        }
-        addPacket("Robot Angle", alignRobotAngle);
+        // Uses Angle Bisector for High Goal for more consistency
+        if (targetNum == 3) {
+            double d = 10;
+            double a = Math.sqrt(Math.pow(dx + d/2, 2) + Math.pow(dy, 2));
+            double b = Math.sqrt(Math.pow(dx - d/2, 2) + Math.pow(dy, 2));
+
+            targetX += - d/2 + d * b / (a + b);
+            dx = targetX - shooterX;
+            drawLine(shooterX, shooterY, targetX, targetY, "blue");
+            addPacket("TargetX", targetX);
+        }
+
+//        double alignRobotAngle = Math.asin((dx * vx - dx * vy) / Math.sqrt(Math.pow(p, 2) + Math.pow(q, 2))) - Math.atan(q / p);
 
         // Calculate Shooter Angle
-        double d = Math.sqrt(Math.pow(targetX - robotX, 2) + Math.pow(targetY - robotY, 2));
-        double dz = targetZ - 8;
-        double a = (386 * Math.pow(d, 2)) / (2 * Math.pow(v, 2));
-        double b = d;
-        double c = -dz - a;
-        double quadraticRes = (-b - Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a);
-        double shooterAngle = 0.27 * (Math.atan(quadraticRes) - 5 * Math.PI / 36) * 3 / Math.PI;
+        double d = Math.sqrt(Math.pow(targetX - shooterX, 2) + Math.pow(targetY - shooterY, 2));
+//        double dz = targetZ - 8;
+//        double a = (386 * Math.pow(d, 2)) / (2 * Math.pow(v, 2));
+//        double b = d;
+//        double c = -dz - a;
+//        double quadraticRes = (-b - Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a);
+//        double shooterAngle = 0.27 * (Math.atan(quadraticRes) - 5 * Math.PI / 36) * 3 / Math.PI;
+        double shooterAngle = 0.638 - 0.0145*d + 8.23e-5 * Math.pow(d, 2);
         addPacket("Shooter Angle", shooterAngle);
 
-        return new double[] {alignRobotAngle, shooterAngle};
+        double CONSTANT = Math.PI/(38*Math.pow(92, 2));
+        double alignRobotAngle = Math.atan2((dy), (dx)) - CONSTANT * Math.pow(d, 2);
+        double alignRobotX = shooterX - 6.5 * Math.sin(alignRobotAngle);
+        double alignRobotY = shooterY + 6.5 * Math.cos(alignRobotAngle);
+
+        return new double[] {alignRobotX, alignRobotY, alignRobotAngle, shooterAngle};
     }
 
-    public void drawGoal(double x, double y, String color) {
+    public void drawGoal(String color) {
         double[] xcoords = {72, 72, 78, 78};
         double[] ycoords = {-24, -48, -48, -24};
         packet.fieldOverlay().setFill(color).fillPolygon(xcoords, ycoords);
-        //packet.fieldOverlay().setStroke(color).strokeLine(72 - x, 72 - y, 72, -36);
+    }
+
+    public void drawLine(double x1, double y1, double x2, double y2, String color) {
+        packet.fieldOverlay().setStroke(color).strokeLine(y1 - 72, 72 - x1, y2 - 72, 72 - x2);
     }
 
     public void drawRobot(double robotX, double robotY, double robotTheta, String color) {
