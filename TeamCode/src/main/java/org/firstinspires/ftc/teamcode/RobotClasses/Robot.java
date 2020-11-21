@@ -109,14 +109,18 @@ public class Robot {
 
         // Update Position
         drivetrain.updatePose();
+        t265.sendOdometryData(vx, vy);
         t265.updateCamPose();
 
         // Calculate Motion Info
         double curTime = (double) System.currentTimeMillis() / 1000;
         double timeDiff = curTime - prevTime;
-        x = (drivetrain.x + t265.getCamX()) / 2;
-        y = (drivetrain.y + t265.getCamY()) / 2;
-        theta = (drivetrain.theta + t265.getCamTheta()) / 2;
+//        x = (drivetrain.x + t265.getCamX()) / 2;
+//        y = (drivetrain.y + t265.getCamY()) / 2;
+//        theta = (drivetrain.theta + t265.getCamTheta()) / 2;
+        x = t265.getCamX();
+        y = t265.getCamY();
+        theta = t265.getCamTheta();
         vx = (x - prevX) / timeDiff;
         vy = (y - prevY) / timeDiff;
         w = (theta - prevTheta) / timeDiff;
@@ -164,7 +168,7 @@ public class Robot {
         // Calculate Robot Angle
         double dx = targetX - shooterX;
         double dy = targetY - shooterY;
-        double v = 63; // tangential velocity of ring when leaving flywheel
+        double v = 4.5 * shooter.getShooterVelocity(); // tangential velocity of ring when leaving flywheel
         double p = v * dy;
         double q = -v * dx;
 

@@ -34,7 +34,7 @@ public class T265 {
         this.hardwareMap = op.hardwareMap;
 
         t265Cam = new T265Camera(new Transform2d(), ODOMETRY_COVARIANCE, hardwareMap.appContext);
-        t265Cam.setPose(new Pose2d(initX * INCH_TO_METER, initY * INCH_TO_METER, new Rotation2d(initTheta)));
+        t265Cam.setPose(new Pose2d(-initY * INCH_TO_METER, initX * INCH_TO_METER, new Rotation2d(initTheta)));
     }
 
     public void startCam() {
@@ -57,7 +57,7 @@ public class T265 {
     }
 
     public void sendOdometryData (double vx, double vy) {
-        t265Cam.sendOdometry(vx, vy);
+        t265Cam.sendOdometry(-vy, vx);
     }
 
     public void updateCamPose() {
@@ -65,11 +65,11 @@ public class T265 {
     }
 
     public double getCamX() {
-        return x;
+        return -y;
     }
 
     public double getCamY() {
-        return y;
+        return x;
     }
 
     public double getCamTheta() {

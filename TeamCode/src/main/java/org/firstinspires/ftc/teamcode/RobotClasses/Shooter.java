@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.acmerobotics.dashboard.config.Config;
 
+import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @Config
@@ -21,7 +22,7 @@ public class Shooter {
 
     public static double flapHomePos = 0;
     public static double flapMaxPos = 0.25;
-    public static double magHomePos = 0.255;
+    public static double magHomePos = 0.25;
     public static double magShootPos = 0.50;
     public static double feedHomePos = 0.45;
     public static double feedShootPos = 0.70;
@@ -60,7 +61,7 @@ public class Shooter {
     }
 
     public double getShooterVelocity() {
-        return (shooterMotor1.getVelocity() + shooterMotor2.getVelocity()) / 2;
+        return (shooterMotor1.getVelocity(AngleUnit.RADIANS) + shooterMotor2.getVelocity(AngleUnit.RADIANS)) / 2;
     }
 
     public void setFlapAngle(double angle) {

@@ -20,9 +20,7 @@ public class Test extends LinearOpMode {
     public void runOpMode() {
         motor = hardwareMap.get(DcMotorEx.class, "wobbleMotor");
         servo = hardwareMap.get(Servo.class, "wobbleServo");
-
-        telemetry.addData("test", "work");
-        telemetry.update();
+        servo.setPosition(0);
 
         waitForStart();
 
