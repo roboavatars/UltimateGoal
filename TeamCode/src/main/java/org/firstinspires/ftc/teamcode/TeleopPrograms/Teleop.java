@@ -27,6 +27,8 @@ public class Teleop extends LinearOpMode {
 
     @Override
     public void runOpMode() {
+        //hi
+
         /*double[] initialPosition = Logger.readPos();
         telemetry.addData("Starting Position", Arrays.toString(initialPosition));
         telemetry.update();*/
