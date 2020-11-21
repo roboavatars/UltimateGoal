@@ -19,7 +19,7 @@ public class T265Test extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        t265 = new T265(this, 9, 111, Math.PI/2);
+        t265 = new T265(this, 57, 135, Math.PI/2);
 
         dashboard = FtcDashboard.getInstance();
         packet = new TelemetryPacket();

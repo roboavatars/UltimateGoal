@@ -34,7 +34,7 @@ public class Teleop extends LinearOpMode {
         robot = new Robot(this, startX, startY, startTheta); // Robot(this, initialPosition[0], initialPosition[1], initialPosition[2])
         // robot.logger.startLogging();
 //        robot.intake.intakeOn();
-//        robot.t265.startCam();
+        robot.t265.startCam();
 
         waitForStart();
 
@@ -101,6 +101,6 @@ public class Teleop extends LinearOpMode {
 
         }
         // robot.logger.stopLogging();
-//        robot.t265.stopCam();
+        robot.t265.stopCam();
     }
 }

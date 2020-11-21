@@ -11,7 +11,7 @@ public class Robot {
     public MecanumDrivetrain drivetrain;
     public Intake intake;
     public Shooter shooter;
-//    public T265 t265;
+    public T265 t265;
     public Logger logger;
 
     // Class Constants
@@ -50,7 +50,7 @@ public class Robot {
         drivetrain = new MecanumDrivetrain(op, x, y, theta, true);
         intake = new Intake(op);
         shooter = new Shooter(op);
-//        t265 = new T265(op, x, y, theta);
+        t265 = new T265(op, x, y, theta);
         logger = new Logger();
 
         this.op = op;
@@ -109,17 +109,14 @@ public class Robot {
 
         // Update Position
         drivetrain.updatePose();
-//        t265.updateCamPose();
+        t265.updateCamPose();
 
         // Calculate Motion Info
         double curTime = (double) System.currentTimeMillis() / 1000;
         double timeDiff = curTime - prevTime;
-        x = drivetrain.x;
-        y = drivetrain.y;
-        theta = drivetrain.theta;
-//        x = t265.getCamX();
-//        y = t265.getCamY();
-//        theta = t265.getCamTheta();
+        x = (drivetrain.x + t265.getCamX()) / 2;
+        y = (drivetrain.y + t265.getCamY()) / 2;
+        theta = (drivetrain.theta + t265.getCamTheta()) / 2;
         vx = (x - prevX) / timeDiff;
         vy = (y - prevY) / timeDiff;
         w = (theta - prevTheta) / timeDiff;
