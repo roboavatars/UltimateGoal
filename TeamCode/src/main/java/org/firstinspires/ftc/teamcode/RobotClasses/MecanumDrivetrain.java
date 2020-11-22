@@ -192,65 +192,6 @@ public class MecanumDrivetrain {
         setControls(xdot, ydot, w);
     }
 
-    // set target point (default K values)
-    public void setTargetPoint(double xtarget, double ytarget, double thetatarget) {
-        // Make Sure thetatarget is Between 0 and 2pi
-        thetatarget = thetatarget % (Math.PI * 2);
-        if (thetatarget < 0) {
-            thetatarget += Math.PI * 2;
-        }
-
-        // Picking the Smaller Distance to Rotate
-        double thetacontrol = 0;
-        if (theta - thetatarget > Math.PI) {
-            thetacontrol = theta - thetatarget - 2 * Math.PI;
-        } else if (theta - thetatarget < (-Math.PI)) {
-            thetacontrol = theta - thetatarget + 2 * Math.PI;
-        } else {
-            thetacontrol = theta - thetatarget;
-        }
-        //Log.w("auto", "thetacontrol: " + thetacontrol);
-
-        setGlobalControls(-xk * (x - xtarget), -yk * (y - ytarget), -thetak * (thetacontrol));
-    }
-
-    // set target point (custom K values)
-    public void setTargetPoint(double xtarget, double ytarget, double thetatarget, double xK, double yK, double thetaK) {
-        // Make Sure thetatarget is Between 0 and 2pi
-        thetatarget = thetatarget % (Math.PI * 2);
-        if (thetatarget < 0) {
-            thetatarget += Math.PI * 2;
-        }
-
-        // Picking the Smaller Distance to Rotate
-        double thetacontrol = 0;
-        if (Math.abs(theta - thetatarget) > Math.PI) {
-            thetacontrol = theta - thetatarget - 2 * Math.PI;
-        } else {
-            thetacontrol = theta - thetatarget;
-        }
-
-        setGlobalControls(-xK * (x - xtarget), -yK * (y - ytarget), -thetaK * (thetacontrol));
-    }
-
-    // auto reflect of autonomous path points (don't think this works...)
-    public void setTargetPointAuto(double xtarget, double ytarget, double thetatarget) {
-        if (!isRed) {
-            xtarget = 142 - xtarget;
-            thetatarget = (Math.PI) - thetatarget;
-        }
-
-        setTargetPoint(xtarget, ytarget, thetatarget);
-    }
-    public void setTargetPointAuto(double xtarget, double ytarget, double thetatarget, double xK, double yK, double thetaK) {
-        if (!isRed) {
-            xtarget = 142 - xtarget;
-            thetatarget = (Math.PI) - thetatarget;
-        }
-
-        setTargetPoint(xtarget, ytarget, thetatarget, xK, yK, thetaK);
-    }
-
     // check if robot is at a certain point/angle (default tolerance)
     public boolean isAtPoseAuto(double targetx, double targety, double targettheta) {
         return isAtPoseAuto(targetx, targety, targettheta, xyTolerance, xyTolerance, thetaTolerance);

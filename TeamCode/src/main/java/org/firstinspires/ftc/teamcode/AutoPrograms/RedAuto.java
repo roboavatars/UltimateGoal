@@ -78,7 +78,7 @@ public class RedAuto extends LinearOpMode {
             wobbleTwoTime =*/
         } else {
             wobbleCor = wobbleDelivery[0];
-            intakeStackTime = 0;
+            intakeStack = true;
             /*deliverWobbleTime =
             wobbleTwoTime =*/
         }
@@ -169,7 +169,7 @@ public class RedAuto extends LinearOpMode {
                 if (time.seconds() > deliverWobbleTime + 1) {
                     Waypoint[] intakeWobble2Waypoints = new Waypoint[] {
                             new Waypoint(robot.drivetrain.x, robot.drivetrain.y, robot.drivetrain.theta, -10.0, -50.0, 0.0, 0.0),
-                            new Waypoint(130, 55, PI/2, -20.0, 10.0, 0.0, intakeWobble2Time),
+                            new Waypoint(130, 55, PI/2, -20.0, 10.0, 0.0, 1.5),
                             new Waypoint(115, 33, PI/2, -10.0, 20.0, 0.0, intakeWobble2Time),
                     };
                     intakeWobble2Path = new Path(new ArrayList<>(Arrays.asList(intakeWobble2Waypoints)));
@@ -258,7 +258,7 @@ public class RedAuto extends LinearOpMode {
                 if (time.seconds() > shootHighGoalTime + 1) {
                     Waypoint[] deliverWobble2Waypoints = new Waypoint[] {
                             new Waypoint(robot.drivetrain.x, robot.drivetrain.y, robot.drivetrain.theta, 10.0, 30.0, 0.0, 0.0),
-                            new Waypoint(wobbleCor.getX(), wobbleCor.getY(), 5*PI/6, 10.0, -30.0, 0.0, deliverWobbleTime),
+                            new Waypoint(wobbleCor.getX(), wobbleCor.getY(), 5*PI/6, 10.0, -30.0, 0.0, deliverWobble2Time),
                     };
                     deliverWobble2Path = new Path(new ArrayList<>(Arrays.asList(deliverWobble2Waypoints)));
 
