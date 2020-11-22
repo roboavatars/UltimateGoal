@@ -27,6 +27,8 @@ public class Robot {
     private boolean timeSaved = false;
 
     public boolean shoot = false;
+    public double odoWeight = 0.5;
+    public double camWeight = 0.5;
 
     // Motion Variables
     private double x, y, theta, prevX, prevY, prevTheta, vx, vy, w, prevVx, prevVy, prevW, prevTime, ax, ay, a;
@@ -34,7 +36,7 @@ public class Robot {
 
     // Shooter Variables
     private final double[] shootX = {76.5, 84, 91.5, 108};
-    private final double shootY = 146;
+    private final double shootY = 150;
     private final double[] shootZ = {24, 24, 24, 35.5};
 
     private final double feedShootDelay = 100;
@@ -66,9 +68,9 @@ public class Robot {
             firstLoop = false;
         }
 
-        if (cycleCounter % distUpdatePeriod == 0) {
-            numRings = shooter.ringsInMag();
-        }
+//        if (cycleCounter % distUpdatePeriod == 0) {
+//            numRings = shooter.ringsInMag();
+//        }
 
         /*
         States (in progress)-
@@ -109,18 +111,18 @@ public class Robot {
 
         // Update Position
         drivetrain.updatePose();
-        t265.sendOdometryData(vx, vy);
+//        t265.sendOdometryData(vx, vy);
         t265.updateCamPose();
 
         // Calculate Motion Info
         double curTime = (double) System.currentTimeMillis() / 1000;
         double timeDiff = curTime - prevTime;
-//        x = (drivetrain.x + t265.getCamX()) / 2;
-//        y = (drivetrain.y + t265.getCamY()) / 2;
-//        theta = (drivetrain.theta + t265.getCamTheta()) / 2;
-        x = t265.getCamX();
-        y = t265.getCamY();
-        theta = t265.getCamTheta();
+        x = odoWeight * drivetrain.x + camWeight * t265.getCamX();
+        y = odoWeight * drivetrain.y + camWeight * t265.getCamY();
+        theta = odoWeight * drivetrain.theta + camWeight * t265.getCamTheta();
+//        x = /*drivetrain.x; */t265.getCamX();
+//        y = /*drivetrain.y; */t265.getCamY();
+//        theta = /*drivetrain.theta; */t265.getCamTheta();
         vx = (x - prevX) / timeDiff;
         vy = (y - prevY) / timeDiff;
         w = (theta - prevTheta) / timeDiff;
@@ -145,9 +147,10 @@ public class Robot {
         addPacket("Angle Pos", shooter.flapServo.getPosition());
         addPacket("Update Frequency (Hz)", 1 / timeDiff);
         drawGoal("black");
+        drawRobot(drivetrain.x, drivetrain.y, drivetrain.theta, "green");
         drawRobot(x, y, theta, "black");
-        double[] calculated = shoot(3);
-        drawRobot(calculated[0], calculated[1], calculated[2], "green");
+//        double[] calculated = shoot(3);
+//        drawRobot(calculated[0], calculated[1], calculated[2], "green");
         sendPacket();
     }
 
@@ -168,9 +171,9 @@ public class Robot {
         // Calculate Robot Angle
         double dx = targetX - shooterX;
         double dy = targetY - shooterY;
-        double v = 4.5 * shooter.getShooterVelocity(); // tangential velocity of ring when leaving flywheel
+        /*double v = 4.5 * shooter.getShooterVelocity(); // tangential velocity of ring when leaving flywheel
         double p = v * dy;
-        double q = -v * dx;
+        double q = -v * dx;*/
 
         // Uses Angle Bisector for High Goal for more consistency
         if (targetNum == 3) {
@@ -184,25 +187,69 @@ public class Robot {
             addPacket("TargetX", targetX);
         }
 
-//        double alignRobotAngle = Math.asin((dx * vx - dx * vy) / Math.sqrt(Math.pow(p, 2) + Math.pow(q, 2))) - Math.atan(q / p);
+        //double alignRobotAngle = Math.asin((dx * vx - dx * vy) / Math.sqrt(Math.pow(p, 2) + Math.pow(q, 2))) - Math.atan(q / p);
 
         // Calculate Shooter Angle
         double d = Math.sqrt(Math.pow(targetX - shooterX, 2) + Math.pow(targetY - shooterY, 2));
-//        double dz = targetZ - 8;
-//        double a = (386 * Math.pow(d, 2)) / (2 * Math.pow(v, 2));
-//        double b = d;
-//        double c = -dz - a;
-//        double quadraticRes = (-b - Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a);
-//        double shooterAngle = 0.27 * (Math.atan(quadraticRes) - 5 * Math.PI / 36) * 3 / Math.PI;
+        /*double dz = targetZ - 8;
+        double a = (386 * Math.pow(d, 2)) / (2 * Math.pow(v, 2));
+        double b = d;
+        double c = -dz - a;
+        double quadraticRes = (-b - Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a);
+        double shooterAngle = 0.27 * (Math.atan(quadraticRes) - 5 * Math.PI / 36) * 3 / Math.PI;*/
         double shooterAngle = 0.638 - 0.0145*d + 8.23e-5 * Math.pow(d, 2);
         addPacket("Shooter Angle", shooterAngle);
 
         double CONSTANT = Math.PI/(38*Math.pow(92, 2));
-        double alignRobotAngle = Math.atan2((dy), (dx)) - CONSTANT * Math.pow(d, 2);
+        double alignRobotAngle = Math.atan2((dy), (dx)) - Math.PI/35 - 0.75*CONSTANT * Math.pow(d, 2);
         double alignRobotX = shooterX - 6.5 * Math.sin(alignRobotAngle);
         double alignRobotY = shooterY + 6.5 * Math.cos(alignRobotAngle);
 
         return new double[] {alignRobotX, alignRobotY, alignRobotAngle, shooterAngle};
+    }
+
+    public void setTargetPoint(double xtarget, double ytarget, double thetatarget) {
+        double thetak = drivetrain.thetak;
+        double xk = drivetrain.xk;
+        double yk = drivetrain.yk;
+
+        // Make Sure thetatarget is Between 0 and 2pi
+        thetatarget = thetatarget % (Math.PI * 2);
+        if (thetatarget < 0) {
+            thetatarget += Math.PI * 2;
+        }
+
+        // Picking the Smaller Distance to Rotate
+        double thetacontrol = 0;
+        if (theta - thetatarget > Math.PI) {
+            thetacontrol = theta - thetatarget - 2 * Math.PI;
+        } else if (theta - thetatarget < (-Math.PI)) {
+            thetacontrol = theta - thetatarget + 2 * Math.PI;
+        } else {
+            thetacontrol = theta - thetatarget;
+        }
+        //Log.w("auto", "thetacontrol: " + thetacontrol);
+
+        drivetrain.setGlobalControls(-xk * (x - xtarget), -yk * (y - ytarget), -thetak * (thetacontrol));
+    }
+
+    // set target point (custom K values)
+    public void setTargetPoint(double xtarget, double ytarget, double thetatarget, double xK, double yK, double thetaK) {
+        // Make Sure thetatarget is Between 0 and 2pi
+        thetatarget = thetatarget % (Math.PI * 2);
+        if (thetatarget < 0) {
+            thetatarget += Math.PI * 2;
+        }
+
+        // Picking the Smaller Distance to Rotate
+        double thetacontrol = 0;
+        if (Math.abs(theta - thetatarget) > Math.PI) {
+            thetacontrol = theta - thetatarget - 2 * Math.PI;
+        } else {
+            thetacontrol = theta - thetatarget;
+        }
+
+        drivetrain.setGlobalControls(-xK * (x - xtarget), -yK * (y - ytarget), -thetaK * (thetacontrol));
     }
 
     public void drawGoal(String color) {

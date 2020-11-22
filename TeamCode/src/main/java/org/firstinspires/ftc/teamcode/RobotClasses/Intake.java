@@ -11,17 +11,17 @@ public class Intake {
     private DcMotorEx wobbleMotor;
     private Servo wobbleServo;
 
-    private int wobbleHomePos = 0;
-    private int wobbleUpPos = 0;
-    private int wobbleClampPos = 0;
-    private int wobbleReleasePos = 0;
+    private int wobbleUpPos = -100;
+    private int wobbleDownPos = -750;
+    private double wobbleClampPos = 0.3;
+    private double wobbleReleasePos = 1;
 
     public Intake(LinearOpMode op) {
         intakeMotor = op.hardwareMap.get(DcMotorEx.class, "intake");
-        wobbleMotor = op.hardwareMap.get(DcMotorEx.class, "wobbleMotor");
-        wobbleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        wobbleMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         wobbleServo = op.hardwareMap.get(Servo.class, "wobbleServo");
+        wobbleMotor = op.hardwareMap.get(DcMotorEx.class, "wobbleMotor");
+        wobbleMotor.setTargetPosition(0);
+        wobbleMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         op.telemetry.addData("Status", "Intake initialized");
     }
@@ -38,12 +38,12 @@ public class Intake {
         intakeMotor.setPower(0);
     }
 
-    public void wobbleHome() {
-        wobbleMotor.setTargetPosition(wobbleHomePos);
-    }
-
     public void wobbleUp() {
         wobbleMotor.setTargetPosition(wobbleUpPos);
+    }
+
+    public void wobbleDown() {
+        wobbleMotor.setTargetPosition(wobbleDownPos);
     }
 
     public void wobbleClamp() {

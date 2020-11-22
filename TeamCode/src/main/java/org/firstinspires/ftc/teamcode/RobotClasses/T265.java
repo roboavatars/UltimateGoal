@@ -29,12 +29,15 @@ public class T265 {
     private LinearOpMode op;
     private HardwareMap hardwareMap;
 
-    public T265(LinearOpMode op, double initX, double initY, double initTheta){
+    public T265(LinearOpMode op, double initX, double initY, double initTheta) {
         this.op = op;
         this.hardwareMap = op.hardwareMap;
 
+        double xPrime = -0.3*Math.cos(initTheta) + 8.65*Math.sin(initTheta);
+        double yPrime = -0.3*Math.sin(initTheta) - 8.65*Math.cos(initTheta);
+
         t265Cam = new T265Camera(new Transform2d(), ODOMETRY_COVARIANCE, hardwareMap.appContext);
-        t265Cam.setPose(new Pose2d(-initY * INCH_TO_METER, initX * INCH_TO_METER, new Rotation2d(initTheta)));
+        t265Cam.setPose(new Pose2d((initX+xPrime) * INCH_TO_METER, (initY+yPrime) * INCH_TO_METER, new Rotation2d(initTheta-Math.PI/2)));
     }
 
     public void startCam() {
@@ -48,6 +51,12 @@ public class T265 {
         });
     }
 
+    public void reset(double x, double y, double theta) {
+        double xPrime = -0.3*Math.cos(theta) + 8.65*Math.sin(theta);
+        double yPrime = -0.3*Math.sin(theta) - 8.65*Math.cos(theta);
+        t265Cam.setPose(new Pose2d((x+xPrime) * INCH_TO_METER, (y+yPrime) * INCH_TO_METER, new Rotation2d(theta-Math.PI/2)));
+    }
+
     public void stopCam() {
         t265Cam.stop();
     }
@@ -57,7 +66,7 @@ public class T265 {
     }
 
     public void sendOdometryData (double vx, double vy) {
-        t265Cam.sendOdometry(-vy, vx);
+        t265Cam.sendOdometry(vx, vy);
     }
 
     public void updateCamPose() {
@@ -65,14 +74,16 @@ public class T265 {
     }
 
     public double getCamX() {
-        return -y;
+        double xPrime = -0.3*Math.cos(theta+Math.PI/2) + 8.65*Math.sin(theta+Math.PI/2);
+        return x-xPrime;
     }
 
     public double getCamY() {
-        return x;
+        double yPrime = -0.3*Math.sin(theta+Math.PI/2) - 8.65*Math.cos(theta+Math.PI/2);
+        return y-yPrime;
     }
 
     public double getCamTheta() {
-        return theta;
+        return theta+Math.PI/2;
     }
 }

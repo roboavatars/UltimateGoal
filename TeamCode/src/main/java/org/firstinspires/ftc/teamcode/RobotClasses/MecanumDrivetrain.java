@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.RobotClasses;
 
 import android.util.Log;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxEmbeddedIMU;
 import com.qualcomm.hardware.lynx.LynxI2cDeviceSynchV2;
@@ -21,7 +22,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@SuppressWarnings("FieldCanBeLocal")
+@SuppressWarnings("FieldCanBeLocal") @Config
 public class MecanumDrivetrain {
 
     // Motors
@@ -61,9 +62,9 @@ public class MecanumDrivetrain {
     private double lastpod3 = 0;
 
     // K Variables for Control of Linear System
-    private double xk = 0.15;
-    private double yk = 0.15;
-    private double thetak = 0.95;
+    public double xk = 0.15;
+    public double yk = 0.15;
+    public double thetak = 1.2;
 
     // Motor Caching Stuff
     private double lastFRPower = 0;
@@ -75,8 +76,8 @@ public class MecanumDrivetrain {
     // Constants
     private final double xyTolerance = 1;
     private final double thetaTolerance = Math.PI / 35;
-    private final double OdometryTrackWidth = 13.85;
-    private final double OdometryHorizontalOffset = 3.165;
+    public static double OdometryTrackWidth = 13.79;
+    public static double OdometryHorizontalOffset = -3.165;
     private final double OdometryHeadingThreshold = Math.PI / 8;
     // 1440 ticks per encoder revolution, 4.3289 inches per wheel revolution
     private final double encoderCountsPerRevolution = 537.6;
@@ -191,7 +192,7 @@ public class MecanumDrivetrain {
         setControls(xdot, ydot, w);
     }
 
-    // set target point (default K values0
+    // set target point (default K values)
     public void setTargetPoint(double xtarget, double ytarget, double thetatarget) {
         // Make Sure thetatarget is Between 0 and 2pi
         thetatarget = thetatarget % (Math.PI * 2);

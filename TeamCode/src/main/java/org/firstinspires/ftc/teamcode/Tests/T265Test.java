@@ -19,7 +19,7 @@ public class T265Test extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        t265 = new T265(this, 57, 135, Math.PI/2);
+        t265 = new T265(this, 57, 135, 0);
 
         dashboard = FtcDashboard.getInstance();
         packet = new TelemetryPacket();
@@ -33,7 +33,7 @@ public class T265Test extends LinearOpMode {
             y = t265.getCamY();
             theta = t265.getCamTheta();
 
-            drawRobot(x, y, theta);
+            drawRobot(x, y, theta, "black");
             addPacket("X", x);
             addPacket("Y", y);
             addPacket("Theta", theta);
@@ -52,15 +52,15 @@ public class T265Test extends LinearOpMode {
         packet.put(key, value.toString());
     }
 
-    public void drawRobot(double robotx, double roboty, double robottheta) {
+    public void drawRobot(double robotX, double robotY, double robotTheta, String color) {
         double r = 9 * Math.sqrt(2);
         double pi = Math.PI;
-        double x = 72 - robotx;
-        double y = 72 - roboty;
-        double theta = pi/2 + robottheta;
+        double x = robotY - 72;
+        double y = 72 - robotX;
+        double theta = pi/2 + robotTheta;
         double[] ycoords = {r * Math.sin(pi/4 + theta) + y, r * Math.sin(3 * pi/4 + theta) + y, r * Math.sin(5 * pi/4 + theta) + y, r * Math.sin(7 * pi/4 + theta) + y};
         double[] xcoords = {r * Math.cos(pi/4 + theta) + x, r * Math.cos(3 * pi/4 + theta) + x, r * Math.cos(5 * pi/4 + theta) + x, r * Math.cos(7 * pi/4 + theta) + x};
-        packet.fieldOverlay().setFill("green").fillPolygon(xcoords,ycoords);
+        packet.fieldOverlay().setFill(color).fillPolygon(xcoords, ycoords);
     }
 
     public void sendPacket() {
