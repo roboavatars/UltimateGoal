@@ -17,8 +17,10 @@ public class Teleop extends LinearOpMode {
     private Robot robot;
     private final boolean robotCentric = true;
 
-    double targetShooterVelocity = 0;
+    public double targetShooterVelocity = 0;
 
+    public boolean motorToggle = false;
+    public boolean clampToggle = false;
     public boolean motorDown = false;
     public boolean clamped = false;
 
@@ -27,22 +29,23 @@ public class Teleop extends LinearOpMode {
 
         /*double[] initialPosition = Logger.readPos();
         telemetry.addData("Starting Position", Arrays.toString(initialPosition));
-        telemetry.update();*/
+        telemetry.update();
+        robot = new Robot(this, initialPosition[0], initialPosition[1], initialPosition[2])
+        robot.logger.startLogging();*/
 
         robot = new Robot(this, startX, startY, startTheta); // Robot(this, initialPosition[0], initialPosition[1], initialPosition[2])
-        // robot.logger.startLogging();
-//        robot.intake.intakeOn();
+        //robot.intake.intakeOn();
         robot.t265.startCam();
 
         waitForStart();
 
-        while(opModeIsActive()) {
+        while (opModeIsActive()) {
 
-            if (gamepad1.a) {
+            if (gamepad1.b) {
                 robot.t265.reset(startX, startY, startTheta);
             }
 
-            if (gamepad1.b) {
+            if (gamepad1.a) {
                 robot.intake.intakeRev();
             } else {
                 robot.intake.intakeOn();
@@ -70,20 +73,28 @@ public class Teleop extends LinearOpMode {
 //                robot.shooter.setShooterVelocity(targetShooterVelocity);
 //            }
 
-            if (gamepad2.a && !motorDown) {
-                robot.intake.wobbleDown();
-                motorDown = true;
-            } else if (gamepad2.a && motorDown) {
-                robot.intake.wobbleUp();
-                motorDown = false;
+            if (gamepad2.a && !motorToggle) {
+                motorToggle = true;
+                if (motorDown) {
+                    robot.intake.wobbleUp();
+                } else {
+                    robot.intake.wobbleDown();
+                }
+                motorDown = !motorDown;
+            } else if (!gamepad2.a && motorToggle) {
+                motorToggle = false;
             }
 
-            if (gamepad2.b && !clamped) {
-                robot.intake.wobbleClamp();
-                clamped = true;
-            } else if (gamepad2.b && clamped) {
-                robot.intake.wobbleRelease();
-                clamped = false;
+            if (gamepad2.b && !clampToggle) {
+                clampToggle = true;
+                if (clamped) {
+                    robot.intake.wobbleRelease();
+                } else {
+                    robot.intake.wobbleClamp();
+                }
+                clamped = !clamped;
+            } else if (!gamepad2.b && clampToggle) {
+                clampToggle = false;
             }
 
             if (gamepad1.dpad_up && robot.shooter.getFlapAngle() < 0.22) {
