@@ -28,7 +28,7 @@ public class Logger {
             data = "";
             File robotDataLog = new File(getLogName(true));
             fileWriter = new FileWriter(robotDataLog);
-            fileWriter.write("Timestamp,SinceStart,X,Y,Theta,VelocityX,VelocityY,VelocityTheta,AccelX,AccelY,AccelTheta\n");
+            fileWriter.write("Timestamp,SinceStart,X,Y,Theta,VelocityX,VelocityY,VelocityTheta,AccelX,AccelY,AccelTheta,NumRings\n");
         } catch (Exception e) {e.printStackTrace();}
     }
 
@@ -58,10 +58,10 @@ public class Logger {
      * Adds data to string
      */
     public void logData(double timeSinceSt, double x, double y, double theta, double velocityX, double velocityY, double velocityTheta,
-                        double accelX, double accelY, double accelTheta) {
+                        double accelX, double accelY, double accelTheta, double numRings) {
         @SuppressLint("SimpleDateFormat") SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss.SSS"); Date d = new Date();
         data += df.format(d)+","+timeSinceSt+","+x+","+y+","+theta+","+velocityX+","+velocityY+","+velocityTheta+","+
-                accelX+","+accelY+","+accelTheta+"\n";
+                accelX+","+accelY+","+accelTheta+numRings+"\n";
     }
 
     /**
@@ -103,25 +103,5 @@ public class Logger {
         }
 
         return robotPos;
-    }
-
-    public ArrayList<double[]> replay(String path) {
-        String curLine;
-        int lineNum = 0;
-        ArrayList<double[]> dataArray = new ArrayList<>();
-        try {
-            File robotDataLog = new File(path);
-            bufferedReader = new BufferedReader(new FileReader(robotDataLog));
-
-            while ((curLine = bufferedReader.readLine()) != null) {
-                if (lineNum != 0) {
-                    String[] data = curLine.split(",");
-                    dataArray.add(new double[]{Double.parseDouble(data[1]), Double.parseDouble(data[2]), Double.parseDouble(data[3]), Double.parseDouble(data[4])});
-                }
-                lineNum++;
-            }
-            bufferedReader.close();
-        } catch (IOException e) {e.printStackTrace();}
-        return dataArray;
     }
 }

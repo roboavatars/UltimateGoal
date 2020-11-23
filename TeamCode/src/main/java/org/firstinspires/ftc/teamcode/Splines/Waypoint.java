@@ -15,7 +15,6 @@ public class Waypoint {
      * the same direction as heading
      */
     public Waypoint(double x, double y, double theta, double velocity, double acceleration, double angularVelocity, double time){
-        assert velocity==0: "Waypoint Velocity is zero";
         this.x = x;
         this.y = y;
         this.theta = theta;

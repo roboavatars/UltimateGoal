@@ -36,7 +36,8 @@ public class RedAuto extends LinearOpMode {
         */
 
         Robot robot = new Robot(this, 90, 9, PI/2);
-        robot.logger.startLogging();
+        robot.t265.startCam();
+//        robot.logger.startLogging();
 
 //        StackHeightDetector detector = new StackHeightDetector(this);
 //        detector.start();
@@ -50,21 +51,23 @@ public class RedAuto extends LinearOpMode {
         boolean deliverWobble2 = false;
         boolean park = false;
 
-        double startLineTime = 2;
-        double shootPowerShotsTime = 2;
-        double deliverWobbleTime = 2;
-        double intakeWobble2Time = 3;
-        double intakeStackTime = 3;
-        double shootHighGoalTime = 2;
-        double deliverWobble2Time = 3;
+        double startLineTime = 2.0;
+        double shootPowerShotsTime = 4.5;
+        double deliverWobbleTime = 2.0;
+        double intakeWobble2Time = 3.0;
+        double intakeStackTime = 3.0;
+        double shootHighGoalTime = 4.5;
+        double deliverWobble2Time = 3.0;
         double parkTime = 1;
 
         waitForStart();
 
+        robot.intake.intakeOff();
+
 //        RingCase ringCase = detector.getResult();
         RingCase ringCase = RingCase.One;
         Point2D[] wobbleDelivery = {
-                new Point2D(118, 83), new Point2D(110, 107), new Point2D(122, 131)
+                new Point2D(104, 83), new Point2D(96, 107), new Point2D(104, 131)
         };
 
         Point2D wobbleCor;
@@ -87,7 +90,7 @@ public class RedAuto extends LinearOpMode {
 
         Waypoint[] startLineWaypoints = new Waypoint[] {
                 new Waypoint(90, 9, PI/2, 20.0, 50.0, 0.0, 0.0),
-                new Waypoint(90, 74, PI/2, 10.0, -20.0, 0.0, startLineTime),
+                new Waypoint(90, 72, PI/2, 10.0, -20.0, 0.0, startLineTime),
         };
         Path startLinePath = new Path(new ArrayList<>(Arrays.asList(startLineWaypoints)));
 
@@ -106,6 +109,8 @@ public class RedAuto extends LinearOpMode {
                 Pose curPose = startLinePath.getRobotPose(curTime);
                 robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta());
 
+                robot.shooter.flywheelOn();
+
                 if (time.seconds() > startLineTime + 1) {
                     startLine = true;
                     time.reset();
@@ -113,45 +118,59 @@ public class RedAuto extends LinearOpMode {
             }
 
             else if (!shootPowerShots) {
-                double[] target;
+//                double[] target;
 
-                robot.shooter.magShoot();
-                robot.shooter.setShooterVelocity(-2000);
+                robot.powerShotShoot();
 
-                if (time.seconds() <= 0.2) {
-                    target = robot.shoot(0);
-                    robot.setTargetPoint(target[0], target[1], target[2]);
-                    robot.shooter.setFlapAngle(target[3]);
-                    robot.shooter.feedHome();
-                } else if (time.seconds() <= 0.3) {
-                    robot.shooter.feedShoot();
-                } else if (time.seconds() <= 0.5) {
-                    target = robot.shoot(1);
-                    robot.setTargetPoint(target[0], target[1], target[2]);
-                    robot.shooter.setFlapAngle(target[3]);
-                } else if (time.seconds() <= 0.6) {
-                    robot.shooter.feedShoot();
-                } else if (time.seconds() <= 0.8) {
-                    target = robot.shoot(2);
-                    robot.setTargetPoint(target[0], target[1], target[2]);
-                    robot.shooter.setFlapAngle(target[3]);
-                } else if (time.seconds() <= 0.9) {
-                    robot.shooter.feedShoot();
-                } else {
-                    robot.shooter.feedHome();
-                    robot.shooter.magHome();
-                    robot.shooter.flywheelOff();
-                    robot.intake.intakeOn();
-                }
+//                if (time.seconds() <= 1.0) {
+//                    target = robot.shoot(0);
+//                    robot.setTargetPoint(target[0], target[1], target[2]);
+//                    robot.shooter.setFlapAngle(target[3]);
+//                    robot.shooter.feedHome();
+//                    robot.shooter.magShoot();
+//                    robot.shooter.setShooterVelocity(-2000);
+//                } else if (time.seconds() <= 1.5) {
+//                    robot.shooter.feedShoot();
+//                    robot.shooter.magShoot();
+//                    robot.shooter.setShooterVelocity(-2000);
+//                } else if (time.seconds() <= 2.5) {
+//                    target = robot.shoot(1);
+//                    robot.setTargetPoint(target[0], target[1], target[2]);
+//                    robot.shooter.setFlapAngle(target[3]);
+//                    robot.shooter.feedHome();
+//                    robot.shooter.magShoot();
+//                    robot.shooter.setShooterVelocity(-2000);
+//                } else if (time.seconds() <= 3.0) {
+//                    robot.shooter.feedShoot();
+//                    robot.shooter.magShoot();
+//                    robot.shooter.setShooterVelocity(-2000);
+//                } else if (time.seconds() <= 4.0) {
+//                    target = robot.shoot(2);
+//                    robot.setTargetPoint(target[0], target[1], target[2]);
+//                    robot.shooter.setFlapAngle(target[3]);
+//                    robot.shooter.feedHome();
+//                    robot.shooter.magShoot();
+//                    robot.shooter.setShooterVelocity(-2000);
+//                } else if (time.seconds() <= 4.5) {
+//                    robot.shooter.feedShoot();
+//                    robot.shooter.magShoot();
+//                    robot.shooter.setShooterVelocity(-2000);
+//                } else {
+//                    robot.shooter.feedHome();
+//                    robot.shooter.magHome();
+//                    robot.shooter.flywheelOff();
+//                }
 
                 if (time.seconds() > shootPowerShotsTime + 1) {
                     Waypoint[] deliverWobbleWaypoints = new Waypoint[] {
-                            new Waypoint(robot.drivetrain.x, robot.drivetrain.y, robot.drivetrain.theta, 10.0, 30.0, 0.0, 0.0),
-                            new Waypoint(wobbleCor.getX(), wobbleCor.getY(), 5*PI/6, 10.0, -30.0, 0.0, deliverWobbleTime),
+                            new Waypoint(robot.drivetrain.x, robot.drivetrain.y, robot.drivetrain.theta, 40.0, 30.0, 0.0, 0.0),
+                            new Waypoint(wobbleCor.getX(), wobbleCor.getY(), 5*PI/6, 50.0, -30.0, 0.0, deliverWobbleTime),
                     };
                     deliverWobblePath = new Path(new ArrayList<>(Arrays.asList(deliverWobbleWaypoints)));
 
-                    robot.intake.intakeOff();
+                    robot.shooter.feedHome();
+                    robot.shooter.magHome();
+                    robot.shooter.flywheelOff();
 
                     shootPowerShots = true;
                     time.reset();
@@ -179,125 +198,138 @@ public class RedAuto extends LinearOpMode {
                 }
             }
 
-            else if (!intakeWobble2) {
-                double curTime = Math.min(time.seconds(), intakeWobble2Time);
-                Pose curPose = intakeWobble2Path.getRobotPose(curTime);
-                double[] target;
-
-                robot.intake.wobbleDown();
-
-                if (time.seconds() <= 2) {
-                    target = robot.shoot(3);
-                    robot.setTargetPoint(target[0], target[1], target[2]);
-                    robot.shooter.setFlapAngle(target[3]);
-                } else {
-                    robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta());
-                }
-
-                if (time.seconds() > intakeWobble2Time + 1) {
-                    Waypoint[] intakeStackWaypoints = new Waypoint[] {
-                            new Waypoint(robot.drivetrain.x, robot.drivetrain.y, robot.drivetrain.theta, 10.0, 20.0, 0.0, 0.0),
-                            new Waypoint(112, 41, PI/2, 10.0, -40.0, 0.0, intakeStackTime),
-                    };
-                    intakeStackPath = new Path(new ArrayList<>(Arrays.asList(intakeStackWaypoints)));
-
-                    robot.intake.wobbleClamp();
-                    robot.intake.wobbleUp();
-
-                    intakeWobble2 = true;
-                    time.reset();
-                }
-            }
-
-            else if (!intakeStack) {
-                double curTime = Math.min(time.seconds(), intakeStackTime);
-                Pose curPose = intakeStackPath.getRobotPose(curTime);
-                robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta());
-
-                robot.intake.intakeOn();
-
-                if (time.seconds() > intakeStackTime + 1) {
-                    intakeStack = true;
-                    time.reset();
-                }
-            }
-
-            else if (!shootHighGoal) {
-                double[] target;
-
-                robot.intake.intakeOff();
-                robot.shooter.magShoot();
-                robot.shooter.setShooterVelocity(-2000);
-
-                if (time.seconds() <= 0.2) {
-                    target = robot.shoot(3);
-                    robot.setTargetPoint(target[0], target[1], target[2]);
-                    robot.shooter.setFlapAngle(target[3]);
-                    robot.shooter.feedHome();
-                } else if (time.seconds() <= 0.3) {
-                    robot.shooter.feedShoot();
-                } else if (time.seconds() <= 0.5) {
-                    target = robot.shoot(3);
-                    robot.setTargetPoint(target[0], target[1], target[2]);
-                    robot.shooter.setFlapAngle(target[3]);
-                } else if (time.seconds() <= 0.6) {
-                    robot.shooter.feedShoot();
-                } else if (time.seconds() <= 0.8) {
-                    target = robot.shoot(3);
-                    robot.setTargetPoint(target[0], target[1], target[2]);
-                    robot.shooter.setFlapAngle(target[3]);
-                } else if (time.seconds() <= 0.9) {
-                    robot.shooter.feedShoot();
-                } else {
-                    robot.shooter.feedHome();
-                    robot.shooter.magHome();
-                    robot.shooter.flywheelOff();
-                    robot.intake.intakeOn();
-                }
-
-                if (time.seconds() > shootHighGoalTime + 1) {
-                    Waypoint[] deliverWobble2Waypoints = new Waypoint[] {
-                            new Waypoint(robot.drivetrain.x, robot.drivetrain.y, robot.drivetrain.theta, 10.0, 30.0, 0.0, 0.0),
-                            new Waypoint(wobbleCor.getX(), wobbleCor.getY(), 5*PI/6, 10.0, -30.0, 0.0, deliverWobble2Time),
-                    };
-                    deliverWobble2Path = new Path(new ArrayList<>(Arrays.asList(deliverWobble2Waypoints)));
-
-                    shootHighGoal = true;
-                    time.reset();
-                }
-            }
-
-            else if (!deliverWobble2) {
-                double curTime = Math.min(time.seconds(), deliverWobble2Time);
-                Pose curPose = deliverWobble2Path.getRobotPose(curTime);
-                robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta());
-
-                robot.intake.wobbleDown();
-                robot.intake.wobbleRelease();
-
-                if (time.seconds() > deliverWobble2Time + 1) {
-                    robot.intake.wobbleUp();
-
-                    Waypoint[] parkWaypoints = new Waypoint[] {
-                            new Waypoint(robot.drivetrain.x, robot.drivetrain.y, robot.drivetrain.theta, -10.0, -30.0, 0.0, 0.0),
-                            new Waypoint(98, 80, PI/2, 10.0, 20.0, 0.0, parkTime),
-                    };
-                    parkPath = new Path(new ArrayList<>(Arrays.asList(parkWaypoints)));
-
-                    deliverWobble2 = true;
-                    time.reset();
-                }
-            }
-
-            else if (!park) {
-                double curTime = Math.min(time.seconds(), parkTime);
-                Pose curPose = parkPath.getRobotPose(curTime);
-                robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta());
-
-                if (time.seconds() > parkTime + 1) {
-                    park = true;
-                }
-            }
+//            else if (!intakeWobble2) {
+//                double curTime = Math.min(time.seconds(), intakeWobble2Time);
+//                Pose curPose = intakeWobble2Path.getRobotPose(curTime);
+//                double[] target;
+//
+//                robot.intake.wobbleDown();
+//
+//                if (time.seconds() <= 2) {
+//                    target = robot.shoot(3);
+//                    robot.setTargetPoint(target[0], target[1], target[2]);
+//                    robot.shooter.setFlapAngle(target[3]);
+//                } else {
+//                    robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta());
+//                }
+//
+//                if (time.seconds() > intakeWobble2Time + 1) {
+//                    Waypoint[] intakeStackWaypoints = new Waypoint[] {
+//                            new Waypoint(robot.drivetrain.x, robot.drivetrain.y, robot.drivetrain.theta, 10.0, 20.0, 0.0, 0.0),
+//                            new Waypoint(112, 41, PI/2, 10.0, -40.0, 0.0, intakeStackTime),
+//                    };
+//                    intakeStackPath = new Path(new ArrayList<>(Arrays.asList(intakeStackWaypoints)));
+//
+//                    robot.intake.wobbleClamp();
+//                    robot.intake.wobbleUp();
+//
+//                    intakeWobble2 = true;
+//                    time.reset();
+//                }
+//            }
+//
+//            else if (!intakeStack) {
+//                double curTime = Math.min(time.seconds(), intakeStackTime);
+//                Pose curPose = intakeStackPath.getRobotPose(curTime);
+//                robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta());
+//
+//                robot.intake.intakeOn();
+//
+//                if (time.seconds() > intakeStackTime + 1) {
+//                    intakeStack = true;
+//                    time.reset();
+//                }
+//            }
+//
+//            else if (!shootHighGoal) {
+//                double[] target;
+//
+//                robot.intake.intakeOff();
+//
+//                if (time.seconds() <= 1.0) {
+//                    target = robot.shoot(3);
+//                    robot.setTargetPoint(target[0], target[1], target[2]);
+//                    robot.shooter.setFlapAngle(target[3]);
+//                    robot.shooter.feedHome();
+//                    robot.shooter.magShoot();
+//                    robot.shooter.setShooterVelocity(-2000);
+//                } else if (time.seconds() <= 1.5) {
+//                    robot.shooter.feedShoot();
+//                    robot.shooter.magShoot();
+//                    robot.shooter.setShooterVelocity(-2000);
+//                } else if (time.seconds() <= 2.5) {
+//                    target = robot.shoot(3);
+//                    robot.setTargetPoint(target[0], target[1], target[2]);
+//                    robot.shooter.setFlapAngle(target[3]);
+//                    robot.shooter.magShoot();
+//                    robot.shooter.setShooterVelocity(-2000);
+//                } else if (time.seconds() <= 3.0) {
+//                    robot.shooter.feedShoot();
+//                    robot.shooter.magShoot();
+//                    robot.shooter.setShooterVelocity(-2000);
+//                } else if (time.seconds() <= 4.0) {
+//                    target = robot.shoot(3);
+//                    robot.setTargetPoint(target[0], target[1], target[2]);
+//                    robot.shooter.setFlapAngle(target[3]);
+//                    robot.shooter.magShoot();
+//                    robot.shooter.setShooterVelocity(-2000);
+//                } else if (time.seconds() <= 4.5) {
+//                    robot.shooter.feedShoot();
+//                    robot.shooter.magShoot();
+//                    robot.shooter.setShooterVelocity(-2000);
+//                } else {
+//                    robot.shooter.feedHome();
+//                    robot.shooter.magHome();
+//                    robot.shooter.flywheelOff();
+//                }
+//
+//                if (time.seconds() > shootHighGoalTime + 1) {
+//                    Waypoint[] deliverWobble2Waypoints = new Waypoint[] {
+//                            new Waypoint(robot.drivetrain.x, robot.drivetrain.y, robot.drivetrain.theta, 10.0, 30.0, 0.0, 0.0),
+//                            new Waypoint(wobbleCor.getX(), wobbleCor.getY(), 5*PI/6, 10.0, -30.0, 0.0, deliverWobble2Time),
+//                    };
+//                    deliverWobble2Path = new Path(new ArrayList<>(Arrays.asList(deliverWobble2Waypoints)));
+//
+//                    robot.shooter.feedHome();
+//                    robot.shooter.magHome();
+//                    robot.shooter.flywheelOff();
+//
+//                    shootHighGoal = true;
+//                    time.reset();
+//                }
+//            }
+//
+//            else if (!deliverWobble2) {
+//                double curTime = Math.min(time.seconds(), deliverWobble2Time);
+//                Pose curPose = deliverWobble2Path.getRobotPose(curTime);
+//                robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta());
+//
+//                robot.intake.wobbleDown();
+//                robot.intake.wobbleRelease();
+//
+//                if (time.seconds() > deliverWobble2Time + 1) {
+//                    robot.intake.wobbleUp();
+//
+//                    Waypoint[] parkWaypoints = new Waypoint[] {
+//                            new Waypoint(robot.drivetrain.x, robot.drivetrain.y, robot.drivetrain.theta, -10.0, -30.0, 0.0, 0.0),
+//                            new Waypoint(98, 80, PI/2, 10.0, 20.0, 0.0, parkTime),
+//                    };
+//                    parkPath = new Path(new ArrayList<>(Arrays.asList(parkWaypoints)));
+//
+//                    deliverWobble2 = true;
+//                    time.reset();
+//                }
+//            }
+//
+//            else if (!park) {
+//                double curTime = Math.min(time.seconds(), parkTime);
+//                Pose curPose = parkPath.getRobotPose(curTime);
+//                robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta());
+//
+//                if (time.seconds() > parkTime + 1) {
+//                    park = true;
+//                }
+//            }
 
             else {
                 robot.drivetrain.setControls(0,0,0);
@@ -307,6 +339,7 @@ public class RedAuto extends LinearOpMode {
         }
 
         robot.update();
-        robot.logger.stopLogging();
+        robot.t265.stopCam();
+//        robot.logger.stopLogging();
     }
 }

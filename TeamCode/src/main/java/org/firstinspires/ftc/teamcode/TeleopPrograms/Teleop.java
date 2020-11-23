@@ -10,7 +10,7 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 @TeleOp
 public class Teleop extends LinearOpMode {
 
-    public static int startX = 135;
+    public static int startX = 90;
     public static int startY = 9;
     public static double startTheta = Math.PI/2;
 
@@ -105,9 +105,9 @@ public class Teleop extends LinearOpMode {
             }
 
             if (gamepad1.right_trigger > 0) {
-                double[] target = robot.shoot(3);
-                robot.setTargetPoint(target[0], target[1], target[2]);
-                robot.shooter.setFlapAngle(target[3]);
+                robot.powerShotShoot();
+            } else if (gamepad1.left_trigger > 0) {
+                robot.highGoalShoot();
             } else if (robotCentric) {
                 robot.drivetrain.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
             } else {
@@ -116,12 +116,19 @@ public class Teleop extends LinearOpMode {
 
             robot.update();
 
-            telemetry.addData("Shooter Velocity", robot.shooter.getShooterVelocity());
-            telemetry.addData("Target Shooter Velocity", targetShooterVelocity);
-            telemetry.addData("Flap Angle", robot.shooter.getFlapAngle());
-            telemetry.addData("Robot X", robot.drivetrain.x);
-            telemetry.addData("Robot Y", robot.drivetrain.y);
-            telemetry.addData("Robot Theta", robot.drivetrain.theta);
+//            telemetry.addData("Shooter Velocity", robot.shooter.getShooterVelocity());
+//            telemetry.addData("Target Shooter Velocity", targetShooterVelocity);
+//            telemetry.addData("Flap Angle", robot.shooter.getFlapAngle());
+//            telemetry.addData("Robot X", robot.drivetrain.x);
+//            telemetry.addData("Robot Y", robot.drivetrain.y);
+//            telemetry.addData("Robot Theta", robot.drivetrain.theta);
+
+            telemetry.addData("shootCounter", robot.shootCounter);
+            telemetry.addData("shootDelay", robot.shootDelay);
+            telemetry.addData("numRings", robot.numRings);
+            telemetry.addData("shoot", robot.shoot);
+            telemetry.addData("clear", robot.clear);
+            telemetry.addData("highGoal", robot.highGoal);
             telemetry.update();
 
         }

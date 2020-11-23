@@ -21,14 +21,16 @@ public class Robot {
     // State Variables
     private boolean firstLoop = true;
     private int cycleCounter = 0;
-    private int numRings = 0;
+    public int numRings = 0;
 
-    private double shootTime;
-    private boolean timeSaved = false;
-
+    public double shootCounter = 0;
+    public double shootDelay = 70;
     public boolean shoot = false;
-    public double odoWeight = 0.5;
-    public double camWeight = 0.5;
+    public boolean clear = false;
+    public boolean highGoal = false;
+
+    public double odoWeight = 1;
+    public double camWeight = 0;
 
     // Motion Variables
     private double x, y, theta, prevX, prevY, prevTheta, vx, vy, w, prevVx, prevVy, prevW, prevTime, ax, ay, a;
@@ -38,9 +40,6 @@ public class Robot {
     private final double[] shootX = {76.5, 84, 91.5, 108};
     private final double shootY = 150;
     private final double[] shootZ = {24, 24, 24, 35.5};
-
-    private final double feedShootDelay = 100;
-    private final double feedHomeDelay = 100;
 
     // OpMode Stuff
     private LinearOpMode op;
@@ -62,6 +61,7 @@ public class Robot {
 
     public void update() {
         cycleCounter++;
+        shootCounter++;
 
         if (firstLoop) {
             startTime = System.currentTimeMillis();
@@ -84,29 +84,38 @@ public class Robot {
         0 rings, shoot, mag shoot, feed home- mag home, intake on
         */
 
-        if (numRings == 3 && !shoot && shooter.magHome && shooter.feedHome) {
+        if (numRings == 3 && shoot && shooter.magHome && shooter.feedHome) {
             shooter.magShoot();
             intake.intakeOff();
         }
 
-        else if (numRings > 0 && shoot && !shooter.magHome && shooter.feedHome) {
-            if (!timeSaved || (timeSaved && (System.currentTimeMillis()-shootTime)>feedHomeDelay)) {
-                shooter.feedShoot();
-                shootTime = System.currentTimeMillis();
-                timeSaved = true;
+        else if (numRings >= 0 && shoot && !shooter.magHome) {
+            if (shootCounter % shootDelay == 0) {
+                if (numRings > 0) {
+                    if (shooter.feedHome && !clear) {
+                        double[] target;
+                        if (highGoal) {
+                            target = shoot(3);
+                        } else {
+                            target = shoot(numRings - 1);
+                        }
+                        setTargetPoint(target[0], target[1], target[2], 0.15, 0.15, 1.5);
+                        shooter.setFlapAngle(target[3]);
+                        clear = true;
+                    } else if (shooter.feedHome) {
+                        shooter.feedShoot();
+                    } else {
+                        shooter.feedHome();
+                        clear = false;
+                        numRings--;
+                    }
+                } else {
+                    shooter.flywheelOff();
+                    shooter.magHome();
+                    shoot = false;
+                    intake.intakeOn();
+                }
             }
-        }
-
-        else if (numRings > 0 && shoot && !shooter.magHome && !shooter.feedHome && (System.currentTimeMillis()-shootTime)>feedShootDelay) {
-            shooter.feedHome();
-            numRings--;
-        }
-
-        else if (numRings == 0 && shoot && !shooter.magHome && shooter.feedHome) {
-            shooter.magHome();
-            shoot = false;
-            timeSaved = false;
-            intake.intakeOn();
         }
 
         // Update Position
@@ -132,7 +141,7 @@ public class Robot {
 
         // Log Data
         if (cycleCounter % loggerUpdatePeriod == 0) {
-            logger.logData(System.currentTimeMillis()-startTime, x, y, theta, vx, vy, w, ax, ay, a);
+            logger.logData(System.currentTimeMillis()-startTime, x, y, theta, vx, vy, w, ax, ay, a, numRings);
         }
 
         // Remember Old Motion Info
@@ -148,6 +157,7 @@ public class Robot {
         addPacket("Update Frequency (Hz)", 1 / timeDiff);
         drawGoal("black");
         drawRobot(drivetrain.x, drivetrain.y, drivetrain.theta, "green");
+        drawRobot(t265.getCamX(), t265.getCamY(), t265.getCamTheta(), "red");
         drawRobot(x, y, theta, "black");
 //        double[] calculated = shoot(3);
 //        drawRobot(calculated[0], calculated[1], calculated[2], "green");
@@ -206,6 +216,27 @@ public class Robot {
         double alignRobotY = shooterY + 6.5 * Math.cos(alignRobotAngle);
 
         return new double[] {alignRobotX, alignRobotY, alignRobotAngle, shooterAngle};
+    }
+
+    public void highGoalShoot() {
+        if (!shoot) {
+            shooter.flywheelOn();
+            shoot = true;
+            numRings = 3;
+            highGoal = true;
+            shootCounter = -1;
+        }
+        addPacket("gae", "work");
+    }
+
+    public void powerShotShoot() {
+        if (!shoot) {
+            shooter.flywheelOn();
+            shoot = true;
+            numRings = 3;
+            highGoal = false;
+            shootCounter = -1;
+        }
     }
 
     public void setTargetPoint(double xtarget, double ytarget, double thetatarget) {
