@@ -121,17 +121,12 @@ public class Teleop extends LinearOpMode {
 
             robot.update();
 
-//            telemetry.addData("Shooter Velocity", robot.shooter.getShooterVelocity());
-//            telemetry.addData("Target Shooter Velocity", targetShooterVelocity);
-//            telemetry.addData("Flap Angle", robot.shooter.getFlapAngle());
-//            telemetry.addData("Robot X", robot.drivetrain.x);
-//            telemetry.addData("Robot Y", robot.drivetrain.y);
-//            telemetry.addData("Robot Theta", robot.drivetrain.theta);
-
+            telemetry.addData("Robot X", robot.x);
+            telemetry.addData("Robot Y", robot.y);
+            telemetry.addData("Robot Theta", robot.theta);
             telemetry.addData("numRings", robot.numRings);
-            telemetry.addData("shoot", robot.shoot);
-            telemetry.addData("clear", robot.clear);
-            telemetry.addData("highGoal", robot.highGoal);
+//            telemetry.addData("Shooter Velocity", robot.shooter.getShooterVelocity());
+//            telemetry.addData("Flap Angle", robot.shooter.getFlapAngle());
             telemetry.update();
 
         }

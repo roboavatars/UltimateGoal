@@ -22,8 +22,10 @@ public class Robot {
     // Class Constants
     private final int loggerUpdatePeriod = 2;
     //private final int distUpdatePeriod = 15;
-    public final double xyTolerance = 1;
-    public final double thetaTolerance = Math.PI / 35;
+    private final double xyTolerance = 1;
+    private final double thetaTolerance = Math.PI / 35;
+    private final double odoWeight = 0.5;
+    private final double camWeight = 0.5;
 
     // State Variables
     private boolean firstLoop = true;
@@ -37,12 +39,10 @@ public class Robot {
     public boolean highGoal = false;
     public ArrayList<double[]> targets = new ArrayList<>();
 
-    public double odoWeight = 0.5;
-    public double camWeight = 0.5;
-
     // Motion Variables
-    private double x, y, theta, prevX, prevY, prevTheta, vx, vy, w, prevVx, prevVy, prevW, prevTime, ax, ay, a;
-    public double startTime;
+    public double x, y, theta;
+    private double prevX, prevY, prevTheta, vx, vy, w, prevVx, prevVy, prevW, prevTime, ax, ay, a;
+    private double startTime;
 
     // Shooter Variables
     private final double[] shootX = {76.5, 84, 91.5, 108};
@@ -142,9 +142,9 @@ public class Robot {
         x = odoWeight * drivetrain.x + camWeight * t265.getCamX();
         y = odoWeight * drivetrain.y + camWeight * t265.getCamY();
         theta = odoWeight * drivetrain.theta + camWeight * t265.getCamTheta();
-//        x = /*drivetrain.x; */t265.getCamX();
-//        y = /*drivetrain.y; */t265.getCamY();
-//        theta = /*drivetrain.theta; */t265.getCamTheta();
+//        x = drivetrain.x;//*/ t265.getCamX();
+//        y = drivetrain.y;//*/ t265.getCamY();
+//        theta = drivetrain.theta;//*/ t265.getCamTheta();
         vx = (x - prevX) / timeDiff;
         vy = (y - prevY) / timeDiff;
         w = (theta - prevTheta) / timeDiff;
@@ -235,23 +235,23 @@ public class Robot {
 
     public void highGoalShoot() {
         if (!shoot) {
-            shooter.flywheelOn();
-            shoot = true;
-            numRings = 3;
+            initiateShoot();
             highGoal = true;
-            shootCounter = -1;
         }
-        targets = new ArrayList<>(Arrays.asList(shoot(0), shoot(1), shoot(2), shoot(3)));
     }
 
     public void powerShotShoot() {
         if (!shoot) {
-            shooter.flywheelOn();
-            shoot = true;
-            numRings = 3;
+            initiateShoot();
             highGoal = false;
-            shootCounter = -1;
         }
+    }
+
+    public void initiateShoot() {
+        shooter.flywheelOn();
+        shoot = true;
+        numRings = 3;
+        shootCounter = -1;
         targets = new ArrayList<>(Arrays.asList(shoot(0), shoot(1), shoot(2), shoot(3)));
     }
 
@@ -276,7 +276,6 @@ public class Robot {
         } else {
             thetacontrol = theta - thetatarget;
         }
-        //Log.w("auto", "thetacontrol: " + thetacontrol);
 
         drivetrain.setGlobalControls(-xk * (x - xtarget), -yk * (y - ytarget), -thetak * (thetacontrol));
     }
@@ -310,6 +309,7 @@ public class Robot {
         return (Math.abs(x - targetx) < xtolerance && Math.abs(y - targety) < ytolerance && Math.abs(theta - targettheta) < thetatolerance);
     }
 
+    // draw on dashboard field
     public void drawRobot(double robotX, double robotY, double robotTheta, String color) {
         double r = 9 * Math.sqrt(2);
         double pi = Math.PI;
@@ -331,6 +331,7 @@ public class Robot {
         packet.fieldOverlay().setStroke(color).strokeLine(y1 - 72, 72 - x1, y2 - 72, 72 - x2);
     }
 
+    // dashboard telemetry
     public void addPacket(String key, Object value) {
         packet.put(key, value.toString());
     }
@@ -340,7 +341,7 @@ public class Robot {
         packet = new TelemetryPacket();
     }
 
-    public void log (String message) {
+    public void log(String message) {
         Log.w("robot", message);
     }
 }
