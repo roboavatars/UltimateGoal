@@ -74,8 +74,6 @@ public class MecanumDrivetrain {
     public static double motorUpdateTolerance = 0.05;
 
     // Constants
-    private final double xyTolerance = 1;
-    private final double thetaTolerance = Math.PI / 35;
     public static double OdometryTrackWidth = 13.79;
     public static double OdometryHorizontalOffset = -3.165;
     private final double OdometryHeadingThreshold = Math.PI / 8;
@@ -190,20 +188,6 @@ public class MecanumDrivetrain {
         double xdot = xvelocity * Math.cos(-theta) - yvelocity * Math.sin(-theta);
         double ydot = yvelocity * Math.cos(-theta) + xvelocity * Math.sin(-theta);
         setControls(xdot, ydot, w);
-    }
-
-    // check if robot is at a certain point/angle (default tolerance)
-    public boolean isAtPoseAuto(double targetx, double targety, double targettheta) {
-        return isAtPoseAuto(targetx, targety, targettheta, xyTolerance, xyTolerance, thetaTolerance);
-    }
-
-    // check if robot is at a certain point/angle (custom tolerance)
-    public boolean isAtPoseAuto(double targetx, double targety, double targettheta, double xtolerance, double ytolerance, double thetatolerance) {
-        if (!isRed) {
-            targetx = 144 - targetx;
-            targettheta = Math.PI - targettheta;
-        }
-        return (Math.abs(x - targetx) < xtolerance && Math.abs(y - targety) < ytolerance && Math.abs(theta - targettheta) < thetatolerance);
     }
 
     // odometry bulk read

@@ -17,8 +17,6 @@ public class Teleop extends LinearOpMode {
     private Robot robot;
     private final boolean robotCentric = true;
 
-    public double targetShooterVelocity = 0;
-
     public boolean motorToggle = false;
     public boolean clampToggle = false;
     public boolean motorDown = false;
@@ -51,19 +49,30 @@ public class Teleop extends LinearOpMode {
                 robot.intake.intakeOn();
             }
 
-            if (gamepad1.left_bumper) {
-                robot.shooter.magShoot();
-                robot.shooter.setShooterVelocity(-2000);
-            } else {
-                robot.shooter.magHome();
-                robot.shooter.flywheelOff();
+            if (gamepad1.right_bumper) {
+                robot.powerShotShoot();
+            } else if (gamepad1.left_bumper) {
+                robot.highGoalShoot();
             }
 
-            if (gamepad1.right_bumper) {
-                robot.shooter.feedShoot();
-            } else {
-                robot.shooter.feedHome();
+            if (gamepad1.x) {
+                double[] target = robot.shoot(3);
+                robot.setTargetPoint(target[0], target[1], target[2]);
             }
+
+//            if (gamepad1.left_bumper) {
+//                robot.shooter.magShoot();
+//                robot.shooter.setShooterVelocity(-2000);
+//            } else {
+//                robot.shooter.magHome();
+//                robot.shooter.flywheelOff();
+//            }
+//
+//            if (gamepad1.right_bumper) {
+//                robot.shooter.feedShoot();
+//            } else {
+//                robot.shooter.feedHome();
+//            }
 
 //            if (gamepad1.x) {
 //                targetShooterVelocity += 1;
@@ -96,19 +105,15 @@ public class Teleop extends LinearOpMode {
             } else if (!gamepad2.b && clampToggle) {
                 clampToggle = false;
             }
+//
+//            if (gamepad1.dpad_up && robot.shooter.getFlapAngle() < 0.22) {
+//                robot.shooter.flapServo.setPosition(robot.shooter.getFlapAngle() + 0.001);
+//            }
+//            if (gamepad1.dpad_down && robot.shooter.getFlapAngle() > 0.03) {
+//                robot.shooter.flapServo.setPosition(robot.shooter.getFlapAngle() - 0.001);
+//            }
 
-            if (gamepad1.dpad_up && robot.shooter.getFlapAngle() < 0.22) {
-                robot.shooter.flapServo.setPosition(robot.shooter.getFlapAngle() + 0.001);
-            }
-            if (gamepad1.dpad_down && robot.shooter.getFlapAngle() > 0.03) {
-                robot.shooter.flapServo.setPosition(robot.shooter.getFlapAngle() - 0.001);
-            }
-
-            if (gamepad1.right_trigger > 0) {
-                robot.powerShotShoot();
-            } else if (gamepad1.left_trigger > 0) {
-                robot.highGoalShoot();
-            } else if (robotCentric) {
+            if (robotCentric) {
                 robot.drivetrain.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
             } else {
                 robot.drivetrain.setGlobalControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
@@ -123,8 +128,6 @@ public class Teleop extends LinearOpMode {
 //            telemetry.addData("Robot Y", robot.drivetrain.y);
 //            telemetry.addData("Robot Theta", robot.drivetrain.theta);
 
-            telemetry.addData("shootCounter", robot.shootCounter);
-            telemetry.addData("shootDelay", robot.shootDelay);
             telemetry.addData("numRings", robot.numRings);
             telemetry.addData("shoot", robot.shoot);
             telemetry.addData("clear", robot.clear);

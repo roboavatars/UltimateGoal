@@ -1,8 +1,13 @@
 package org.firstinspires.ftc.teamcode.RobotClasses;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import java.util.ArrayList;
+import java.util.Arrays;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class Robot {
@@ -16,7 +21,9 @@ public class Robot {
 
     // Class Constants
     private final int loggerUpdatePeriod = 2;
-    private final int distUpdatePeriod = 15;
+    //private final int distUpdatePeriod = 15;
+    public final double xyTolerance = 1;
+    public final double thetaTolerance = Math.PI / 35;
 
     // State Variables
     private boolean firstLoop = true;
@@ -24,13 +31,14 @@ public class Robot {
     public int numRings = 0;
 
     public double shootCounter = 0;
-    public double shootDelay = 70;
+    public double shootDelay = 30;
     public boolean shoot = false;
     public boolean clear = false;
     public boolean highGoal = false;
+    public ArrayList<double[]> targets = new ArrayList<>();
 
-    public double odoWeight = 1;
-    public double camWeight = 0;
+    public double odoWeight = 0.5;
+    public double camWeight = 0.5;
 
     // Motion Variables
     private double x, y, theta, prevX, prevY, prevTheta, vx, vy, w, prevVx, prevVy, prevW, prevTime, ax, ay, a;
@@ -68,9 +76,9 @@ public class Robot {
             firstLoop = false;
         }
 
-//        if (cycleCounter % distUpdatePeriod == 0) {
-//            numRings = shooter.ringsInMag();
-//        }
+        /*if (cycleCounter % distUpdatePeriod == 0) {
+            numRings = shooter.ringsInMag();
+        }*/
 
         /*
         States (in progress)-
@@ -90,19 +98,24 @@ public class Robot {
         }
 
         else if (numRings >= 0 && shoot && !shooter.magHome) {
+            if (numRings > 0) {
+                double[] target;
+                if (highGoal) {
+                    target = targets.get(3);
+                } else {
+                    target = targets.get(numRings - 1);
+                }
+
+                if (!isAtPose(target[0], target[1], target[2])) {
+                    setTargetPoint(target[0], target[1], target[2], 0.15, 0.15, 2.5);
+                }
+                //shooter.setFlapAngle(target[3]);
+            }
+
             if (shootCounter % shootDelay == 0) {
                 if (numRings > 0) {
                     if (shooter.feedHome && !clear) {
-                        double[] target;
-                        if (highGoal) {
-                            target = shoot(3);
-                        } else {
-                            target = shoot(numRings - 1);
-                        }
-                        setTargetPoint(target[0], target[1], target[2], 0.15, 0.15, 1.5);
-                        shooter.setFlapAngle(target[3]);
                         clear = true;
-                    } else if (shooter.feedHome) {
                         shooter.feedShoot();
                     } else {
                         shooter.feedHome();
@@ -155,6 +168,10 @@ public class Robot {
         addPacket("Theta", theta);
         addPacket("Angle Pos", shooter.flapServo.getPosition());
         addPacket("Update Frequency (Hz)", 1 / timeDiff);
+        addPacket("numRings", numRings);
+        addPacket("shoot", shoot);
+        addPacket("clear", clear);
+        addPacket("highGoal", highGoal);
         drawGoal("black");
         drawRobot(drivetrain.x, drivetrain.y, drivetrain.theta, "green");
         drawRobot(t265.getCamX(), t265.getCamY(), t265.getCamTheta(), "red");
@@ -194,7 +211,6 @@ public class Robot {
             targetX += - d/2 + d * b / (a + b);
             dx = targetX - shooterX;
             drawLine(shooterX, shooterY, targetX, targetY, "blue");
-            addPacket("TargetX", targetX);
         }
 
         //double alignRobotAngle = Math.asin((dx * vx - dx * vy) / Math.sqrt(Math.pow(p, 2) + Math.pow(q, 2))) - Math.atan(q / p);
@@ -208,10 +224,9 @@ public class Robot {
         double quadraticRes = (-b - Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a);
         double shooterAngle = 0.27 * (Math.atan(quadraticRes) - 5 * Math.PI / 36) * 3 / Math.PI;*/
         double shooterAngle = 0.638 - 0.0145*d + 8.23e-5 * Math.pow(d, 2);
-        addPacket("Shooter Angle", shooterAngle);
 
         double CONSTANT = Math.PI/(38*Math.pow(92, 2));
-        double alignRobotAngle = Math.atan2((dy), (dx)) - Math.PI/35 - 0.75*CONSTANT * Math.pow(d, 2);
+        double alignRobotAngle = Math.atan2((dy), (dx)) - Math.PI/35 - CONSTANT * Math.pow(d, 2);
         double alignRobotX = shooterX - 6.5 * Math.sin(alignRobotAngle);
         double alignRobotY = shooterY + 6.5 * Math.cos(alignRobotAngle);
 
@@ -226,7 +241,7 @@ public class Robot {
             highGoal = true;
             shootCounter = -1;
         }
-        addPacket("gae", "work");
+        targets = new ArrayList<>(Arrays.asList(shoot(0), shoot(1), shoot(2), shoot(3)));
     }
 
     public void powerShotShoot() {
@@ -237,8 +252,10 @@ public class Robot {
             highGoal = false;
             shootCounter = -1;
         }
+        targets = new ArrayList<>(Arrays.asList(shoot(0), shoot(1), shoot(2), shoot(3)));
     }
 
+    // set target point (default K values)
     public void setTargetPoint(double xtarget, double ytarget, double thetatarget) {
         double thetak = drivetrain.thetak;
         double xk = drivetrain.xk;
@@ -283,14 +300,14 @@ public class Robot {
         drivetrain.setGlobalControls(-xK * (x - xtarget), -yK * (y - ytarget), -thetaK * (thetacontrol));
     }
 
-    public void drawGoal(String color) {
-        double[] xcoords = {72, 72, 78, 78};
-        double[] ycoords = {-24, -48, -48, -24};
-        packet.fieldOverlay().setFill(color).fillPolygon(xcoords, ycoords);
+    // check if robot is at a certain point/angle (default tolerance)
+    public boolean isAtPose(double targetx, double targety, double targettheta) {
+        return isAtPose(targetx, targety, targettheta, xyTolerance, xyTolerance, thetaTolerance);
     }
 
-    public void drawLine(double x1, double y1, double x2, double y2, String color) {
-        packet.fieldOverlay().setStroke(color).strokeLine(y1 - 72, 72 - x1, y2 - 72, 72 - x2);
+    // check if robot is at a certain point/angle (custom tolerance)
+    public boolean isAtPose(double targetx, double targety, double targettheta, double xtolerance, double ytolerance, double thetatolerance) {
+        return (Math.abs(x - targetx) < xtolerance && Math.abs(y - targety) < ytolerance && Math.abs(theta - targettheta) < thetatolerance);
     }
 
     public void drawRobot(double robotX, double robotY, double robotTheta, String color) {
@@ -304,6 +321,16 @@ public class Robot {
         packet.fieldOverlay().setFill(color).fillPolygon(xcoords, ycoords);
     }
 
+    public void drawGoal(String color) {
+        double[] xcoords = {72, 72, 78, 78};
+        double[] ycoords = {-24, -48, -48, -24};
+        packet.fieldOverlay().setFill(color).fillPolygon(xcoords, ycoords);
+    }
+
+    public void drawLine(double x1, double y1, double x2, double y2, String color) {
+        packet.fieldOverlay().setStroke(color).strokeLine(y1 - 72, 72 - x1, y2 - 72, 72 - x2);
+    }
+
     public void addPacket(String key, Object value) {
         packet.put(key, value.toString());
     }
@@ -311,5 +338,9 @@ public class Robot {
     public void sendPacket() {
         dashboard.sendTelemetryPacket(packet);
         packet = new TelemetryPacket();
+    }
+
+    public void log (String message) {
+        Log.w("robot", message);
     }
 }
