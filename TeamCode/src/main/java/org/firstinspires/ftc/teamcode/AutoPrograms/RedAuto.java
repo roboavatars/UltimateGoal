@@ -51,10 +51,6 @@ public class RedAuto extends LinearOpMode {
         boolean deliverWobble2 = false;
         boolean park = false;
 
-        double[][] targets = {{90.0031477369014, 67.79773613404643, 1.601918868671684, 0.030734622387846855},
-                {90.01199154772037, 68.39464708683586, 1.5100440260635926, 0.03558494709810123},
-                {90.076193524281, 68.99232573407653, 1.4175314990497618, 0.03823227682762809}};
-
         double startLineTime = 2.0;
         double shootPowerShotsTime = 4;
         double deliverWobbleTime = 2.0;
@@ -113,12 +109,11 @@ public class RedAuto extends LinearOpMode {
                 Pose curPose = startLinePath.getRobotPose(curTime);
                 robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta());
 
-                robot.shooter.setShooterVelocity(-2000);
+                robot.shooter.setShooterVelocity(-900);
 
                 if (time.seconds() > startLineTime + 1) {
 
-                    robot.highGoalShoot();
-                    robot.log("entering shoot");
+                    robot.powerShotShoot();
 
                     startLine = true;
                     time.reset();
