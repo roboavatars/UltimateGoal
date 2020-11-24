@@ -10,7 +10,6 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.spartronics4915.lib.T265Camera;
 
 @SuppressWarnings("FieldCanBeLocal")
-@Config
 public class T265 {
 
     // Electronics

@@ -1,15 +1,15 @@
 package org.firstinspires.ftc.teamcode.RobotClasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.acmerobotics.dashboard.config.Config;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@Config
+@SuppressWarnings("FieldCanBeLocal")
 public class Shooter {
 
     private DcMotorEx shooterMotor1;
@@ -20,12 +20,12 @@ public class Shooter {
 
     private DistanceSensor ringSensor;
 
-    public static double flapHomePos = 0;
-    public static double flapMaxPos = 0.25;
-    public static double magHomePos = 0.25;
-    public static double magShootPos = 0.50;
-    public static double feedHomePos = 0.45;
-    public static double feedShootPos = 0.70;
+    private final double flapHomePos = 0;
+    private final double flapMaxPos = 0.25;
+    private final double magHomePos = 0.25;
+    private final double magShootPos = 0.50;
+    private final double feedHomePos = 0.45;
+    private final double feedShootPos = 0.70;
 
     public boolean magHome = true;
     public boolean feedHome = true;
@@ -33,6 +33,9 @@ public class Shooter {
     public Shooter(LinearOpMode op) {
         shooterMotor1 = op.hardwareMap.get(DcMotorEx.class, "shooter1");
         shooterMotor2 = op.hardwareMap.get(DcMotorEx.class, "shooter2");
+        shooterMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooterMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
         flapServo = op.hardwareMap.get(Servo.class, "flapServo");
         magServo = op.hardwareMap.get(Servo.class, "magServo");
         feedServo = op.hardwareMap.get(Servo.class, "feedServo");
@@ -46,13 +49,13 @@ public class Shooter {
     }
 
     public void flywheelOn() {
-        shooterMotor1.setPower(-1);
-        shooterMotor2.setPower(-1);
+        shooterMotor1.setVelocity(-2000);
+        shooterMotor2.setVelocity(-2000);
     }
 
     public void flywheelOff() {
-        shooterMotor1.setPower(0);
-        shooterMotor2.setPower(0);
+        shooterMotor1.setVelocity(0);
+        shooterMotor2.setVelocity(0);
     }
 
     public void setShooterVelocity(double velocity) {
@@ -61,7 +64,7 @@ public class Shooter {
     }
 
     public double getShooterVelocity() {
-        return (shooterMotor1.getVelocity(AngleUnit.RADIANS) + shooterMotor2.getVelocity(AngleUnit.RADIANS)) / 2;
+        return (shooterMotor1.getVelocity() + shooterMotor2.getVelocity()) / 2;
     }
 
     public void setFlapAngle(double angle) {
