@@ -21,8 +21,7 @@ public class Robot {
     //private final int distUpdatePeriod = 15;
     private final double xyTolerance = 1;
     private final double thetaTolerance = Math.PI / 35;
-    private final double odoWeight = 1;
-    private double camWeight = 0;
+    private double odoWeight = 1;
 
     // State Variables
     private boolean firstLoop = true;
@@ -31,7 +30,7 @@ public class Robot {
     private boolean isAuto;
 
     public double shootCounter = 0;
-    public double shootDelay = 40;
+    public double shootDelay = 50;
     public boolean shoot = false;
     public boolean clear = false;
     public boolean highGoal = false;
@@ -47,9 +46,9 @@ public class Robot {
     private final double[] shootZ = {24, 24, 24, 35.5};
 
     double[][] targets = {
-            {90.003147736901, 67.797736134046, 1.6463062382935, 0.0307346223878468},
-            {90.011991547720, 68.394647086835, 1.5709188686716, 0.035584947098101},
-            {90.076193524281, 68.992325734076, 1.4275314990497, 0.038232276827628}
+            {90.003147736901, 67.797736134046, 1.6863062382935, 0.030734622387847},
+            {90.011991547720, 68.394647086835, 1.5909188686716, 0.035584947098101},
+            {90.076193524281, 68.992325734076, 1.4225314990497, 0.038232276827628}
     };
 
     // OpMode Stuff
@@ -68,7 +67,7 @@ public class Robot {
         } catch (Exception ex) {
             log("Camera error");
             ex.printStackTrace();
-            camWeight = 0;
+            odoWeight = 1;
         }
         logger = new Logger();
 
@@ -80,7 +79,7 @@ public class Robot {
 
     public void stop() {
         logger.stopLogging();
-        if (camWeight != 0) {
+        if (odoWeight != 1) {
             t265.stopCam();
         }
     }
@@ -143,10 +142,10 @@ public class Robot {
                     target = targets[numRings - 1];
                 }
                 if (isAuto) {
-                    setTargetPoint(target[0], target[1], target[2]);
+                    setTargetPoint(target[0], target[1], target[2], 0.17, 0.17, 1.8);
                 } else {
                     if (!isAtPose(target[0], target[1], target[2])) {
-                        setTargetPoint(target[0], target[1], target[2]);
+                        setTargetPoint(target[0], target[1], target[2], 0.17, 0.17, 1.8);
                     }
                 }
                 shooter.setFlapAngle(target[3]);
@@ -156,17 +155,17 @@ public class Robot {
         // Update Position
         drivetrain.updatePose();
 //        t265.sendOdometryData(vx, vy);
-        if (camWeight != 0) {
+        if (odoWeight != 1) {
             t265.updateCamPose();
         }
 
         // Calculate Motion Info
         double curTime = (double) System.currentTimeMillis() / 1000;
         double timeDiff = curTime - prevTime;
-        if (camWeight != 0) {
-            x = odoWeight * drivetrain.x + camWeight * t265.getCamX();
-            y = odoWeight * drivetrain.y + camWeight * t265.getCamY();
-            theta = odoWeight * drivetrain.theta + camWeight * t265.getCamTheta();
+        if (odoWeight != 1) {
+            x = odoWeight * drivetrain.x + (1 - odoWeight) * t265.getCamX();
+            y = odoWeight * drivetrain.y + (1 - odoWeight) * t265.getCamY();
+            theta = odoWeight * drivetrain.theta + (1 - odoWeight) * t265.getCamTheta();
         } else {
             x = drivetrain.x;
             y = drivetrain.y;
@@ -205,7 +204,7 @@ public class Robot {
 
         drawGoal("black");
         drawRobot(drivetrain.x, drivetrain.y, drivetrain.theta, "green");
-        if (camWeight != 0) {
+        if (odoWeight != 1) {
             drawRobot(t265.getCamX(), t265.getCamY(), t265.getCamTheta(), "red");
         }
         drawRobot(x, y, theta, "black");
@@ -293,7 +292,7 @@ public class Robot {
     public void powerShotShoot() {
         if (!shoot) {
             shootDelay = 40;
-            shooter.setShooterVelocity(-850);
+            shooter.setShooterVelocity(-875);
             highGoal = false;
             initiateShoot();
         }

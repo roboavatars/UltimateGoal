@@ -18,10 +18,10 @@ public class Intake {
     private final double rHomePos = 0;
     private final double lOutPos = 0;
     private final double rOutPos = 0.85;
-    private final int wobbleUpPos = -170;
-    private final int wobbleDownPos = -750;
-    private final double wobbleClampPos = 0.3;
-    private final double wobbleReleasePos = 1;
+    private final int wobbleUpPos = -80;
+    private final int wobbleDownPos = -800;
+    private final double wobbleClampPos = 0.20;
+    private final double wobbleReleasePos = 0.75;
 
     public Intake(LinearOpMode op) {
         intakeMotor = op.hardwareMap.get(DcMotorEx.class, "intake");
@@ -31,6 +31,7 @@ public class Intake {
         wobbleServo = op.hardwareMap.get(Servo.class, "wobbleServo");
         wobbleMotor = op.hardwareMap.get(DcMotorEx.class, "wobbleMotor");
         wobbleUp();
+        wobbleClamp();
         wobbleMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         sticksHome();
@@ -74,13 +75,15 @@ public class Intake {
     }
 
     public void wobbleUp() {
+        wobbleClamp();
         wobbleMotor.setTargetPosition(wobbleUpPos);
-        wobbleMotor.setPower(0.2);
+        wobbleMotor.setPower(0.4);
     }
 
     public void wobbleDown() {
+        wobbleClamp();
         wobbleMotor.setTargetPosition(wobbleDownPos);
-        wobbleMotor.setPower(0.2);
+        wobbleMotor.setPower(0.4);
     }
 
     public void wobbleClamp() {

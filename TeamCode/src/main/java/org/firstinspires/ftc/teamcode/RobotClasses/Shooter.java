@@ -51,6 +51,7 @@ public class Shooter {
     public void flywheelOn() {
         shooterMotor1.setVelocity(-2000);
         shooterMotor2.setVelocity(-2000);
+        Robot.log("Shooter Velocity: -2000");
     }
 
     public void flywheelOff() {
@@ -61,6 +62,7 @@ public class Shooter {
     public void setShooterVelocity(double velocity) {
         shooterMotor1.setVelocity(velocity);
         shooterMotor2.setVelocity(velocity);
+        Robot.log("Shooter Velocity: " + velocity);
     }
 
     public double getShooterVelocity() {

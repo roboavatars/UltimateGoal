@@ -41,15 +41,18 @@ public class Teleop extends LinearOpMode {
         }
 
         robot.logger.startLogging();
+        robot.intake.sticksOut();
 
         waitForStart();
 
         while (opModeIsActive()) {
 
-            if (gamepad1.a) {
+            if (gamepad2.right_bumper) {
+                robot.intake.intakeOn();
+            } else if (gamepad2.left_bumper) {
                 robot.intake.intakeRev();
             } else {
-                robot.intake.intakeOn();
+                robot.intake.intakeOff();
             }
 
             if (gamepad1.right_bumper) {
