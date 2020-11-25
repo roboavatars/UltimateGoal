@@ -18,7 +18,7 @@ public class Intake {
     private final double rHomePos = 0;
     private final double lOutPos = 0;
     private final double rOutPos = 0.85;
-    private final int wobbleUpPos = -100;
+    private final int wobbleUpPos = -170;
     private final int wobbleDownPos = -750;
     private final double wobbleClampPos = 0.3;
     private final double wobbleReleasePos = 1;
@@ -48,6 +48,14 @@ public class Intake {
 
     public void intakeOff() {
         intakeMotor.setPower(0);
+    }
+
+    public void setIntakePow(double power) {
+        intakeMotor.setPower(power);
+    }
+
+    public void rStickDown() {
+        rStickServo.setPosition(0.9);
     }
 
     public void sticksHalf() {

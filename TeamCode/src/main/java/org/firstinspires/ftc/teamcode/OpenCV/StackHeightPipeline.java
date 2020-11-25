@@ -22,7 +22,7 @@ import java.util.List;
 @Config
 public class StackHeightPipeline extends OpenCvPipeline {
 
-    public enum RingCase {None, One, Four}
+    public enum RingCase {Zero, One, Four}
 
     public static double FILTER_MIN = 80;
     public static double FILTER_MAX = 110;
@@ -32,7 +32,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
     public static double FOUR_MAX = 1.1;
 
     private double[] result = new double[3];
-    private RingCase ringCase = RingCase.None;
+    private RingCase ringCase = RingCase.Zero;
     private Mat yCrCb = new Mat();
     private Mat cb = new Mat();
     private Mat processed = new Mat();
@@ -115,7 +115,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
         // No Contours Detected
         if (i == 0) {
             result = new double[]{0,0,0};
-            ringCase = RingCase.None;
+            ringCase = RingCase.Zero;
         }
 
         log("Result: " + Arrays.toString(result));

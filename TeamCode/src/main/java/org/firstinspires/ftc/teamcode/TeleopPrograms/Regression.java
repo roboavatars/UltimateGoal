@@ -20,8 +20,7 @@ public class Regression extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        robot = new Robot(this, startX, startY, startTheta);
-        robot.t265.startCam();
+        robot = new Robot(this, startX, startY, startTheta, false);
 
         waitForStart();
 
@@ -73,7 +72,5 @@ public class Regression extends LinearOpMode {
             telemetry.update();
 
         }
-        // robot.logger.stopLogging();
-        robot.t265.stopCam();
     }
 }

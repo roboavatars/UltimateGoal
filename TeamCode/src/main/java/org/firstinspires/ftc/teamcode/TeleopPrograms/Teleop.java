@@ -1,11 +1,15 @@
 package org.firstinspires.ftc.teamcode.TeleopPrograms;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
+import org.firstinspires.ftc.teamcode.RobotClasses.Logger;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
-@TeleOp
+import java.util.Arrays;
+
+@TeleOp @Config
 public class Teleop extends LinearOpMode {
 
     public int startX = 90;
@@ -13,7 +17,8 @@ public class Teleop extends LinearOpMode {
     public double startTheta = Math.PI/2;
 
     private Robot robot;
-    private final boolean robotCentric = false;
+    public static boolean robotCentric = false;
+    public static boolean useAutoPos = true;
 
     public boolean flywheelToggle = false;
     public boolean flywheelOn = false;
@@ -27,14 +32,15 @@ public class Teleop extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        /*double[] initialPosition = Logger.readPos();
-        telemetry.addData("Starting Position", Arrays.toString(initialPosition));
-        telemetry.update();
-        robot = new Robot(this, initialPosition[0], initialPosition[1], initialPosition[2])
-        robot.logger.startLogging();*/
+        if (useAutoPos) {
+            double[] initialPosition = Logger.readPos();
+            telemetry.addData("Starting Position", Arrays.toString(initialPosition)); telemetry.update();
+            robot = new Robot(this, initialPosition[0], initialPosition[1], initialPosition[2], false);
+        } else {
+            robot = new Robot(this, startX, startY, startTheta, false);
+        }
 
-        robot = new Robot(this, startX, startY, startTheta); // Robot(this, initialPosition[0], initialPosition[1], initialPosition[2])
-        robot.t265.startCam();
+        robot.logger.startLogging();
 
         waitForStart();
 
@@ -47,17 +53,16 @@ public class Teleop extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
-                if (Math.abs(robot.shooter.getShooterVelocity() + 500) < 10) {
-                    robot.powerShotShoot();
-                } else {
-                    robot.shooter.setShooterVelocity(-1000);
-                }
+                robot.powerShotShoot();
             } else if (gamepad1.left_bumper) {
-                if (Math.abs(robot.shooter.getShooterVelocity() + 2000) < 10) {
-                    robot.highGoalShoot();
-                } else {
-                    robot.shooter.setShooterVelocity(-2000);
-                }
+                robot.highGoalShoot();
+            }
+
+            if (gamepad1.dpad_left) {
+                robot.thetaOffset -= 0.01;
+            }
+            if (gamepad1.dpad_right) {
+                robot.thetaOffset += 0.01;
             }
 
             if (gamepad2.y && !flywheelToggle) {
@@ -107,13 +112,6 @@ public class Teleop extends LinearOpMode {
             } else if (!gamepad2.b && clampToggle) {
                 clampToggle = false;
             }
-//
-//            if (gamepad1.dpad_up && robot.shooter.getFlapAngle() < 0.22) {
-//                robot.shooter.flapServo.setPosition(robot.shooter.getFlapAngle() + 0.001);
-//            }
-//            if (gamepad1.dpad_down && robot.shooter.getFlapAngle() > 0.03) {
-//                robot.shooter.flapServo.setPosition(robot.shooter.getFlapAngle() - 0.001);
-//            }
 
             if (robotCentric) {
                 robot.drivetrain.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
@@ -134,7 +132,6 @@ public class Teleop extends LinearOpMode {
 
         robot.shooter.feedHome();
 
-        // robot.logger.stopLogging();
-        robot.t265.stopCam();
+        robot.stop();
     }
 }

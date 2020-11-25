@@ -6,9 +6,6 @@ import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 @SuppressWarnings("FieldCanBeLocal")
 public class Robot {
 
@@ -25,15 +22,16 @@ public class Robot {
     private final double xyTolerance = 1;
     private final double thetaTolerance = Math.PI / 35;
     private final double odoWeight = 1;
-    private final double camWeight = 0;
+    private double camWeight = 0;
 
     // State Variables
     private boolean firstLoop = true;
     private int cycleCounter = 0;
     public int numRings = 0;
+    private boolean isAuto;
 
     public double shootCounter = 0;
-    public double shootDelay = 100;
+    public double shootDelay = 40;
     public boolean shoot = false;
     public boolean clear = false;
     public boolean highGoal = false;
@@ -48,9 +46,11 @@ public class Robot {
     private final double shootY = 150;
     private final double[] shootZ = {24, 24, 24, 35.5};
 
-    double[][] targets = {{90.003147736901, 67.797736134046, 1.7463062382935, 0.0307346223878468},
-            {90.011991547720, 68.394647086835, 1.6709188686716, 0.035584947098101},
-            {90.076193524281, 68.992325734076, 1.4275314990497, 0.038232276827628}};
+    double[][] targets = {
+            {90.003147736901, 67.797736134046, 1.6463062382935, 0.0307346223878468},
+            {90.011991547720, 68.394647086835, 1.5709188686716, 0.035584947098101},
+            {90.076193524281, 68.992325734076, 1.4275314990497, 0.038232276827628}
+    };
 
     // OpMode Stuff
     private LinearOpMode op;
@@ -58,16 +58,31 @@ public class Robot {
     private TelemetryPacket packet;
 
     // Constructor
-    public Robot(LinearOpMode op, double x, double y, double theta) {
-        drivetrain = new MecanumDrivetrain(op, x, y, theta, true);
+    public Robot(LinearOpMode op, double x, double y, double theta, boolean isAuto) {
+        drivetrain = new MecanumDrivetrain(op, x, y, theta);
         intake = new Intake(op);
         shooter = new Shooter(op);
-        t265 = new T265(op, x, y, theta);
+        try {
+            t265 = new T265(op, x, y, theta);
+            t265.startCam();
+        } catch (Exception ex) {
+            log("Camera error");
+            ex.printStackTrace();
+            camWeight = 0;
+        }
         logger = new Logger();
 
         this.op = op;
+        this.isAuto = isAuto;
         dashboard = FtcDashboard.getInstance();
         packet = new TelemetryPacket();
+    }
+
+    public void stop() {
+        logger.stopLogging();
+        if (camWeight != 0) {
+            t265.stopCam();
+        }
     }
 
     public void update() {
@@ -84,7 +99,7 @@ public class Robot {
         }*/
 
         /*
-        States (in progress)-
+        States-
         <3 rings, no shoot, mag home, feed home- nothing (default state)
         3 rings, no shoot, mag home, feed home- mag to shoot, intake off
 
@@ -113,7 +128,9 @@ public class Robot {
                     }
                 } else {
                     shooter.flywheelOff();
-                    shooter.magHome();
+                    if (!isAuto) {
+                        shooter.magHome();
+                    }
                     shoot = false;
                 }
             }
@@ -125,7 +142,13 @@ public class Robot {
                 } else {
                     target = targets[numRings - 1];
                 }
-                setTargetPoint(target[0], target[1], target[2]);
+                if (isAuto) {
+                    setTargetPoint(target[0], target[1], target[2]);
+                } else {
+                    if (!isAtPose(target[0], target[1], target[2])) {
+                        setTargetPoint(target[0], target[1], target[2]);
+                    }
+                }
                 shooter.setFlapAngle(target[3]);
             }
         }
@@ -133,17 +156,23 @@ public class Robot {
         // Update Position
         drivetrain.updatePose();
 //        t265.sendOdometryData(vx, vy);
-        t265.updateCamPose();
+        if (camWeight != 0) {
+            t265.updateCamPose();
+        }
 
         // Calculate Motion Info
         double curTime = (double) System.currentTimeMillis() / 1000;
         double timeDiff = curTime - prevTime;
-        x = odoWeight * drivetrain.x + camWeight * t265.getCamX();
-        y = odoWeight * drivetrain.y + camWeight * t265.getCamY();
-        theta = odoWeight * drivetrain.theta + camWeight * t265.getCamTheta();
-//        x = drivetrain.x;//*/ t265.getCamX();
-//        y = drivetrain.y;//*/ t265.getCamY();
-//        theta = drivetrain.theta;//*/ t265.getCamTheta();
+        if (camWeight != 0) {
+            x = odoWeight * drivetrain.x + camWeight * t265.getCamX();
+            y = odoWeight * drivetrain.y + camWeight * t265.getCamY();
+            theta = odoWeight * drivetrain.theta + camWeight * t265.getCamTheta();
+        } else {
+            x = drivetrain.x;
+            y = drivetrain.y;
+            theta = drivetrain.theta;
+        }
+
         vx = (x - prevX) / timeDiff;
         vy = (y - prevY) / timeDiff;
         w = (theta - prevTheta) / timeDiff;
@@ -172,15 +201,19 @@ public class Robot {
         addPacket("8 highGoal", highGoal);
         addPacket("9 Time", (System.currentTimeMillis() - startTime) / 1000);
         addPacket("Update Frequency (Hz)", 1 / timeDiff);
+        addPacket("Offset", thetaOffset);
 
         drawGoal("black");
         drawRobot(drivetrain.x, drivetrain.y, drivetrain.theta, "green");
-        drawRobot(t265.getCamX(), t265.getCamY(), t265.getCamTheta(), "red");
+        if (camWeight != 0) {
+            drawRobot(t265.getCamX(), t265.getCamY(), t265.getCamTheta(), "red");
+        }
         drawRobot(x, y, theta, "black");
-        if (numRings == 0) {
-            drawRobot(targets[2][0], targets[2][1], targets[2][2], "red");
-            drawLine(targets[2][0], targets[2][1], shootX[2], shootZ[2], "red");
-        } else {
+        /*if (numRings == 0) {
+            drawRobot(targets[2][0], targets[2][1], targets[2][2], "yellow");
+            drawLine(targets[2][0], targets[2][1], shootX[2], shootZ[2], "black");
+        }
+        else {
             String color;
             if (numRings == 3) {
                 color = "yellow";
@@ -191,13 +224,14 @@ public class Robot {
             }
             drawRobot(targets[numRings - 1][0], targets[numRings - 1][1], targets[numRings - 1][2], color);
             drawLine(targets[numRings - 1][0], targets[numRings - 1][1], shootX[numRings - 1], shootZ[numRings - 1], color);
-        }
+        }*/
         sendPacket();
     }
 
+    public double thetaOffset = 0.435135;
+
     // left ps = 0, middle ps = 1, right ps = 2, high goal = 3
     public double[] shoot(int targetNum) {
-
         /*  power1- (76.5,144,24)
             power2- (84,144,24)
             power3- (91.5,144,24)
@@ -240,7 +274,7 @@ public class Robot {
         double quadraticRes = (-b - Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a);
         double shooterAngle = 0.27 * (Math.atan(quadraticRes) - 5 * Math.PI / 36) * 3 / Math.PI;*/
 
-        double alignRobotAngle = Math.atan2(dy, dx) + 0.00268976 * d - 0.435135;
+        double alignRobotAngle = Math.atan2(dy, dx) + 0.00268976 * d - thetaOffset;
         double alignRobotX = shooterX - 6.5 * Math.sin(alignRobotAngle);
         double alignRobotY = shooterY + 6.5 * Math.cos(alignRobotAngle);
 
@@ -250,7 +284,7 @@ public class Robot {
     public void highGoalShoot() {
         if (!shoot) {
             shootDelay = 30;
-//            shooter.setShooterVelocity(-2000);
+            shooter.setShooterVelocity(-2000);
             highGoal = true;
             initiateShoot();
         }
@@ -259,7 +293,7 @@ public class Robot {
     public void powerShotShoot() {
         if (!shoot) {
             shootDelay = 40;
-//            shooter.setShooterVelocity(-900);
+            shooter.setShooterVelocity(-850);
             highGoal = false;
             initiateShoot();
         }
@@ -293,7 +327,7 @@ public class Robot {
             thetacontrol = theta - thetatarget;
         }
 
-        log("setTargetPoint- " + xtarget + " " + " " + ytarget + " " + thetatarget);
+        //log("setTargetPoint- " + xtarget + " " + " " + ytarget + " " + thetatarget);
 
         drivetrain.setGlobalControls(-xk * (x - xtarget), -yk * (y - ytarget), -thetak * (thetacontrol));
     }
@@ -314,7 +348,7 @@ public class Robot {
             thetacontrol = theta - thetatarget;
         }
 
-        log("setTargetPointK-" + xtarget + " " + " " + ytarget + " " + thetatarget);
+        //log("setTargetPointK-" + xtarget + " " + " " + ytarget + " " + thetatarget);
 
         drivetrain.setGlobalControls(-xK * (x - xtarget), -yK * (y - ytarget), -thetaK * (thetacontrol));
     }
@@ -361,7 +395,7 @@ public class Robot {
         packet = new TelemetryPacket();
     }
 
-    public void log(String message) {
+    public static void log(String message) {
         Log.w("robot-log", message);
     }
 }

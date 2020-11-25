@@ -18,7 +18,7 @@ public class OdometryTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        dt = new MecanumDrivetrain(this, 57, 135, Math.PI/2, false);
+        dt = new MecanumDrivetrain(this, 57, 135, Math.PI/2);
 
         dashboard = FtcDashboard.getInstance();
         packet = new TelemetryPacket();

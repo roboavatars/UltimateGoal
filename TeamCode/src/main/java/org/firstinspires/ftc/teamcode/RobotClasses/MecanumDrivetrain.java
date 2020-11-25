@@ -62,9 +62,9 @@ public class MecanumDrivetrain {
     private double lastpod3 = 0;
 
     // K Variables for Control of Linear System
-    public double xk = 0.15;
-    public double yk = 0.15;
-    public double thetak = 1.2;
+    public double xk = 0.17;
+    public double yk = 0.17;
+    public double thetak = 1.8;
 
     // Motor Caching Stuff
     private double lastFRPower = 0;
@@ -80,11 +80,10 @@ public class MecanumDrivetrain {
     // 1440 ticks per encoder revolution, 4.3289 inches per wheel revolution
     private final double encoderCountsPerRevolution = 537.6;
 
-    private final boolean isRed;
     public boolean zeroStrafeCorrection = false;
 
     // Constructor
-    public MecanumDrivetrain(LinearOpMode opMode, double initialX, double initialY, double initialTheta, boolean isRedAuto) {
+    public MecanumDrivetrain(LinearOpMode opMode, double initialX, double initialY, double initialTheta) {
         this.opMode = opMode;
         HardwareMap hardwareMap = opMode.hardwareMap;
 
@@ -117,12 +116,6 @@ public class MecanumDrivetrain {
         y = initialY;
         lastheading = initialTheta;
         theta = initialTheta;
-
-        isRed = isRedAuto;
-
-        if (!isRed) {
-            thetak = 1.15;
-        }
     }
 
     // robot centric movement
@@ -215,10 +208,9 @@ public class MecanumDrivetrain {
             deltapod2 = pod2 - lastpod2;
             deltapod3 = pod3 - lastpod3;
 
-            Log.w("auto", deltapod1 + " " + deltapod2 + " " + deltapod3);
-            if (deltapod1 == 0) Log.w("auto", "pod 1 delta 0");
-            if (deltapod2 == 0) Log.w("auto", "pod 2 delta 0");
-            if (deltapod3 == 0) Log.w("auto", "pod 3 delta 0");
+            if (deltapod1 == 0) Robot.log("pod 1 delta 0");
+            if (deltapod2 == 0) Robot.log("pod 2 delta 0");
+            if (deltapod3 == 0) Robot.log("pod 3 delta 0");
 
             lastx = x;
             lasty = y;
