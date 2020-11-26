@@ -39,7 +39,7 @@ public class ShooterTest extends LinearOpMode {
         while (opModeIsActive()) {
             if (on) {
                 shooter1.setVelocity(velocity);
-                shooter2.setVelocity(velocity);
+                shooter2.setVelocity(-velocity);
             } else {
                 shooter1.setVelocity(0);
                 shooter2.setVelocity(0);

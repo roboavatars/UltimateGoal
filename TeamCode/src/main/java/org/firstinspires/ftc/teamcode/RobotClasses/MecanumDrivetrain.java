@@ -1,8 +1,5 @@
 package org.firstinspires.ftc.teamcode.RobotClasses;
 
-import android.util.Log;
-
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxEmbeddedIMU;
 import com.qualcomm.hardware.lynx.LynxI2cDeviceSynchV2;
@@ -22,7 +19,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@SuppressWarnings("FieldCanBeLocal") @Config
+@SuppressWarnings("FieldCanBeLocal")
 public class MecanumDrivetrain {
 
     // Motors
@@ -87,7 +84,7 @@ public class MecanumDrivetrain {
         this.opMode = opMode;
         HardwareMap hardwareMap = opMode.hardwareMap;
 
-        module = hardwareMap.get(LynxModule.class, "Drivetrain Hub");
+        module = hardwareMap.get(LynxModule.class, "Control Hub");
 
         motorFrontRight = hardwareMap.get(DcMotorEx.class, "motorFrontRight");
         motorFrontLeft = hardwareMap.get(DcMotorEx.class, "motorFrontLeft");
@@ -104,7 +101,6 @@ public class MecanumDrivetrain {
         motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         imu = new LynxEmbeddedIMU(new BetterI2cDeviceSyncImplOnSimple(

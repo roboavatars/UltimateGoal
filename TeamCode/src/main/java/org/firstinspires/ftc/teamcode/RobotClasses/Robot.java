@@ -3,12 +3,9 @@ package org.firstinspires.ftc.teamcode.RobotClasses;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Config
 @SuppressWarnings("FieldCanBeLocal")
 public class Robot {
 
@@ -49,9 +46,9 @@ public class Robot {
     private final double[] shootZ = {24, 24, 24, 35.5};
 
     double[][] targets = {
-            {90.00, 67.80, 1.6563, 0.0307},
-            {90.02, 68.39, 1.5809, 0.0355},
-            {90.08, 68.99, 1.4825, 0.0380}
+            {86.00, 67.80, 1.6563, 0.0307},
+            {88.00, 68.39, 1.5809, 0.0355},
+            {90.00, 68.99, 1.4825, 0.0380}
     };
 
     // OpMode Stuff
@@ -118,9 +115,26 @@ public class Robot {
         }
 
         else if (numRings >= 0 && shoot && !shooter.magHome) {
+            double[] target = {};
+            if (numRings > 0) {
+                if (highGoal) {
+                    target = shoot(3);
+                } else {
+                    target = targets[numRings - 1];
+                }
+                if (isAuto) {
+                    setTargetPoint(target[0], target[1], target[2], 0.2, 0.2, 1.9);
+                } else {
+                    if (!isAtPose(target[0], target[1], target[2])) {
+                        setTargetPoint(target[0], target[1], target[2], 0.17, 0.17, 1.9);
+                    }
+                }
+                shooter.setFlapAngle(target[3]);
+            }
+
             if (shootCounter % shootDelay == 0) {
                 if (numRings > 0) {
-                    if (shooter.feedHome && !clear) {
+                    if (shooter.feedHome && !clear && !isAtPose(target[0], target[1], target[2])) {
                         clear = true;
                         shooter.feedShoot();
                     } else {
@@ -136,29 +150,12 @@ public class Robot {
                     shoot = false;
                 }
             }
-
-            if (numRings > 0) {
-                double[] target;
-                if (highGoal) {
-                    target = shoot(3);
-                } else {
-                    target = targets[numRings - 1];
-                }
-                if (isAuto) {
-                    setTargetPoint(target[0], target[1], target[2], 0.17, 0.17, 1.9);
-                } else {
-                    if (!isAtPose(target[0], target[1], target[2])) {
-                        setTargetPoint(target[0], target[1], target[2], 0.17, 0.17, 1.9);
-                    }
-                }
-                shooter.setFlapAngle(target[3]);
-            }
         }
 
         // Update Position
         drivetrain.updatePose();
-//        t265.sendOdometryData(vx, vy);
         if (odoWeight != 1) {
+            //t265.sendOdometryData(vx, vy);
             t265.updateCamPose();
         }
 
@@ -294,7 +291,7 @@ public class Robot {
 
     public void powerShotShoot() {
         if (!shoot) {
-            shootDelay = 40;
+            shootDelay = 100;
             shooter.setShooterVelocity(-875);
             highGoal = false;
             initiateShoot();

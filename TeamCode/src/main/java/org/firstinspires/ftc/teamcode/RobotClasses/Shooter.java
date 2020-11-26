@@ -57,13 +57,12 @@ public class Shooter {
     }
 
     public void flywheelOff() {
-        shooterMotor1.setVelocity(0);
-        shooterMotor2.setVelocity(0);
+        setShooterVelocity(0);
     }
 
     public void setShooterVelocity(double velocity) {
         shooterMotor1.setVelocity(velocity);
-        shooterMotor2.setVelocity(velocity);
+        shooterMotor2.setVelocity(-velocity);
         Log.w("shooter-log", "Shooter Velocity: " + velocity);
     }
 

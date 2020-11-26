@@ -27,7 +27,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
     public enum RingCase {Zero, One, Four}
 
     public static double FILTER_MIN = 80;
-    public static double FILTER_MAX = 110;
+    public static double FILTER_MAX = 115;
     public static int HEIGHT_THRESH = 3;
     public static int WIDTH_THRESH = 15;
     public static double ONE_MIN = 2.7;
@@ -56,7 +56,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         // Crop Image
-        Rect rect = new Rect(0, 0, 160, 120);
+        Rect rect = new Rect(5, 10, 140, 100);
         input = new Mat(input, rect);
 
         // Convert to YCrCb Color Space

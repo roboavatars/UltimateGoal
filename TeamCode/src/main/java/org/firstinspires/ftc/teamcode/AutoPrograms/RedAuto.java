@@ -162,7 +162,7 @@ public class RedAuto extends LinearOpMode {
                     Waypoint[] intakeWobble2Waypoints = new Waypoint[] {
                             new Waypoint(robot.drivetrain.x, robot.drivetrain.y, robot.drivetrain.theta, -10.0, -50.0, 0.0, 0.0),
                             new Waypoint(130, 60, PI/3, -20.0, 10.0, 0.0, 1.5),
-                            new Waypoint(122, 37, PI/2, -10.0, -10.0, 0.0, intakeWobble2Time),
+                            new Waypoint(123, 37.5, PI/2, -5.0, -10.0, 0.0, intakeWobble2Time),
                     };
                     intakeWobble2Path = new Path(new ArrayList<>(Arrays.asList(intakeWobble2Waypoints)));
 
@@ -181,8 +181,8 @@ public class RedAuto extends LinearOpMode {
 
                     Waypoint[] intakeStackWaypoints = new Waypoint[] {
                             new Waypoint(robot.drivetrain.x, robot.drivetrain.y, robot.drivetrain.theta, 10.0, 20.0, 0.0, 0.0),
-                            new Waypoint(115, 44, PI/2, 10.0, 0.0, 0.0, 1.5),
-                            new Waypoint(110, 61, PI/2, 5.0, -20.0, 0.0, intakeStackTime),
+                            new Waypoint(112, 44, PI/2, 10.0, 0.0, 0.0, 1.5),
+                            new Waypoint(108, 61, PI/2, 5.0, -20.0, 0.0, intakeStackTime),
                     };
                     intakeStackPath = new Path(new ArrayList<>(Arrays.asList(intakeStackWaypoints)));
 
@@ -242,8 +242,8 @@ public class RedAuto extends LinearOpMode {
                     robot.intake.wobbleUp();
 
                     Waypoint[] parkWaypoints = new Waypoint[] {
-                            new Waypoint(robot.drivetrain.x, robot.drivetrain.y, robot.drivetrain.theta, -10.0, -30.0, 0.0, 0.0),
-                            new Waypoint(98, 80, 3*PI/2, 20.0, 20.0, 0.0, parkTime),
+                            new Waypoint(robot.drivetrain.x, robot.drivetrain.y, robot.drivetrain.theta, -10.0, -20.0, 0.0, 0.0),
+                            new Waypoint(98, 80, 3*PI/2, 10.0, 20.0, 0.0, parkTime),
                     };
                     parkPath = new Path(new ArrayList<>(Arrays.asList(parkWaypoints)));
 
@@ -269,7 +269,7 @@ public class RedAuto extends LinearOpMode {
                     robot.intake.sticksOut();
                     robot.intake.intakeOff();
                     robot.intake.wobbleUp();
-//                    park = true;
+                    park = true;
                 }
             }
 
