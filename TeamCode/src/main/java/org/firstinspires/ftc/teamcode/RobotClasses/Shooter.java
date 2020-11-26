@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.RobotClasses;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -12,8 +14,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @SuppressWarnings("FieldCanBeLocal")
 public class Shooter {
 
-    private DcMotorEx shooterMotor1;
-    private DcMotorEx shooterMotor2;
+    public DcMotorEx shooterMotor1;
+    public DcMotorEx shooterMotor2;
     public Servo flapServo;
     private Servo magServo;
     private Servo feedServo;
@@ -35,6 +37,8 @@ public class Shooter {
         shooterMotor2 = op.hardwareMap.get(DcMotorEx.class, "shooter2");
         shooterMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooterMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooterMotor1.setVelocityPIDFCoefficients(20, 0, 0, 16);
+        shooterMotor2.setVelocityPIDFCoefficients(20, 0, 0, 16);
 
         flapServo = op.hardwareMap.get(Servo.class, "flapServo");
         magServo = op.hardwareMap.get(Servo.class, "magServo");
@@ -49,9 +53,7 @@ public class Shooter {
     }
 
     public void flywheelOn() {
-        shooterMotor1.setVelocity(-2000);
-        shooterMotor2.setVelocity(-2000);
-        Robot.log("Shooter Velocity: -2000");
+        setShooterVelocity(-2000);
     }
 
     public void flywheelOff() {
@@ -62,11 +64,11 @@ public class Shooter {
     public void setShooterVelocity(double velocity) {
         shooterMotor1.setVelocity(velocity);
         shooterMotor2.setVelocity(velocity);
-        Robot.log("Shooter Velocity: " + velocity);
+        Log.w("shooter-log", "Shooter Velocity: " + velocity);
     }
 
     public double getShooterVelocity() {
-        return (shooterMotor1.getVelocity() + shooterMotor2.getVelocity()) / 2;
+        return shooterMotor1.getVelocity();
     }
 
     public void setFlapAngle(double angle) {

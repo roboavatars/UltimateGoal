@@ -26,7 +26,7 @@ public class StackPipelineTest extends LinearOpMode {
         while (opModeIsActive()) {
             addPacket("Frame Count", detector.getFrameCount());
             addPacket("FPS", detector.getFPS());
-            addPacket("Raw Result", detector.getRawResult());
+            addPacket("Raw Result", detector.getRawResult()[2]);
             addPacket("Result", detector.getResult());
             sendPacket();
         }

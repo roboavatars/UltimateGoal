@@ -9,6 +9,8 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
+import org.opencv.core.Rect;
 import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
@@ -26,10 +28,11 @@ public class StackHeightPipeline extends OpenCvPipeline {
 
     public static double FILTER_MIN = 80;
     public static double FILTER_MAX = 110;
-    public static int HEIGHT_THRESH = 15;
+    public static int HEIGHT_THRESH = 3;
     public static int WIDTH_THRESH = 15;
-    public static double ONE_MAX = 0.7;
-    public static double FOUR_MAX = 1.1;
+    public static double ONE_MIN = 2.7;
+    public static double ONE_MAX = 4.1;
+    public static double FOUR_MIN = 1.2;
 
     private double[] result = new double[3];
     private RingCase ringCase = RingCase.Zero;
@@ -52,6 +55,10 @@ public class StackHeightPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
+        // Crop Image
+        Rect rect = new Rect(0, 0, 160, 120);
+        input = new Mat(input, rect);
+
         // Convert to YCrCb Color Space
         Imgproc.cvtColor(input, yCrCb, Imgproc.COLOR_RGB2YCrCb);
 
@@ -100,9 +107,9 @@ public class StackHeightPipeline extends OpenCvPipeline {
 
                 // Checking WH ratio because heights were inconsistent in testing images
                 // This works better at a higher camera angle but comparing the height would be better for a lower camera angle.
-                if (wh_ratio < ONE_MAX) {
+                if (ONE_MIN <= wh_ratio && wh_ratio <= ONE_MAX) {
                     ringCase = RingCase.One;
-                } else if (wh_ratio >= ONE_MAX && wh_ratio <= FOUR_MAX) {
+                } else if (FOUR_MIN <= wh_ratio && wh_ratio <= ONE_MIN) {
                     ringCase = RingCase.Four;
                 }
 

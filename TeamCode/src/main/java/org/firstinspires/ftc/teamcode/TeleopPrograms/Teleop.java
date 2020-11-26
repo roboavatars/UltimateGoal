@@ -25,7 +25,7 @@ public class Teleop extends LinearOpMode {
     public boolean stickToggle = false;
     public boolean sticksOut = true;
     public boolean motorToggle = false;
-    public boolean clampToggle = false;
+    public boolean clampToggle = true;
     public boolean motorDown = false;
     public boolean clamped = false;
 
@@ -40,6 +40,7 @@ public class Teleop extends LinearOpMode {
             robot = new Robot(this, startX, startY, startTheta, false);
         }
 
+        robot.intake.wobbleDown();
         robot.logger.startLogging();
         robot.intake.sticksOut();
 

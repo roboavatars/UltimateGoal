@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.OpenCV.StackHeightDetector;
 import org.firstinspires.ftc.teamcode.OpenCV.StackHeightPipeline.RingCase;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 import org.firstinspires.ftc.teamcode.Splines.Path;
@@ -36,11 +37,11 @@ public class RedAuto extends LinearOpMode {
 
         Robot robot = new Robot(this, 90, 9, PI/2, true);
         robot.logger.startLogging();
-
+        robot.intake.sticksHome();
         robot.shooter.magShoot();
 
-//        StackHeightDetector detector = new StackHeightDetector(this);
-//        detector.start();
+        StackHeightDetector detector = new StackHeightDetector(this);
+        detector.start();
 
         boolean startLine = false;
         boolean shootPowerShots = false;
@@ -62,31 +63,33 @@ public class RedAuto extends LinearOpMode {
 
         waitForStart();
 
-//        RingCase ringCase = detector.getResult();
-        RingCase ringCase = RingCase.Four;
-        Point2D[] wobbleDelivery = {
-                new Point2D(123, 76), new Point2D(97, 96), new Point2D(123, 120)
-        };
+        RingCase ringCase = detector.getResult();
+        double[][] wobbleDelivery = {{123, 73}, {97, 96}, {123, 121}};
+        double[][] wobble2Delivery = {{123, 72}, {97, 93}, {113, 126}};
 
-        Point2D wobbleCor;
+        double[] wobbleCor;
+        double[] wobble2Cor;
         if (ringCase == RingCase.Four) {
             wobbleCor = wobbleDelivery[2];
+            wobble2Cor = wobble2Delivery[2];
             /*deliverWobbleTime =
             wobbleTwoTime = */
         } else if (ringCase == RingCase.One) {
             wobbleCor = wobbleDelivery[1];
+            wobble2Cor = wobble2Delivery[1];
             /*deliverWobbleTime =
             wobbleTwoTime =*/
         } else {
             wobbleCor = wobbleDelivery[0];
+            wobble2Cor = wobble2Delivery[0];
             intakeStack = true;
             /*deliverWobbleTime =
             wobbleTwoTime =*/
         }
 
-//        detector.stop();
+        detector.stop();
 
-        if (ringCase == ringCase.Four) {
+        if (ringCase == RingCase.Four) {
             robot.intake.rStickDown();
         }
 
@@ -131,7 +134,7 @@ public class RedAuto extends LinearOpMode {
                 if (robot.numRings == 0 || time.seconds() > shootPowerShotsTime + 1) {
                     Waypoint[] deliverWobbleWaypoints = new Waypoint[] {
                             new Waypoint(robot.drivetrain.x, robot.drivetrain.y, robot.drivetrain.theta, 40.0, 30.0, 0.0, 0.0),
-                            new Waypoint(wobbleCor.getX(), wobbleCor.getY(), PI/4, 50.0, -30.0, 0.0, deliverWobbleTime),
+                            new Waypoint(wobbleCor[0], wobbleCor[1], PI/4, 50.0, -30.0, 0.0, deliverWobbleTime),
                     };
                     deliverWobblePath = new Path(new ArrayList<>(Arrays.asList(deliverWobbleWaypoints)));
 
@@ -159,7 +162,7 @@ public class RedAuto extends LinearOpMode {
                     Waypoint[] intakeWobble2Waypoints = new Waypoint[] {
                             new Waypoint(robot.drivetrain.x, robot.drivetrain.y, robot.drivetrain.theta, -10.0, -50.0, 0.0, 0.0),
                             new Waypoint(130, 60, PI/3, -20.0, 10.0, 0.0, 1.5),
-                            new Waypoint(123, 36, PI/2, -10.0, 20.0, 0.0, intakeWobble2Time),
+                            new Waypoint(122, 37, PI/2, -10.0, -10.0, 0.0, intakeWobble2Time),
                     };
                     intakeWobble2Path = new Path(new ArrayList<>(Arrays.asList(intakeWobble2Waypoints)));
 
@@ -174,15 +177,16 @@ public class RedAuto extends LinearOpMode {
                 robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta() + PI);
 
                 if (time.seconds() > intakeWobble2Time + 1) {
+                    robot.intake.intakeOn();
+
                     Waypoint[] intakeStackWaypoints = new Waypoint[] {
                             new Waypoint(robot.drivetrain.x, robot.drivetrain.y, robot.drivetrain.theta, 10.0, 20.0, 0.0, 0.0),
                             new Waypoint(115, 44, PI/2, 10.0, 0.0, 0.0, 1.5),
-                            new Waypoint(111, 62, PI/2, 10.0, -30.0, 0.0, intakeStackTime),
+                            new Waypoint(110, 61, PI/2, 5.0, -20.0, 0.0, intakeStackTime),
                     };
                     intakeStackPath = new Path(new ArrayList<>(Arrays.asList(intakeStackWaypoints)));
 
-                    robot.intake.wobbleUp();
-                    if (ringCase != ringCase.Zero) {
+                    if (ringCase != RingCase.Zero) {
                         robot.shooter.setShooterVelocity(-2000);
                     }
 
@@ -202,12 +206,8 @@ public class RedAuto extends LinearOpMode {
                 Pose curPose = intakeStackPath.getRobotPose(curTime);
                 robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta());
 
-                robot.intake.intakeOn();
-
                 if (time.seconds() > intakeStackTime + 1) {
-
                     robot.highGoalShoot();
-                    robot.intake.intakeRev();
 
                     intakeStack = true;
                     time.reset();
@@ -215,11 +215,16 @@ public class RedAuto extends LinearOpMode {
             }
 
             else if (!shootHighGoal) {
+                if (ringCase != RingCase.Zero) {
+                    robot.intake.intakeRev();
+                } else {
+                    robot.numRings = 0;
+                }
 
                 if (robot.numRings == 0 || time.seconds() > shootHighGoalTime + 1) {
                     Waypoint[] deliverWobble2Waypoints = new Waypoint[] {
                             new Waypoint(robot.drivetrain.x, robot.drivetrain.y, robot.drivetrain.theta, 10.0, 30.0, 0.0, 0.0),
-                            new Waypoint(wobbleCor.getX() - 4, wobbleCor.getY() + 2, 7*PI/6, 10.0, -30.0, 0.0, deliverWobble2Time),
+                            new Waypoint(wobble2Cor[0], wobble2Cor[1], 5*PI/4, 10.0, -30.0, 0.0, deliverWobble2Time),
                     };
                     deliverWobble2Path = new Path(new ArrayList<>(Arrays.asList(deliverWobble2Waypoints)));
 
@@ -233,7 +238,7 @@ public class RedAuto extends LinearOpMode {
                 Pose curPose = deliverWobble2Path.getRobotPose(curTime);
                 robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta());
 
-                if (time.seconds() > deliverWobble2Time + 2) {
+                if (time.seconds() > deliverWobble2Time + 1.5) {
                     robot.intake.wobbleUp();
 
                     Waypoint[] parkWaypoints = new Waypoint[] {
@@ -244,17 +249,17 @@ public class RedAuto extends LinearOpMode {
 
                     deliverWobble2 = true;
                     time.reset();
-                } else if (time.seconds() > deliverWobble2Time + 1) {
-                    robot.intake.wobbleRelease();
                 } else if (time.seconds() > deliverWobble2Time) {
-                    robot.intake.wobbleDown();
+                    robot.intake.wobbleRelease();
+                } else if (time.seconds() > deliverWobble2Time - 1) {
+//                    robot.intake.wobbleDown();
                 }
             }
 
             else if (!park) {
                 double curTime = Math.min(time.seconds(), parkTime);
                 Pose curPose = parkPath.getRobotPose(curTime);
-                robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta() + PI);
+                robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta() + PI, 0.17, 0.17, 1.9);
 
                 if (time.seconds() > 1) {
                     robot.intake.wobbleUp();
@@ -264,7 +269,7 @@ public class RedAuto extends LinearOpMode {
                     robot.intake.sticksOut();
                     robot.intake.intakeOff();
                     robot.intake.wobbleUp();
-                    park = true;
+//                    park = true;
                 }
             }
 

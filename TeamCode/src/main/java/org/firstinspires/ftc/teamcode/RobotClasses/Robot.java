@@ -3,9 +3,12 @@ package org.firstinspires.ftc.teamcode.RobotClasses;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.FtcDashboard;
+import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 
+@Config
 @SuppressWarnings("FieldCanBeLocal")
 public class Robot {
 
@@ -46,9 +49,9 @@ public class Robot {
     private final double[] shootZ = {24, 24, 24, 35.5};
 
     double[][] targets = {
-            {90.003147736901, 67.797736134046, 1.6863062382935, 0.030734622387847},
-            {90.011991547720, 68.394647086835, 1.5909188686716, 0.035584947098101},
-            {90.076193524281, 68.992325734076, 1.4225314990497, 0.038232276827628}
+            {90.00, 67.80, 1.6563, 0.0307},
+            {90.02, 68.39, 1.5809, 0.0355},
+            {90.08, 68.99, 1.4825, 0.0380}
     };
 
     // OpMode Stuff
@@ -142,10 +145,10 @@ public class Robot {
                     target = targets[numRings - 1];
                 }
                 if (isAuto) {
-                    setTargetPoint(target[0], target[1], target[2], 0.17, 0.17, 1.8);
+                    setTargetPoint(target[0], target[1], target[2], 0.17, 0.17, 1.9);
                 } else {
                     if (!isAtPose(target[0], target[1], target[2])) {
-                        setTargetPoint(target[0], target[1], target[2], 0.17, 0.17, 1.8);
+                        setTargetPoint(target[0], target[1], target[2], 0.17, 0.17, 1.9);
                     }
                 }
                 shooter.setFlapAngle(target[3]);
@@ -252,7 +255,7 @@ public class Robot {
 
         // Uses Angle Bisector for High Goal for more consistency
         if (targetNum == 3) {
-            double d = 10;
+            double d = 9;
             double a = Math.sqrt(Math.pow(dx + d/2, 2) + Math.pow(dy, 2));
             double b = Math.sqrt(Math.pow(dx - d/2, 2) + Math.pow(dy, 2));
 

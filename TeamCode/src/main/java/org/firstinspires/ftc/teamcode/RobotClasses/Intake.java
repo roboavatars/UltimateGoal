@@ -34,8 +34,6 @@ public class Intake {
         wobbleClamp();
         wobbleMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
-        sticksHome();
-
         op.telemetry.addData("Status", "Intake initialized");
     }
 
