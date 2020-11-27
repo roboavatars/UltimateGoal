@@ -12,6 +12,7 @@ public class Robot {
     // Robot Classes
     public MecanumDrivetrain drivetrain;
     public Intake intake;
+    public WobbleArm wobbleArm;
     public Shooter shooter;
     public T265 t265;
     public Logger logger;
@@ -46,10 +47,12 @@ public class Robot {
     private final double[] shootZ = {24, 24, 24, 35.5};
 
     double[][] targets = {
-            {86.00, 67.80, 1.6563, 0.0307},
+            {86.00, 67.80, 1.6313, 0.0307},
             {88.00, 68.39, 1.5809, 0.0355},
             {90.00, 68.99, 1.4825, 0.0380}
     };
+
+    public double xOffset = 0;
 
     // OpMode Stuff
     private LinearOpMode op;
@@ -60,6 +63,7 @@ public class Robot {
     public Robot(LinearOpMode op, double x, double y, double theta, boolean isAuto) {
         drivetrain = new MecanumDrivetrain(op, x, y, theta);
         intake = new Intake(op);
+        wobbleArm = new WobbleArm(op);
         shooter = new Shooter(op);
         try {
             t265 = new T265(op, x, y, theta);
@@ -123,18 +127,18 @@ public class Robot {
                     target = targets[numRings - 1];
                 }
                 if (isAuto) {
-                    setTargetPoint(target[0], target[1], target[2], 0.2, 0.2, 1.9);
+                    setTargetPoint(target[0] + xOffset, target[1], target[2], 0.2, 0.2, 4.7);
                 } else {
-                    if (!isAtPose(target[0], target[1], target[2])) {
-                        setTargetPoint(target[0], target[1], target[2], 0.17, 0.17, 1.9);
-                    }
+//                    if (!isAtPose(target[0] + xOffset, target[1], target[2])) {
+                        setTargetPoint(target[0] + xOffset, target[1], target[2], 0.17, 0.17, 4.7);
+//                    }
                 }
                 shooter.setFlapAngle(target[3]);
             }
 
             if (shootCounter % shootDelay == 0) {
                 if (numRings > 0) {
-                    if (shooter.feedHome && !clear && !isAtPose(target[0], target[1], target[2])) {
+                    if (shooter.feedHome && !clear/* && !isAtPose(target[0], target[1], target[2])*/) {
                         clear = true;
                         shooter.feedShoot();
                     } else {
@@ -200,7 +204,7 @@ public class Robot {
         addPacket("8 highGoal", highGoal);
         addPacket("9 Time", (System.currentTimeMillis() - startTime) / 1000);
         addPacket("Update Frequency (Hz)", 1 / timeDiff);
-        addPacket("Offset", thetaOffset);
+        addPacket("Offset", xOffset);
 
         drawGoal("black");
         drawRobot(drivetrain.x, drivetrain.y, drivetrain.theta, "green");
@@ -227,8 +231,6 @@ public class Robot {
         sendPacket();
     }
 
-    public double thetaOffset = 0.435135;
-
     // left ps = 0, middle ps = 1, right ps = 2, high goal = 3
     public double[] shoot(int targetNum) {
         /*  power1- (76.5,144,24)
@@ -252,7 +254,7 @@ public class Robot {
 
         // Uses Angle Bisector for High Goal for more consistency
         if (targetNum == 3) {
-            double d = 9;
+            double d = 8;
             double a = Math.sqrt(Math.pow(dx + d/2, 2) + Math.pow(dy, 2));
             double b = Math.sqrt(Math.pow(dx - d/2, 2) + Math.pow(dy, 2));
 
@@ -273,7 +275,7 @@ public class Robot {
         double quadraticRes = (-b - Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a);
         double shooterAngle = 0.27 * (Math.atan(quadraticRes) - 5 * Math.PI / 36) * 3 / Math.PI;*/
 
-        double alignRobotAngle = Math.atan2(dy, dx) + 0.00268976 * d - thetaOffset;
+        double alignRobotAngle = Math.atan2(dy, dx) + 0.00268976 * d - 0.435135;
         double alignRobotX = shooterX - 6.5 * Math.sin(alignRobotAngle);
         double alignRobotY = shooterY + 6.5 * Math.cos(alignRobotAngle);
 
@@ -283,7 +285,7 @@ public class Robot {
     public void highGoalShoot() {
         if (!shoot) {
             shootDelay = 30;
-            shooter.setShooterVelocity(-2000);
+            shooter.setShooterVelocity(-1850);
             highGoal = true;
             initiateShoot();
         }
@@ -291,7 +293,11 @@ public class Robot {
 
     public void powerShotShoot() {
         if (!shoot) {
-            shootDelay = 100;
+            if (isAuto) {
+                shootDelay = 90;
+            } else {
+                shootDelay = 60;
+            }
             shooter.setShooterVelocity(-875);
             highGoal = false;
             initiateShoot();

@@ -20,6 +20,9 @@ public class Teleop extends LinearOpMode {
     public static boolean robotCentric = false;
     public static boolean useAutoPos = true;
 
+    private double[] target;
+    private double d;
+
     public boolean flywheelToggle = false;
     public boolean flywheelOn = false;
     public boolean stickToggle = false;
@@ -40,13 +43,16 @@ public class Teleop extends LinearOpMode {
             robot = new Robot(this, startX, startY, startTheta, false);
         }
 
-        robot.intake.wobbleDown();
+        robot.wobbleArm.wobbleDown();
         robot.logger.startLogging();
         robot.intake.sticksOut();
 
         waitForStart();
 
         while (opModeIsActive()) {
+
+            target = robot.shoot(3);
+            d = Math.sqrt(Math.pow(robot.x - 108, 2) + Math.pow(robot.y - 150, 2));
 
             if (gamepad2.right_bumper) {
                 robot.intake.intakeOn();
@@ -63,10 +69,13 @@ public class Teleop extends LinearOpMode {
             }
 
             if (gamepad1.dpad_left) {
-                robot.thetaOffset -= 0.01;
+                robot.xOffset -= 0.01;
             }
             if (gamepad1.dpad_right) {
-                robot.thetaOffset += 0.01;
+                robot.xOffset += 0.01;
+            }
+            if (gamepad1.dpad_up) {
+                robot.xOffset = 0;
             }
 
             if (gamepad2.y && !flywheelToggle) {
@@ -96,9 +105,9 @@ public class Teleop extends LinearOpMode {
             if (gamepad2.a && !motorToggle) {
                 motorToggle = true;
                 if (motorDown) {
-                    robot.intake.wobbleUp();
+                    robot.wobbleArm.wobbleUp();
                 } else {
-                    robot.intake.wobbleDown();
+                    robot.wobbleArm.wobbleDown();
                 }
                 motorDown = !motorDown;
             } else if (!gamepad2.a && motorToggle) {
@@ -108,9 +117,9 @@ public class Teleop extends LinearOpMode {
             if (gamepad2.b && !clampToggle) {
                 clampToggle = true;
                 if (clamped) {
-                    robot.intake.wobbleRelease();
+                    robot.wobbleArm.wobbleRelease();
                 } else {
-                    robot.intake.wobbleClamp();
+                    robot.wobbleArm.wobbleClamp();
                 }
                 clamped = !clamped;
             } else if (!gamepad2.b && clampToggle) {
@@ -128,6 +137,7 @@ public class Teleop extends LinearOpMode {
             telemetry.addData("Robot X", robot.x);
             telemetry.addData("Robot Y", robot.y);
             telemetry.addData("Robot Theta", robot.theta);
+            telemetry.addData("Distance", d);
             telemetry.addData("numRings", robot.numRings);
             telemetry.addData("Flap Angle", robot.shooter.getFlapAngle());
             telemetry.update();

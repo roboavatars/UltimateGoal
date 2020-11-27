@@ -14,6 +14,11 @@ public class Regression extends LinearOpMode {
 
     int shooterVelocity = -2000;
 
+    private final double xyTol = 1;
+    private final double thetaTol = Math.PI / 35;
+
+    private double d;
+
     private Robot robot;
     private final boolean robotCentric = false;
 
@@ -38,6 +43,16 @@ public class Regression extends LinearOpMode {
                 robot.shooter.feedShoot();
             } else {
                 robot.shooter.feedHome();
+            }
+
+            if (gamepad1.right_trigger > 0) {
+                double[] target = robot.shoot(3);
+                d = Math.sqrt(Math.pow(robot.x - 108, 2) + Math.pow(robot.y - 150, 2));
+
+                if (!(Math.abs(robot.x - target[0]) < xyTol && Math.abs(robot.y - target[1]) < xyTol && Math.abs(robot.theta - target[2]) < thetaTol)) {
+                    robot.setTargetPoint(target[0], target[1], target[2], 0.2, 0.2, 1.9);
+                    robot.shooter.setFlapAngle(target[3]);
+                }
             }
 
 //            if (gamepad1.a) {
@@ -66,6 +81,7 @@ public class Regression extends LinearOpMode {
             telemetry.addData("Robot X", robot.x);
             telemetry.addData("Robot Y", robot.y);
             telemetry.addData("Robot Theta", robot.theta);
+            telemetry.addData("Distance", d);
             telemetry.addData("numRings", robot.numRings);
             telemetry.addData("Shooter Velocity", robot.shooter.getShooterVelocity());
             telemetry.addData("Flap Angle", robot.shooter.getFlapAngle());

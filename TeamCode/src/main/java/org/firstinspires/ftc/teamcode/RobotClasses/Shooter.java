@@ -29,6 +29,8 @@ public class Shooter {
     private final double feedHomePos = 0.45;
     private final double feedShootPos = 0.70;
 
+    private double currentFlapPos = flapHomePos;
+
     public boolean magHome = true;
     public boolean feedHome = true;
 
@@ -53,7 +55,7 @@ public class Shooter {
     }
 
     public void flywheelOn() {
-        setShooterVelocity(-2000);
+        setShooterVelocity(-1850);
     }
 
     public void flywheelOff() {
@@ -71,7 +73,10 @@ public class Shooter {
     }
 
     public void setFlapAngle(double angle) {
-        flapServo.setPosition(angle);
+        if (angle != currentFlapPos) {
+            flapServo.setPosition(angle);
+            currentFlapPos = angle;
+        }
     }
 
     public double getFlapAngle() {

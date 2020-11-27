@@ -22,7 +22,7 @@ public class Test extends LinearOpMode {
     @Override
     public void runOpMode() {
         robot = new Robot(this, 90, 9, Math.PI/2, false);
-        robot.intake.wobbleDown();
+        robot.wobbleArm.wobbleDown();
 
         waitForStart();
 

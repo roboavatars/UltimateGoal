@@ -9,8 +9,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Intake {
 
     private DcMotorEx intakeMotor;
-    private DcMotorEx wobbleMotor;
-    private Servo wobbleServo;
     private Servo lStickServo;
     private Servo rStickServo;
 
@@ -27,12 +25,6 @@ public class Intake {
         intakeMotor = op.hardwareMap.get(DcMotorEx.class, "intake");
         lStickServo = op.hardwareMap.get(Servo.class, "leftStick");
         rStickServo = op.hardwareMap.get(Servo.class, "rightStick");
-
-        wobbleServo = op.hardwareMap.get(Servo.class, "wobbleServo");
-        wobbleMotor = op.hardwareMap.get(DcMotorEx.class, "wobbleMotor");
-        wobbleUp();
-        wobbleClamp();
-        wobbleMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
 
         op.telemetry.addData("Status", "Intake initialized");
     }
@@ -70,25 +62,5 @@ public class Intake {
     public void sticksOut() {
         lStickServo.setPosition(lOutPos);
         rStickServo.setPosition(rOutPos);
-    }
-
-    public void wobbleUp() {
-        wobbleClamp();
-        wobbleMotor.setTargetPosition(wobbleUpPos);
-        wobbleMotor.setPower(0.4);
-    }
-
-    public void wobbleDown() {
-        wobbleClamp();
-        wobbleMotor.setTargetPosition(wobbleDownPos);
-        wobbleMotor.setPower(0.4);
-    }
-
-    public void wobbleClamp() {
-        wobbleServo.setPosition(wobbleClampPos);
-    }
-
-    public void wobbleRelease() {
-        wobbleServo.setPosition(wobbleReleasePos);
     }
 }
