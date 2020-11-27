@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.RobotClasses;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @SuppressWarnings("FieldCanBeLocal")
@@ -16,25 +17,23 @@ public class Intake {
     private final double rHomePos = 0;
     private final double lOutPos = 0;
     private final double rOutPos = 0.85;
-    private final int wobbleUpPos = -80;
-    private final int wobbleDownPos = -800;
-    private final double wobbleClampPos = 0.20;
-    private final double wobbleReleasePos = 0.75;
 
     public Intake(LinearOpMode op) {
         intakeMotor = op.hardwareMap.get(DcMotorEx.class, "intake");
         lStickServo = op.hardwareMap.get(Servo.class, "leftStick");
         rStickServo = op.hardwareMap.get(Servo.class, "rightStick");
 
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
         op.telemetry.addData("Status", "Intake initialized");
     }
 
     public void intakeOn() {
-        intakeMotor.setPower(-1);
+        intakeMotor.setPower(-0.7);
     }
 
     public void intakeRev() {
-        intakeMotor.setPower(1);
+        intakeMotor.setPower(0.7);
     }
 
     public void intakeOff() {
