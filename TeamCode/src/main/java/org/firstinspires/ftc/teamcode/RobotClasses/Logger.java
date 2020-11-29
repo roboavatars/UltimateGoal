@@ -61,7 +61,7 @@ public class Logger {
                         double accelX, double accelY, double accelTheta, double numRings) {
         @SuppressLint("SimpleDateFormat") SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss.SSS"); Date d = new Date();
         data += df.format(d)+","+timeSinceSt+","+x+","+y+","+theta+","+velocityX+","+velocityY+","+velocityTheta+","+
-                accelX+","+accelY+","+accelTheta+numRings+"\n";
+                accelX+","+accelY+","+accelTheta+","+numRings+"\n";
     }
 
     /**

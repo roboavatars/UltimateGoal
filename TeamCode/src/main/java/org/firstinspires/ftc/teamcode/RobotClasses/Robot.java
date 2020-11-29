@@ -32,6 +32,8 @@ public class Robot {
 
     public double shootCounter = 0;
     public double shootDelay = 50;
+    public double magVibrateCounter = 0;
+    public double magVibrateDelay = 10;
     public boolean shoot = false;
     public boolean clear = false;
     public boolean highGoal = false;
@@ -63,7 +65,7 @@ public class Robot {
     public Robot(LinearOpMode op, double x, double y, double theta, boolean isAuto) {
         drivetrain = new MecanumDrivetrain(op, x, y, theta);
         intake = new Intake(op);
-        wobbleArm = new WobbleArm(op);
+        wobbleArm = new WobbleArm(op, isAuto);
         shooter = new Shooter(op);
         try {
             t265 = new T265(op, x, y, theta);
@@ -91,6 +93,7 @@ public class Robot {
     public void update() {
         cycleCounter++;
         shootCounter++;
+        magVibrateCounter++;
 
         if (firstLoop) {
             startTime = System.currentTimeMillis();
@@ -112,6 +115,14 @@ public class Robot {
 
         0 rings, shoot, mag shoot, feed home- mag home, intake on
         */
+
+        if (!shoot && intake.intakeOn && magVibrateCounter % magVibrateDelay == 0) {
+            if (shooter.magVibrate) {
+                shooter.magHome();
+            } else {
+                shooter.magVibrate();
+            }
+        }
 
         if (numRings == 3 && shoot && shooter.magHome && shooter.feedHome) {
             shooter.magShoot();
@@ -285,7 +296,7 @@ public class Robot {
     public void highGoalShoot() {
         if (!shoot) {
             shootDelay = 30;
-            shooter.setShooterVelocity(-1850);
+            shooter.flywheelOn();
             highGoal = true;
             initiateShoot();
         }
@@ -294,7 +305,7 @@ public class Robot {
     public void powerShotShoot() {
         if (!shoot) {
             if (isAuto) {
-                shootDelay = 90;
+                shootDelay = 85;
             } else {
                 shootDelay = 60;
             }

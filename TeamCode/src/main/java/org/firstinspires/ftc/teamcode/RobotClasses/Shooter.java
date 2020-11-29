@@ -24,7 +24,8 @@ public class Shooter {
 
     private final double flapHomePos = 0;
     private final double flapMaxPos = 0.25;
-    private final double magHomePos = 0.25;
+    private final double magHomePos = 0.24;
+    private final double magVibratePos = 0.23;
     private final double magShootPos = 0.50;
     private final double feedHomePos = 0.45;
     private final double feedShootPos = 0.70;
@@ -32,6 +33,7 @@ public class Shooter {
     private double currentFlapPos = flapHomePos;
 
     public boolean magHome = true;
+    public boolean magVibrate = false;
     public boolean feedHome = true;
 
     public Shooter(LinearOpMode op) {
@@ -55,7 +57,7 @@ public class Shooter {
     }
 
     public void flywheelOn() {
-        setShooterVelocity(-1850);
+        setShooterVelocity(-1800);
     }
 
     public void flywheelOff() {
@@ -90,11 +92,18 @@ public class Shooter {
     public void magHome() {
         magServo.setPosition(magHomePos);
         magHome = true;
+        magVibrate = false;
+    }
+
+    public void magVibrate() {
+        magServo.setPosition(magVibratePos);
+        magVibrate = true;
     }
 
     public void magShoot() {
         magServo.setPosition(magShootPos);
         magHome = false;
+        magVibrate = false;
     }
 
     public void feedHome() {

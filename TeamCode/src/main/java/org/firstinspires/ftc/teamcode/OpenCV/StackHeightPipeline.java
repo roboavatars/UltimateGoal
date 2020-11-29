@@ -123,6 +123,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
         if (i == 0) {
             result = new double[]{0,0,0};
             ringCase = RingCase.Zero;
+            log("No Contours Detected");
         }
 
         log("Result: " + Arrays.toString(result));
