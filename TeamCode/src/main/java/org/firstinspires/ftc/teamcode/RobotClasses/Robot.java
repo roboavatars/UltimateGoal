@@ -49,7 +49,7 @@ public class Robot {
     private final double[] shootZ = {24, 24, 24, 35.5};
 
     double[][] targets = {
-            {86.00, 67.80, 1.6313, 0.0307},
+            {86.00, 67.80, 1.6353, 0.0307},
             {88.00, 68.39, 1.5809, 0.0355},
             {90.00, 68.99, 1.4825, 0.0380}
     };
@@ -295,7 +295,7 @@ public class Robot {
 
     public void highGoalShoot() {
         if (!shoot) {
-            shootDelay = 30;
+            shootDelay = 15;
             shooter.flywheelOn();
             highGoal = true;
             initiateShoot();

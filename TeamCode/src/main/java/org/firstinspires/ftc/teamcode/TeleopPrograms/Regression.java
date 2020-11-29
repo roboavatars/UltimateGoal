@@ -12,8 +12,6 @@ public class Regression extends LinearOpMode {
     public int startY = 9;
     public double startTheta = Math.PI/2;
 
-    int shooterVelocity = -2000;
-
     private final double xyTol = 1;
     private final double thetaTol = Math.PI / 35;
 
@@ -33,7 +31,7 @@ public class Regression extends LinearOpMode {
 
             if (gamepad1.left_bumper) {
                 robot.shooter.magShoot();
-                robot.shooter.setShooterVelocity(shooterVelocity);
+                robot.shooter.setShooterVelocity(-875);
             } else {
                 robot.shooter.magHome();
                 robot.shooter.flywheelOff();
@@ -46,13 +44,18 @@ public class Regression extends LinearOpMode {
             }
 
             if (gamepad1.right_trigger > 0) {
-                double[] target = robot.shoot(3);
-                d = Math.sqrt(Math.pow(robot.x - 108, 2) + Math.pow(robot.y - 150, 2));
-
-                if (!(Math.abs(robot.x - target[0]) < xyTol && Math.abs(robot.y - target[1]) < xyTol && Math.abs(robot.theta - target[2]) < thetaTol)) {
-                    robot.setTargetPoint(target[0], target[1], target[2], 0.2, 0.2, 1.9);
-                    robot.shooter.setFlapAngle(target[3]);
-                }
+                robot.setTargetPoint(86.00, 67.80, 1.6353, 0.2, 0.2, 1.9);
+//                double[] target = robot.shoot(3);
+//                d = Math.sqrt(Math.pow(robot.x - 108, 2) + Math.pow(robot.y - 150, 2));
+//
+//                if (!(Math.abs(robot.x - target[0]) < xyTol && Math.abs(robot.y - target[1]) < xyTol && Math.abs(robot.theta - target[2]) < thetaTol)) {
+//                    robot.setTargetPoint(target[0], target[1], target[2], 0.2, 0.2, 1.9);
+//                    robot.shooter.setFlapAngle(target[3]);
+//                }
+            } else if (robotCentric) {
+                robot.drivetrain.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
+            } else {
+                robot.drivetrain.setGlobalControls(gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x);
             }
 
 //            if (gamepad1.a) {
@@ -68,12 +71,6 @@ public class Regression extends LinearOpMode {
             }
             if (gamepad1.dpad_down && robot.shooter.getFlapAngle() > 0.02) {
                 robot.shooter.flapServo.setPosition(robot.shooter.getFlapAngle() - 0.001);
-            }
-
-            if (robotCentric) {
-                robot.drivetrain.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
-            } else {
-                robot.drivetrain.setGlobalControls(gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x);
             }
 
             robot.update();

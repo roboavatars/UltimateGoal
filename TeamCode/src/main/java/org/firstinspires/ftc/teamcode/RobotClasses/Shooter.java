@@ -5,6 +5,7 @@ import android.util.Log;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
@@ -27,8 +28,8 @@ public class Shooter {
     private final double magHomePos = 0.24;
     private final double magVibratePos = 0.23;
     private final double magShootPos = 0.50;
-    private final double feedHomePos = 0.45;
-    private final double feedShootPos = 0.70;
+    private final double feedHomePos = 0.15;
+    private final double feedShootPos = 0.35;
 
     private double currentFlapPos = flapHomePos;
 
@@ -41,8 +42,10 @@ public class Shooter {
         shooterMotor2 = op.hardwareMap.get(DcMotorEx.class, "shooter2");
         shooterMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooterMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooterMotor1.setVelocityPIDFCoefficients(20, 0, 0, 16);
-        shooterMotor2.setVelocityPIDFCoefficients(20, 0, 0, 16);
+        shooterMotor1.setVelocityPIDFCoefficients(28, 0, 0, 18);
+        shooterMotor2.setVelocityPIDFCoefficients(28, 0, 0, 18);
+        shooterMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooterMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         flapServo = op.hardwareMap.get(Servo.class, "flapServo");
         magServo = op.hardwareMap.get(Servo.class, "magServo");
@@ -57,7 +60,7 @@ public class Shooter {
     }
 
     public void flywheelOn() {
-        setShooterVelocity(-1800);
+        setShooterVelocity(-1750);
     }
 
     public void flywheelOff() {
