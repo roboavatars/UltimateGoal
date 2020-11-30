@@ -8,7 +8,6 @@ import org.firstinspires.ftc.teamcode.OpenCV.StackHeightDetector;
 import org.firstinspires.ftc.teamcode.OpenCV.StackHeightPipeline.RingCase;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 import org.firstinspires.ftc.teamcode.Splines.Path;
-import org.firstinspires.ftc.teamcode.Splines.Point2D;
 import org.firstinspires.ftc.teamcode.Splines.Pose;
 import org.firstinspires.ftc.teamcode.Splines.Spline;
 import org.firstinspires.ftc.teamcode.Splines.Waypoint;
@@ -38,7 +37,7 @@ public class RedAuto extends LinearOpMode {
 
         Robot robot = new Robot(this, 90, 9, PI/2, true);
         robot.logger.startLogging();
-        robot.intake.sticksHome();
+        robot.intake.sticksHomeAuto();
         robot.shooter.magShoot();
 
         StackHeightDetector detector = new StackHeightDetector(this);
@@ -115,7 +114,7 @@ public class RedAuto extends LinearOpMode {
                 Pose curPose = startLinePath.getRobotPose(curTime);
                 robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta());
 
-                robot.shooter.setShooterVelocity(-875);
+                robot.shooter.flywheelPowershot();
 
                 if (time.seconds() > startLineTime) {
                     robot.intake.sticksHome();
@@ -203,7 +202,7 @@ public class RedAuto extends LinearOpMode {
 
                 if (time.seconds() > intakeWobble2Time + 1.5) {
                     if (ringCase != RingCase.Zero) {
-//                        robot.intake.intakeOn();
+                        robot.intake.intakeOn();
                     } else {
                         robot.intake.intakeOff();
                     }
@@ -216,7 +215,7 @@ public class RedAuto extends LinearOpMode {
                     intakeStackPath = new Path(new ArrayList<>(Arrays.asList(intakeStackWaypoints)));
 
                     if (ringCase != RingCase.Zero) {
-                        robot.shooter.flywheelOn();
+                        robot.shooter.flywheelHighGoal();
                     }
 
                     intakeWobble2 = true;
@@ -333,9 +332,6 @@ public class RedAuto extends LinearOpMode {
 
                 if (robot.isAtPose(curPose.getX(), curPose.getY(), PI/2)) {
                     robot.intake.sticksOut();
-                    robot.intake.intakeOff();
-                    robot.wobbleArm.wobbleHome();
-                    robot.shooter.feedHome();
                     park = true;
                 }
             }

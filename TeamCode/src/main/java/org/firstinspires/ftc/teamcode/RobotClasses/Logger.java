@@ -7,14 +7,13 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
 @SuppressLint("SdCardPath")
 public class Logger {
 
-    private static String basePath = "/sdcard/FIRST/robotLogs/RobotData";
+    private static final String basePath = "/sdcard/FIRST/robotLogs/RobotData";
     private static FileWriter fileWriter;
     private static BufferedReader bufferedReader;
     private String data = "";
@@ -28,7 +27,7 @@ public class Logger {
             data = "";
             File robotDataLog = new File(getLogName(true));
             fileWriter = new FileWriter(robotDataLog);
-            fileWriter.write("Timestamp,SinceStart,X,Y,Theta,VelocityX,VelocityY,VelocityTheta,AccelX,AccelY,AccelTheta,NumRings\n");
+            fileWriter.write("Timestamp,SinceStart,X,Y,Theta,VelocityX,VelocityY,VelocityTheta,AccelX,AccelY,AccelTheta,NumRings,MagHome,FeedHome\n");
         } catch (Exception e) {e.printStackTrace();}
     }
 
@@ -39,7 +38,9 @@ public class Logger {
         int logNum = 1;
         while (true) {
             File currentFile = new File(basePath + logNum + ".csv");
-            if (!currentFile.exists()) break;
+            if (!currentFile.exists()) {
+                break;
+            }
             logNum++;
         }
         return logNum - 1;
@@ -50,18 +51,21 @@ public class Logger {
      */
     private static String getLogName(boolean fileWrite) {
         Robot.log(basePath + (getLastFileNumber() + 1) + ".csv");
-        if (fileWrite) return basePath + (getLastFileNumber() + 1) + ".csv";
-        else return basePath + getLastFileNumber() + ".csv";
+        if (fileWrite) {
+            return basePath + (getLastFileNumber() + 1) + ".csv";
+        } else {
+            return basePath + getLastFileNumber() + ".csv";
+        }
     }
 
     /**
      * Adds data to string
      */
     public void logData(double timeSinceSt, double x, double y, double theta, double velocityX, double velocityY, double velocityTheta,
-                        double accelX, double accelY, double accelTheta, double numRings) {
+                        double accelX, double accelY, double accelTheta, int numRings, boolean magHome, boolean feedHome) {
         @SuppressLint("SimpleDateFormat") SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss.SSS"); Date d = new Date();
         data += df.format(d)+","+timeSinceSt+","+x+","+y+","+theta+","+velocityX+","+velocityY+","+velocityTheta+","+
-                accelX+","+accelY+","+accelTheta+","+numRings+"\n";
+                accelX+","+accelY+","+accelTheta+","+numRings+","+magHome+","+feedHome+"\n";
     }
 
     /**

@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.RobotClasses;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -23,15 +21,15 @@ public class Shooter {
 
     private DistanceSensor ringSensor;
 
+    private final int highGoalV = -1175;
+    private final int powershotV = -875;
     private final double flapHomePos = 0;
-    private final double flapMaxPos = 0.25;
+    private final double flapMaxPos = 0.15;
     private final double magHomePos = 0.24;
     private final double magVibratePos = 0.23;
     private final double magShootPos = 0.50;
     private final double feedHomePos = 0.15;
     private final double feedShootPos = 0.35;
-
-    private double currentFlapPos = flapHomePos;
 
     public boolean magHome = true;
     public boolean magVibrate = false;
@@ -42,8 +40,8 @@ public class Shooter {
         shooterMotor2 = op.hardwareMap.get(DcMotorEx.class, "shooter2");
         shooterMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooterMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooterMotor1.setVelocityPIDFCoefficients(28, 0, 0, 18);
-        shooterMotor2.setVelocityPIDFCoefficients(28, 0, 0, 18);
+        shooterMotor1.setVelocityPIDFCoefficients(38, 0, 0, 17);
+        shooterMotor2.setVelocityPIDFCoefficients(38, 0, 0, 17);
         shooterMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
         shooterMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -59,8 +57,12 @@ public class Shooter {
         op.telemetry.addData("Status", "Shooter initialized");
     }
 
-    public void flywheelOn() {
-        setShooterVelocity(-1750);
+    public void flywheelHighGoal() {
+        setShooterVelocity(highGoalV);
+    }
+
+    public void flywheelPowershot() {
+        setShooterVelocity(powershotV);
     }
 
     public void flywheelOff() {
@@ -70,7 +72,6 @@ public class Shooter {
     public void setShooterVelocity(double velocity) {
         shooterMotor1.setVelocity(velocity);
         shooterMotor2.setVelocity(-velocity);
-        Log.w("shooter-log", "Shooter Velocity: " + velocity);
     }
 
     public double getShooterVelocity() {
@@ -78,9 +79,8 @@ public class Shooter {
     }
 
     public void setFlapAngle(double angle) {
-        if (angle != currentFlapPos) {
+        if (getFlapAngle() > 0 && getFlapAngle() < flapMaxPos) {
             flapServo.setPosition(angle);
-            currentFlapPos = angle;
         }
     }
 
@@ -119,12 +119,12 @@ public class Shooter {
         feedHome = false;
     }
 
-    public double getDistance() {
+    /*public double getDistance() {
         return ringSensor.getDistance(DistanceUnit.CM);
     }
 
     public int ringsInMag() {
-        /*if (getDistance() >  && getDistance() < ) {
+        if (getDistance() >  && getDistance() < ) {
             return 3;
         } else if (getDistance() > && getDistance() < ) {
             return 2;
@@ -132,8 +132,8 @@ public class Shooter {
             return 1;
         } else {
             return 0;
-        }*/
+        }
         return 0;
-    }
+    }*/
 
 }

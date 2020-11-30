@@ -83,9 +83,9 @@ public class Teleop extends LinearOpMode {
                 if (flywheelOn) {
                     robot.shooter.flywheelOff();
                 } else {
-                    robot.shooter.flywheelOn();
+                    robot.shooter.flywheelHighGoal();
                 }
-                flywheelToggle = !flywheelToggle;
+                flywheelOn = !flywheelOn;
             } else if (!gamepad2.y && flywheelToggle) {
                 flywheelToggle = false;
             }

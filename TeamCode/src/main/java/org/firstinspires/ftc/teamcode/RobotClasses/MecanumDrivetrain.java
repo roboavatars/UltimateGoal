@@ -58,24 +58,17 @@ public class MecanumDrivetrain {
     private double lastpod2 = 0;
     private double lastpod3 = 0;
 
-    // K Variables for Control of Linear System
-    public double xk = 0.30;
-    public double yk = 0.30;
-    public double thetak = 2.4;
-
     // Motor Caching Stuff
     private double lastFRPower = 0;
     private double lastBRPower = 0;
     private double lastFLPower = 0;
     private double lastBLPower = 0;
-    public static double motorUpdateTolerance = 0.05;
+    private final double motorUpdateTolerance = 0.05;
 
     // Constants
     public static double OdometryTrackWidth = 13.79;
     public static double OdometryHorizontalOffset = -3.165;
     private final double OdometryHeadingThreshold = Math.PI / 8;
-    // 1440 ticks per encoder revolution, 4.3289 inches per wheel revolution
-    private final double encoderCountsPerRevolution = 537.6;
 
     public boolean zeroStrafeCorrection = false;
 

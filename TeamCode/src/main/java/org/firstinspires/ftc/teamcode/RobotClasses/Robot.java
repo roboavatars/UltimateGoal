@@ -19,9 +19,11 @@ public class Robot {
 
     // Class Constants
     private final int loggerUpdatePeriod = 2;
-    //private final int distUpdatePeriod = 15;
     private final double xyTolerance = 1;
     private final double thetaTolerance = Math.PI / 35;
+    private final double xk = 0.30;
+    private final double yk = 0.30;
+    private final double thetak = 2.4;
     private double odoWeight = 1;
 
     // State Variables
@@ -31,7 +33,7 @@ public class Robot {
     private boolean isAuto;
 
     public double shootCounter = 0;
-    public double shootDelay = 50;
+    public double shootDelay = 15;
     public double magVibrateCounter = 0;
     public double magVibrateDelay = 10;
     public boolean shoot = false;
@@ -99,10 +101,6 @@ public class Robot {
             startTime = System.currentTimeMillis();
             firstLoop = false;
         }
-
-        /*if (cycleCounter % distUpdatePeriod == 0) {
-            numRings = shooter.ringsInMag();
-        }*/
 
         /*
         States-
@@ -196,7 +194,7 @@ public class Robot {
 
         // Log Data
         if (cycleCounter % loggerUpdatePeriod == 0) {
-            logger.logData(System.currentTimeMillis()-startTime, x, y, theta, vx, vy, w, ax, ay, a, numRings);
+            logger.logData(System.currentTimeMillis()-startTime, x, y, theta, vx, vy, w, ax, ay, a, numRings, shooter.magHome, shooter.feedHome);
         }
 
         // Remember Old Motion Info
@@ -205,10 +203,10 @@ public class Robot {
         prevVx = vx; prevVy = vy; prevW = w;
 
         // Telemetry
-        addPacket("1 X", x);
-        addPacket("2 Y", y);
-        addPacket("3 Theta", theta);
-        addPacket("4 Angle Pos", shooter.flapServo.getPosition());
+        addPacket("1 X", String.format("%.5f", x));
+        addPacket("2 Y", String.format("%.5f", y));
+        addPacket("3 Theta", String.format("%.5f", theta));
+        addPacket("4 Angle Pos", String.format("%.5f", shooter.flapServo.getPosition()));
         addPacket("5 Shooter Velocity", shooter.getShooterVelocity());
         addPacket("6 numRings", numRings);
         addPacket("7 shoot", shoot);
@@ -223,22 +221,6 @@ public class Robot {
             drawRobot(t265.getCamX(), t265.getCamY(), t265.getCamTheta(), "red");
         }
         drawRobot(x, y, theta, "black");
-        /*if (numRings == 0) {
-            drawRobot(targets[2][0], targets[2][1], targets[2][2], "yellow");
-            drawLine(targets[2][0], targets[2][1], shootX[2], shootZ[2], "black");
-        }
-        else {
-            String color;
-            if (numRings == 3) {
-                color = "yellow";
-            } else if (numRings == 2) {
-                color = "blue";
-            } else {
-                color = "green";
-            }
-            drawRobot(targets[numRings - 1][0], targets[numRings - 1][1], targets[numRings - 1][2], color);
-            drawLine(targets[numRings - 1][0], targets[numRings - 1][1], shootX[numRings - 1], shootZ[numRings - 1], color);
-        }*/
         sendPacket();
     }
 
@@ -276,7 +258,7 @@ public class Robot {
 
         // Calculate Shooter Angle
         double d = Math.sqrt(Math.pow(targetX - shooterX, 2) + Math.pow(targetY - shooterY, 2));
-        double shooterAngle = -0.00333008 * d + 0.311806;
+        double flapAngle = -0.0001 * Math.pow(d, 2) + 0.0167 * d - 0.4905;
 
         /*double alignRobotAngle = Math.asin((dx * vx - dx * vy) / Math.sqrt(Math.pow(p, 2) + Math.pow(q, 2))) - Math.atan(q / p);
         double dz = targetZ - 8;
@@ -286,17 +268,17 @@ public class Robot {
         double quadraticRes = (-b - Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a);
         double shooterAngle = 0.27 * (Math.atan(quadraticRes) - 5 * Math.PI / 36) * 3 / Math.PI;*/
 
-        double alignRobotAngle = Math.atan2(dy, dx) + 0.00268976 * d - 0.435135;
+        double alignRobotAngle = Math.atan2(dy, dx) + 0.0013 * d - 0.2962;
         double alignRobotX = shooterX - 6.5 * Math.sin(alignRobotAngle);
         double alignRobotY = shooterY + 6.5 * Math.cos(alignRobotAngle);
 
-        return new double[] {alignRobotX, alignRobotY, alignRobotAngle, shooterAngle};
+        return new double[] {alignRobotX, alignRobotY, alignRobotAngle, flapAngle};
     }
 
     public void highGoalShoot() {
         if (!shoot) {
             shootDelay = 15;
-            shooter.flywheelOn();
+            shooter.flywheelHighGoal();
             highGoal = true;
             initiateShoot();
         }
@@ -309,7 +291,7 @@ public class Robot {
             } else {
                 shootDelay = 60;
             }
-            shooter.setShooterVelocity(-875);
+            shooter.flywheelPowershot();
             highGoal = false;
             initiateShoot();
         }
@@ -323,9 +305,6 @@ public class Robot {
 
     // set target point (default K values)
     public void setTargetPoint(double xtarget, double ytarget, double thetatarget) {
-        double thetak = drivetrain.thetak;
-        double xk = drivetrain.xk;
-        double yk = drivetrain.yk;
 
         // Make Sure thetatarget is Between 0 and 2pi
         thetatarget = thetatarget % (Math.PI * 2);
