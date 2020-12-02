@@ -14,15 +14,15 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 public class Test extends LinearOpMode {
 
     private Robot robot;
-    public static double home = 0.15;
-    public static double out = 0.35;
+    public static double home = 0.95;
+    public static double out = 0.05;
     public static boolean isHome = true;
     private double position;
+    public static boolean isLeft = true;
 
     @Override
     public void runOpMode() {
         robot = new Robot(this, 90, 9, Math.PI/2, false);
-        robot.shooter.magShoot();
 
         waitForStart();
 
@@ -33,10 +33,10 @@ public class Test extends LinearOpMode {
                 position = out;
             }
 
-            if (gamepad1.right_bumper) {
-                robot.powerShotShoot();
-            } else if (gamepad1.left_bumper) {
-                robot.highGoalShoot();
+            if (isLeft) {
+                robot.intake.stickLeft(position);
+            } else {
+                robot.intake.stickRight(position);
             }
 
             robot.update();
