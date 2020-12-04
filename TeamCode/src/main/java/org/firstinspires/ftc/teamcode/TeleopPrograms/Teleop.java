@@ -20,9 +20,6 @@ public class Teleop extends LinearOpMode {
     public static boolean robotCentric = false;
     public static boolean useAutoPos = true;
 
-    private double[] target;
-    private double d;
-
     public boolean flywheelToggle = false;
     public boolean flywheelOn = false;
     public boolean stickToggle = false;
@@ -31,6 +28,8 @@ public class Teleop extends LinearOpMode {
     public boolean clampToggle = true;
     public boolean motorDown = false;
     public boolean clamped = false;
+
+    private double d;
 
     @Override
     public void runOpMode() {
@@ -51,7 +50,6 @@ public class Teleop extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            target = robot.shoot(3);
             d = Math.sqrt(Math.pow(robot.x - 108, 2) + Math.pow(robot.y - 150, 2));
 
             if (gamepad2.right_bumper) {
@@ -63,9 +61,13 @@ public class Teleop extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
-                robot.powerShotShoot();
+                if (robot.shooter.getShooterVelocity() > 500) {
+                    robot.powerShotShoot();
+                }
             } else if (gamepad1.left_bumper) {
-                robot.highGoalShoot();
+                if (robot.shooter.getShooterVelocity() > 500) {
+                    robot.highGoalShoot();
+                }
             }
 
             if (gamepad1.dpad_left) {
@@ -134,18 +136,17 @@ public class Teleop extends LinearOpMode {
 
             robot.update();
 
-            telemetry.addData("Robot X", robot.x);
-            telemetry.addData("Robot Y", robot.y);
-            telemetry.addData("Robot Theta", robot.theta);
-            telemetry.addData("Distance", d);
-            telemetry.addData("numRings", robot.numRings);
-            telemetry.addData("Flap Angle", robot.shooter.getFlapAngle());
+            telemetry.addData("X", robot.x);
+            telemetry.addData("Y", robot.y);
+            telemetry.addData("Theta", robot.theta);
+            telemetry.addData("High Goal Distance", d);
+            telemetry.addData("# Rings", robot.numRings);
+            telemetry.addData("Shooter Velocity", robot.shooter.getShooterVelocity());
             telemetry.update();
 
         }
 
         robot.shooter.feedHome();
-
         robot.stop();
     }
 }

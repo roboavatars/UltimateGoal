@@ -101,7 +101,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
                 double width = boundingRect.size.width;
                 double height = boundingRect.size.height;
                 double wh_ratio = width/height;
-                System.out.println(width + " " + height + " " + wh_ratio);
+               log("Loop(" + i + "): " + width + " " + height + " " + wh_ratio);
 
                 result = new double[]{width, height, wh_ratio};
 
@@ -112,8 +112,6 @@ public class StackHeightPipeline extends OpenCvPipeline {
                 } else if (FOUR_MIN <= wh_ratio && wh_ratio <= ONE_MIN) {
                     ringCase = RingCase.Four;
                 }
-
-                log("WH Ratio: " + wh_ratio);
             }
         }
 

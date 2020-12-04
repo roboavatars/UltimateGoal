@@ -64,7 +64,6 @@ public class RedAuto extends LinearOpMode {
         waitForStart();
 
         RingCase ringCase = detector.getResult();
-
         double[][] wobbleDelivery = {{123, 73}, {98, 97}, {126, 124}};
         double[][] wobble2Delivery = {{119, 68}, {96, 92}, {121, 118}};
 
@@ -162,6 +161,12 @@ public class RedAuto extends LinearOpMode {
                 Pose curPose = deliverWobblePath.getRobotPose(curTime);
                 robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta());
 
+                if (time.seconds() > deliverWobbleTime + 0.5) {
+                    robot.intake.setIntakePow(-0.6);
+                } else if (time.seconds() > deliverWobbleTime) {
+                    robot.intake.sticksHalf();
+                }
+
                 if (time.seconds() > deliverWobbleTime + 1) {
 
                     robot.intake.sticksHome();
@@ -180,7 +185,7 @@ public class RedAuto extends LinearOpMode {
                         intakeWobble2Waypoints = new Waypoint[] {
                                 new Waypoint(robot.drivetrain.x, robot.drivetrain.y, robot.drivetrain.theta, -10.0, -50.0, 0.0, 0.0),
                                 new Waypoint(127, 66, PI/2, -15.0, 10.0, 0.0, 2.0),
-                                new Waypoint(124, 37, 5*PI/12, 0.0, -30.0, 0.0, intakeWobble2Time),
+                                new Waypoint(124.5, 37, 5*PI/12, 0.0, -30.0, 0.0, intakeWobble2Time),
                         };
                         intakeWobble2ThetaSpline = new Spline(5*PI/12, 0.2, 0.0, 5*PI/12, 0.0, 0.0, intakeWobble2Time);
                     } else {
@@ -195,9 +200,6 @@ public class RedAuto extends LinearOpMode {
 
                     deliverWobble = true;
                     time.reset();
-                } else if (time.seconds() > deliverWobbleTime) {
-                    robot.intake.setIntakePow(-0.6);
-                    robot.intake.sticksHalf();
                 }
             }
 
@@ -207,6 +209,14 @@ public class RedAuto extends LinearOpMode {
                 robot.setTargetPoint(curPose.getX(), curPose.getY(), intakeWobble2ThetaSpline.position(curTime));
 
                 robot.intake.intakeOff();
+
+                if (time.seconds() > intakeWobble2Time + 0.5) {
+                    robot.wobbleArm.setWobbleMotorPosition(-300);
+                } else if (time.seconds() > intakeWobble2Time - 0.5) {
+                    robot.wobbleArm.wobbleClamp();
+                } else if (time.seconds() > intakeWobble2Time - 1) {
+                    robot.wobbleArm.wobbleRelease();
+                }
 
                 if (time.seconds() > intakeWobble2Time + 1.5) {
                     if (ringCase != RingCase.Zero) {
@@ -227,12 +237,6 @@ public class RedAuto extends LinearOpMode {
 
                     intakeWobble2 = true;
                     time.reset();
-                } else if (time.seconds() > intakeWobble2Time + 0.5) {
-                    robot.wobbleArm.setWobbleMotorPosition(-300);
-                } else if (time.seconds() > intakeWobble2Time - 0.5) {
-                    robot.wobbleArm.wobbleClamp();
-                } else if (time.seconds() > intakeWobble2Time - 1) {
-                    robot.wobbleArm.wobbleRelease();
                 }
             }
 
@@ -296,7 +300,13 @@ public class RedAuto extends LinearOpMode {
                 Pose curPose = deliverWobble2Path.getRobotPose(curTime);
                 robot.setTargetPoint(curPose.getX(), curPose.getY(), deliverWobble2ThetaSpline.position(curTime));
 
-                if (time.seconds() > deliverWobble2Time + 1.5) {
+                if (time.seconds() > deliverWobble2Time) {
+                    robot.wobbleArm.wobbleRelease();
+                } else if (time.seconds() > deliverWobble2Time - 0.75) {
+                    robot.wobbleArm.wobbleDown();
+                }
+
+                if (time.seconds() > deliverWobble2Time + 1) {
                     robot.wobbleArm.wobbleUp();
 
                     Waypoint[] parkWaypoints;
@@ -325,10 +335,6 @@ public class RedAuto extends LinearOpMode {
 
                     deliverWobble2 = true;
                     time.reset();
-                } else if (time.seconds() > deliverWobble2Time) {
-                    robot.wobbleArm.wobbleRelease();
-                } else if (time.seconds() > deliverWobble2Time - 0.75) {
-                    robot.wobbleArm.wobbleDown();
                 }
             }
 

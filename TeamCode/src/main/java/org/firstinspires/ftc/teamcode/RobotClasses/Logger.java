@@ -105,6 +105,7 @@ public class Logger {
             ex.printStackTrace();
         }
 
+        Robot.log("Starting At " + Arrays.toString(robotPos));
         return robotPos;
     }
 }
