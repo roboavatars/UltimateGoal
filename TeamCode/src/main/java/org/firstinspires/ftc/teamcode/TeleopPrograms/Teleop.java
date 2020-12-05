@@ -20,16 +20,15 @@ public class Teleop extends LinearOpMode {
     public static boolean robotCentric = false;
     public static boolean useAutoPos = true;
 
+    // Toggles
     public boolean flywheelToggle = false;
     public boolean flywheelOn = false;
+    public boolean psToggle = false;
+    public boolean ps = false;
     public boolean stickToggle = false;
     public boolean sticksOut = true;
-    public boolean motorToggle = false;
     public boolean clampToggle = true;
-    public boolean motorDown = false;
     public boolean clamped = false;
-
-    private double d;
 
     @Override
     public void runOpMode() {
@@ -50,48 +49,62 @@ public class Teleop extends LinearOpMode {
 
         while (opModeIsActive()) {
 
-            d = Math.sqrt(Math.pow(robot.x - 108, 2) + Math.pow(robot.y - 150, 2));
-
+            // Intake on/off/rev
             if (gamepad2.right_bumper) {
                 robot.intake.intakeOn();
             } else if (gamepad2.left_bumper) {
                 robot.intake.intakeRev();
-            } else {
+            } else if (!robot.vibrateMag) {
                 robot.intake.intakeOff();
             }
 
+            // Auto high goal and powershot shoot
             if (gamepad1.right_bumper) {
-                if (robot.shooter.getShooterVelocity() > 500) {
+                if (robot.shooter.getShooterVelocity() > 800) {
                     robot.powerShotShoot();
                 }
             } else if (gamepad1.left_bumper) {
-                if (robot.shooter.getShooterVelocity() > 500) {
+                if (robot.shooter.getShooterVelocity() > 800) {
                     robot.highGoalShoot();
                 }
             }
 
+            // Shoot x offset
             if (gamepad1.dpad_left) {
                 robot.xOffset -= 0.01;
-            }
-            if (gamepad1.dpad_right) {
+            } else if (gamepad1.dpad_right) {
                 robot.xOffset += 0.01;
-            }
-            if (gamepad1.dpad_up) {
+            } else if (gamepad1.dpad_up) {
                 robot.xOffset = 0;
             }
 
-            if (gamepad2.y && !flywheelToggle) {
-                flywheelToggle = true;
-                if (flywheelOn) {
-                    robot.shooter.flywheelOff();
-                } else {
-                    robot.shooter.flywheelHighGoal();
-                }
-                flywheelOn = !flywheelOn;
-            } else if (!gamepad2.y && flywheelToggle) {
-                flywheelToggle = false;
+            // Rev up flywheel for high goal
+            if (gamepad2.y) {
+                robot.shooter.flywheelHighGoal();
             }
 
+            // Manual powershot controls
+            if (gamepad2.right_trigger > 0 && !psToggle) {
+                psToggle = true;
+                if (ps) {
+                    robot.shooter.flywheelOff();
+                    robot.shooter.magHome();
+                } else {
+                    robot.shooter.flywheelPowershot();
+                    robot.shooter.magShoot();
+                }
+                ps = !ps;
+            } else if (gamepad2.right_trigger == 0 && psToggle) {
+                psToggle = false;
+            }
+
+            if (gamepad2.left_trigger > 0 && ps) {
+                robot.shooter.feedShoot();
+            } else if (gamepad2.left_trigger == 0&& ps) {
+                robot.shooter.feedHome();
+            }
+
+            // Stick extension/retraction
             if (gamepad2.x && !stickToggle) {
                 stickToggle = true;
                 if (sticksOut) {
@@ -104,19 +117,11 @@ public class Teleop extends LinearOpMode {
                 stickToggle = false;
             }
 
-            if (gamepad2.a && !motorToggle) {
-                motorToggle = true;
-                if (motorDown) {
-                    robot.wobbleArm.wobbleUp();
-                } else {
-                    robot.wobbleArm.wobbleDown();
-                }
-                motorDown = !motorDown;
-            } else if (!gamepad2.a && motorToggle) {
-                motorToggle = false;
-            }
+            // Wobble motor controls
+            robot.wobbleArm.setPower(-0.5 * gamepad2.left_stick_y);
 
-            if (gamepad2.b && !clampToggle) {
+            // Wobble clamp/unclamp
+            if (gamepad2.a && !clampToggle) {
                 clampToggle = true;
                 if (clamped) {
                     robot.wobbleArm.wobbleRelease();
@@ -124,26 +129,35 @@ public class Teleop extends LinearOpMode {
                     robot.wobbleArm.wobbleClamp();
                 }
                 clamped = !clamped;
-            } else if (!gamepad2.b && clampToggle) {
+            } else if (!gamepad2.a && clampToggle) {
                 clampToggle = false;
             }
 
+            // Mag vibrate to unstuck rings
+            if (gamepad2.b) {
+                robot.vibrateMag = true;
+                robot.vibrateTime = System.currentTimeMillis();
+            }
+
+            // Drivetrain controls
             if (robotCentric) {
                 robot.drivetrain.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
             } else {
                 robot.drivetrain.setGlobalControls(gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x);
             }
 
+            // Update robot
             robot.update();
 
+            // Telemetry
             telemetry.addData("X", robot.x);
             telemetry.addData("Y", robot.y);
             telemetry.addData("Theta", robot.theta);
+            double d = Math.sqrt(Math.pow(robot.x - 108, 2) + Math.pow(robot.y - 150, 2));
             telemetry.addData("High Goal Distance", d);
             telemetry.addData("# Rings", robot.numRings);
             telemetry.addData("Shooter Velocity", robot.shooter.getShooterVelocity());
             telemetry.update();
-
         }
 
         robot.shooter.feedHome();

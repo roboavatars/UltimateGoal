@@ -24,19 +24,24 @@ public class Robot {
     private final double xk = 0.30;
     private final double yk = 0.30;
     private final double thetak = 2.4;
+
     private double odoWeight = 1;
 
     // State Variables
+    private final boolean isAuto;
     private boolean firstLoop = true;
     private int cycleCounter = 0;
     public int numRings = 0;
-    private final boolean isAuto;
-
-    public double shootTime;
-    public double shootDelay;
     public boolean shoot = false;
     public boolean clear = false;
     public boolean highGoal = false;
+    public boolean vibrateMag = false;
+
+    // Time and Delay Variables
+    public double shootTime;
+    public double shootDelay;
+    public double vibrateTime;
+    public double vibrateDelay = 100;
 
     // Motion Variables
     public double x, y, theta;
@@ -47,14 +52,12 @@ public class Robot {
     private final double[] shootX = {76.5, 84, 91.5, 108};
     private final double shootY = 150;
     private final double[] shootZ = {24, 24, 24, 35.5};
-
-    double[][] targets = {
+    public double xOffset = 0;
+    double[][] powerTargets = {
             {86.00, 67.80, 1.6353, 0.0307},
             {88.00, 68.39, 1.5809, 0.0355},
             {90.00, 68.99, 1.4825, 0.0380}
     };
-
-    public double xOffset = 0;
 
     // OpMode Stuff
     private LinearOpMode op;
@@ -68,8 +71,7 @@ public class Robot {
         wobbleArm = new WobbleArm(op, isAuto);
         shooter = new Shooter(op);
         try {
-            t265 = new T265(op, x, y, theta);
-            t265.startCam();
+            t265 = new T265(op, x, y, theta); t265.startCam();
         } catch (Exception ex) {
             log("Camera error"); ex.printStackTrace();
             odoWeight = 1;
@@ -82,6 +84,7 @@ public class Robot {
         packet = new TelemetryPacket();
     }
 
+    // Stop logger and t265
     public void stop() {
         logger.stopLogging();
         if (odoWeight != 1) {
@@ -109,29 +112,49 @@ public class Robot {
         0 rings, shoot, mag shoot, feed home- mag home, intake on
         */
 
+        // To help unstuck rings
+        // b-> intake on, vibrate pos, intake rev, home pos, intake off
+        if (vibrateMag && System.currentTimeMillis() - vibrateTime > vibrateDelay) {
+            if (!intake.intakeOn && shooter.magHome) {
+                intake.intakeOn();
+            } else if (intake.intakeFor && shooter.magHome) {
+                shooter.magVibrate();
+            } else if (intake.intakeFor && shooter.magVibrate) {
+                intake.intakeRev();
+            } else if (intake.intakeRev && shooter.magVibrate) {
+                shooter.magHome();
+                intake.intakeOff();
+                vibrateMag = false;
+            }
+            vibrateTime = System.currentTimeMillis();
+        }
+
         if (numRings == 3 && shoot && shooter.magHome && shooter.feedHome) {
             shooter.magShoot();
             intake.intakeOff();
         }
 
         else if (numRings >= 0 && shoot && !shooter.magHome) {
+
+            // Auto align robot
             double[] target = {};
             if (numRings > 0) {
                 if (highGoal) {
                     target = shootTargets(3);
                 } else {
-                    target = targets[numRings - 1];
+                    target = powerTargets[numRings - 1];
                 }
                 if (isAuto) {
                     setTargetPoint(target[0] + xOffset, target[1], target[2], 0.2, 0.2, 4.7);
                 } else {
                     //if (!isAtPose(target[0] + xOffset, target[1], target[2])) {
-                        setTargetPoint(target[0] + xOffset, target[1], target[2], 0.17, 0.17, 4.7);
+                        setTargetPoint(target[0] + xOffset, target[1], target[2], 0.2, 0.2, 4.7);
                     //}
                 }
                 shooter.setFlapAngle(target[3]);
             }
 
+            // Auto feed rings
             if (System.currentTimeMillis() - shootTime > shootDelay) {
                 if (numRings > 0) {
                     if (shooter.feedHome && !clear/* && !isAtPose(target[0] + xOffset, target[1], target[2])*/) {
@@ -139,7 +162,7 @@ public class Robot {
                         shooter.feedShoot();
                         if (numRings == 3) {
                             shootDelay -= 100;
-                        } else if (numRings == 2) {
+                        } else if (numRings == 1) {
                             shootDelay += 100;
                         }
                     } else {
@@ -153,9 +176,7 @@ public class Robot {
                     }
                 } else {
                     shooter.flywheelOff();
-                    if (!isAuto) {
-                        shooter.magHome();
-                    }
+                    shooter.magHome();
                     shoot = false;
                 }
                 shootTime = System.currentTimeMillis();
@@ -181,7 +202,6 @@ public class Robot {
             y = drivetrain.y;
             theta = drivetrain.theta;
         }
-
         vx = (x - prevX) / timeDiff;
         vy = (y - prevY) / timeDiff;
         w = (theta - prevTheta) / timeDiff;
@@ -199,7 +219,7 @@ public class Robot {
         prevTime = curTime;
         prevVx = vx; prevVy = vy; prevW = w;
 
-        // Telemetry
+        // Dashboard Telemetry
         addPacket("1 X", String.format("%.5f", x));
         addPacket("2 Y", String.format("%.5f", y));
         addPacket("3 Theta", String.format("%.5f", theta));
@@ -211,8 +231,8 @@ public class Robot {
         addPacket("9 Time", (System.currentTimeMillis() - startTime) / 1000);
         addPacket("Update Frequency (Hz)", 1 / timeDiff);
         addPacket("delay", shootDelay);
-        addPacket("diff", (System.currentTimeMillis() - shootTime));
 
+        // Dashboard Drawings
         drawGoal("black");
         drawRobot(drivetrain.x, drivetrain.y, drivetrain.theta, "green");
         if (odoWeight != 1) {
@@ -222,6 +242,7 @@ public class Robot {
         sendPacket();
     }
 
+    // Calculate auto aim target positions
     // left ps = 0, middle ps = 1, right ps = 2, high goal = 3
     public double[] shootTargets(int targetNum) {
         /*  power1- (76.5,144,24)
@@ -236,7 +257,6 @@ public class Robot {
         double shooterX = x + 6.5 * Math.sin(theta);
         double shooterY = y - 6.5 * Math.cos(theta);
 
-        // Calculate Robot Angle
         double dx = targetX - shooterX;
         double dy = targetY - shooterY;
         /*double v = 4.5 * shooter.getShooterVelocity();
@@ -254,7 +274,7 @@ public class Robot {
             drawLine(shooterX, shooterY, targetX, targetY, "blue");
         }
 
-        // Calculate Shooter Angle
+        // Calculate Flap Angle
         double d = Math.sqrt(Math.pow(targetX - shooterX, 2) + Math.pow(targetY - shooterY, 2));
         double flapAngle = -0.0001 * Math.pow(d, 2) + 0.0167 * d - 0.4905;
 
@@ -266,6 +286,7 @@ public class Robot {
         double quadraticRes = (-b - Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a);
         double shooterAngle = 0.27 * (Math.atan(quadraticRes) - 5 * Math.PI / 36) * 3 / Math.PI;*/
 
+        // Calculate Robot Angle
         double alignRobotAngle = Math.atan2(dy, dx) + 0.0013 * d - 0.2962;
         double alignRobotX = shooterX - 6.5 * Math.sin(alignRobotAngle);
         double alignRobotY = shooterY + 6.5 * Math.cos(alignRobotAngle);
@@ -273,6 +294,7 @@ public class Robot {
         return new double[] {alignRobotX, alignRobotY, alignRobotAngle, flapAngle};
     }
 
+    // Set variables for high goal shoot
     public void highGoalShoot() {
         if (!shoot) {
             shootDelay = 275;
@@ -282,6 +304,7 @@ public class Robot {
         }
     }
 
+    // Set variables for powershot shoot
     public void powerShotShoot() {
         if (!shoot) {
             if (isAuto) {
@@ -295,13 +318,14 @@ public class Robot {
         }
     }
 
+    // Set common shoot variables
     public void initiateShoot() {
         shoot = true;
         numRings = 3;
         shootTime = System.currentTimeMillis();
     }
 
-    // set target point (default K values)
+    // Set target point (default K values)
     public void setTargetPoint(double xtarget, double ytarget, double thetatarget) {
 
         // Make Sure thetatarget is Between 0 and 2pi
@@ -325,7 +349,7 @@ public class Robot {
         drivetrain.setGlobalControls(-xk * (x - xtarget), -yk * (y - ytarget), -thetak * (thetacontrol));
     }
 
-    // set target point (custom K values)
+    // Set target point (custom K values)
     public void setTargetPoint(double xtarget, double ytarget, double thetatarget, double xK, double yK, double thetaK) {
         // Make Sure thetatarget is Between 0 and 2pi
         thetatarget = thetatarget % (Math.PI * 2);
@@ -346,17 +370,17 @@ public class Robot {
         drivetrain.setGlobalControls(-xK * (x - xtarget), -yK * (y - ytarget), -thetaK * (thetacontrol));
     }
 
-    // check if robot is at a certain point/angle (default tolerance)
+    // Check if robot is at a certain point/angle (default tolerance)
     public boolean isAtPose(double targetx, double targety, double targettheta) {
         return isAtPose(targetx, targety, targettheta, xyTolerance, xyTolerance, thetaTolerance);
     }
 
-    // check if robot is at a certain point/angle (custom tolerance)
+    // Check if robot is at a certain point/angle (custom tolerance)
     public boolean isAtPose(double targetx, double targety, double targettheta, double xtolerance, double ytolerance, double thetatolerance) {
         return (Math.abs(x - targetx) < xtolerance && Math.abs(y - targety) < ytolerance && Math.abs(theta - targettheta) < thetatolerance);
     }
 
-    // draw on dashboard field
+    // Dashboard draw functions
     public void drawRobot(double robotX, double robotY, double robotTheta, String color) {
         double r = 9 * Math.sqrt(2);
         double pi = Math.PI;
@@ -378,7 +402,7 @@ public class Robot {
         packet.fieldOverlay().setStroke(color).strokeLine(y1 - 72, 72 - x1, y2 - 72, 72 - x2);
     }
 
-    // dashboard telemetry
+    // Dashboard telemetry and logging
     public void addPacket(String key, Object value) {
         packet.put(key, value.toString());
     }

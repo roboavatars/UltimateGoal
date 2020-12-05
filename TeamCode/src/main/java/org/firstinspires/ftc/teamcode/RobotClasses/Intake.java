@@ -18,6 +18,8 @@ public class Intake {
     private final double rOutPos = 0.92;
 
     public boolean intakeOn = false;
+    public boolean intakeRev = false;
+    public boolean intakeFor = false;
 
     public Intake(LinearOpMode op) {
         intakeMotor = op.hardwareMap.get(DcMotorEx.class, "intake");
@@ -32,19 +34,25 @@ public class Intake {
     public void intakeOn() {
         intakeMotor.setPower(-1);
         intakeOn = true;
+        intakeRev = false;
+        intakeFor = true;
     }
 
     public void intakeRev() {
         intakeMotor.setPower(1);
         intakeOn = true;
+        intakeRev = true;
+        intakeFor = false;
     }
 
     public void intakeOff() {
         intakeMotor.setPower(0);
         intakeOn = false;
+        intakeRev = false;
+        intakeFor = false;
     }
 
-    public void setIntakePow(double power) {
+    public void setPower(double power) {
         intakeMotor.setPower(power);
         intakeOn = power != 0;
     }
@@ -55,7 +63,7 @@ public class Intake {
     }
 
     public void sticksHomeAuto() {
-        lStickServo.setPosition(0.70);
+        lStickServo.setPosition(0.55);
         rStickServo.setPosition(rHomePos);
     }
 

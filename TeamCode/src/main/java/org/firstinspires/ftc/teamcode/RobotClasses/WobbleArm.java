@@ -24,11 +24,17 @@ public class WobbleArm {
         wobbleMotor = op.hardwareMap.get(DcMotorEx.class, "wobbleMotor");
         wobbleUp();
         wobbleClamp();
-        wobbleMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        if (isAuto) {
+            wobbleMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+        }
 
         this.isAuto = isAuto;
 
         op.telemetry.addData("Status", "Wobble Arm initialized");
+    }
+
+    public void setPower(double power) {
+        wobbleMotor.setPower(power);
     }
 
     public void wobbleUp() {

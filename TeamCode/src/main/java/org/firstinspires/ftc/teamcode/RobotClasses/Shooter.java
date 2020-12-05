@@ -15,17 +15,22 @@ public class Shooter {
     private Servo magServo;
     private Servo feedServo;
 
-    private final int highGoalV = -1175;
+    private final int highGoalV = -1250;
     private final int powershotV = -875;
+
     private final double flapHomePos = 0;
     private final double flapMaxPos = 0.15;
+
     private final double magHomePos = 0.24;
+    private final double magVibratePos = 0.28;
     private final double magShootPos = 0.50;
+
     private final double feedHomePos = 0.15;
     private final double feedMid = 0.2;
     private final double feedShootPos = 0.35;
 
     public boolean magHome = true;
+    public boolean magVibrate = false;
     public boolean feedHome = true;
 
     public Shooter(LinearOpMode op) {
@@ -87,6 +92,13 @@ public class Shooter {
     public void magHome() {
         magServo.setPosition(magHomePos);
         magHome = true;
+        magVibrate = false;
+    }
+
+    public void magVibrate() {
+        magServo.setPosition(magVibratePos);
+        magHome = false;
+        magVibrate = true;
     }
 
     public void magShoot() {
