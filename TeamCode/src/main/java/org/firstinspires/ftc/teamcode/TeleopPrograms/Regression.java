@@ -87,7 +87,7 @@ public class Regression extends LinearOpMode {
             telemetry.addData("Robot Theta", robot.theta);
             telemetry.addData("Distance", d);
             telemetry.addData("numRings", robot.numRings);
-            telemetry.addData("Shooter Velocity", robot.shooter.getShooterVelocity());
+            telemetry.addData("Shooter Velocity", robot.shooter.getVelocity());
             telemetry.addData("Flap Angle", robot.shooter.getFlapAngle());
             telemetry.update();
 

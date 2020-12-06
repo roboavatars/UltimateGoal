@@ -35,17 +35,17 @@ public class MecanumDrivetrain {
     // OpMode
     private LinearOpMode opMode;
 
-    // Tracking X Y coordinate position
-    public double x = 0;
-    public double y = 0;
+    // Tracking X/Y/Theta
+    public double x;
+    public double y;
     private double lastx = 0;
     private double lasty = 0;
+    private double deltaheading = 0;
+    public double theta;
 
     // IMU related variables for storing states
     private Orientation angles;
     private double lastheading = 0;
-    private double deltaheading = 0;
-    public double theta = 0;
 
     // Odometry
     public double pod1 = 0;
@@ -105,6 +105,12 @@ public class MecanumDrivetrain {
         y = initialY;
         lastheading = initialTheta;
         theta = initialTheta;
+    }
+
+    public void resetOdo(double newX, double newY, double newTheta) {
+        x = newX;
+        y = newY;
+        theta = newTheta;
     }
 
     // robot centric movement

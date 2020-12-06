@@ -15,15 +15,15 @@ public class Shooter {
     private Servo magServo;
     private Servo feedServo;
 
-    private final int highGoalV = -1250;
-    private final int powershotV = -875;
+    public final int highGoalV = -1250;
+    public final int powershotV = -875;
 
     private final double flapHomePos = 0;
     private final double flapMaxPos = 0.15;
 
     private final double magHomePos = 0.24;
     private final double magVibratePos = 0.28;
-    private final double magShootPos = 0.50;
+    private final double magShootPos = 0.52;
 
     private final double feedHomePos = 0.15;
     private final double feedMid = 0.2;
@@ -38,8 +38,8 @@ public class Shooter {
         shooterMotor2 = op.hardwareMap.get(DcMotorEx.class, "shooter2");
         shooterMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooterMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooterMotor1.setVelocityPIDFCoefficients(38, 0, 0, 17);
-        shooterMotor2.setVelocityPIDFCoefficients(38, 0, 0, 17);
+        shooterMotor1.setVelocityPIDFCoefficients(57, 0, 0, 17);
+        shooterMotor2.setVelocityPIDFCoefficients(57, 0, 0, 17);
         shooterMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
         shooterMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
 
@@ -55,23 +55,23 @@ public class Shooter {
     }
 
     public void flywheelHighGoal() {
-        setShooterVelocity(highGoalV);
+        setVelocity(highGoalV);
     }
 
     public void flywheelPowershot() {
-        setShooterVelocity(powershotV);
+        setVelocity(powershotV);
     }
 
     public void flywheelOff() {
-        setShooterVelocity(0);
+        setVelocity(0);
     }
 
-    public void setShooterVelocity(double velocity) {
+    public void setVelocity(double velocity) {
         shooterMotor1.setVelocity(velocity);
         shooterMotor2.setVelocity(-velocity);
     }
 
-    public double getShooterVelocity() {
+    public double getVelocity() {
         return shooterMotor1.getVelocity();
     }
 

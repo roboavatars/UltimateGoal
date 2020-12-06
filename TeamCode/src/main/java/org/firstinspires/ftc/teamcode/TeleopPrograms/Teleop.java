@@ -27,8 +27,8 @@ public class Teleop extends LinearOpMode {
     public boolean ps = false;
     public boolean stickToggle = false;
     public boolean sticksOut = true;
-    public boolean clampToggle = true;
-    public boolean clamped = false;
+    public boolean clampToggle = false;
+    public boolean clamped = true;
 
     @Override
     public void runOpMode() {
@@ -41,7 +41,6 @@ public class Teleop extends LinearOpMode {
             robot = new Robot(this, startX, startY, startTheta, false);
         }
 
-        robot.wobbleArm.wobbleDown();
         robot.logger.startLogging();
         robot.intake.sticksOut();
 
@@ -60,22 +59,22 @@ public class Teleop extends LinearOpMode {
 
             // Auto high goal and powershot shoot
             if (gamepad1.right_bumper) {
-                if (robot.shooter.getShooterVelocity() > 800) {
-                    robot.powerShotShoot();
+                if (!robot.shootRoutine) {
+                    robot.shootRoutine = true;
+                    robot.highGoal = false;
                 }
             } else if (gamepad1.left_bumper) {
-                if (robot.shooter.getShooterVelocity() > 800) {
-                    robot.highGoalShoot();
+                if (!robot.shootRoutine) {
+                    robot.shootRoutine = true;
+                    robot.highGoal = true;
                 }
             }
 
-            // Shoot x offset
+            // Change theta due to drift
             if (gamepad1.dpad_left) {
-                robot.xOffset -= 0.01;
+                robot.drivetrain.theta -= 0.005;
             } else if (gamepad1.dpad_right) {
-                robot.xOffset += 0.01;
-            } else if (gamepad1.dpad_up) {
-                robot.xOffset = 0;
+                robot.drivetrain.theta += 0.005;
             }
 
             // Rev up flywheel for high goal
@@ -83,26 +82,30 @@ public class Teleop extends LinearOpMode {
                 robot.shooter.flywheelHighGoal();
             }
 
-            // Manual powershot controls
-            if (gamepad2.right_trigger > 0 && !psToggle) {
-                psToggle = true;
-                if (ps) {
-                    robot.shooter.flywheelOff();
-                    robot.shooter.magHome();
-                } else {
-                    robot.shooter.flywheelPowershot();
-                    robot.shooter.magShoot();
-                }
-                ps = !ps;
-            } else if (gamepad2.right_trigger == 0 && psToggle) {
-                psToggle = false;
+            if (gamepad2.left_trigger > 0) {
+                robot.shooter.flywheelPowershot();
             }
 
-            if (gamepad2.left_trigger > 0 && ps) {
-                robot.shooter.feedShoot();
-            } else if (gamepad2.left_trigger == 0&& ps) {
-                robot.shooter.feedHome();
-            }
+            // Manual powershot controls
+//            if (gamepad2.right_trigger > 0 && !psToggle) {
+//                psToggle = true;
+//                if (ps) {
+//                    robot.shooter.flywheelOff();
+//                    robot.shooter.magHome();
+//                } else {
+//                    robot.shooter.flywheelPowershot();
+//                    robot.shooter.magShoot();
+//                }
+//                ps = !ps;
+//            } else if (gamepad2.right_trigger == 0 && psToggle) {
+//                psToggle = false;
+//            }
+//
+//            if (gamepad2.left_trigger > 0 && ps) {
+//                robot.shooter.feedShoot();
+//            } else if (gamepad2.left_trigger == 0 && ps) {
+//                robot.shooter.feedHome();
+//            }
 
             // Stick extension/retraction
             if (gamepad2.x && !stickToggle) {
@@ -139,6 +142,11 @@ public class Teleop extends LinearOpMode {
                 robot.vibrateTime = System.currentTimeMillis();
             }
 
+            // Reset odo for powershot
+            if (gamepad1.x) {
+                robot.reset(135, 57, Math.PI / 2);
+            }
+
             // Drivetrain controls
             if (robotCentric) {
                 robot.drivetrain.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
@@ -156,7 +164,7 @@ public class Teleop extends LinearOpMode {
             double d = Math.sqrt(Math.pow(robot.x - 108, 2) + Math.pow(robot.y - 150, 2));
             telemetry.addData("High Goal Distance", d);
             telemetry.addData("# Rings", robot.numRings);
-            telemetry.addData("Shooter Velocity", robot.shooter.getShooterVelocity());
+            telemetry.addData("Shooter Velocity", robot.shooter.getVelocity());
             telemetry.update();
         }
 

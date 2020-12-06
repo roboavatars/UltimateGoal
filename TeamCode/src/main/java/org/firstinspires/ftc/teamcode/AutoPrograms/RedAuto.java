@@ -24,15 +24,15 @@ public class RedAuto extends LinearOpMode {
 
         /*
         Timeline:
-        detect stack
-        move to line
-        shoot 3 preloaded rings at powershots
-        drop off wobble goal at corresponding zone
-        go back to start to pick up second wobble
-        intake stack rings
-        shoot stack rings into high goal
-        drop off second wobble at corresponding zone
-        park
+            detect stack
+            move to line
+            shoot 3 preloaded rings at powershots
+            drop off wobble goal at corresponding zone
+            go back to start to pick up second wobble
+            intake stack rings
+            shoot stack rings into high goal
+            drop off second wobble at corresponding zone
+            park
         */
 
         Robot robot = new Robot(this, 90, 9, PI/2, true);
@@ -42,6 +42,7 @@ public class RedAuto extends LinearOpMode {
         StackHeightDetector detector = new StackHeightDetector(this);
         detector.start();
 
+        // Segments
         boolean startLine = false;
         boolean shootPowerShots = false;
         boolean deliverWobble = false;
@@ -51,6 +52,7 @@ public class RedAuto extends LinearOpMode {
         boolean deliverWobble2 = false;
         boolean park = false;
 
+        // Segment Times
         double startLineTime = 1.75;
         double shootPowerShotsTime = 4.0;
         double deliverWobbleTime = 2;
@@ -62,9 +64,10 @@ public class RedAuto extends LinearOpMode {
 
         waitForStart();
 
-        RingCase ringCase = detector.getResult();
-        double[][] wobbleDelivery = {{123, 73}, {98, 97}, {126, 124}};
-        double[][] wobble2Delivery = {{119, 68}, {96, 92}, {121, 118}};
+        // Wobble coordinates based on ring case
+        RingCase ringCase = detector.getModeResult();  //getResult();
+        double[][] wobbleDelivery = {{123, 76}, {93, 92}, {126, 124}};
+        double[][] wobble2Delivery = {{119, 71}, {96, 92}, {121, 118}};
 
         double[] wobbleCor;
         double[] wobble2Cor;
@@ -107,6 +110,7 @@ public class RedAuto extends LinearOpMode {
 
         while(opModeIsActive()) {
 
+            // Go to shooting line to shoot powershots
             if (!startLine) {
                 double curTime = Math.min(time.seconds(), startLineTime);
                 Pose curPose = startLinePath.getRobotPose(curTime);
@@ -121,15 +125,19 @@ public class RedAuto extends LinearOpMode {
                 if (time.seconds() > startLineTime + 1) {
 
                     robot.powerShotShoot();
+                    robot.wobbleArm.wobbleDown();
 
                     startLine = true;
                     time.reset();
                 }
             }
 
+            // Time block to shoot powershots
             else if (!shootPowerShots) {
 
                 if (robot.numRings == 0 || time.seconds() > shootPowerShotsTime + 1) {
+                    robot.wobbleArm.wobbleUp();
+
                     Waypoint[] deliverWobbleWaypoints;
                     if (ringCase == RingCase.Zero) {
                         deliverWobbleWaypoints = new Waypoint[] {
@@ -154,18 +162,19 @@ public class RedAuto extends LinearOpMode {
                 }
             }
 
+            // Deliver first wobble goal
             else if (!deliverWobble) {
                 double curTime = Math.min(time.seconds(), deliverWobbleTime);
                 Pose curPose = deliverWobblePath.getRobotPose(curTime);
                 robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta());
 
-                if (time.seconds() > deliverWobbleTime + 0.5) {
-                    robot.intake.setPower(-0.6);
+                if (time.seconds() > deliverWobbleTime + 0.75) {
+                    robot.intake.setPower(-0.25);
                 } else if (time.seconds() > deliverWobbleTime) {
                     robot.intake.sticksHalf();
                 }
 
-                if (time.seconds() > deliverWobbleTime + 1) {
+                if (time.seconds() > deliverWobbleTime + 1.5) {
 
                     robot.intake.sticksHomeAuto();
                     robot.wobbleArm.wobbleDown();
@@ -200,6 +209,7 @@ public class RedAuto extends LinearOpMode {
                 }
             }
 
+            // Go to pick up second wobble goal
             else if (!intakeWobble2) {
                 double curTime = Math.min(time.seconds(), intakeWobble2Time);
                 Pose curPose = intakeWobble2Path.getRobotPose(curTime);
@@ -236,6 +246,7 @@ public class RedAuto extends LinearOpMode {
                 }
             }
 
+            // Intake start stack
             else if (!intakeStack) {
                 double curTime = Math.min(time.seconds(), intakeStackTime);
                 Pose curPose = intakeStackPath.getRobotPose(curTime);
@@ -246,8 +257,10 @@ public class RedAuto extends LinearOpMode {
                 }
 
                 if (time.seconds() > intakeStackTime + 1) {
-                    robot.intake.intakeRev();
-                    robot.highGoalShoot();
+                    robot.intake.intakeOff();
+                    robot.shootRoutine = true;
+                    robot.highGoal = true;
+//                    robot.highGoalShoot();
 
                     intakeStack = true;
                     time.reset();
@@ -256,13 +269,13 @@ public class RedAuto extends LinearOpMode {
                 }
             }
 
+            // Time block to shoot into high goal
             else if (!shootHighGoal) {
                 if (ringCase == RingCase.Zero) {
                     robot.numRings = 0;
                 }
 
                 if (robot.numRings == 0 || time.seconds() > shootHighGoalTime + 1) {
-                    robot.intake.intakeOff();
 
                     Waypoint[] deliverWobble2Waypoints;
                     if (ringCase == RingCase.Zero) {
@@ -291,14 +304,15 @@ public class RedAuto extends LinearOpMode {
                 }
             }
 
+            // Deliver second wobble goal
             else if (!deliverWobble2) {
                 double curTime = Math.min(time.seconds(), deliverWobble2Time);
                 Pose curPose = deliverWobble2Path.getRobotPose(curTime);
                 robot.setTargetPoint(curPose.getX(), curPose.getY(), deliverWobble2ThetaSpline.position(curTime));
 
-                if (time.seconds() > deliverWobble2Time) {
+                if (time.seconds() > deliverWobble2Time + 0.5) {
                     robot.wobbleArm.wobbleRelease();
-                } else if (time.seconds() > deliverWobble2Time - 0.75) {
+                } else if (time.seconds() > deliverWobble2Time) {
                     robot.wobbleArm.wobbleDown();
                 }
 
@@ -334,6 +348,7 @@ public class RedAuto extends LinearOpMode {
                 }
             }
 
+            // Park on line
             else if (!park) {
                 double curTime = Math.min(time.seconds(), parkTime);
                 Pose curPose = parkPath.getRobotPose(curTime);
@@ -349,6 +364,7 @@ public class RedAuto extends LinearOpMode {
 
                 if (robot.isAtPose(curPose.getX(), curPose.getY(), PI/2)) {
                     robot.intake.sticksOut();
+                    robot.wobbleArm.wobbleDown();
                     park = true;
                 }
             }
@@ -360,7 +376,6 @@ public class RedAuto extends LinearOpMode {
             robot.update();
         }
 
-        robot.wobbleArm.wobbleHome();
         robot.shooter.feedHome();
 
         robot.update();

@@ -24,8 +24,10 @@ import java.util.List;
 @Config
 public class StackHeightPipeline extends OpenCvPipeline {
 
+    // Cases
     public enum RingCase {Zero, One, Four}
 
+    // Thresholds
     public static double FILTER_MIN = 80;
     public static double FILTER_MAX = 115;
     public static int HEIGHT_THRESH = 3;
@@ -34,23 +36,27 @@ public class StackHeightPipeline extends OpenCvPipeline {
     public static double ONE_MAX = 4.1;
     public static double FOUR_MIN = 1.2;
 
+    // Results
     private double[] result = new double[3];
     private RingCase ringCase = RingCase.Zero;
+    private ArrayList<RingCase> results = new ArrayList<>();
+    private int cycles = 0;
+
+    // Mats used in processing
     private Mat yCrCb = new Mat();
     private Mat cb = new Mat();
     private Mat processed = new Mat();
     private Mat mask = new Mat();
 
-    // Clear Old Images
     public StackHeightPipeline() {
-        @SuppressLint("SdCardPath")
-        File dir = new File("/sdcard/EasyOpenCV");
+        // Clear Old Images
+        @SuppressLint("SdCardPath") File dir = new File("/sdcard/EasyOpenCV");
         String[] children = dir.list();
         if (children != null) {
-            for (String child : children) {
-                new File(dir, child).delete();
-            }
+            for (String child : children) { new File(dir, child).delete(); }
         }
+
+        for (int i = 0; i < 5; i++) { results.add(RingCase.Zero); }
     }
 
     @Override
@@ -101,7 +107,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
                 double width = boundingRect.size.width;
                 double height = boundingRect.size.height;
                 double wh_ratio = width/height;
-               log("Loop(" + i + "): " + width + " " + height + " " + wh_ratio);
+                log("Loop(" + i + "): " + width + " " + height + " " + wh_ratio);
 
                 result = new double[]{width, height, wh_ratio};
 
@@ -128,6 +134,9 @@ public class StackHeightPipeline extends OpenCvPipeline {
         log("Case: " + ringCase.name());
         //saveMatToDisk(input, "result" + i);
 
+        results.set(cycles % 5, ringCase);
+        cycles++;
+
         return input;
     }
 
@@ -137,6 +146,18 @@ public class StackHeightPipeline extends OpenCvPipeline {
 
     public RingCase getResult() {
         return ringCase;
+    }
+
+    public RingCase getModeResult() {
+        int[] temp = new int[3];
+        for (RingCase result : results) {
+            if (result == RingCase.Zero) { temp[0]++; }
+            else if (result == RingCase.One) { temp[1]++; }
+            else if (result == RingCase.Four) { temp[2]++; }
+        }
+        if (temp[1] > temp[0] && temp[1] > temp[2]) { return RingCase.One; }
+        else if (temp[2] > temp[0] && temp[2] > temp[1]) { return RingCase.Four; }
+        else { return RingCase.Zero; }
     }
 
     private void log(String message) {

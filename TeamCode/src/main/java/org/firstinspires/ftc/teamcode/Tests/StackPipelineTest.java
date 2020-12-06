@@ -28,6 +28,7 @@ public class StackPipelineTest extends LinearOpMode {
             addPacket("FPS", detector.getFPS());
             addPacket("Raw Result", detector.getRawResult()[2]);
             addPacket("Result", detector.getResult());
+            addPacket("Mode Result", detector.getModeResult());
             sendPacket();
         }
 

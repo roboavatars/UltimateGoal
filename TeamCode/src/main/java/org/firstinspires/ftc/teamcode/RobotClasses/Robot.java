@@ -37,6 +37,9 @@ public class Robot {
     public boolean highGoal = false;
     public boolean vibrateMag = false;
 
+    public boolean shootRoutine = false;
+    public int rcount = 0;
+
     // Time and Delay Variables
     public double shootTime;
     public double shootDelay;
@@ -49,10 +52,9 @@ public class Robot {
     private double startTime;
 
     // Shooter Variables
-    private final double[] shootX = {76.5, 84, 91.5, 108};
-    private final double shootY = 150;
-    private final double[] shootZ = {24, 24, 24, 35.5};
-    public double xOffset = 0;
+    private final double[] shootXCor = {76.5, 84, 91.5, 108};
+    private final double shootYCor = 150;
+    private final double[] shootZCor = {24, 24, 24, 35.5};
     double[][] powerTargets = {
             {86.00, 67.80, 1.6353, 0.0307},
             {88.00, 68.39, 1.5809, 0.0355},
@@ -92,6 +94,10 @@ public class Robot {
         }
     }
 
+    public void reset(double x, double y, double theta) {
+        drivetrain.resetOdo(x, y, theta);
+    }
+
     public void update() {
         cycleCounter++;
 
@@ -129,12 +135,51 @@ public class Robot {
             vibrateTime = System.currentTimeMillis();
         }
 
-        if (numRings == 3 && shoot && shooter.magHome && shooter.feedHome) {
+        if (shootRoutine) {
+
+            double[] target;
+            int vThresh;
+            if (highGoal) {
+                shooter.flywheelHighGoal();
+                vThresh = -shooter.highGoalV - 100;
+                target = shootTargets(x, 66, Math.PI / 2, 3);
+            } else {
+                shooter.flywheelPowershot();
+                vThresh = -shooter.powershotV - 40;
+                target = shootTargets(powerTargets[0][0], powerTargets[0][1], Math.PI / 2, 2);
+            }
+            //log("vib,home,count:"+vibrateMag+" "+shooter.magHome+" "+rcount);
+
+            if (!vibrateMag && shooter.magHome) {
+//                if (rcount == 0) {
+                    intake.intakeOff();
+//                    vibrateMag = true;
+//                    rcount++;
+//                } else if (rcount == 1) {
+                    shooter.magShoot();
+//                    rcount = 0;
+//                }
+            }
+            else if (!vibrateMag && !shooter.magHome && !isAtPose(target[0], target[1], target[2])) {
+                setTargetPoint(target[0], target[1], target[2], 0.2, 0.2, 4.7);
+            }
+            else if (!vibrateMag && !shooter.magHome && shooter.getVelocity() > vThresh && isAtPose(target[0], target[1], target[2])) {
+                if (highGoal) {
+                    highGoalShoot();
+                } else {
+                    powerShotShoot();
+                }
+                log("ready for shoot");
+                shootRoutine = false;
+            }
+        }
+
+        if (!shootRoutine && !vibrateMag && numRings == 3 && shoot && shooter.magHome && shooter.feedHome) {
             shooter.magShoot();
             intake.intakeOff();
         }
 
-        else if (numRings >= 0 && shoot && !shooter.magHome) {
+        if (numRings >= 0 && shoot && !shooter.magHome) {
 
             // Auto align robot
             double[] target = {};
@@ -144,20 +189,14 @@ public class Robot {
                 } else {
                     target = powerTargets[numRings - 1];
                 }
-                if (isAuto) {
-                    setTargetPoint(target[0] + xOffset, target[1], target[2], 0.2, 0.2, 4.7);
-                } else {
-                    //if (!isAtPose(target[0] + xOffset, target[1], target[2])) {
-                        setTargetPoint(target[0] + xOffset, target[1], target[2], 0.2, 0.2, 4.7);
-                    //}
-                }
+                setTargetPoint(target[0], target[1], target[2], 0.2, 0.2, 4.7);
                 shooter.setFlapAngle(target[3]);
             }
 
             // Auto feed rings
             if (System.currentTimeMillis() - shootTime > shootDelay) {
                 if (numRings > 0) {
-                    if (shooter.feedHome && !clear/* && !isAtPose(target[0] + xOffset, target[1], target[2])*/) {
+                    if (shooter.feedHome && !clear && isAtPose(target[0], target[1], target[2])) {
                         clear = true;
                         shooter.feedShoot();
                         if (numRings == 3) {
@@ -224,13 +263,14 @@ public class Robot {
         addPacket("2 Y", String.format("%.5f", y));
         addPacket("3 Theta", String.format("%.5f", theta));
         addPacket("4 Angle Pos", String.format("%.5f", shooter.flapServo.getPosition()));
-        addPacket("5 Shooter Velocity", shooter.getShooterVelocity());
+        addPacket("5 Shooter Velocity", shooter.getVelocity());
         addPacket("6 numRings", numRings);
         addPacket("7 shoot", shoot);
-        addPacket("8 highGoal", highGoal);
+        addPacket("8 highGoal", highGoal + " " + shootRoutine);
         addPacket("9 Time", (System.currentTimeMillis() - startTime) / 1000);
         addPacket("Update Frequency (Hz)", 1 / timeDiff);
         addPacket("delay", shootDelay);
+        addPacket("clear", clear);
 
         // Dashboard Drawings
         drawGoal("black");
@@ -245,17 +285,21 @@ public class Robot {
     // Calculate auto aim target positions
     // left ps = 0, middle ps = 1, right ps = 2, high goal = 3
     public double[] shootTargets(int targetNum) {
+        return shootTargets(x, y, theta, targetNum);
+    }
+
+    public double[] shootTargets(double shootX, double shootY, double shootTheta, int targetNum) {
         /*  power1- (76.5,144,24)
             power2- (84,144,24)
             power3- (91.5,144,24)
             high goal- (108,144,35.5)
         */
 
-        double targetX = shootX[targetNum];
-        double targetY = shootY;
-        double targetZ = shootZ[targetNum];
-        double shooterX = x + 6.5 * Math.sin(theta);
-        double shooterY = y - 6.5 * Math.cos(theta);
+        double targetX = shootXCor[targetNum];
+        double targetY = shootYCor;
+        double targetZ = shootZCor[targetNum];
+        double shooterX = shootX + 6.5 * Math.sin(shootTheta);
+        double shooterY = shootY - 6.5 * Math.cos(shootTheta);
 
         double dx = targetX - shooterX;
         double dy = targetY - shooterY;
@@ -310,7 +354,7 @@ public class Robot {
             if (isAuto) {
                 shootDelay = 600;
             } else {
-                shootDelay = 400;
+                shootDelay = 300;
             }
             shooter.flywheelPowershot();
             highGoal = false;

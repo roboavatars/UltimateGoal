@@ -99,13 +99,13 @@ public class Logger {
                 lineNum++;
             }
             bufferedReader.close();
+            Robot.log("Starting At " + Arrays.toString(robotPos));
         } catch (Exception ex) {
             robotPos[0] = 0; robotPos[1] = 0; robotPos[2] = 0;
             Robot.log("read error, using default values :-(");
             ex.printStackTrace();
         }
 
-        Robot.log("Starting At " + Arrays.toString(robotPos));
         return robotPos;
     }
 }
