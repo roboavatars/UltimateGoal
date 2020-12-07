@@ -14,8 +14,8 @@ public class Intake {
 
     private final double lHomePos = 0.95;
     private final double lOutPos = 0.05;
-    private final double rHomePos = 0.28;
-    private final double rOutPos = 0.92;
+    private final double rHomePos = 0.25;
+    private final double rOutPos = 0.9;
 
     public boolean intakeOn = false;
     public boolean intakeRev = false;

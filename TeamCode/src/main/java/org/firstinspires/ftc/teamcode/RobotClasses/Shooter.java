@@ -15,7 +15,7 @@ public class Shooter {
     private Servo magServo;
     private Servo feedServo;
 
-    public final int highGoalV = -1250;
+    public final int highGoalV = -1150;
     public final int powershotV = -875;
 
     private final double flapHomePos = 0;
@@ -27,7 +27,7 @@ public class Shooter {
 
     private final double feedHomePos = 0.15;
     private final double feedMid = 0.2;
-    private final double feedShootPos = 0.35;
+    private final double feedShootPos = 0.37;
 
     public boolean magHome = true;
     public boolean magVibrate = false;

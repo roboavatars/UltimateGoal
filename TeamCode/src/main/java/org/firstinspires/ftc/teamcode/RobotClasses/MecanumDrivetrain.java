@@ -203,10 +203,10 @@ public class MecanumDrivetrain {
             deltapod2 = pod2 - lastpod2;
             deltapod3 = pod3 - lastpod3;
 
-            if (deltapod1 != 0 && deltapod2 != 0 && deltapod3 != 0) {
-                if (deltapod1 == 0) Robot.log("pod 1 delta 0");
-                if (deltapod2 == 0) Robot.log("pod 2 delta 0");
-                if (deltapod3 == 0) Robot.log("pod 3 delta 0");
+            if (!(deltapod1 == 0 && deltapod2 == 0 && deltapod3 == 0)) {
+                if (deltapod1 == 0) Robot.log("pod1 delta 0");
+                if (deltapod2 == 0) Robot.log("pod2 delta 0");
+                if (deltapod3 == 0) Robot.log("pod3 delta 0");
             }
 
             lastx = x;

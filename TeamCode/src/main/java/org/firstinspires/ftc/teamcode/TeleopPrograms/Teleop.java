@@ -20,11 +20,10 @@ public class Teleop extends LinearOpMode {
     public static boolean robotCentric = false;
     public static boolean useAutoPos = true;
 
+    public double xySpeed = 1;
+    public double thSpeed = 1;
+
     // Toggles
-    public boolean flywheelToggle = false;
-    public boolean flywheelOn = false;
-    public boolean psToggle = false;
-    public boolean ps = false;
     public boolean stickToggle = false;
     public boolean sticksOut = true;
     public boolean clampToggle = false;
@@ -49,9 +48,9 @@ public class Teleop extends LinearOpMode {
         while (opModeIsActive()) {
 
             // Intake on/off/rev
-            if (gamepad2.right_bumper) {
+            if (gamepad2.right_trigger > 0) {
                 robot.intake.intakeOn();
-            } else if (gamepad2.left_bumper) {
+            } else if (gamepad2.left_trigger > 0) {
                 robot.intake.intakeRev();
             } else if (!robot.vibrateMag) {
                 robot.intake.intakeOff();
@@ -59,53 +58,23 @@ public class Teleop extends LinearOpMode {
 
             // Auto high goal and powershot shoot
             if (gamepad1.right_bumper) {
-                if (!robot.shootRoutine) {
-                    robot.shootRoutine = true;
+                if (!robot.preShootRoutine) {
+                    robot.preShootRoutine = true;
                     robot.highGoal = false;
-                }
-            } else if (gamepad1.left_bumper) {
-                if (!robot.shootRoutine) {
-                    robot.shootRoutine = true;
-                    robot.highGoal = true;
                 }
             }
 
-            // Change theta due to drift
-            if (gamepad1.dpad_left) {
-                robot.drivetrain.theta -= 0.005;
-            } else if (gamepad1.dpad_right) {
-                robot.drivetrain.theta += 0.005;
+            if (gamepad1.left_bumper) {
+                if (!robot.preShootRoutine) {
+                    robot.preShootRoutine = true;
+                    robot.highGoal = true;
+                }
             }
 
             // Rev up flywheel for high goal
             if (gamepad2.y) {
                 robot.shooter.flywheelHighGoal();
             }
-
-            if (gamepad2.left_trigger > 0) {
-                robot.shooter.flywheelPowershot();
-            }
-
-            // Manual powershot controls
-//            if (gamepad2.right_trigger > 0 && !psToggle) {
-//                psToggle = true;
-//                if (ps) {
-//                    robot.shooter.flywheelOff();
-//                    robot.shooter.magHome();
-//                } else {
-//                    robot.shooter.flywheelPowershot();
-//                    robot.shooter.magShoot();
-//                }
-//                ps = !ps;
-//            } else if (gamepad2.right_trigger == 0 && psToggle) {
-//                psToggle = false;
-//            }
-//
-//            if (gamepad2.left_trigger > 0 && ps) {
-//                robot.shooter.feedShoot();
-//            } else if (gamepad2.left_trigger == 0 && ps) {
-//                robot.shooter.feedHome();
-//            }
 
             // Stick extension/retraction
             if (gamepad2.x && !stickToggle) {
@@ -137,21 +106,42 @@ public class Teleop extends LinearOpMode {
             }
 
             // Mag vibrate to unstuck rings
-            if (gamepad2.b) {
+            if (gamepad1.b) {
                 robot.vibrateMag = true;
                 robot.vibrateTime = System.currentTimeMillis();
             }
 
+            // Slow align mode
+            if (gamepad1.right_trigger > 0) {
+                xySpeed = 0.4;
+                thSpeed = 0.2;
+            } else {
+                xySpeed = 1;
+                thSpeed = 1;
+            }
+
             // Reset odo for powershot
             if (gamepad1.x) {
-                robot.reset(135, 57, Math.PI / 2);
+                robot.reset(87, 63, Math.PI / 2);
+            }
+
+            // Reset theta to pi/2
+            if (gamepad1.y) {
+                robot.reset(robot.x, robot.y, Math.PI / 2);
+            }
+
+            // Change theta due to drift
+            if (gamepad1.dpad_left) {
+                robot.drivetrain.theta -= 0.005;
+            } else if (gamepad1.dpad_right) {
+                robot.drivetrain.theta += 0.005;
             }
 
             // Drivetrain controls
             if (robotCentric) {
-                robot.drivetrain.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
+                robot.drivetrain.setControls(-gamepad1.left_stick_y * xySpeed, -gamepad1.left_stick_x * xySpeed, -gamepad1.right_stick_x * thSpeed);
             } else {
-                robot.drivetrain.setGlobalControls(gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x);
+                robot.drivetrain.setGlobalControls(gamepad1.left_stick_y * xySpeed, gamepad1.left_stick_x * xySpeed, -gamepad1.right_stick_x * thSpeed);
             }
 
             // Update robot
