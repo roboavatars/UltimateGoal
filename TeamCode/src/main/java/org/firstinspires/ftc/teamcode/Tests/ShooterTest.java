@@ -1,20 +1,17 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
-import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.config.Config;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
+
 @TeleOp @Config
 public class ShooterTest extends LinearOpMode {
 
-    private FtcDashboard dashboard;
-    private TelemetryPacket packet;
     private DcMotorEx shooter1;
     private DcMotorEx shooter2;
 
@@ -34,9 +31,6 @@ public class ShooterTest extends LinearOpMode {
         shooter1.setDirection(DcMotorSimple.Direction.REVERSE);
         shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        dashboard = FtcDashboard.getInstance();
-        packet = new TelemetryPacket();
-
         waitForStart();
 
         while (opModeIsActive()) {
@@ -53,17 +47,7 @@ public class ShooterTest extends LinearOpMode {
 
             addPacket("Shooter 1", shooter1.getVelocity());
             addPacket("Shooter 2", shooter2.getVelocity());
-
             sendPacket();
         }
-    }
-
-    public void addPacket(String key, Object value) {
-        packet.put(key, value.toString());
-    }
-
-    public void sendPacket() {
-        dashboard.sendTelemetryPacket(packet);
-        packet = new TelemetryPacket();
     }
 }

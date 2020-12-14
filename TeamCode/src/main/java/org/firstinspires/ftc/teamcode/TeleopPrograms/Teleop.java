@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-import org.firstinspires.ftc.teamcode.RobotClasses.Logger;
+import org.firstinspires.ftc.teamcode.Debug.Logger;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import java.util.Arrays;
@@ -57,18 +57,10 @@ public class Teleop extends LinearOpMode {
             }
 
             // Auto high goal and powershot shoot
-            if (gamepad1.right_bumper) {
-                if (!robot.preShootRoutine) {
-                    robot.preShootRoutine = true;
-                    robot.highGoal = false;
-                }
-            }
-
             if (gamepad1.left_bumper) {
-                if (!robot.preShootRoutine) {
-                    robot.preShootRoutine = true;
-                    robot.highGoal = true;
-                }
+                robot.highGoalShoot();
+            } else if (gamepad1.right_bumper) {
+                robot.powerShotShoot();
             }
 
             // Rev up flywheel for high goal
@@ -122,12 +114,12 @@ public class Teleop extends LinearOpMode {
 
             // Reset odo for powershot
             if (gamepad1.x) {
-                robot.reset(87, 63, Math.PI / 2);
+                robot.resetOdo(87, 63, Math.PI / 2);
             }
 
             // Reset theta to pi/2
             if (gamepad1.y) {
-                robot.reset(robot.x, robot.y, Math.PI / 2);
+                robot.resetOdo(robot.x, robot.y, Math.PI / 2);
             }
 
             // Change theta due to drift

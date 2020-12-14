@@ -7,10 +7,10 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.OpenCV.StackHeightDetector;
 import org.firstinspires.ftc.teamcode.OpenCV.StackHeightPipeline.RingCase;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
-import org.firstinspires.ftc.teamcode.Splines.Path;
-import org.firstinspires.ftc.teamcode.Splines.Pose;
-import org.firstinspires.ftc.teamcode.Splines.Spline;
-import org.firstinspires.ftc.teamcode.Splines.Waypoint;
+import org.firstinspires.ftc.teamcode.Pathing.Path;
+import org.firstinspires.ftc.teamcode.Pathing.Pose;
+import org.firstinspires.ftc.teamcode.Pathing.Spline;
+import org.firstinspires.ftc.teamcode.Pathing.Waypoint;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -264,19 +264,18 @@ public class RedAuto extends LinearOpMode {
                 Pose curPose = intakeStackPath.getRobotPose(curTime);
                 robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta());//intakeStackThetaSpline.position(curTime));
 
-                if (!robot.intake.intakeOn) {
+                if (!robot.intake.on) {
                     robot.intake.intakeOn();
                 }
 
                 if (time.seconds() > intakeStackTime - 0.5) {
-                    robot.intake.intakeOff();
                     robot.vibrateMag = true;
                     robot.vibrateTime = System.currentTimeMillis();
                 }
 
                 if (time.seconds() > intakeStackTime + 1) {
-                    robot.preShootRoutine = true;
-                    robot.highGoal = true;
+
+                    robot.highGoalShoot();
                     robot.intake.intakeRev();
 
                     intakeStack = true;

@@ -3,9 +3,13 @@ package org.firstinspires.ftc.teamcode.RobotClasses;
 import android.annotation.SuppressLint;
 import android.util.Log;
 
-import com.acmerobotics.dashboard.FtcDashboard;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.teamcode.Debug.Logger;
+
+import java.util.Arrays;
+
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 
 @SuppressWarnings("FieldCanBeLocal") @SuppressLint("DefaultLocale")
 public class Robot {
@@ -22,10 +26,9 @@ public class Robot {
     private final int loggerUpdatePeriod = 2;
     private final double xyTolerance = 1;
     private final double thetaTolerance = Math.PI / 35;
-    private final double xk = 0.30;
-    private final double yk = 0.30;
-    private final double thetak = 2.4;
-
+    private final double xK = 0.30;
+    private final double yK = 0.30;
+    private final double thetaK = 2.4;
     private double odoWeight = 1;
 
     // State Variables
@@ -37,7 +40,7 @@ public class Robot {
     public boolean clear = false;
     public boolean highGoal = false;
     public boolean vibrateMag = false;
-    public boolean preShootRoutine = false;
+    public boolean preShoot = false;
 
     // Time and Delay Variables
     public double shootTime;
@@ -62,27 +65,23 @@ public class Robot {
 
     // OpMode Stuff
     private LinearOpMode op;
-    private FtcDashboard dashboard;
-    private TelemetryPacket packet;
 
     // Constructor
     public Robot(LinearOpMode op, double x, double y, double theta, boolean isAuto) {
         drivetrain = new MecanumDrivetrain(op, x, y, theta);
         intake = new Intake(op);
-        wobbleArm = new WobbleArm(op, isAuto);
         shooter = new Shooter(op);
+        wobbleArm = new WobbleArm(op, isAuto);
+        logger = new Logger();
         try {
             t265 = new T265(op, x, y, theta); t265.startCam();
         } catch (Exception ex) {
             log("Camera error"); ex.printStackTrace();
             odoWeight = 1;
         }
-        logger = new Logger();
 
         this.op = op;
         this.isAuto = isAuto;
-        dashboard = FtcDashboard.getInstance();
-        packet = new TelemetryPacket();
     }
 
     // Stop logger and t265
@@ -93,7 +92,8 @@ public class Robot {
         }
     }
 
-    public void reset(double x, double y, double theta) {
+    // Reset Odometry
+    public void resetOdo(double x, double y, double theta) {
         drivetrain.resetOdo(x, y, theta);
     }
 
@@ -117,69 +117,55 @@ public class Robot {
         0 rings, shoot, mag shoot, feed home- mag home, intake on
         */
 
-        // To help unstuck rings
-        // b-> intake on, vibrate pos, intake rev, home pos, intake off
-        if (vibrateMag && System.currentTimeMillis() - vibrateTime > vibrateDelay) {
-            if (!intake.intakeOn && shooter.magHome) {
-                intake.intakeOn();
-            } else if (intake.intakeFor && shooter.magHome) {
-                shooter.magVibrate();
-            } else if (intake.intakeFor && shooter.magVibrate) {
-                intake.intakeRev();
-            } else if (intake.intakeRev && shooter.magVibrate) {
-                shooter.magHome();
-                intake.intakeOff();
-                vibrateMag = false;
-            }
-            vibrateTime = System.currentTimeMillis();
-        }
-
-        if (preShootRoutine && !vibrateMag) {
+        // Pre-shoot tasks: Turn on flywheel, move robot to shooting position, mag up, initiate shoot once ready
+        if (preShoot && !vibrateMag) {
 
             double[] target;
             int vThresh;
             if (highGoal) {
                 shooter.flywheelHighGoal();
-                vThresh = -shooter.highGoalV - 50; // 1100
-                double lineY;
-                if (!isAuto) {
-                    lineY = 66;
-                } else {
-                    lineY = y;
-                }
-                target = shootTargets(x, lineY, Math.PI / 2, 3);
+                vThresh = -shooter.highGoalV - 50;
+
+                double alignY;
+                if (!isAuto) { alignY = 66; }
+                else { alignY = y; }
+                target = shootTargets(x, alignY, Math.PI / 2, 3);
             } else {
                 shooter.flywheelPowershot();
-                vThresh = -shooter.powershotV - 40; // 835
+                vThresh = -shooter.powershotV - 40;
                 target = shootTargets(powerTargets[0][0], powerTargets[0][1], Math.PI / 2, 2);
             }
 
             if (shooter.magHome) {
                 intake.intakeOff();
                 shooter.magShoot();
+                log("Mag up");
             }
 
             if (!isAtPose(target[0], target[1], target[2])) {
-                setTargetPoint(target[0], target[1], target[2], 0.2, 0.2, 4.7);
-            } else if (!shooter.magHome && shooter.getVelocity() > vThresh && isAtPose(target[0], target[1], target[2])) {
+                setTargetPoint(target[0], target[1], target[2], xK, yK, 4.7);
+                log("Moving to shoot position: " + Arrays.toString(target));
+            }
+            else if (!shooter.magHome && shooter.getVelocity() > vThresh && isAtPose(target[0], target[1], target[2])) {
                 if (highGoal) {
-                    highGoalShoot();
+                    shootDelay = 275;
+                    shooter.flywheelHighGoal();
                 } else {
-                    powerShotShoot();
+                    shootDelay = 600;
+                    shooter.flywheelPowershot();
                 }
-                log("ready for shoot");
-                preShootRoutine = false;
+                shoot = true;
+                numRings = 3;
+                shootTime = System.currentTimeMillis();
+                preShoot = false;
+                log("Ready to shoot");
             }
         }
 
-        if (!preShootRoutine && !vibrateMag && numRings == 3 && shoot && shooter.magHome && shooter.feedHome) {
-            shooter.magShoot();
-            intake.intakeOff();
-        }
+        // Shoot tasks: change/maintain shooting position, auto feed rings
+        if (shoot && numRings >= 0 && !shooter.magHome && !vibrateMag) {
 
-        if (numRings >= 0 && shoot && !shooter.magHome) {
-
-            // Auto align robot
+            // Auto align robot, set flap
             double[] target = {};
             if (numRings > 0) {
                 if (highGoal) {
@@ -187,7 +173,7 @@ public class Robot {
                 } else {
                     target = powerTargets[numRings - 1];
                 }
-                setTargetPoint(target[0], target[1], target[2], 0.2, 0.2, 4.7);
+                setTargetPoint(target[0], target[1], target[2], xK, yK, 4.7);
                 shooter.setFlapAngle(target[3]);
             }
 
@@ -203,6 +189,7 @@ public class Robot {
                             } else if (numRings == 1) {
                                 shootDelay += 100;
                             }
+                            log("Feed ring");
                         }
                     } else {
                         if (numRings == 1) {
@@ -212,14 +199,32 @@ public class Robot {
                         }
                         clear = false;
                         numRings--;
+                        log("Feed home");
                     }
                 } else {
                     shooter.flywheelOff();
                     shooter.magHome();
                     shoot = false;
+                    log("Shoot done");
                 }
                 shootTime = System.currentTimeMillis();
             }
+        }
+
+        // To help unstuck rings--> intake on, vibrate pos, intake rev, home pos, intake off
+        if (vibrateMag && System.currentTimeMillis() - vibrateTime > vibrateDelay) {
+            if (!intake.on && shooter.magHome) {
+                intake.intakeOn();
+            } else if (intake.forward && shooter.magHome) {
+                shooter.magVibrate();
+            } else if (intake.forward && shooter.magVibrate) {
+                intake.intakeRev();
+            } else if (intake.reverse && shooter.magVibrate) {
+                shooter.magHome();
+                intake.intakeOff();
+                vibrateMag = false;
+            }
+            vibrateTime = System.currentTimeMillis();
         }
 
         // Update Position
@@ -248,15 +253,15 @@ public class Robot {
         ay = (vy - prevVy) / timeDiff;
         a = (w - prevW) / timeDiff;
 
+        // Remember Previous Motion Info
+        prevX = x; prevY = y; prevTheta = theta;
+        prevTime = curTime;
+        prevVx = vx; prevVy = vy; prevW = w;
+
         // Log Data
         if (cycleCounter % loggerUpdatePeriod == 0) {
             logger.logData(System.currentTimeMillis()-startTime, x, y, theta, vx, vy, w, ax, ay, a, numRings, shooter.magHome, shooter.feedHome);
         }
-
-        // Remember Old Motion Info
-        prevX = x; prevY = y; prevTheta = theta;
-        prevTime = curTime;
-        prevVx = vx; prevVy = vy; prevW = w;
 
         // Dashboard Telemetry
         addPacket("1 X", String.format("%.5f", x));
@@ -265,11 +270,10 @@ public class Robot {
         addPacket("4 Angle Pos", String.format("%.5f", shooter.flapServo.getPosition()));
         addPacket("5 Shooter Velocity", shooter.getVelocity());
         addPacket("6 numRings", numRings);
-        addPacket("7 shoot", shoot  + " " + preShootRoutine + " " + highGoal);
+        addPacket("7 shoot", shoot  + " " + preShoot + " " + highGoal);
         addPacket("8 Time", (System.currentTimeMillis() - startTime) / 1000);
         addPacket("9 Update Frequency (Hz)", 1 / timeDiff);
         addPacket("delay", shootDelay);
-        addPacket("vibrate", vibrateMag);
 
         // Dashboard Drawings
         drawGoal("black");
@@ -279,6 +283,22 @@ public class Robot {
         }
         drawRobot(x, y, theta, "black");
         sendPacket();
+    }
+
+    // Set variables for high goal shoot
+    public void highGoalShoot() {
+        if (!preShoot) {
+            preShoot = true;
+            highGoal = true;
+        }
+    }
+
+    // Set variables for powershot shoot
+    public void powerShotShoot() {
+        if (!preShoot) {
+            preShoot = true;
+            highGoal = false;
+        }
     }
 
     // Calculate auto aim target positions
@@ -296,14 +316,11 @@ public class Robot {
         double targetX = shootXCor[targetNum];
         double targetY = shootYCor;
         double targetZ = shootZCor[targetNum];
+
         double shooterX = shootX + 6.5 * Math.sin(shootTheta);
         double shooterY = shootY - 6.5 * Math.cos(shootTheta);
-
         double dx = targetX - shooterX;
         double dy = targetY - shooterY;
-        /*double v = 4.5 * shooter.getShooterVelocity();
-        double p = v * dy;
-        double q = -v * dx;*/
 
         // Uses Angle Bisector for High Goal for more consistency
         if (targetNum == 3) {
@@ -320,14 +337,6 @@ public class Robot {
         double d = Math.sqrt(Math.pow(targetX - shooterX, 2) + Math.pow(targetY - shooterY, 2));
         double flapAngle = -0.0001 * Math.pow(d, 2) + 0.0167 * d - 0.4905;
 
-        /*double alignRobotAngle = Math.asin((dx * vx - dx * vy) / Math.sqrt(Math.pow(p, 2) + Math.pow(q, 2))) - Math.atan(q / p);
-        double dz = targetZ - 8;
-        double a = (386 * Math.pow(d, 2)) / (2 * Math.pow(v, 2));
-        double b = d;
-        double c = -dz - a;
-        double quadraticRes = (-b - Math.sqrt(Math.pow(b, 2) - (4 * a * c))) / (2 * a);
-        double shooterAngle = 0.27 * (Math.atan(quadraticRes) - 5 * Math.PI / 36) * 3 / Math.PI;*/
-
         // Calculate Robot Angle
         double alignRobotAngle = Math.atan2(dy, dx) + 0.0013 * d - 0.2962;
         double alignRobotX = shooterX - 6.5 * Math.sin(alignRobotAngle);
@@ -336,118 +345,40 @@ public class Robot {
         return new double[] {alignRobotX, alignRobotY, alignRobotAngle, flapAngle};
     }
 
-    // Set variables for high goal shoot
-    public void highGoalShoot() {
-        if (!shoot) {
-            shootDelay = 275;
-            shooter.flywheelHighGoal();
-            highGoal = true;
-            initiateShoot();
-        }
-    }
-
-    // Set variables for powershot shoot
-    public void powerShotShoot() {
-        if (!shoot) {
-            shootDelay = 600;
-            shooter.flywheelPowershot();
-            highGoal = false;
-            initiateShoot();
-        }
-    }
-
-    // Set common shoot variables
-    public void initiateShoot() {
-        shoot = true;
-        numRings = 3;
-        shootTime = System.currentTimeMillis();
-    }
-
     // Set target point (default K values)
-    public void setTargetPoint(double xtarget, double ytarget, double thetatarget) {
-
-        // Make Sure thetatarget is Between 0 and 2pi
-        thetatarget = thetatarget % (Math.PI * 2);
-        if (thetatarget < 0) {
-            thetatarget += Math.PI * 2;
-        }
-
-        // Picking the Smaller Distance to Rotate
-        double thetacontrol;
-        if (theta - thetatarget > Math.PI) {
-            thetacontrol = theta - thetatarget - 2 * Math.PI;
-        } else if (theta - thetatarget < (-Math.PI)) {
-            thetacontrol = theta - thetatarget + 2 * Math.PI;
-        } else {
-            thetacontrol = theta - thetatarget;
-        }
-
-        //log("setTargetPoint- " + xtarget + " " + " " + ytarget + " " + thetatarget);
-
-        drivetrain.setGlobalControls(-xk * (x - xtarget), -yk * (y - ytarget), -thetak * (thetacontrol));
+    public void setTargetPoint(double xTarget, double yTarget, double thetaTarget) {
+        setTargetPoint(xTarget, yTarget, thetaTarget, xK, yK, thetaK);
     }
 
     // Set target point (custom K values)
-    public void setTargetPoint(double xtarget, double ytarget, double thetatarget, double xK, double yK, double thetaK) {
-        // Make Sure thetatarget is Between 0 and 2pi
-        thetatarget = thetatarget % (Math.PI * 2);
-        if (thetatarget < 0) {
-            thetatarget += Math.PI * 2;
+    public void setTargetPoint(double xTarget, double yTarget, double thetaTarget, double xK, double yK, double thetaK) {
+        // Make Sure thetaTarget is Between 0 and 2pi
+        thetaTarget = thetaTarget % (Math.PI * 2);
+        if (thetaTarget < 0) {
+            thetaTarget += Math.PI * 2;
         }
 
         // Picking the Smaller Distance to Rotate
-        double thetacontrol;
-        if (Math.abs(theta - thetatarget) > Math.PI) {
-            thetacontrol = theta - thetatarget - 2 * Math.PI;
+        double thetaControl;
+        if (Math.abs(theta - thetaTarget) > Math.PI) {
+            thetaControl = theta - thetaTarget - 2 * Math.PI;
         } else {
-            thetacontrol = theta - thetatarget;
+            thetaControl = theta - thetaTarget;
         }
 
-        //log("setTargetPointK-" + xtarget + " " + " " + ytarget + " " + thetatarget);
+        //log("setTargetPoint-" + xTarget + " " + " " + yTarget + " " + thetaTarget);
 
-        drivetrain.setGlobalControls(-xK * (x - xtarget), -yK * (y - ytarget), -thetaK * (thetacontrol));
+        drivetrain.setGlobalControls(-xK * (x - xTarget), -yK * (y - yTarget), -thetaK * (thetaControl));
     }
 
     // Check if robot is at a certain point/angle (default tolerance)
-    public boolean isAtPose(double targetx, double targety, double targettheta) {
-        return isAtPose(targetx, targety, targettheta, xyTolerance, xyTolerance, thetaTolerance);
+    public boolean isAtPose(double targetX, double targetY, double targetTheta) {
+        return isAtPose(targetX, targetY, targetTheta, xyTolerance, xyTolerance, thetaTolerance);
     }
 
     // Check if robot is at a certain point/angle (custom tolerance)
-    public boolean isAtPose(double targetx, double targety, double targettheta, double xtolerance, double ytolerance, double thetatolerance) {
-        return (Math.abs(x - targetx) < xtolerance && Math.abs(y - targety) < ytolerance && Math.abs(theta - targettheta) < thetatolerance);
-    }
-
-    // Dashboard draw functions
-    public void drawRobot(double robotX, double robotY, double robotTheta, String color) {
-        double r = 9 * Math.sqrt(2);
-        double pi = Math.PI;
-        double x = robotY - 72;
-        double y = 72 - robotX;
-        double theta = pi/2 + robotTheta;
-        double[] ycoords = {r * Math.sin(pi/4 + theta) + y, r * Math.sin(3 * pi/4 + theta) + y, r * Math.sin(5 * pi/4 + theta) + y, r * Math.sin(7 * pi/4 + theta) + y};
-        double[] xcoords = {r * Math.cos(pi/4 + theta) + x, r * Math.cos(3 * pi/4 + theta) + x, r * Math.cos(5 * pi/4 + theta) + x, r * Math.cos(7 * pi/4 + theta) + x};
-        packet.fieldOverlay().setFill(color).fillPolygon(xcoords, ycoords);
-    }
-
-    public void drawGoal(String color) {
-        double[] xcoords = {72, 72, 78, 78};
-        double[] ycoords = {-24, -48, -48, -24};
-        packet.fieldOverlay().setFill(color).fillPolygon(xcoords, ycoords);
-    }
-
-    public void drawLine(double x1, double y1, double x2, double y2, String color) {
-        packet.fieldOverlay().setStroke(color).strokeLine(y1 - 72, 72 - x1, y2 - 72, 72 - x2);
-    }
-
-    // Dashboard telemetry and logging
-    public void addPacket(String key, Object value) {
-        packet.put(key, value.toString());
-    }
-
-    public void sendPacket() {
-        dashboard.sendTelemetryPacket(packet);
-        packet = new TelemetryPacket();
+    public boolean isAtPose(double targetX, double targetY, double targetTheta, double xTolerance, double yTolerance, double thetaTolerance) {
+        return (Math.abs(x - targetX) < xTolerance && Math.abs(y - targetY) < yTolerance && Math.abs(theta - targetTheta) < thetaTolerance);
     }
 
     public static void log(String message) {

@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.teamcode.RobotClasses;
+package org.firstinspires.ftc.teamcode.Debug;
 
 import android.annotation.SuppressLint;
+
+import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import java.io.BufferedReader;
 import java.io.File;

@@ -17,9 +17,9 @@ public class Intake {
     private final double rHomePos = 0.25;
     private final double rOutPos = 0.9;
 
-    public boolean intakeOn = false;
-    public boolean intakeRev = false;
-    public boolean intakeFor = false;
+    public boolean on = false;
+    public boolean reverse = false;
+    public boolean forward = false;
 
     public Intake(LinearOpMode op) {
         intakeMotor = op.hardwareMap.get(DcMotorEx.class, "intake");
@@ -33,28 +33,28 @@ public class Intake {
 
     public void intakeOn() {
         intakeMotor.setPower(-1);
-        intakeOn = true;
-        intakeRev = false;
-        intakeFor = true;
+        on = true;
+        reverse = false;
+        forward = true;
     }
 
     public void intakeRev() {
         intakeMotor.setPower(1);
-        intakeOn = true;
-        intakeRev = true;
-        intakeFor = false;
+        on = true;
+        reverse = true;
+        forward = false;
     }
 
     public void intakeOff() {
         intakeMotor.setPower(0);
-        intakeOn = false;
-        intakeRev = false;
-        intakeFor = false;
+        on = false;
+        reverse = false;
+        forward = false;
     }
 
     public void setPower(double power) {
         intakeMotor.setPower(power);
-        intakeOn = power != 0;
+        on = power != 0;
     }
 
     public void sticksHome() {

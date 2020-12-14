@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Splines;
+package org.firstinspires.ftc.teamcode.Pathing;
 
 public class Point2D {
 
