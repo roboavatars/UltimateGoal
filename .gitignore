@@ -76,4 +76,5 @@ lint/outputs/
 lint/tmp/
 # lint/reports/
 
-dash-aar/
+!dash-aar/FtcDashboard-debug.aar
+!dash-aar/ReplaceUrl.class
