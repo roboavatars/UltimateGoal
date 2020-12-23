@@ -31,6 +31,15 @@ repositories {
 
 dependencies {
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
-    implementation 'org.openftc:easyopencv:1.4.1'
+    implementation group: 'org.ejml', name: 'ejml-all', version: '0.39'
+    implementation 'org.openftc:easyopencv:1.4.3'
     implementation 'com.spartronics4915.lib:ftc265:2.0.1'
+
+    boolean useAar = true
+    if (!useAar) {
+        implementation 'com.acmerobotics.dashboard:dashboard:0.3.10'
+    } else {
+        implementation(name: 'FtcDashboard-debug2', ext: 'aar')
+        implementation('org.nanohttpd:nanohttpd-websocket:2.3.1') { exclude module: 'nanohttpd' }
+    }
 }

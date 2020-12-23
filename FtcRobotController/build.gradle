@@ -23,6 +23,13 @@ android {
 }
 
 dependencies {
+    boolean useAar = true
+    if (!useAar) {
+        implementation 'com.acmerobotics.dashboard:dashboard:0.3.10'
+    } else {
+        implementation(name: 'FtcDashboard-debug2', ext: 'aar')
+        implementation('org.nanohttpd:nanohttpd-websocket:2.3.1') { exclude module: 'nanohttpd' }
+    }
 }
 
 repositories {

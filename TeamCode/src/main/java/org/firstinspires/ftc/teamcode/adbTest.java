@@ -5,6 +5,8 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
+
 import java.util.Random;
 
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
@@ -25,7 +27,9 @@ public class adbTest extends LinearOpMode {
 
         while (opModeIsActive()) {
             packet.put("message", str);
-            packet.put("data", new Random().nextInt(1000));
+            int data = new Random().nextInt(1000);
+            packet.put("data", data);
+            Robot.log("Data: " + data);
             dashboard.sendTelemetryPacket(packet);
             packet = new TelemetryPacket();
         }
