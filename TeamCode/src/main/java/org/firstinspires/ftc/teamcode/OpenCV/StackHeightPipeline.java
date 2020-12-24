@@ -38,12 +38,12 @@ public class StackHeightPipeline extends OpenCvPipeline {
     private int cycles = 0;
 
     // Image Processing Mats
-    private RingProcessor processor;
+    private ImageProcessor processor;
     private Mat processed = new Mat();
 
     public StackHeightPipeline() {
         // Clear Old Images
-        processor = new RingProcessor();
+        processor = new ImageProcessor();
         @SuppressLint("SdCardPath") File dir = new File("/sdcard/EasyOpenCV/stackHeight");
         String[] children = dir.list();
         if (children != null) {
@@ -60,7 +60,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         // Process Image
-        processed = processor.processFrame(input)[1];
+        processed = processor.processFrame(input)[0];
 
         // Find Contours
         List<MatOfPoint> contours = new ArrayList<>();

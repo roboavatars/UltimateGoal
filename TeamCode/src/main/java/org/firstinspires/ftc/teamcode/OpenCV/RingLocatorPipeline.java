@@ -30,7 +30,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
     public static double CAM_THETA = Math.toRadians(57);
 
     // Image Processing Mats
-    private RingProcessor processor;
+    private ImageProcessor processor;
     private Mat processed = new Mat();
 
     // Ellipse Variables
@@ -48,7 +48,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
 
     public RingLocatorPipeline() {
         // Clear Old Images
-        processor = new RingProcessor();
+        processor = new ImageProcessor();
         @SuppressLint("SdCardPath") File dir = new File("/sdcard/EasyOpenCV/ringLocator");
         String[] children = dir.list();
         if (children != null) {
@@ -61,7 +61,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         // Process Image
-        processed = processor.processFrame(input)[1];
+        processed = processor.processFrame(input)[0];
 
         // Find Contours
         List<MatOfPoint> contours = new ArrayList<>();
@@ -125,14 +125,14 @@ public class RingLocatorPipeline extends OpenCvPipeline {
     }
 
     public double[] getAbsRingPos(double robotX, double robotY, double robotTheta) {
+        // Calculate ring's absolute position using robot's position and ring's position relative to robot
         double ringX = ringPos[0];
         double ringY = ringPos[1];
 
         double targetX = robotX + ringX * Math.sin(robotTheta) + ringY * Math.cos(robotTheta);
         double targetY = robotY + ringX * Math.cos(robotTheta) + ringY * Math.sin(robotTheta);
-        double targetTheta = Math.atan2(targetY - robotY, targetX - robotX);
 
-        return new double[] {targetX, targetY, targetTheta};
+        return new double[] {targetX, targetY};
     }
 
     public double[] getRelRingPos() {
