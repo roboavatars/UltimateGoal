@@ -30,7 +30,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
     public static double CAM_THETA = Math.toRadians(57);
 
     // Image Processing Mats
-    private ImageProcessor processor;
+    private RingProcessor processor;
     private Mat processed = new Mat();
 
     // Ellipse Variables
@@ -48,7 +48,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
 
     public RingLocatorPipeline() {
         // Clear Old Images
-        processor = new ImageProcessor();
+        processor = new RingProcessor();
         @SuppressLint("SdCardPath") File dir = new File("/sdcard/EasyOpenCV/ringLocator");
         String[] children = dir.list();
         if (children != null) {

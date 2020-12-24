@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.OpenCV;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-public class StackHeightDetector extends CVDetector {
+public class StackHeightDetector extends BaseDetector {
 
     private StackHeightPipeline pipeline;
 

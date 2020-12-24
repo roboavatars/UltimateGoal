@@ -2,7 +2,7 @@ package org.firstinspires.ftc.teamcode.OpenCV;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-public class RingLocator extends CVDetector {
+public class RingLocator extends BaseDetector {
 
     private RingLocatorPipeline pipeline;
 

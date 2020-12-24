@@ -38,12 +38,12 @@ public class StackHeightPipeline extends OpenCvPipeline {
     private int cycles = 0;
 
     // Image Processing Mats
-    private ImageProcessor processor;
+    private RingProcessor processor;
     private Mat processed = new Mat();
 
     public StackHeightPipeline() {
         // Clear Old Images
-        processor = new ImageProcessor();
+        processor = new RingProcessor();
         @SuppressLint("SdCardPath") File dir = new File("/sdcard/EasyOpenCV/stackHeight");
         String[] children = dir.list();
         if (children != null) {
@@ -107,7 +107,6 @@ public class StackHeightPipeline extends OpenCvPipeline {
 
         log("Result: " + Arrays.toString(result));
         log("Case: " + ringCase.name());
-        //saveMatToDisk(input, "result" + i);
 
         results.set(cycles % 5, ringCase);
         cycles++;

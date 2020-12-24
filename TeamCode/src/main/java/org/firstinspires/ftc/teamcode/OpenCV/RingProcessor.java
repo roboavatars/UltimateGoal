@@ -13,14 +13,12 @@ import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 
-@Config
-public class ImageProcessor {
+@Config @SuppressLint("SdCardPath")
+public class RingProcessor {
 
     // CV Thresholds
     public static double FILTER_MIN = 80;
     public static double FILTER_MAX = 115;
-
-    private final String path = "/sdcard/EasyOpenCV/imageProcessor";
 
     // Image Processing Mats
     private Mat yCrCb = new Mat();
@@ -28,9 +26,11 @@ public class ImageProcessor {
     private Mat processed = new Mat();
     private Mat mask = new Mat();
 
-    public ImageProcessor() {
+    private final String path = "/sdcard/EasyOpenCV/ringProcessor";
+
+    public RingProcessor() {
         // Clear Old Images
-        @SuppressLint("SdCardPath") File dir = new File("/sdcard/EasyOpenCV/imageProcessor");
+        File dir = new File(path);
         String[] children = dir.list();
         if (children != null) {
             for (String child : children) {
