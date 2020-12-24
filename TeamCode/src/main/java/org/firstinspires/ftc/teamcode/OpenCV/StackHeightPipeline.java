@@ -5,12 +5,9 @@ import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
 
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Point;
-import org.opencv.core.Rect;
 import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
@@ -28,8 +25,6 @@ public class StackHeightPipeline extends OpenCvPipeline {
     public enum RingCase {Zero, One, Four}
 
     // Thresholds
-    public static double FILTER_MIN = 80;
-    public static double FILTER_MAX = 115;
     public static int HEIGHT_THRESH = 3;
     public static int WIDTH_THRESH = 15;
     public static double ONE_MIN = 2.7;
@@ -42,54 +37,34 @@ public class StackHeightPipeline extends OpenCvPipeline {
     private ArrayList<RingCase> results = new ArrayList<>();
     private int cycles = 0;
 
-    // Mats used in processing
-    private Mat yCrCb = new Mat();
-    private Mat cb = new Mat();
+    // Image Processing Mats
+    private RingProcessor processor;
     private Mat processed = new Mat();
-    private Mat mask = new Mat();
 
     public StackHeightPipeline() {
         // Clear Old Images
-        @SuppressLint("SdCardPath") File dir = new File("/sdcard/EasyOpenCV");
+        processor = new RingProcessor();
+        @SuppressLint("SdCardPath") File dir = new File("/sdcard/EasyOpenCV/stackHeight");
         String[] children = dir.list();
         if (children != null) {
-            for (String child : children) { new File(dir, child).delete(); }
+            for (String child : children) {
+                new File(dir, child).delete();
+            }
         }
 
-        for (int i = 0; i < 5; i++) { results.add(RingCase.Zero); }
+        for (int i = 0; i < 5; i++) {
+            results.add(RingCase.Zero);
+        }
     }
 
     @Override
     public Mat processFrame(Mat input) {
-        // Crop Image
-        Rect rect = new Rect(5, 10, 140, 100);
-        input = new Mat(input, rect);
-
-        // Convert to YCrCb Color Space
-        Imgproc.cvtColor(input, yCrCb, Imgproc.COLOR_RGB2YCrCb);
-
-        // Extract Cb
-        Core.extractChannel(yCrCb, cb, 2);
-
-        // Filter Colors
-        Core.inRange(cb, new Scalar(FILTER_MIN), new Scalar(FILTER_MAX), processed);
-
-        // Remove Noise
-        Imgproc.morphologyEx(processed, processed, Imgproc.MORPH_CLOSE, new Mat());
-
-        // Mask Image for Debugging
-        input.copyTo(mask, processed);
+        // Process Image
+        processed = processor.processFrame(input)[1];
 
         // Find Contours
         List<MatOfPoint> contours = new ArrayList<>();
         Imgproc.findContours(processed, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-
-        // Save Images for Debug
-        saveMatToDisk(input, "input");
-        saveMatToDisk(yCrCb, "ycrcb");
-        saveMatToDisk(cb, "cb");
-        saveMatToDisk(processed, "processed");
-        saveMatToDisk(mask, "mask");
 
         // Loop Through Contours
         int i = 0;

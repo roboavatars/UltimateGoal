@@ -5,13 +5,10 @@ import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
 
-import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
-import org.opencv.core.Rect;
 import org.opencv.core.RotatedRect;
-import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
@@ -24,8 +21,6 @@ import java.util.List;
 public class RingLocatorPipeline extends OpenCvPipeline {
 
     // CV Thresholds
-    public static double FILTER_MIN = 80;
-    public static double FILTER_MAX = 115;
     public static double HEIGHT_THRESH = 3;
     public static double WIDTH_THRESH = 15;
 
@@ -35,8 +30,8 @@ public class RingLocatorPipeline extends OpenCvPipeline {
     public static double CAM_THETA = Math.toRadians(57);
 
     // Image Processing Mats
+    private RingProcessor processor;
     private Mat processed = new Mat();
-    private Mat mask = new Mat();
 
     // Ellipse Variables
     private double width;
@@ -53,6 +48,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
 
     public RingLocatorPipeline() {
         // Clear Old Images
+        processor = new RingProcessor();
         @SuppressLint("SdCardPath") File dir = new File("/sdcard/EasyOpenCV/ringLocator");
         String[] children = dir.list();
         if (children != null) {
@@ -64,33 +60,12 @@ public class RingLocatorPipeline extends OpenCvPipeline {
 
     @Override
     public Mat processFrame(Mat input) {
-        // Crop Image
-        Rect rect = new Rect(5, 10, 140, 100);
-        processed = new Mat(input, rect);
-
-        // Convert to YCrCb Color Space
-        Imgproc.cvtColor(input, processed, Imgproc.COLOR_RGB2YCrCb);
-
-        // Extract Cb
-        Core.extractChannel(processed, processed, 2);
-
-        // Filter Colors
-        Core.inRange(processed, new Scalar(FILTER_MIN), new Scalar(FILTER_MAX), processed);
-
-        // Remove Noise
-        Imgproc.morphologyEx(processed, processed, Imgproc.MORPH_CLOSE, new Mat());
-
-        // Mask Image for Debugging
-        input.copyTo(mask, processed);
+        // Process Image
+        processed = processor.processFrame(input)[1];
 
         // Find Contours
         List<MatOfPoint> contours = new ArrayList<>();
         Imgproc.findContours(processed, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
-
-        // Save Images for Debug
-        saveMatToDisk(input, "input");
-        saveMatToDisk(processed, "processed");
-        saveMatToDisk(mask, "mask");
 
         // Loop Through Contours
         distMin = Double.MAX_VALUE;
