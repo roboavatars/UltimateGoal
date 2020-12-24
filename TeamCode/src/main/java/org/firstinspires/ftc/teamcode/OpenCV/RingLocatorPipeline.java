@@ -26,8 +26,8 @@ public class RingLocatorPipeline extends OpenCvPipeline {
 
     // Perspective Math Constants
     public static double CAM_HEIGHT = 8.5;
-    public static double CAM_FOV = Math.toRadians(15);
-    public static double CAM_THETA = Math.toRadians(57);
+    public static double CAM_THETA = Math.toRadians(15);
+    public static double CAM_FOV = Math.toRadians(57);
 
     // Image Processing Mats
     private RingProcessor processor;
@@ -68,7 +68,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
         Imgproc.findContours(processed, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
         // Loop Through Contours
-        distMin = Double.MAX_VALUE;
+        distMin = 48 * Math.sqrt(13); // Longest Diagonal on Field
         for (MatOfPoint contour : contours) {
 
             // Bound Ellipse
@@ -102,7 +102,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
         }
 
         // Return (-1, -1) If No Rings Detected
-        if (distMin == Double.MAX_VALUE) {
+        if (distMin == 48 * Math.sqrt(13)) {
             ringPos = new double[] {-1, -1};
             log("No Rings Detected");
         }
