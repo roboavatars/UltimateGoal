@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.RobotClasses;
 
+import android.util.Log;
+
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.lynx.LynxEmbeddedIMU;
 import com.qualcomm.hardware.lynx.LynxI2cDeviceSynchV2;
@@ -19,7 +22,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
 import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
-@SuppressWarnings("FieldCanBeLocal")
+@SuppressWarnings("FieldCanBeLocal") @Config
 public class MecanumDrivetrain {
 
     // Motors
@@ -66,7 +69,7 @@ public class MecanumDrivetrain {
     private final double motorUpdateTolerance = 0.05;
 
     // Constants
-    public static double OdometryTrackWidth = 13.79;
+    public static double OdometryTrackWidth = 13.77;
     public static double OdometryHorizontalOffset = -3.165;
     private final double OdometryHeadingThreshold = Math.PI / 8;
 
@@ -204,9 +207,9 @@ public class MecanumDrivetrain {
             deltapod3 = pod3 - lastpod3;
 
             if (!(deltapod1 == 0 && deltapod2 == 0 && deltapod3 == 0)) {
-                if (deltapod1 == 0) Robot.log("pod1 delta 0");
-                if (deltapod2 == 0) Robot.log("pod2 delta 0");
-                if (deltapod3 == 0) Robot.log("pod3 delta 0");
+                if (deltapod1 == 0) Log.w("pod-delta-log", "pod1 delta 0");
+                if (deltapod2 == 0) Log.w("pod-delta-log", "pod2 delta 0");
+                if (deltapod3 == 0) Log.w("pod-delta-log", "pod3 delta 0");
             }
 
             lastx = x;
@@ -244,8 +247,6 @@ public class MecanumDrivetrain {
     public double getHeadingImu() {
         angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
         deltaheading = angles.firstAngle - lastheading;
-
-        //opMode.telemetry.addData("delta", deltaheading);
 
         if (deltaheading < -Math.PI)
             deltaheading += 2 * Math.PI;

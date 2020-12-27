@@ -23,7 +23,7 @@ android {
 }
 
 dependencies {
-    boolean useAar = true
+    boolean useAar = false
     if (!useAar) {
         implementation 'com.acmerobotics.dashboard:dashboard:0.3.10'
     } else {

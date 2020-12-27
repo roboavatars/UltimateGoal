@@ -32,14 +32,14 @@ public class Intake {
     }
 
     public void intakeOn() {
-        intakeMotor.setPower(-1);
+        intakeMotor.setPower(1);
         on = true;
         reverse = false;
         forward = true;
     }
 
     public void intakeRev() {
-        intakeMotor.setPower(1);
+        intakeMotor.setPower(-1);
         on = true;
         reverse = true;
         forward = false;

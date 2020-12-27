@@ -105,26 +105,15 @@ public class Robot {
             firstLoop = false;
         }
 
-        /*
-        States-
-        <3 rings, no shoot, mag home, feed home- nothing (default state)
-        3 rings, no shoot, mag home, feed home- mag to shoot, intake off
-
-        >0 rings, shoot, mag shoot, feed home- feed to shoot, save time (maybe also dt align, servo angle, flywheel)
-        >0 rings, shoot, mag shoot, feed shoot, delay passed- feed to home, rings-1
-        need delay before shoot again
-
-        0 rings, shoot, mag shoot, feed home- mag home, intake on
-        */
-
-        // Pre-shoot tasks: Turn on flywheel, move robot to shooting position, mag up, initiate shoot once ready
+        // Pre-shoot tasks: Turn on flywheel, move robot to shooting position, mag up, start auto-feed once ready
         if (preShoot && !vibrateMag) {
 
+            // Set flywheel velocity and shooting position based on what we want to shoot
             double[] target;
             int vThresh;
             if (highGoal) {
                 shooter.flywheelHighGoal();
-                vThresh = -shooter.highGoalV - 50;
+                vThresh = shooter.highGoalV - 50;
 
                 double alignY;
                 if (!isAuto) { alignY = 66; }
@@ -132,20 +121,24 @@ public class Robot {
                 target = shootTargets(x, alignY, Math.PI / 2, 3);
             } else {
                 shooter.flywheelPowershot();
-                vThresh = -shooter.powershotV - 40;
+                vThresh = shooter.powershotV - 40;
                 target = shootTargets(powerTargets[0][0], powerTargets[0][1], Math.PI / 2, 2);
             }
 
+            // Turn off intake and put mag up
             if (shooter.magHome) {
                 intake.intakeOff();
                 shooter.magShoot();
                 log("Mag up");
             }
 
+            // Move to shooting position
             if (!isAtPose(target[0], target[1], target[2])) {
                 setTargetPoint(target[0], target[1], target[2], xK, yK, 4.7);
                 log("Moving to shoot position: " + Arrays.toString(target));
             }
+
+            // Start auto-feed when mag is up, velocity is high enough, and robot is at position
             else if (!shooter.magHome && shooter.getVelocity() > vThresh && isAtPose(target[0], target[1], target[2])) {
                 if (highGoal) {
                     shootDelay = 275;
@@ -165,7 +158,7 @@ public class Robot {
         // Shoot tasks: change/maintain shooting position, auto feed rings
         if (shoot && numRings >= 0 && !shooter.magHome && !vibrateMag) {
 
-            // Auto align robot, set flap
+            // Maintain/change robot alignment, set flap
             double[] target = {};
             if (numRings > 0) {
                 if (highGoal) {
@@ -180,11 +173,12 @@ public class Robot {
             // Auto feed rings
             if (System.currentTimeMillis() - shootTime > shootDelay) {
                 if (numRings > 0) {
+                    // Shoot ring if feed home and robot at position
                     if (shooter.feedHome && !clear) {
                         if (isAtPose(target[0], target[1], target[2])) {
                             clear = true;
                             shooter.feedShoot();
-                            if (numRings == 3) {
+                            if (numRings == 3) { // Adjust delay for mid pos
                                 shootDelay -= 100;
                             } else if (numRings == 1) {
                                 shootDelay += 100;
@@ -194,14 +188,16 @@ public class Robot {
                     } else {
                         if (numRings == 1) {
                             shooter.feedHome();
-                        } else {
+                        } else { // Use mid pos to save time
                             shooter.feedMid();
                         }
                         clear = false;
                         numRings--;
                         log("Feed home");
                     }
-                } else {
+                }
+                // Clean up tasks after shooting completed
+                else {
                     shooter.flywheelOff();
                     shooter.magHome();
                     shoot = false;
@@ -273,7 +269,6 @@ public class Robot {
         addPacket("7 shoot", shoot  + " " + preShoot + " " + highGoal);
         addPacket("8 Time", (System.currentTimeMillis() - startTime) / 1000);
         addPacket("9 Update Frequency (Hz)", 1 / timeDiff);
-        addPacket("delay", shootDelay);
 
         // Dashboard Drawings
         drawGoal("black");
@@ -301,7 +296,7 @@ public class Robot {
         }
     }
 
-    // Calculate auto aim target positions
+    // Calculate robot pose for auto aim
     // left ps = 0, middle ps = 1, right ps = 2, high goal = 3
     public double[] shootTargets(int targetNum) {
         return shootTargets(x, y, theta, targetNum);
@@ -381,6 +376,7 @@ public class Robot {
         return (Math.abs(x - targetX) < xTolerance && Math.abs(y - targetY) < yTolerance && Math.abs(theta - targetTheta) < thetaTolerance);
     }
 
+    // Logging
     public static void log(String message) {
         Log.w("robot-log", message);
     }

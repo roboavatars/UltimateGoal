@@ -15,11 +15,11 @@ public class ShooterTest extends LinearOpMode {
     private DcMotorEx shooter1;
     private DcMotorEx shooter2;
 
-    public static double p = 28;
+    public static double p = 57;
     public static double i = 0;
     public static double d = 0;
-    public static double f = 18;
-    public static int velocity = -875;
+    public static double f = 17;
+    public static int velocity = 875;
     public static boolean on = false;
 
     @Override
@@ -28,7 +28,7 @@ public class ShooterTest extends LinearOpMode {
         shooter2 = hardwareMap.get(DcMotorEx.class, "shooter2");
         shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooter1.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooter1.setDirection(DcMotorSimple.Direction.FORWARD);
         shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         waitForStart();
@@ -36,7 +36,7 @@ public class ShooterTest extends LinearOpMode {
         while (opModeIsActive()) {
             if (on) {
                 shooter1.setVelocity(velocity);
-                shooter2.setVelocity(-velocity);
+                shooter2.setVelocity(velocity);
             } else {
                 shooter1.setVelocity(0);
                 shooter2.setVelocity(0);

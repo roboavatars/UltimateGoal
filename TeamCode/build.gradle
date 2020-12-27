@@ -35,7 +35,7 @@ dependencies {
     implementation 'org.openftc:easyopencv:1.4.3'
     implementation 'com.spartronics4915.lib:ftc265:2.0.1'
 
-    boolean useAar = true
+    boolean useAar = false
     if (!useAar) {
         implementation 'com.acmerobotics.dashboard:dashboard:0.3.10'
     } else {

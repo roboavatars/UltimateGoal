@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode;
+package org.firstinspires.ftc.teamcode.Tests;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
@@ -11,7 +11,7 @@ import java.util.Random;
 
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 
-@TeleOp @Config
+@TeleOp //@Config
 public class adbTest extends LinearOpMode {
 
     public static String str = "Hello :-)";
