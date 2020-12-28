@@ -16,6 +16,7 @@ import org.openftc.easyopencv.OpenCvPipeline;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 @Config
@@ -43,7 +44,6 @@ public class StackHeightPipeline extends OpenCvPipeline {
 
     public StackHeightPipeline() {
         // Clear Old Images
-        processor = new RingProcessor();
         @SuppressLint("SdCardPath") File dir = new File("/sdcard/EasyOpenCV/stackHeight");
         String[] children = dir.list();
         if (children != null) {
@@ -52,9 +52,8 @@ public class StackHeightPipeline extends OpenCvPipeline {
             }
         }
 
-        for (int i = 0; i < 5; i++) {
-            results.add(RingCase.Zero);
-        }
+        processor = new RingProcessor();
+        Collections.fill(results, RingCase.Zero);
     }
 
     @Override
@@ -123,14 +122,11 @@ public class StackHeightPipeline extends OpenCvPipeline {
     }
 
     public RingCase getModeResult() {
-        int[] temp = new int[3];
-        for (RingCase result : results) {
-            if (result == RingCase.Zero) { temp[0]++; }
-            else if (result == RingCase.One) { temp[1]++; }
-            else if (result == RingCase.Four) { temp[2]++; }
-        }
-        if (temp[1] > temp[0] && temp[1] > temp[2]) { return RingCase.One; }
-        else if (temp[2] > temp[0] && temp[2] > temp[1]) { return RingCase.Four; }
+        int zero = Collections.frequency(results, RingCase.Zero);
+        int one = Collections.frequency(results, RingCase.One);
+        int four = Collections.frequency(results, RingCase.Four);
+        if (one > zero && one > four) { return RingCase.One; }
+        else if (four > zero && four > one) { return RingCase.Four; }
         else { return RingCase.Zero; }
     }
 
