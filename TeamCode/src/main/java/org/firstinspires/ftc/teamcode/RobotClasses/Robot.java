@@ -122,7 +122,7 @@ public class Robot {
             } else {
                 shooter.flywheelPowershot();
                 vThresh = shooter.powershotV - 40;
-                target = shootTargets(powerTargets[0][0], powerTargets[0][1], Math.PI / 2, 2);
+                target = shootTargets(powerTargets[2][0], powerTargets[2][1], Math.PI / 2, 2);
             }
 
             // Turn off intake and put mag up
@@ -135,7 +135,7 @@ public class Robot {
             // Move to shooting position
             if (!isAtPose(target[0], target[1], target[2])) {
                 setTargetPoint(target[0], target[1], target[2], xK, yK, 4.7);
-                log("Moving to shoot position: " + Arrays.toString(target));
+                log("("+x+", "+y+", "+theta+") Moving to shoot position: " + Arrays.toString(target));
             }
 
             // Start auto-feed when mag is up, velocity is high enough, and robot is at position
@@ -184,6 +184,8 @@ public class Robot {
                                 shootDelay += 100;
                             }
                             log("Feed ring");
+                        } else {
+                            log("("+x+", "+y+", "+theta+") Not at shoot position: " + Arrays.toString(target));
                         }
                     } else {
                         if (numRings == 1) {

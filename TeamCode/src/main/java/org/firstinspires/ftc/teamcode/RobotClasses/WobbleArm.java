@@ -16,17 +16,18 @@ public class WobbleArm {
     private final int wobbleDownPos = -830;
     private final int wobbleUpTeleopPos = -80;
     private final int wobbleDownTeleopPos = -1000;
-    private final double wobbleClampPos = 0.20;
-    private final double wobbleReleasePos = 0.75;
+
+    private final double clampWobblePos = 0.20;
+    private final double unClampWobblePos = 0.75;
 
     public WobbleArm(LinearOpMode op, boolean isAuto) {
         wobbleServo = op.hardwareMap.get(Servo.class, "wobbleServo");
         wobbleMotor = op.hardwareMap.get(DcMotorEx.class, "wobbleMotor");
 
-        wobbleClamp();
+        clampWobble();
         this.isAuto = isAuto;
         if (isAuto) {
-            wobbleUp();
+            armUp();
             wobbleMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         } else {
             setPower(0);
@@ -39,8 +40,8 @@ public class WobbleArm {
         wobbleMotor.setPower(power);
     }
 
-    public void wobbleUp() {
-        wobbleClamp();
+    public void armUp() {
+        clampWobble();
         if (isAuto) {
             wobbleMotor.setTargetPosition(wobbleUpPos);
         } else {
@@ -49,8 +50,8 @@ public class WobbleArm {
         wobbleMotor.setPower(0.4);
     }
 
-    public void wobbleDown() {
-        wobbleClamp();
+    public void armDown() {
+        clampWobble();
         if (isAuto) {
             wobbleMotor.setTargetPosition(wobbleDownPos);
         } else {
@@ -59,22 +60,16 @@ public class WobbleArm {
         wobbleMotor.setPower(0.4);
     }
 
-    public void setWobbleMotorPosition(int position) {
+    public void setArmPosition(int position) {
         wobbleMotor.setTargetPosition(position);
         wobbleMotor.setPower(0.4);
     }
 
-    public void wobbleHome() {
-        wobbleClamp();
-        wobbleMotor.setTargetPosition(0);
-        wobbleMotor.setPower(0.4);
+    public void clampWobble() {
+        wobbleServo.setPosition(clampWobblePos);
     }
 
-    public void wobbleClamp() {
-        wobbleServo.setPosition(wobbleClampPos);
-    }
-
-    public void wobbleRelease() {
-        wobbleServo.setPosition(wobbleReleasePos);
+    public void unClampWobble() {
+        wobbleServo.setPosition(unClampWobblePos);
     }
 }

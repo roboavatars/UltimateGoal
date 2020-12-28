@@ -31,6 +31,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
 
     // Image Processing Mats
     private RingProcessor processor;
+    private Mat[] processorOut = new Mat[3];
     private Mat processed = new Mat();
 
     // Ellipse Variables
@@ -62,7 +63,9 @@ public class RingLocatorPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         // Process Image
-        processed = processor.processFrame(input)[0];
+        processorOut = processor.processFrame(input);
+        input = processorOut[0];
+        processed = processorOut[1];
 
         // Find Contours
         List<MatOfPoint> contours = new ArrayList<>();

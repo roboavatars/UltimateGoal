@@ -8,15 +8,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp @Config
 public class Test extends LinearOpMode {
 
-    public static double home = 0.15;
-    public static double out = 0.37;
+    public static double home = 0.24;
+    public static double out = 0.495;
     public static boolean isHome = true;
     private double position;
 
     @Override
     public void runOpMode() {
 
-        Servo servo = hardwareMap.get(Servo.class, "feedServo");
+        Servo servo = hardwareMap.get(Servo.class, "magServo");
 
         waitForStart();
 

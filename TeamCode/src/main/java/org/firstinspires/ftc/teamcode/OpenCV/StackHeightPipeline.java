@@ -35,11 +35,12 @@ public class StackHeightPipeline extends OpenCvPipeline {
     // Results
     private double[] result = new double[3];
     private RingCase ringCase = RingCase.Zero;
-    private ArrayList<RingCase> results = new ArrayList<>();
+    private RingCase[] results = new RingCase[5];
     private int cycles = 0;
 
     // Image Processing Mats
     private RingProcessor processor;
+    private Mat[] processorOut = new Mat[3];
     private Mat processed = new Mat();
 
     public StackHeightPipeline() {
@@ -53,13 +54,15 @@ public class StackHeightPipeline extends OpenCvPipeline {
         }
 
         processor = new RingProcessor();
-        Collections.fill(results, RingCase.Zero);
+        Arrays.fill(results, RingCase.Zero);
     }
 
     @Override
     public Mat processFrame(Mat input) {
         // Process Image
-        processed = processor.processFrame(input)[0];
+        processorOut = processor.processFrame(input);
+        input = processorOut[0];
+        processed = processorOut[1];
 
         // Find Contours
         List<MatOfPoint> contours = new ArrayList<>();
@@ -107,7 +110,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
         log("Result: " + Arrays.toString(result));
         log("Case: " + ringCase.name());
 
-        results.set(cycles % 5, ringCase);
+        results[cycles % 5] = ringCase;
         cycles++;
 
         return input;
@@ -122,9 +125,10 @@ public class StackHeightPipeline extends OpenCvPipeline {
     }
 
     public RingCase getModeResult() {
-        int zero = Collections.frequency(results, RingCase.Zero);
-        int one = Collections.frequency(results, RingCase.One);
-        int four = Collections.frequency(results, RingCase.Four);
+        List<RingCase> list = Arrays.asList(results);
+        int zero = Collections.frequency(list, RingCase.Zero);
+        int one = Collections.frequency(list, RingCase.One);
+        int four = Collections.frequency(list, RingCase.Four);
         if (one > zero && one > four) { return RingCase.One; }
         else if (four > zero && four > one) { return RingCase.Four; }
         else { return RingCase.Zero; }

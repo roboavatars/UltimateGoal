@@ -25,8 +25,9 @@ public class RingProcessor {
     private Mat cb = new Mat();
     private Mat processed = new Mat();
     private Mat mask = new Mat();
+    private Mat save;
 
-    private final String path = "/sdcard/EasyOpenCV/ringProcessor";
+    private final String path = "/sdcard/EasyOpenCV/ringProcessor-";
 
     public RingProcessor() {
         // Clear Old Images
@@ -60,12 +61,17 @@ public class RingProcessor {
         input.copyTo(mask, processed);
 
         // Save Images for Debug
-        Imgcodecs.imwrite(path + "input.jpg", input);
-        Imgcodecs.imwrite(path + "ycrcb.jpg", yCrCb);
-        Imgcodecs.imwrite(path + "cb.jpg", cb);
-        Imgcodecs.imwrite(path + "processed.jpg", processed);
-        Imgcodecs.imwrite(path + "mask.jpg", mask);
+        saveMatToDisk("input.jpg", input);
+        saveMatToDisk("ycrcb.jpg", yCrCb);
+        saveMatToDisk("cb.jpg", cb);
+        saveMatToDisk("processed.jpg", processed);
+        saveMatToDisk("mask.jpg", mask);
 
-        return new Mat[] {processed, mask};
+        return new Mat[] {input, processed, mask};
+    }
+
+    public void saveMatToDisk(String name, Mat mat) {
+        save = mat.clone(); Imgproc.cvtColor(mat, save, Imgproc.COLOR_BGR2RGB);
+        Imgcodecs.imwrite(path + name, save);
     }
 }

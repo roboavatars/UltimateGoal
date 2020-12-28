@@ -88,9 +88,9 @@ public class Teleop extends LinearOpMode {
             if (gamepad2.a && !clampToggle) {
                 clampToggle = true;
                 if (clamped) {
-                    robot.wobbleArm.wobbleRelease();
+                    robot.wobbleArm.unClampWobble();
                 } else {
-                    robot.wobbleArm.wobbleClamp();
+                    robot.wobbleArm.clampWobble();
                 }
                 clamped = !clamped;
             } else if (!gamepad2.a && clampToggle) {
