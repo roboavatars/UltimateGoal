@@ -25,9 +25,9 @@ public class RingLocatorPipeline extends OpenCvPipeline {
     public static double WIDTH_THRESH = 15;
 
     // Perspective Math Constants
-    public static double CAM_HEIGHT = 8.5;
+    public static double CAM_HEIGHT = 10;
     public static double CAM_THETA = Math.toRadians(15);
-    public static double CAM_FOV = Math.toRadians(57);
+    public static double CAM_VFOV = Math.toRadians(47);
 
     // Image Processing Mats
     private RingProcessor processor;
@@ -123,8 +123,8 @@ public class RingLocatorPipeline extends OpenCvPipeline {
 
     private double calcY(double yPix) {
         double theta = CAM_THETA / 2;
-        double num = (Math.cos(-CAM_FOV - theta)) / (2 * Math.sin(theta)) + yPix * Math.sin(CAM_FOV);
-        double den = (Math.sin(-CAM_FOV - theta)) / (2 * Math.sin(theta)) + yPix * Math.cos(CAM_FOV);
+        double num = (Math.cos(-CAM_VFOV - theta)) / (2 * Math.sin(theta)) + yPix * Math.sin(CAM_VFOV);
+        double den = (Math.sin(-CAM_VFOV - theta)) / (2 * Math.sin(theta)) + yPix * Math.cos(CAM_VFOV);
         return -CAM_HEIGHT * num / den;
     }
 
