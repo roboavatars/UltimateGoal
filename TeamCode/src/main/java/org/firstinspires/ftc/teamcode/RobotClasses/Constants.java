@@ -14,16 +14,16 @@ public class Constants {
     public static int HIGH_GOAL_VELOCITY = 1150;
     public static int POWERSHOT_VELOCITY = 875;
 
-    public static  double FLAP_HOME_POS = 0;
-    public static  double FLAP_MAX_POS = 0.15;
+    public static double FLAP_HOME_POS = 0;
+    public static double FLAP_MAX_POS = 0.15;
 
-    public static  double MAG_HOME_POS = 0.27;
-    public static  double MAG_VIBRATE_POS = 0.26;
-    public static  double MAG_SHOOT_POS = 0.495;
+    public static double MAG_HOME_POS = 0.27;
+    public static double MAG_VIBRATE_POS = 0.26;
+    public static double MAG_SHOOT_POS = 0.495;
 
-    public static  double FEED_HOME_POS = 0.15;
-    public static  double FEED_MID = 0.2;
-    public static  double FEED_SHOOT_POS = 0.37;
+    public static double FEED_HOME_POS = 0.15;
+    public static double FEED_MID = 0.2;
+    public static double FEED_SHOOT_POS = 0.37;
 
     // Wobble Arm
     public static int WOBBLE_UP_POS = -80;
