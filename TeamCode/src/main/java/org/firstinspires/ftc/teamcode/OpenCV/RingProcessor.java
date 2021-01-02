@@ -14,7 +14,8 @@ import org.opencv.imgproc.Imgproc;
 
 import java.io.File;
 
-@Config @SuppressLint("SdCardPath")
+@Config
+@SuppressLint("SdCardPath")
 public class RingProcessor {
 
     // CV Thresholds
@@ -71,7 +72,8 @@ public class RingProcessor {
     }
 
     public void saveMatToDisk(String name, Mat mat) {
-        save = mat.clone(); Imgproc.cvtColor(mat, save, Imgproc.COLOR_BGR2RGB);
+        save = mat.clone();
+        Imgproc.cvtColor(mat, save, Imgproc.COLOR_BGR2RGB);
         Imgcodecs.imwrite(path + name, save);
     }
 }
