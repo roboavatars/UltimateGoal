@@ -12,10 +12,10 @@ public class Intake {
     private Servo lStickServo;
     private Servo rStickServo;
 
-    private final double lHomePos = 1;
-    private final double lOutPos = 0.23;
-    private final double rHomePos = 0.25;
-    private final double rOutPos = 0.9;
+    private double lHomePos = Constants.L_HOME_POS;
+    private double lOutPos = Constants.L_OUT_POS;
+    private double rHomePos = Constants.R_HOME_POS;
+    private double rOutPos = Constants.R_OUT_POS;
 
     public boolean on = false;
     public boolean reverse = false;

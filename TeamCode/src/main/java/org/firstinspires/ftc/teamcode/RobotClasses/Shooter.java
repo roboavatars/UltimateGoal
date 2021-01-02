@@ -15,19 +15,16 @@ public class Shooter {
     private Servo magServo;
     private Servo feedServo;
 
-    public final int highGoalV = 1150;
-    public final int powershotV = 875;
-
-    private final double flapHomePos = 0;
-    private final double flapMaxPos = 0.15;
-
-    private final double magHomePos = 0.27;
-    private final double magVibratePos = 0.26;
-    private final double magShootPos = 0.495;
-
-    private final double feedHomePos = 0.15;
-    private final double feedMid = 0.2;
-    private final double feedShootPos = 0.37;
+    private int highGoalV = Constants.HIGH_GOAL_VELOCITY;
+    private int powershotV = Constants.POWERSHOT_VELOCITY;
+    private double flapHomePos = Constants.FLAP_HOME_POS;
+    private double flapMaxPos = Constants.FLAP_MAX_POS;
+    private double magHomePos = Constants.MAG_HOME_POS;
+    private double magVibratePos = Constants.MAG_VIBRATE_POS;
+    private double magShootPos = Constants.MAG_SHOOT_POS;
+    private double feedHomePos = Constants.FEED_HOME_POS;
+    private double feedMid = Constants.FEED_MID;
+    private double feedShootPos = Constants.FEED_SHOOT_POS;
 
     public boolean magHome = true;
     public boolean magVibrate = false;

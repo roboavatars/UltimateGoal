@@ -12,13 +12,12 @@ public class WobbleArm {
     private Servo wobbleServo;
     private boolean isAuto;
 
-    private final int wobbleUpPos = -80;
-    private final int wobbleDownPos = -830;
-    private final int wobbleUpTeleopPos = -80;
-    private final int wobbleDownTeleopPos = -1000;
-
-    private final double clampWobblePos = 0.20;
-    private final double unClampWobblePos = 0.75;
+    private int wobbleUpPos = Constants.WOBBLE_UP_POS;
+    private int wobbleDownPos = Constants.WOBBLE_DOWN_POS;
+    private int wobbleUpTeleopPos = Constants.WOBBLE_UP_TELEOP_POS;
+    private int wobbleDownTeleopPos = Constants.WOBBLE_DOWN_TELEOP_POS;
+    private double clampWobblePos = Constants.CLAMP_WOBBLE_POS;
+    private double unClampWobblePos = Constants.UNCLAMP_WOBBLE_POS;
 
     public WobbleArm(LinearOpMode op, boolean isAuto) {
         wobbleServo = op.hardwareMap.get(Servo.class, "wobbleServo");
