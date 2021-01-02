@@ -34,7 +34,7 @@ public class RedAuto extends LinearOpMode {
             park
         */
 
-        Robot robot = new Robot(this, 90, 9, -PI/2, true);
+        Robot robot = new Robot(this, 90, 9, PI/2, true);
         robot.logger.startLogging();
         robot.intake.sticksHomeAuto();
         robot.wobbleArm.clampWobble();
@@ -54,7 +54,7 @@ public class RedAuto extends LinearOpMode {
         boolean park = false;
 
         // Segment Times
-        double startLineTime = 2.0;
+        double startLineTime = 1.75;
         double shootPowerShotsTime = 4.0;
         double deliverWobbleTime = 1.5;
         double intakeWobble2Time = 4.0;
