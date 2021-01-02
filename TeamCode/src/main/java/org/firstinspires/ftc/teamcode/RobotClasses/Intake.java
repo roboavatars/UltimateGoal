@@ -12,11 +12,6 @@ public class Intake {
     private Servo lStickServo;
     private Servo rStickServo;
 
-    private double lHomePos = Constants.L_HOME_POS;
-    private double lOutPos = Constants.L_OUT_POS;
-    private double rHomePos = Constants.R_HOME_POS;
-    private double rOutPos = Constants.R_OUT_POS;
-
     public boolean on = false;
     public boolean reverse = false;
     public boolean forward = false;
@@ -58,13 +53,13 @@ public class Intake {
     }
 
     public void sticksHome() {
-        lStickServo.setPosition(lHomePos);
-        rStickServo.setPosition(rHomePos);
+        lStickServo.setPosition(Constants.L_HOME_POS);
+        rStickServo.setPosition(Constants.R_HOME_POS);
     }
 
     public void sticksHomeAuto() {
         lStickServo.setPosition(0.55);
-        rStickServo.setPosition(rHomePos);
+        rStickServo.setPosition(Constants.R_HOME_POS);
     }
 
     public void rStickDown() {
@@ -77,8 +72,8 @@ public class Intake {
     }
 
     public void sticksOut() {
-        lStickServo.setPosition(lOutPos);
-        rStickServo.setPosition(rOutPos);
+        lStickServo.setPosition(Constants.L_OUT_POS);
+        rStickServo.setPosition(Constants.R_OUT_POS);
     }
 
     public void stickLeft(double position) {

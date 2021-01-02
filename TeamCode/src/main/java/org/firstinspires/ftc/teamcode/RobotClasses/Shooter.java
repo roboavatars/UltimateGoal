@@ -15,17 +15,6 @@ public class Shooter {
     private Servo magServo;
     private Servo feedServo;
 
-    private int highGoalV = Constants.HIGH_GOAL_VELOCITY;
-    private int powershotV = Constants.POWERSHOT_VELOCITY;
-    private double flapHomePos = Constants.FLAP_HOME_POS;
-    private double flapMaxPos = Constants.FLAP_MAX_POS;
-    private double magHomePos = Constants.MAG_HOME_POS;
-    private double magVibratePos = Constants.MAG_VIBRATE_POS;
-    private double magShootPos = Constants.MAG_SHOOT_POS;
-    private double feedHomePos = Constants.FEED_HOME_POS;
-    private double feedMid = Constants.FEED_MID;
-    private double feedShootPos = Constants.FEED_SHOOT_POS;
-
     public boolean magHome = true;
     public boolean magVibrate = false;
     public boolean feedHome = true;
@@ -52,11 +41,11 @@ public class Shooter {
     }
 
     public void flywheelHighGoal() {
-        setVelocity(highGoalV);
+        setVelocity(Constants.HIGH_GOAL_VELOCITY);
     }
 
     public void flywheelPowershot() {
-        setVelocity(powershotV);
+        setVelocity(Constants.POWERSHOT_VELOCITY);
     }
 
     public void flywheelOff() {
@@ -73,7 +62,7 @@ public class Shooter {
     }
 
     public void setFlapAngle(double angle) {
-        if (getFlapAngle() > 0 && getFlapAngle() < flapMaxPos) {
+        if (getFlapAngle() > 0 && getFlapAngle() < Constants.FLAP_MAX_POS) {
             flapServo.setPosition(angle);
         }
     }
@@ -83,38 +72,38 @@ public class Shooter {
     }
 
     public void flapHome() {
-        flapServo.setPosition(flapHomePos);
+        flapServo.setPosition(Constants.FLAP_HOME_POS);
     }
 
     public void magHome() {
-        magServo.setPosition(magHomePos);
+        magServo.setPosition(Constants.MAG_HOME_POS);
         magHome = true;
         magVibrate = false;
     }
 
     public void magVibrate() {
-        magServo.setPosition(magVibratePos);
+        magServo.setPosition(Constants.MAG_VIBRATE_POS);
         magHome = false;
         magVibrate = true;
     }
 
     public void magShoot() {
-        magServo.setPosition(magShootPos);
+        magServo.setPosition(Constants.MAG_SHOOT_POS);
         magHome = false;
     }
 
     public void feedHome() {
-        feedServo.setPosition(feedHomePos);
+        feedServo.setPosition(Constants.FEED_HOME_POS);
         feedHome = true;
     }
 
     public void feedMid() {
-        feedServo.setPosition(feedMid);
+        feedServo.setPosition(Constants.FEED_MID_POS);
         feedHome = true;
     }
 
     public void feedShoot() {
-        feedServo.setPosition(feedShootPos);
+        feedServo.setPosition(Constants.FEED_SHOOT_POS);
         feedHome = false;
     }
 }

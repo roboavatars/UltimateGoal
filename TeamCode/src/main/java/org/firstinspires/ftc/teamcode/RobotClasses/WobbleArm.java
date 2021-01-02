@@ -12,13 +12,6 @@ public class WobbleArm {
     private Servo wobbleServo;
     private boolean isAuto;
 
-    private int wobbleUpPos = Constants.WOBBLE_UP_POS;
-    private int wobbleDownPos = Constants.WOBBLE_DOWN_POS;
-    private int wobbleUpTeleopPos = Constants.WOBBLE_UP_TELEOP_POS;
-    private int wobbleDownTeleopPos = Constants.WOBBLE_DOWN_TELEOP_POS;
-    private double clampWobblePos = Constants.CLAMP_WOBBLE_POS;
-    private double unClampWobblePos = Constants.UNCLAMP_WOBBLE_POS;
-
     public WobbleArm(LinearOpMode op, boolean isAuto) {
         wobbleServo = op.hardwareMap.get(Servo.class, "wobbleServo");
         wobbleMotor = op.hardwareMap.get(DcMotorEx.class, "wobbleMotor");
@@ -42,9 +35,9 @@ public class WobbleArm {
     public void armUp() {
         clampWobble();
         if (isAuto) {
-            wobbleMotor.setTargetPosition(wobbleUpPos);
+            wobbleMotor.setTargetPosition(Constants.WOBBLE_UP_POS);
         } else {
-            wobbleMotor.setTargetPosition(wobbleUpTeleopPos);
+            wobbleMotor.setTargetPosition(Constants.WOBBLE_UP_TELEOP_POS);
         }
         wobbleMotor.setPower(0.4);
     }
@@ -52,9 +45,9 @@ public class WobbleArm {
     public void armDown() {
         clampWobble();
         if (isAuto) {
-            wobbleMotor.setTargetPosition(wobbleDownPos);
+            wobbleMotor.setTargetPosition(Constants.WOBBLE_DOWN_POS);
         } else {
-            wobbleMotor.setTargetPosition(wobbleDownTeleopPos);
+            wobbleMotor.setTargetPosition(Constants.WOBBLE_DOWN_TELEOP_POS);
         }
         wobbleMotor.setPower(0.4);
     }
@@ -65,10 +58,10 @@ public class WobbleArm {
     }
 
     public void clampWobble() {
-        wobbleServo.setPosition(clampWobblePos);
+        wobbleServo.setPosition(Constants.CLAMP_WOBBLE_POS);
     }
 
     public void unClampWobble() {
-        wobbleServo.setPosition(unClampWobblePos);
+        wobbleServo.setPosition(Constants.UNCLAMP_WOBBLE_POS);
     }
 }

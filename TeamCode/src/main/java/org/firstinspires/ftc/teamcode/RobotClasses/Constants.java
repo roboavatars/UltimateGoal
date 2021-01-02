@@ -22,7 +22,7 @@ public class Constants {
     public static double MAG_SHOOT_POS = 0.495;
 
     public static double FEED_HOME_POS = 0.15;
-    public static double FEED_MID = 0.2;
+    public static double FEED_MID_POS = 0.2;
     public static double FEED_SHOOT_POS = 0.37;
 
     // Wobble Arm
