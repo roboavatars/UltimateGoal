@@ -17,7 +17,7 @@ public class Teleop extends LinearOpMode {
     public double startTheta = Math.PI/2;
 
     private Robot robot;
-    public static boolean robotCentric = false;
+    public static boolean robotCentric = true;
     public static boolean useAutoPos = true;
 
     public double xySpeed = 1;

@@ -22,7 +22,7 @@ public class Shooter {
     private final double flapMaxPos = 0.15;
 
     private final double magHomePos = 0.3;
-    private final double magVibratePos = 0.26;
+    private final double magVibratePos = 0.27;
     private final double magShootPos = 0.495;
 
     private final double feedHomePos = 0.15;

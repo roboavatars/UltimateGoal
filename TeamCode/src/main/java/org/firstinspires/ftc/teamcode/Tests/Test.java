@@ -8,26 +8,39 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp @Config
 public class Test extends LinearOpMode {
 
-    public static double home = 0.24;
-    public static double out = 0.495;
-    public static boolean isHome = true;
-    private double position;
+    public static double lHomePos = 0.95;
+    public static double lOutPos = 0.05;
+    public static double rHomePos = 0.25;
+    public static double rOutPos = 0.9;
+    public static boolean isLHome = true;
+    public static boolean isRHome = true;
+    private double lPosition;
+    private double rPosition;
 
     @Override
     public void runOpMode() {
 
-        Servo servo = hardwareMap.get(Servo.class, "magServo");
+        Servo leftServo = hardwareMap.get(Servo.class, "leftStick");
+        Servo rightServo = hardwareMap.get(Servo.class, "rightStick");
 
         waitForStart();
 
         while(opModeIsActive()) {
-            if (isHome) {
-                position = home;
+            if (isLHome) {
+                lPosition = lHomePos;
             } else {
-                position = out;
+                lPosition = lOutPos;
             }
 
-            servo.setPosition(position);
+            leftServo.setPosition(lPosition);
+
+            if (isRHome) {
+                rPosition = rHomePos;
+            } else {
+                rPosition = rOutPos;
+            }
+
+            rightServo.setPosition(rPosition);
         }
     }
 }

@@ -12,8 +12,8 @@ public class Intake {
     private Servo lStickServo;
     private Servo rStickServo;
 
-    private final double lHomePos = 0.95;
-    private final double lOutPos = 0.05;
+    private final double lHomePos = 1;
+    private final double lOutPos = 0.23;
     private final double rHomePos = 0.25;
     private final double rOutPos = 0.9;
 

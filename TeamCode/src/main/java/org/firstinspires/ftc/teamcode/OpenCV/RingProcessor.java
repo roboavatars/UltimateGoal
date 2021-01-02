@@ -8,6 +8,7 @@ import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
+import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
 
@@ -41,9 +42,8 @@ public class RingProcessor {
     }
 
     public Mat[] processFrame(Mat input) {
-        // Crop Image
-        Rect rect = new Rect(5, 10, 140, 100);
-        input = new Mat(input, rect);
+        // Reduce Image Size
+        Imgproc.resize(input, input, new Size(320, 180));
 
         // Convert to YCrCb Color Space
         Imgproc.cvtColor(input, yCrCb, Imgproc.COLOR_RGB2YCrCb);

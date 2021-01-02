@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.OpenCV.RingLocator;
 
+import java.util.Arrays;
+
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
@@ -21,9 +23,9 @@ public class RingLocatorTest extends LinearOpMode {
         detector.start();
 
         while (opModeIsActive()) {
-            addPacket("Frame Count", detector.getFrameCount());
+            addPacket("Closest Relative Position", Arrays.toString(detector.getRelRingPos()));
             addPacket("FPS", detector.getFPS());
-            addPacket("Closest Relative Position", detector.getRelRingPos());
+            addPacket("Frame Count", detector.getFrameCount());
             sendPacket();
         }
 

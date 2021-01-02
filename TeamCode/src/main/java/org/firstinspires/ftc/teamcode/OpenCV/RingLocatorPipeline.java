@@ -8,7 +8,9 @@ import com.acmerobotics.dashboard.config.Config;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Point;
 import org.opencv.core.RotatedRect;
+import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
@@ -21,11 +23,11 @@ import java.util.List;
 public class RingLocatorPipeline extends OpenCvPipeline {
 
     // CV Thresholds
-    public static double HEIGHT_THRESH = 3;
-    public static double WIDTH_THRESH = 15;
+    public static double HEIGHT_THRESH = 10;
+    public static double WIDTH_THRESH = 2;
 
     // Perspective Math Constants
-    public static double CAM_HEIGHT = 10;
+    public static double CAM_HEIGHT = 6.5;
     public static double CAM_THETA = Math.toRadians(15);
     public static double CAM_VFOV = Math.toRadians(47);
 
@@ -74,32 +76,40 @@ public class RingLocatorPipeline extends OpenCvPipeline {
         // Loop Through Contours
         distMin = 48 * Math.sqrt(13); // Longest Diagonal on Field
         for (MatOfPoint contour : contours) {
+            Point[] contourArray = contour.toArray();
 
-            // Bound Ellipse
-            MatOfPoint2f areaPoints = new MatOfPoint2f(contour.toArray());
-            RotatedRect approxEllipse = Imgproc.fitEllipse(areaPoints);
+            // Bound Ellipse if Contour is Large Enough
+            if (contourArray.length >= 5) {
+                MatOfPoint2f areaPoints = new MatOfPoint2f(contourArray);
+                RotatedRect approxEllipse = Imgproc.fitEllipse(areaPoints);
 
-            // Save Ellipse Data
-            width = approxEllipse.size.width;
-            height = approxEllipse.size.height;
-            xPix = (approxEllipse.center.x - 160) / 320; // x ∈ [-1, 1]
-            yPix = approxEllipse.center.y / 240; // y ∈ (0, 1)
+                // Save Ellipse Data
+                width = approxEllipse.size.width;
+                height = approxEllipse.size.height;
+                xPix = (approxEllipse.center.x - 160) / 320; // x ∈ [-1, 1]
+                yPix = approxEllipse.center.y / 240; // y ∈ (0, 1)
 
-            // Analyze Valid Contours
-            if (height > HEIGHT_THRESH && width > WIDTH_THRESH) {
+                log("width: " + width);
+                log("height: " + height);
 
-                // Calculate Center of Ring if Y is in Valid Domain
-                if (0 < yPix && yPix < 0.7468) {
-                    xRel = calcX(xPix, yPix);
-                    yRel = calcY(yPix);
-                    dist = Math.hypot(xRel, yRel);
+                Imgproc.ellipse(input, approxEllipse, new Scalar(0, 255, 0), 1);
 
-                    log("(" + xRel + ", " + yRel + ") " + dist);
+                // Analyze Valid Contours
+                if (height > HEIGHT_THRESH && width > WIDTH_THRESH) {
 
-                    // Save Closest Ring Position to Robot
-                    if (yRel > 0 && dist < distMin) {
-                        distMin = dist;
-                        ringPos = new double[] {xRel, yRel};
+                    // Calculate Center of Ring if Y is in Valid Domain
+                    if (0 < yPix && yPix < 0.7468) {
+                        xRel = calcX(xPix, yPix) * 50;
+                        yRel = calcY(yPix) * 10;
+                        dist = Math.hypot(xRel, yRel);
+
+                        log("(" + xRel + ", " + yRel + ") " + dist);
+
+                        // Save Closest Ring Position to Robot
+                        if (yRel > 0 && dist < distMin) {
+                            distMin = dist;
+                            ringPos = new double[] {xRel, yRel};
+                        }
                     }
                 }
             }
