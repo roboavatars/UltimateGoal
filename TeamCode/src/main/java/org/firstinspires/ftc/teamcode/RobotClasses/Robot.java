@@ -113,7 +113,7 @@ public class Robot {
             int vThresh;
             if (highGoal) {
                 shooter.flywheelHighGoal();
-                vThresh = shooter.highGoalV - 50;
+                vThresh = Constants.HIGH_GOAL_VELOCITY - 50;
 
                 double alignY;
                 if (!isAuto) { alignY = 66; }
@@ -121,7 +121,7 @@ public class Robot {
                 target = shootTargets(x, alignY, Math.PI / 2, 3);
             } else {
                 shooter.flywheelPowershot();
-                vThresh = shooter.powershotV - 40;
+                vThresh = Constants.POWERSHOT_VELOCITY - 40;
                 target = shootTargets(powerTargets[2][0], powerTargets[2][1], Math.PI / 2, 2);
             }
 
