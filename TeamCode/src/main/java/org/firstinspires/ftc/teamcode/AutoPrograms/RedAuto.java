@@ -21,7 +21,6 @@ public class RedAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
         /*
         Timeline:
             detect stack
@@ -38,6 +37,8 @@ public class RedAuto extends LinearOpMode {
         Robot robot = new Robot(this, 90, 9, -PI/2, true);
         robot.logger.startLogging();
         robot.intake.sticksHomeAuto();
+        robot.wobbleArm.clampWobble();
+        robot.wobbleArm.armUp();
 
         StackHeightDetector detector = new StackHeightDetector(this);
         detector.start();

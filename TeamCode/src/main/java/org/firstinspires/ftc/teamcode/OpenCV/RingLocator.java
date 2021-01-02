@@ -20,4 +20,8 @@ public class RingLocator extends BaseDetector {
     public double[] getRelRingPos() {
         return pipeline.getRelRingPos();
     }
+
+    public double[] getRThetaRingPos() {
+        return pipeline.getRThetaRingPos();
+    }
 }

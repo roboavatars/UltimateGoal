@@ -28,8 +28,9 @@ public class RingLocatorPipeline extends OpenCvPipeline {
 
     // Perspective Math Constants
     public static double CAM_HEIGHT = 6.5;
-    public static double CAM_THETA = Math.toRadians(15);
+    public static double CAM_PHI = Math.toRadians(15);
     public static double CAM_VFOV = Math.toRadians(47);
+    public static double CAM_HFOV = Math.toRadians(75);
 
     // Image Processing Mats
     private RingProcessor processor;
@@ -87,20 +88,32 @@ public class RingLocatorPipeline extends OpenCvPipeline {
                 width = approxEllipse.size.width;
                 height = approxEllipse.size.height;
                 xPix = (approxEllipse.center.x - 160) / 320; // x ∈ [-1, 1]
-                yPix = approxEllipse.center.y / 240; // y ∈ (0, 1)
+                yPix = 1 - approxEllipse.center.y / 180; // y ∈ (0, 1)
+
+//                xPix = approxEllipse.center.x - 160; // x ∈ [-160, 160]
+//                yPix = 1 - approxEllipse.center.y; // y ∈ (0, 180)
+//
+//                log("x: " + xPix);
+//                log("y: " + yPix);
 
                 log("width: " + width);
                 log("height: " + height);
 
                 Imgproc.ellipse(input, approxEllipse, new Scalar(0, 255, 0), 1);
+//
+//                dist = Math.hypot(xPix, yPix);
+//                if (yPix > 0 && dist < distMin) {
+//                    distMin = dist;
+//                    ringPos = new double[] {xPix, yPix};
+//                }
 
                 // Analyze Valid Contours
                 if (height > HEIGHT_THRESH && width > WIDTH_THRESH) {
 
                     // Calculate Center of Ring if Y is in Valid Domain
                     if (0 < yPix && yPix < 0.7468) {
-                        xRel = calcX(xPix, yPix) * 50;
-                        yRel = calcY(yPix) * 10;
+                        xRel = calcX(xPix, yPix);
+                        yRel = calcY(yPix);
                         dist = Math.hypot(xRel, yRel);
 
                         log("(" + xRel + ", " + yRel + ") " + dist);
@@ -127,14 +140,14 @@ public class RingLocatorPipeline extends OpenCvPipeline {
     }
 
     private double calcX(double xPix, double yPix) {
-        double theta = CAM_THETA / 2;
-        return Math.tan(theta) * xPix * Math.hypot(CAM_HEIGHT, calcY(yPix));
+        double hfov = CAM_HFOV / 2;
+        return Math.tan(hfov) * xPix * Math.hypot(CAM_HEIGHT, calcY(yPix));
     }
 
     private double calcY(double yPix) {
-        double theta = CAM_THETA / 2;
-        double num = (Math.cos(-CAM_VFOV - theta)) / (2 * Math.sin(theta)) + yPix * Math.sin(CAM_VFOV);
-        double den = (Math.sin(-CAM_VFOV - theta)) / (2 * Math.sin(theta)) + yPix * Math.cos(CAM_VFOV);
+        double vfov = CAM_VFOV / 2;
+        double num = (Math.cos(-CAM_PHI - vfov)) / (2 * Math.sin(vfov)) + yPix * Math.sin(CAM_PHI);
+        double den = (Math.sin(-CAM_PHI - vfov)) / (2 * Math.sin(vfov)) + yPix * Math.cos(CAM_PHI);
         return -CAM_HEIGHT * num / den;
     }
 
@@ -151,6 +164,12 @@ public class RingLocatorPipeline extends OpenCvPipeline {
 
     public double[] getRelRingPos() {
         return ringPos;
+    }
+
+    public double[] getRThetaRingPos() {
+        double x = ringPos[0];
+        double y = ringPos[1];
+        return new double[] {Math.hypot(x, y), Math.atan2(y, x)};
     }
 
     private void log(String message) {
