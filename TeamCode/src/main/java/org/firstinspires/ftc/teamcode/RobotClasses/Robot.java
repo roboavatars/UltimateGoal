@@ -46,6 +46,7 @@ public class Robot {
     public double shootDelay;
     public double vibrateTime;
     public double vibrateDelay = 100;
+    public double thetaOffset = 0;
 
     // Motion Variables
     public double x, y, theta;
@@ -328,7 +329,7 @@ public class Robot {
 
         // Calculate Flap Angle
         double d = Math.sqrt(Math.pow(targetX - shooterX, 2) + Math.pow(targetY - shooterY, 2));
-        double flapAngle = -0.0001 * Math.pow(d, 2) + 0.0167 * d - 0.4905;
+        double flapAngle = -0.0001 * Math.pow(d, 2) + 0.0167 * d - 0.4905 - thetaOffset;
 
         // Calculate Robot Angle
         double alignRobotAngle = Math.atan2(dy, dx) + 0.0013 * d - 0.2962;

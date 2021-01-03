@@ -122,11 +122,16 @@ public class Teleop extends LinearOpMode {
                 robot.resetOdo(robot.x, robot.y, Math.PI / 2);
             }
 
-            // Change theta due to drift
+            // Change shooting theta offset to compensate for odo drift
             if (gamepad1.dpad_left) {
-                robot.drivetrain.theta -= 0.005;
+                robot.thetaOffset -= 0.01;
             } else if (gamepad1.dpad_right) {
-                robot.drivetrain.theta += 0.005;
+                robot.thetaOffset += 0.01;
+            }
+
+            // Reset theta offset
+            if (gamepad1.dpad_up) {
+                robot.thetaOffset = 0;
             }
 
             // Drivetrain controls
