@@ -116,8 +116,12 @@ public class Robot {
                 vThresh = Constants.HIGH_GOAL_VELOCITY - 50;
 
                 double alignY;
-                if (!isAuto) { alignY = 66; }
-                else { alignY = y; }
+                if (!isAuto) {
+                    alignY = 66;
+                }
+                else {
+                    alignY = y;
+                }
                 target = shootTargets(x, alignY, Math.PI / 2, 3);
             } else {
                 shooter.flywheelPowershot();
@@ -181,8 +185,6 @@ public class Robot {
                             shooter.feedBottom();
                         } else if (numRings == 1) {
                             shooter.feedTop();
-                        } else if (numRings == 0) {
-                            shooter.feedHome();
                         }
                         log("numRings: " + numRings);
                         numRings--;
@@ -192,6 +194,7 @@ public class Robot {
                 } else {
                     shooter.flywheelOff();
                     shooter.magHome();
+                    shooter.feedHome();
                     shoot = false;
                     log("Shoot done");
                 }

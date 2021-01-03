@@ -46,7 +46,7 @@ public class Regression extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
-                robot.shooter.feedShoot();
+                robot.shooter.feedTop();
             } else {
                 robot.shooter.feedHome();
             }
