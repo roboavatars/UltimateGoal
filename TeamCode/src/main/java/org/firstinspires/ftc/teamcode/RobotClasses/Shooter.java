@@ -99,7 +99,7 @@ public class Shooter {
 
     public void feedTop() {
         feedServo.setPosition(Constants.FEED_TOP_POS);
-        feedHome = true;
+        feedHome = false;
     }
 
     public void feedBottom() {

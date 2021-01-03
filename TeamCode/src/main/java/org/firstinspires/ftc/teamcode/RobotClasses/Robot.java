@@ -37,7 +37,6 @@ public class Robot {
     private int cycleCounter = 0;
     public int numRings = 0;
     public boolean shoot = false;
-//    public boolean clear = false;
     public boolean highGoal = false;
     public boolean vibrateMag = false;
     public boolean preShoot = false;
@@ -146,10 +145,8 @@ public class Robot {
             else if (!shooter.magHome && shooter.getVelocity() > vThresh && isAtPose(target[0], target[1], target[2])) {
                 if (highGoal) {
                     shootDelay = 160;
-                    shooter.flywheelHighGoal();
                 } else {
                     shootDelay = 500;
-                    shooter.flywheelPowershot();
                 }
                 shoot = true;
                 numRings = 3;
@@ -177,55 +174,33 @@ public class Robot {
             // Auto feed rings
             if (System.currentTimeMillis() - shootTime > shootDelay) {
                 if (numRings > 0) {
+                    // Shoot ring only if robot at position
                     if (isAtPose(target[0], target[1], target[2])) {
-                        // Shoot ring if robot at position
                         if (numRings == 3) {
                             shooter.feedTop();
+                            log("Feed ring 1");
                         } else if (numRings == 2) {
                             shooter.feedBottom();
+                            log("Feed ring 2");
                         } else if (numRings == 1) {
                             shooter.feedTop();
+                            log("Feed ring 3");
                         }
-                        log("numRings: " + numRings);
                         numRings--;
                     } else {
                         log("("+x+", "+y+", "+theta+") Not at shoot position: " + Arrays.toString(target));
                     }
                 } else {
-                    shooter.flywheelOff();
-                    shooter.magHome();
-                    shooter.feedHome();
-                    shoot = false;
-                    log("Shoot done");
+                    if (!shooter.feedHome) {
+                        shooter.flywheelOff();
+                        shooter.feedHome();
+                        log("Feed home");
+                    } else {
+                        shooter.magHome();
+                        shoot = false;
+                        log("Shoot done");
+                    }
                 }
-//                    if (shooter.feedHome && !clear) {
-//                        if (isAtPose(target[0], target[1], target[2])) {
-//                            clear = true;
-//                            shooter.feedShoot();
-//                            if (numRings == 3) { // Adjust delay for mid pos
-//                                shootDelay -= 100;
-//                            } else if (numRings == 1) {
-//                                shootDelay += 100;
-//                            }
-//                            log("Feed ring");
-//                        } else {
-//                            log("("+x+", "+y+", "+theta+") Not at shoot position: " + Arrays.toString(target));
-//                        }
-//                    } else {
-//                        if (numRings == 1) {
-//                            shooter.feedHome();
-//                        } else { // Use mid pos to save time
-//                            shooter.feedMid();
-//                        }
-//                        clear = false;
-//                        numRings--;
-//                        log("Feed home");
-//                    }
-//                }
-//                // Clean up tasks after shooting completed
-//                else {
-//
-//                }
                 shootTime = System.currentTimeMillis();
             }
         }
