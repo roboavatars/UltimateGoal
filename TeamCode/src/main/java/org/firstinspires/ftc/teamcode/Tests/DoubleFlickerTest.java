@@ -11,9 +11,9 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Shooter;
 @Config
 public class DoubleFlickerTest extends LinearOpMode {
 
-    public static double topShoot = 0.95;
-    public static double home = 0.05;
-    public static double bottomShoot = 0.25;
+    public static double topShoot = 1;
+    public static double home = 0.28;
+    public static double bottomShoot = 0.28;
     public static int pos = 1;
     public static boolean debug = true;
     private double position;
@@ -21,7 +21,7 @@ public class DoubleFlickerTest extends LinearOpMode {
     private boolean shootToggle = false;
     private long shootTime;
     private int delay = 4;
-    public static int period = 200;
+    public static int period = 160;
 
     private Shooter shooter;
 

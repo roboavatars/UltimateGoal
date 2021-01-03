@@ -97,13 +97,13 @@ public class Shooter {
         feedHome = true;
     }
 
-    public void feedMid() {
-        feedServo.setPosition(Constants.FEED_MID_POS);
+    public void feedTop() {
+        feedServo.setPosition(Constants.FEED_TOP_POS);
         feedHome = true;
     }
 
-    public void feedShoot() {
-        feedServo.setPosition(Constants.FEED_SHOOT_POS);
+    public void feedBottom() {
+        feedServo.setPosition(Constants.FEED_BOTTOM_POS);
         feedHome = false;
     }
 }
