@@ -31,6 +31,9 @@ public class Robot {
     private final double thetaK = 2.4;
     private double odoWeight = 1;
 
+    private final int highGoalDelay = 200;
+    private final int psDelay = 500;
+
     // State Variables
     private final boolean isAuto;
     private boolean firstLoop = true;
@@ -56,7 +59,6 @@ public class Robot {
     // Shooter Variables
     private final double[] shootXCor = {76.5, 84, 91.5, 108};
     private final double shootYCor = 150;
-    private final double[] shootZCor = {24, 24, 24, 35.5};
     private final double[][] powerTargets = {
             {86.00, 67.80, 1.6353, 0.0307},
             {88.00, 68.39, 1.5809, 0.0355},
@@ -116,12 +118,8 @@ public class Robot {
                 vThresh = Constants.HIGH_GOAL_VELOCITY - 50;
 
                 double alignY;
-                if (!isAuto) {
-                    alignY = 66;
-                }
-                else {
-                    alignY = y;
-                }
+                if (!isAuto) { alignY = 66; }
+                else { alignY = y; }
                 target = shootTargets(x, alignY, Math.PI / 2, 3);
             } else {
                 shooter.flywheelPowershot();
@@ -145,9 +143,9 @@ public class Robot {
             // Start auto-feed when mag is up, velocity is high enough, and robot is at position
             else if (!shooter.magHome && shooter.getVelocity() > vThresh && isAtPose(target[0], target[1], target[2])) {
                 if (highGoal) {
-                    shootDelay = 160;
+                    shootDelay = highGoalDelay;
                 } else {
-                    shootDelay = 500;
+                    shootDelay = psDelay;
                 }
                 shoot = true;
                 numRings = 3;
@@ -309,7 +307,6 @@ public class Robot {
 
         double targetX = shootXCor[targetNum];
         double targetY = shootYCor;
-        double targetZ = shootZCor[targetNum];
 
         double shooterX = shootX + 6.5 * Math.sin(shootTheta);
         double shooterY = shootY - 6.5 * Math.cos(shootTheta);

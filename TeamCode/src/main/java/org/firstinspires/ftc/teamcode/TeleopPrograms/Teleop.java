@@ -48,9 +48,9 @@ public class Teleop extends LinearOpMode {
         while (opModeIsActive()) {
 
             // Intake on/off/rev
-            if (gamepad2.right_trigger > 0) {
+            if (gamepad1.right_trigger > 0) {
                 robot.intake.intakeOn();
-            } else if (gamepad2.left_trigger > 0) {
+            } else if (gamepad1.left_trigger > 0) {
                 robot.intake.intakeRev();
             } else if (!robot.vibrateMag) {
                 robot.intake.intakeOff();
@@ -104,7 +104,7 @@ public class Teleop extends LinearOpMode {
             }
 
             // Slow align mode
-            if (gamepad1.right_trigger > 0) {
+            if (gamepad1.right_stick_button) {
                 xySpeed = 0.4;
                 thSpeed = 0.2;
             } else {
