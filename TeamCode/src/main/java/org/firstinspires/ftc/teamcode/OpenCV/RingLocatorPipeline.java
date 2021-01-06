@@ -28,7 +28,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
 
     // Camera Constants
     public static double CAM_HEIGHT = 6;
-    public static double CAM_FRONT = 5;
+    public static double CAM_FRONT = 5; // y distance between camera and robot center
     public static double CAM_PHI = Math.toRadians(18);
     public static double CAM_VFOV = Math.toRadians(46);
     public static double CAM_HFOV = Math.toRadians(75);
@@ -131,6 +131,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
         return input;
     }
 
+    // Returns ring's position relative to camera
     private double[] map2Dto3D(double xPix, double yPix) {
         double vfov = CAM_VFOV / 2;
         double hfov = CAM_HFOV / 2;
@@ -140,17 +141,29 @@ public class RingLocatorPipeline extends OpenCvPipeline {
         return new double[] {Math.tan(hfov) * xPix * Math.hypot(CAM_HEIGHT, y), y};
     }
 
+    // Returns ring's absolute position using robot's position and ring's position relative to camera
     public double[] getAbsRingPos(double robotX, double robotY, double robotTheta) {
-        // Calculate ring's absolute position using robot's position and ring's position relative to robot
         double ringX = ringPos[0];
         double ringY = ringPos[1] + CAM_FRONT;
 
         double targetX = robotX + ringX * Math.sin(robotTheta) + ringY * Math.cos(robotTheta);
         double targetY = robotY + ringX * Math.cos(robotTheta) + ringY * Math.sin(robotTheta);
 
+        // Ignore ring if it's out of field
+        if (targetX < 48 || targetX > 144 || targetY < 0 || targetY > 144) {
+            targetX = -1;
+            targetY = -1;
+        }
+
         return new double[] {targetX, targetY};
     }
 
+    // Returns distance between ring and center of robot
+    public double getDist() {
+        return Math.hypot(ringPos[0], ringPos[1] + CAM_FRONT);
+    }
+
+    // Returns ring's position relative to camera
     public double[] getRelRingPos() {
         return ringPos;
     }

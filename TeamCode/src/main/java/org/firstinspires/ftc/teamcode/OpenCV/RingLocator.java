@@ -17,6 +17,10 @@ public class RingLocator extends BaseDetector {
         return pipeline.getAbsRingPos(robotX, robotY, robotTheta);
     }
 
+    public double getDist() {
+        return pipeline.getDist();
+    }
+
     public double[] getRelRingPos() {
         return pipeline.getRelRingPos();
     }
