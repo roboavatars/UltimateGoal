@@ -29,6 +29,11 @@ public class Dashboard {
         packet.fieldOverlay().setStroke(color).strokeLine(y1 - 72, 72 - x1, y2 - 72, 72 - x2);
     }
 
+    public static void drawRing(double x, double y) {
+        packet.fieldOverlay().setFill("orange").fillCircle(x, y,  2.5);
+        packet.fieldOverlay().setFill("white").fillCircle(x, y,  1.5);
+    }
+
     public static void addPacket(String key, Object value) {
         packet.put(key, value.toString());
     }

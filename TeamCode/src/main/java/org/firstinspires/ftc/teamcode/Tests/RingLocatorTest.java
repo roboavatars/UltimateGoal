@@ -23,7 +23,6 @@ public class RingLocatorTest extends LinearOpMode {
         detector.start();
 
         while (opModeIsActive()) {
-            addPacket("r, theta", Arrays.toString(detector.getRThetaRingPos()));
             addPacket("x, y", Arrays.toString(detector.getRelRingPos()));
             addPacket("FPS", detector.getFPS());
             addPacket("Frame Count", detector.getFrameCount());
