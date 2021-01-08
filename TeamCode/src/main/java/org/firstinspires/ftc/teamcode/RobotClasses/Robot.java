@@ -45,7 +45,7 @@ public class Robot {
     public boolean preShoot = false;
 
     public int lastTarget = -1;
-
+    public int autoAlignY = 52;
 
     // Time and Delay Variables
     public double shootTime;
@@ -122,7 +122,7 @@ public class Robot {
 
                 double alignY;
                 if (!isAuto) { alignY = 66; }
-                else { alignY = y; }
+                else { alignY = autoAlignY; }
                 target = shootTargets(x, alignY, Math.PI / 2, 3);
             } else {
                 shooter.flywheelPowershot();
