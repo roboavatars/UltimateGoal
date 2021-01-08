@@ -33,6 +33,8 @@ public class Robot {
 
     private final int highGoalDelay = 200;
     private final int psDelay = 500;
+    private final int flickDelay = 300;
+    private double[] target = {};
 
     // State Variables
     private final boolean isAuto;
@@ -49,6 +51,7 @@ public class Robot {
 
     // Time and Delay Variables
     public double shootTime;
+    public double flickTime;
     public double shootDelay;
     public double vibrateTime;
     public double vibrateDelay = 100;
@@ -139,7 +142,11 @@ public class Robot {
 
             // Move to shooting position
             if (!isAtPose(target[0], target[1], target[2])) {
-                setTargetPoint(target[0], target[1], target[2], xK, yK, 4.7);
+                if (!isAuto) {
+                    setTargetPoint(target[0], target[1], target[2], xK, yK, 4.7);
+                } else {
+                    setTargetPoint(target[0], target[1], target[2], xK, yK, 2.5);
+                }
                 log("("+x+", "+y+", "+theta+") Moving to shoot position: " + Arrays.toString(target));
             }
 
@@ -162,12 +169,14 @@ public class Robot {
         if (shoot && numRings >= 0 && !shooter.magHome && !vibrateMag) {
 
             // Maintain/change robot alignment, set flap
-            double[] target = {};
             if (numRings > 0) {
                 if (highGoal) {
                     target = shootTargets(3);
                 } else {
-                    target = powerTargets[numRings - 1];
+                    if (numRings == 3 || System.currentTimeMillis() - flickTime > flickDelay) {
+                        target = powerTargets[numRings - 1]; // flick move done flick // flick done move done flick
+                        Robot.log("updated target");
+                    }
                 }
                 setTargetPoint(target[0], target[1], target[2], xK, yK, 4.7);
                 shooter.setFlapAngle(target[3]);
@@ -189,6 +198,7 @@ public class Robot {
                             log("Feed ring 3");
                         }
                         numRings--;
+                        flickTime = System.currentTimeMillis();
                     } else {
                         log("("+x+", "+y+", "+theta+") Not at shoot position: " + Arrays.toString(target));
                     }
