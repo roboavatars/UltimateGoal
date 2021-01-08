@@ -44,6 +44,9 @@ public class Robot {
     public boolean vibrateMag = false;
     public boolean preShoot = false;
 
+    public int lastTarget = -1;
+
+
     // Time and Delay Variables
     public double shootTime;
     public double shootDelay;
@@ -151,7 +154,7 @@ public class Robot {
                 numRings = 3;
                 shootTime = System.currentTimeMillis();
                 preShoot = false;
-                log("Ready to shoot");
+                log("Ready to shoot " + (highGoal ? "high goal" : "powershot"));
             }
         }
 
@@ -253,7 +256,7 @@ public class Robot {
 
         // Log Data
         if (cycleCounter % loggerUpdatePeriod == 0) {
-            logger.logData(System.currentTimeMillis()-startTime, x, y, theta, vx, vy, w, ax, ay, a, numRings, shooter.magHome, shooter.feedHome);
+            logger.logData(System.currentTimeMillis()-startTime, x, y, theta, vx, vy, w, ax, ay, a, numRings, shooter.magHome, shooter.feedHome, lastTarget);
         }
 
         // Dashboard Telemetry
@@ -304,6 +307,8 @@ public class Robot {
             power2- (84,144,24)
             power3- (91.5,144,24)
             high goal- (108,144,35.5) */
+
+        lastTarget = targetNum;
 
         double targetX = shootXCor[targetNum];
         double targetY = shootYCor;

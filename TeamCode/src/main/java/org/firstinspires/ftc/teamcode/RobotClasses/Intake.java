@@ -57,11 +57,6 @@ public class Intake {
         rStickServo.setPosition(Constants.R_HOME_POS);
     }
 
-    public void sticksHomeAuto() {
-        lStickServo.setPosition(0.55);
-        rStickServo.setPosition(Constants.R_HOME_POS);
-    }
-
     public void rStickDown() {
         rStickServo.setPosition(1.0);
     }

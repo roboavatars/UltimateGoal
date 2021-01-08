@@ -19,6 +19,8 @@ import static java.lang.Math.PI;
 @Autonomous(name = "1 RedAuto")
 public class RedAuto extends LinearOpMode {
 
+    public static RingCase ringCase = RingCase.Four;
+
     @Override
     public void runOpMode() {
         /*
@@ -29,17 +31,19 @@ public class RedAuto extends LinearOpMode {
             drop off wobble goal at corresponding zone
             go back to start to pick up second wobble
             intake stack rings
+            detect rings that bounced back from powershot
             shoot stack rings into high goal
             drop off second wobble at corresponding zone
+            intake and shoot bounced off rings
             park
         */
 
         Robot robot = new Robot(this, 90, 9, PI/2, true);
         robot.logger.startLogging();
-        robot.intake.sticksHomeAuto();
+        robot.intake.sticksHome();
 
-        StackHeightDetector detector = new StackHeightDetector(this);
-        detector.start();
+//        StackHeightDetector detector = new StackHeightDetector(this);
+//        detector.start();
 
         // Segments
         boolean startLine = false;
@@ -60,11 +64,12 @@ public class RedAuto extends LinearOpMode {
         double shootHighGoalTime = 3.0;
         double deliverWobble2Time = 2.5;
         double parkTime = 2.0;
+        // 4 extra seconds for wobble related tasks
 
         waitForStart();
 
         // Wobble coordinates based on ring case
-        RingCase ringCase = detector.getModeResult(); //getResult();
+//        RingCase ringCase = detector.getModeResult();
         Robot.log("Ring case: " + ringCase);
 
         double[][] wobbleDelivery = {{121, 82}, {96, 103}, {124, 124}};
