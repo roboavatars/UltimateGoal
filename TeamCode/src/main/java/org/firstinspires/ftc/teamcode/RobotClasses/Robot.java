@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.Debug.Logger;
 
 import java.util.Arrays;
 
+import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 
 @SuppressWarnings("FieldCanBeLocal") @SuppressLint("DefaultLocale")
@@ -25,15 +26,15 @@ public class Robot {
     // Class Constants
     private final int loggerUpdatePeriod = 2;
     private final double xyTolerance = 1;
-    private final double thetaTolerance = Math.PI / 35;
+    private final double thetaTolerance = PI / 35;
     private final double xK = 0.30;
     private final double yK = 0.30;
     private final double thetaK = 2.4;
     private double odoWeight = 1;
 
     private final int highGoalDelay = 200;
-    private final int psDelay = 500;
-    private final int flickDelay = 300;
+    private final int psDelay = 600;
+    private final int flickDelay = 150;
     private double[] target = {};
 
     // State Variables
@@ -66,7 +67,7 @@ public class Robot {
     private final double[] shootXCor = {76.5, 84, 91.5, 108};
     private final double shootYCor = 150;
     private final double[][] powerTargets = {
-            {86.00, 67.80, 1.6353, 0.0307},
+            {85.00, 67.80, 1.6353, 0.0330},
             {88.00, 68.39, 1.5809, 0.0355},
             {90.00, 68.99, 1.4825, 0.0380}
     };
@@ -128,12 +129,12 @@ public class Robot {
 
                 double alignY;
                 if (!isAuto) { alignY = 66; }
-                else { alignY = autoAlignY; }
-                target = shootTargets(x, alignY, Math.PI / 2, 3);
+                else { alignY = y; }//autoAlignY; }
+                target = shootTargets(x, alignY, PI / 2, 3);
             } else {
                 shooter.flywheelPowershot();
                 vThresh = Constants.POWERSHOT_VELOCITY - 40;
-                target = shootTargets(powerTargets[2][0], powerTargets[2][1], Math.PI / 2, 2);
+                target = shootTargets(powerTargets[2][0], powerTargets[2][1], PI / 2, 2);
             }
 
             // Turn off intake and put mag up
@@ -146,15 +147,15 @@ public class Robot {
             // Move to shooting position
             if (!isAtPose(target[0], target[1], target[2])) {
                 if (!isAuto) {
-                    setTargetPoint(target[0], target[1], target[2], xK, yK, 4.7);
+                    setTargetPoint(target[0], target[1], target[2], 0.4, 0.4, 4.7);
                 } else {
-                    setTargetPoint(target[0], target[1], target[2], xK, yK, 2.5);
+                    setTargetPoint(target[0], target[1], target[2], 0.5, 0.5, 2.3);
                 }
                 log("("+x+", "+y+", "+theta+") Moving to shoot position: " + Arrays.toString(target));
             }
 
             // Start auto-feed when mag is up, velocity is high enough, and robot is at position
-            else if (!shooter.magHome && shooter.getVelocity() > vThresh && isAtPose(target[0], target[1], target[2])) {
+            else if (!shooter.magHome && shooter.getVelocity() > vThresh && isAtPose(target[0], target[1], target[2], 0.75, 0.75, PI/35)) {
                 if (highGoal) {
                     shootDelay = highGoalDelay;
                 } else {
@@ -181,7 +182,7 @@ public class Robot {
                         Robot.log("updated target");
                     }
                 }
-                setTargetPoint(target[0], target[1], target[2], xK, yK, 4.7);
+                setTargetPoint(target[0], target[1], target[2], 0.4, 0.4, 4.7);
                 shooter.setFlapAngle(target[3]);
             }
 
@@ -189,7 +190,7 @@ public class Robot {
             if (System.currentTimeMillis() - shootTime > shootDelay) {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position
-                    if (isAtPose(target[0], target[1], target[2])) {
+                    if (isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/35)) {
                         if (numRings == 3) {
                             shooter.feedTop();
                             log("Feed ring 1");
@@ -362,15 +363,15 @@ public class Robot {
     // Set target point (custom K values)
     public void setTargetPoint(double xTarget, double yTarget, double thetaTarget, double xK, double yK, double thetaK) {
         // Make Sure thetaTarget is Between 0 and 2pi
-        thetaTarget = thetaTarget % (Math.PI * 2);
+        thetaTarget = thetaTarget % (PI * 2);
         if (thetaTarget < 0) {
-            thetaTarget += Math.PI * 2;
+            thetaTarget += PI * 2;
         }
 
         // Picking the Smaller Distance to Rotate
         double thetaControl;
-        if (Math.abs(theta - thetaTarget) > Math.PI) {
-            thetaControl = theta - thetaTarget - 2 * Math.PI;
+        if (Math.abs(theta - thetaTarget) > PI) {
+            thetaControl = theta - thetaTarget - 2 * PI;
         } else {
             thetaControl = theta - thetaTarget;
         }
