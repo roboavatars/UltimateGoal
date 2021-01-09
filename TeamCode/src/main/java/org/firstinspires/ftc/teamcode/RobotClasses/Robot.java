@@ -103,6 +103,9 @@ public class Robot {
     // Reset Odometry
     public void resetOdo(double x, double y, double theta) {
         drivetrain.resetOdo(x, y, theta);
+        if (odoWeight != 1) {
+            t265.setCameraPose(x, y, theta);
+        }
     }
 
     public void update() {

@@ -8,6 +8,7 @@ import com.acmerobotics.dashboard.config.Config;
 import org.opencv.core.Mat;
 import org.opencv.core.MatOfPoint;
 import org.opencv.core.MatOfPoint2f;
+import org.opencv.core.Rect;
 import org.opencv.core.RotatedRect;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
@@ -28,9 +29,9 @@ public class StackHeightPipeline extends OpenCvPipeline {
     // Thresholds
     public static int HEIGHT_THRESH = 3;
     public static int WIDTH_THRESH = 15;
-    public static double ONE_MIN = 2.7;
-    public static double ONE_MAX = 4.1;
-    public static double FOUR_MIN = 1.2;
+    public static double ONE_MIN = 1.5;
+    public static double ONE_MAX = 2.7;
+    public static double FOUR_MIN = 0.7;
 
     // Results
     private double[] result = new double[3];
@@ -60,7 +61,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         // Process Image
-        processorOut = processor.processFrame(input);
+        processorOut = processor.processFrame(new Mat(input, new Rect(240, 40, 80, 80)));
         input = processorOut[0];
         processed = processorOut[1];
 

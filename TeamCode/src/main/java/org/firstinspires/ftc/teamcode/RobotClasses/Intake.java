@@ -61,6 +61,10 @@ public class Intake {
         rStickServo.setPosition(1.0);
     }
 
+    public void lStickDown() {
+        lStickServo.setPosition(0);
+    }
+
     public void sticksHalf() {
         lStickServo.setPosition(0.50);
         rStickServo.setPosition(0.60);

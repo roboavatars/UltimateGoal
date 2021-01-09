@@ -36,7 +36,7 @@ public class T265 {
         double yPrime = -0.3*Math.sin(initTheta) - 8.65*Math.cos(initTheta);
 
         t265Cam = new T265Camera(new Transform2d(), ODOMETRY_COVARIANCE, hardwareMap.appContext);
-        t265Cam.setPose(new Pose2d((initX+xPrime) * INCH_TO_METER, (initY+yPrime) * INCH_TO_METER, new Rotation2d(initTheta-Math.PI/2)));
+        setCameraPose(initX, initY, initTheta);
     }
 
     public void startCam() {
@@ -50,18 +50,15 @@ public class T265 {
         });
     }
 
-    public void reset(double x, double y, double theta) {
-        double xPrime = -0.3*Math.cos(theta) + 8.65*Math.sin(theta);
-        double yPrime = -0.3*Math.sin(theta) - 8.65*Math.cos(theta);
-        t265Cam.setPose(new Pose2d((x+xPrime) * INCH_TO_METER, (y+yPrime) * INCH_TO_METER, new Rotation2d(theta-Math.PI/2)));
-    }
-
     public void stopCam() {
         t265Cam.stop();
     }
 
-    public void setCameraPose(Pose2d pose) {
-        t265Cam.setPose(pose);
+    public void setCameraPose(double x, double y, double theta) {
+        double xPrime = -0.3 * Math.cos(theta) + 8.65 * Math.sin(theta);
+        double yPrime = -0.3 * Math.sin(theta) - 8.65 * Math.cos(theta);
+
+        t265Cam.setPose(new Pose2d((x + xPrime) * INCH_TO_METER, (y + yPrime) * INCH_TO_METER, new Rotation2d(theta - Math.PI/2)));
     }
 
     public void sendOdometryData (double vx, double vy) {

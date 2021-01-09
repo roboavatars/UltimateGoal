@@ -43,9 +43,6 @@ public class RingProcessor {
     }
 
     public Mat[] processFrame(Mat input) {
-        // Reduce Image Size
-        Imgproc.resize(input, input, new Size(320, 180));
-
         // Convert to YCrCb Color Space
         Imgproc.cvtColor(input, yCrCb, Imgproc.COLOR_RGB2YCrCb);
 

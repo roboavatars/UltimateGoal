@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.AutoPrograms;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -18,8 +20,6 @@ import static java.lang.Math.PI;
 
 @Autonomous(name = "1 RedAuto")
 public class RedAuto extends LinearOpMode {
-
-    public static RingCase ringCase = RingCase.Four;
 
     @Override
     public void runOpMode() {
@@ -42,8 +42,8 @@ public class RedAuto extends LinearOpMode {
         robot.logger.startLogging();
         robot.intake.sticksHome();
 
-//        StackHeightDetector detector = new StackHeightDetector(this);
-//        detector.start();
+        StackHeightDetector detector = new StackHeightDetector(this);
+        detector.start();
 
         // Segments
         boolean startLine = false;
@@ -69,7 +69,7 @@ public class RedAuto extends LinearOpMode {
         waitForStart();
 
         // Wobble coordinates based on ring case
-//        RingCase ringCase = detector.getModeResult();
+        RingCase ringCase = detector.getModeResult();
         Robot.log("Ring case: " + ringCase);
 
         double[][] wobbleDelivery = {{121, 82}, {96, 103}, {124, 124}};
@@ -92,7 +92,7 @@ public class RedAuto extends LinearOpMode {
             deliverWobble2Time = 3.0;
         }
 
-//        detector.stop();
+        detector.stop();
 
         Waypoint[] startLineWaypoints = new Waypoint[] {
                 new Waypoint(90, 9, PI/2, 40, 50, 0, 0),
@@ -112,6 +112,8 @@ public class RedAuto extends LinearOpMode {
         Spline parkThetaSpline = null;
 
         ElapsedTime time = new ElapsedTime();
+
+        robot.wobbleArm.clampWobble();
 
         while(opModeIsActive()) {
 
@@ -176,7 +178,7 @@ public class RedAuto extends LinearOpMode {
                 if (time.seconds() > deliverWobbleTime + 1.5) {
 
                     robot.wobbleArm.clampWobble();
-                    robot.wobbleArm.setArmPosition(-200);
+                    robot.wobbleArm.setArmPosition(-180);
 
                     Waypoint[] intakeWobble2Waypoints;
                     if (ringCase == RingCase.Zero) {
@@ -235,13 +237,13 @@ public class RedAuto extends LinearOpMode {
 
                     Waypoint[] intakeStackWaypoints;
                     if (ringCase == RingCase.One) {
-                        intakeStackWaypoints = new Waypoint[]{
+                        intakeStackWaypoints = new Waypoint[] {
                                 new Waypoint(robot.x, robot.y, robot.theta, -10, -20, 0, 0),
                                 new Waypoint(107, 52, 2*PI/3, 30, 20, 0, intakeStackTime),
                         };
                         robot.autoAlignY = 52;
                     } else {
-                        intakeStackWaypoints = new Waypoint[]{
+                        intakeStackWaypoints = new Waypoint[] {
                                 new Waypoint(robot.x, robot.y, robot.theta, -10, -20, 0, 0),
                                 new Waypoint(robot.x - 4, robot.y - 4, 2*PI/3, 20, 20, 0, 0.25),
                                 new Waypoint(118, 38, 2*PI/3, 10, 10, 0, 1.5),
