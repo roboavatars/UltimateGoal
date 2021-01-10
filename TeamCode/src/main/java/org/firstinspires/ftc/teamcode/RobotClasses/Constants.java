@@ -21,7 +21,7 @@ public class Constants {
     public static double FLAP_HOME_POS = 0;
     public static double FLAP_MAX_POS = 0.15;
 
-    public static double MAG_HOME_POS = 0.27;
+    public static double MAG_HOME_POS = 0.30;
     public static double MAG_VIBRATE_POS = 0.26;
     public static double MAG_SHOOT_POS = 0.495;
 
