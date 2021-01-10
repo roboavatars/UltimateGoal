@@ -266,8 +266,8 @@ public class RedAuto extends LinearOpMode {
                 if (ringCase != RingCase.Four || robot.y < 40) {
                     robot.setTargetPoint(curPose.getX(), curPose.getY(), intakeStackThetaSpline.position(curTime));
                 } else {
-                        double input = 40 * Math.PI / 3 + Math.PI * time.seconds();
-                        robot.setTargetPoint(109, Math.min(64, 1.5 * Math.sin(input) + input), Math.PI / 2, 0.15, 0.15, 1.2);
+                    double input = Math.min(38 + 2*time.seconds() + 1.5*Math.sin(time.seconds()), 64);
+                    robot.setTargetPoint(109, input, Math.PI / 2, 0.15, 0.15, 1.2);
                 }
 
                 if ((ringCase != RingCase.Four && time.seconds() > intakeStackTime) || (ringCase == RingCase.Four && time.seconds() > intakeStackTime + 1)) {

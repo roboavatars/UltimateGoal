@@ -129,6 +129,9 @@ public class Robot {
                 target = shootTargets(x, 65, PI / 2, 3);
             } else {
                 shooter.flywheelPowershot();
+                if(!isAuto){
+                    intake.sticksOut();
+                }
                 vThresh = Constants.POWERSHOT_VELOCITY - 40;
                 target = shootTargets(powerTargets[2][0], powerTargets[2][1], PI / 2, 2);
             }
