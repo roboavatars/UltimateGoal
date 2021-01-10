@@ -69,21 +69,13 @@ public class Robot {
     private final double shootYCor = 150;
 
     // Powershot Debug Variables
-    public static double autoTheta0 = 1.6553;
-    public static double autoTheta1 = 1.6209;
-    public static double autoTheta2 = 1.4825;
-    public static double teleopTheta0 = 1.6553;
-    public static double teleopTheta1 = 1.6209;
-    public static double teleopTheta2 = 1.4825;
-    public static double[][] powerAuto = {
-            {85.00, 67.80, autoTheta0, 0.0330},
-            {88.00, 68.39, autoTheta1, 0.0355},
-            {90.00, 68.99, autoTheta2, 0.0380}
-    };
-    public static double[][] powerTeleop = {
-            {85.00, 67.80, teleopTheta0, 0.0330},
-            {88.00, 68.39, teleopTheta1, 0.0355},
-            {90.00, 68.99, teleopTheta2, 0.0380}
+    public static double theta0 = 1.7053;
+    public static double theta1 = 1.6209;
+    public static double theta2 = 1.5125;
+    public static double[][] powerTargets = {
+            {85.00, 67.80, theta0, 0.0330},
+            {88.00, 68.39, theta1, 0.0355},
+            {90.00, 68.99, theta2, 0.0380}
     };
 
     // OpMode Stuff
@@ -127,15 +119,10 @@ public class Robot {
         cycleCounter++;
 
         // Powershot Debug
-        powerAuto = new double[][] {
-                {85.00, 67.80, autoTheta0, 0.0330},
-                {88.00, 68.39, autoTheta1, 0.0355},
-                {90.00, 68.99, autoTheta2, 0.0380}
-        };
-        powerTeleop = new double[][] {
-                {85.00, 67.80, teleopTheta0, 0.0330},
-                {88.00, 68.39, teleopTheta1, 0.0355},
-                {90.00, 68.99, teleopTheta2, 0.0380}
+        powerTargets = new double[][] {
+                {85.00, 67.80, theta0, 0.0330},
+                {88.00, 68.39, theta1, 0.0355},
+                {90.00, 68.99, theta2, 0.0380}
         };
 
         if (firstLoop) {
@@ -160,11 +147,7 @@ public class Robot {
                     intake.sticksOut();
                 }
                 vThresh = Constants.POWERSHOT_VELOCITY - 40;
-                if (isAuto) {
-                    target = shootTargets(powerAuto[2][0], powerAuto[2][1], PI / 2, 2);
-                } else {
-                    target = shootTargets(powerTeleop[2][0], powerTeleop[2][1], PI / 2, 2);
-                }
+                target = shootTargets(powerTargets[2][0], powerTargets[2][1], PI / 2, 2);
             }
 
             // Turn off intake and put mag up
@@ -204,12 +187,7 @@ public class Robot {
                     target = shootTargets(3);
                 } else {
                     if (numRings == 3 || System.currentTimeMillis() - flickTime > flickDelay) {
-                        if (isAuto) {
-                            target = powerAuto[numRings - 1]; // flick move done flick // flick done move done flick
-                        } else {
-                            target = powerTeleop[numRings - 1]; // flick move done flick // flick done move done flick
-                        }
-
+                        target = powerTargets[numRings - 1]; // flick move done flick // flick done move done flick
                         Robot.log("updated target");
                     }
                 }
