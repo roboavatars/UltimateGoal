@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Debug.Logger;
+import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import java.util.Arrays;
@@ -26,6 +27,7 @@ public class Teleop extends LinearOpMode {
     // Toggles
     public boolean stickToggle = false;
     public boolean sticksOut = true;
+//    public boolean isStickAuto = true;
     public boolean clampToggle = false;
     public boolean clamped = true;
 
@@ -46,7 +48,6 @@ public class Teleop extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-
             // Intake on/off/rev
             if (gamepad1.right_trigger > 0) {
                 robot.intake.intakeOn();
@@ -81,8 +82,34 @@ public class Teleop extends LinearOpMode {
                 stickToggle = false;
             }
 
+//            if (gamepad2.x && !stickToggle) {
+//                stickToggle = true;
+//                if (!stickToggle) {
+//                    robot.intake.sticksHome();
+//                    isStickAuto = false;
+//                } else {
+//                    isStickAuto = true;
+//                }
+//            } else if (!gamepad2.x && stickToggle) {
+//                stickToggle = false;
+//            }
+//
+//            // Sticks are in auto mode
+//            if (isStickAuto && robot.numRings == 0) {
+//                double x = robot.x;
+//                double y = robot.y;
+//                if (84 <= x && x <= 107 && 31 <= y && y <= 107) {
+//                    robot.intake.sticksOut();
+//                } else {
+//                    robot.intake.sticksHome();
+//                }
+//            }
+
+            // Ring blocker
+            robot.intake.setBlocker(gamepad2.right_trigger);
+
             // Wobble motor controls
-            robot.wobbleArm.setPower(-0.5 * gamepad2.left_stick_y);
+            robot.wobbleArm.setPower(-0.4 * gamepad2.left_stick_y);
 
             // Wobble clamp/unclamp
             if (gamepad2.a && !clampToggle) {
@@ -106,7 +133,7 @@ public class Teleop extends LinearOpMode {
             // Slow align mode
             if (gamepad1.right_stick_button) {
                 xySpeed = 0.4;
-                thSpeed = 0.2;
+                thSpeed = 0.12;
             } else {
                 xySpeed = 1;
                 thSpeed = 1;
@@ -117,20 +144,20 @@ public class Teleop extends LinearOpMode {
                 robot.resetOdo(87, 63, Math.PI / 2);
             }
 
-            // Reset theta to pi/2
+            // Reset odo in corner
             if (gamepad1.y) {
-                robot.resetOdo(robot.x, robot.y, Math.PI / 2);
+                robot.resetOdo(135, 9, Math.PI / 2);
             }
 
             // Change shooting theta offset to compensate for odo drift
-            if (gamepad1.dpad_left) {
+            if (gamepad2.dpad_left) {
                 robot.thetaOffset -= 0.01;
-            } else if (gamepad1.dpad_right) {
+            } else if (gamepad2.dpad_right) {
                 robot.thetaOffset += 0.01;
             }
 
             // Reset theta offset
-            if (gamepad1.dpad_up) {
+            if (gamepad2.dpad_up) {
                 robot.thetaOffset = 0;
             }
 

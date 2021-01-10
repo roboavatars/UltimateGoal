@@ -33,7 +33,7 @@ public class Robot {
     private double odoWeight = 1;
 
     private final int highGoalDelay = 200;
-    private final int psDelay = 600;
+    private final int psDelay = 700;
     private final int flickDelay = 150;
     private double[] target = {};
 
@@ -48,7 +48,6 @@ public class Robot {
     public boolean preShoot = false;
 
     public int lastTarget = -1;
-    public int autoAlignY = 52;
 
     // Time and Delay Variables
     public double shootTime;
@@ -67,8 +66,8 @@ public class Robot {
     private final double[] shootXCor = {76.5, 84, 91.5, 108};
     private final double shootYCor = 150;
     private final double[][] powerTargets = {
-            {85.00, 67.80, 1.6353, 0.0330},
-            {88.00, 68.39, 1.5809, 0.0355},
+            {85.00, 67.80, 1.6553, 0.0330},
+            {88.00, 68.39, 1.6209, 0.0355},
             {90.00, 68.99, 1.4825, 0.0380}
     };
 
@@ -127,10 +126,7 @@ public class Robot {
                 shooter.flywheelHighGoal();
                 vThresh = Constants.HIGH_GOAL_VELOCITY - 50;
 
-                double alignY;
-                if (!isAuto) { alignY = 66; }
-                else { alignY = y; }//autoAlignY; }
-                target = shootTargets(x, alignY, PI / 2, 3);
+                target = shootTargets(x, 65, PI / 2, 3);
             } else {
                 shooter.flywheelPowershot();
                 vThresh = Constants.POWERSHOT_VELOCITY - 40;
@@ -146,16 +142,12 @@ public class Robot {
 
             // Move to shooting position
             if (!isAtPose(target[0], target[1], target[2])) {
-                if (!isAuto) {
-                    setTargetPoint(target[0], target[1], target[2], 0.4, 0.4, 4.7);
-                } else {
-                    setTargetPoint(target[0], target[1], target[2], 0.5, 0.5, 2.3);
-                }
+                setTargetPoint(target[0], target[1], target[2], 0.4, 0.4, 4.7);
                 log("("+x+", "+y+", "+theta+") Moving to shoot position: " + Arrays.toString(target));
             }
 
             // Start auto-feed when mag is up, velocity is high enough, and robot is at position
-            else if (!shooter.magHome && shooter.getVelocity() > vThresh && isAtPose(target[0], target[1], target[2], 0.75, 0.75, PI/35)) {
+            else if (!shooter.magHome && shooter.getVelocity() > vThresh && isAtPose(target[0], target[1], target[2]/*, 0.75, 0.75, PI/35*/)) {
                 if (highGoal) {
                     shootDelay = highGoalDelay;
                 } else {
@@ -190,7 +182,7 @@ public class Robot {
             if (System.currentTimeMillis() - shootTime > shootDelay) {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position
-                    if (isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/35)) {
+                    if (isAtPose(target[0], target[1], target[2]/*, 0.5, 0.5, PI/35*/)) {
                         if (numRings == 3) {
                             shooter.feedTop();
                             log("Feed ring 1");
@@ -348,7 +340,7 @@ public class Robot {
         double flapAngle = -0.0001 * Math.pow(d, 2) + 0.0167 * d - 0.4905;
 
         // Calculate Robot Angle
-        double alignRobotAngle = Math.atan2(dy, dx) + 0.0013 * d - 0.2962 - thetaOffset;
+        double alignRobotAngle = Math.atan2(dy, dx) + 0.0013 * d - 0.2262 - thetaOffset;
         double alignRobotX = shooterX - 6.5 * Math.sin(alignRobotAngle);
         double alignRobotY = shooterY + 6.5 * Math.cos(alignRobotAngle);
 

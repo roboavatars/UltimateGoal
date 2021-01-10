@@ -11,6 +11,7 @@ public class Intake {
     private DcMotorEx intakeMotor;
     private Servo lStickServo;
     private Servo rStickServo;
+    private Servo blockerServo;
 
     public boolean on = false;
     public boolean reverse = false;
@@ -20,8 +21,11 @@ public class Intake {
         intakeMotor = op.hardwareMap.get(DcMotorEx.class, "intake");
         lStickServo = op.hardwareMap.get(Servo.class, "leftStick");
         rStickServo = op.hardwareMap.get(Servo.class, "rightStick");
+        blockerServo = op.hardwareMap.get(Servo.class, "blocker");
 
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        closeBlocker();
 
         op.telemetry.addData("Status", "Intake initialized");
     }
@@ -73,5 +77,17 @@ public class Intake {
 
     public void stickRight(double position) {
         rStickServo.setPosition(position);
+    }
+
+    public void closeBlocker() {
+        blockerServo.setPosition(Constants.BLOCKER_CLOSE_POS);
+    }
+
+    public void openBlocker() {
+        blockerServo.setPosition(Constants.BLOCKER_OPEN_POS);
+    }
+
+    public void setBlocker(double position) {
+        blockerServo.setPosition(position * (Constants.BLOCKER_OPEN_POS - Constants.BLOCKER_CLOSE_POS) + Constants.BLOCKER_CLOSE_POS);
     }
 }
