@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.RobotClasses;
 import android.annotation.SuppressLint;
 import android.util.Log;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Debug.Logger;
@@ -12,6 +13,7 @@ import java.util.Arrays;
 import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 
+@Config
 @SuppressWarnings("FieldCanBeLocal") @SuppressLint("DefaultLocale")
 public class Robot {
 
