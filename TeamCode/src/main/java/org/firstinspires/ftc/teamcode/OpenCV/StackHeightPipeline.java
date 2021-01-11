@@ -55,7 +55,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
         }
 
         processor = new RingProcessor();
-        Arrays.fill(results, RingCase.Zero);
+        Arrays.fill(results, RingCase.Four);
     }
 
     @Override
@@ -104,7 +104,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
         // No Contours Detected
         if (i == 0) {
             result = new double[]{0,0,0};
-            ringCase = RingCase.Zero;
+            ringCase = RingCase.Four;
             log("No Contours Detected");
         }
 
@@ -130,9 +130,13 @@ public class StackHeightPipeline extends OpenCvPipeline {
         int zero = Collections.frequency(list, RingCase.Zero);
         int one = Collections.frequency(list, RingCase.One);
         int four = Collections.frequency(list, RingCase.Four);
-        if (one > zero && one > four) { return RingCase.One; }
-        else if (four > zero && four > one) { return RingCase.Four; }
-        else { return RingCase.Zero; }
+        if (one > zero && one > four) {
+            return RingCase.One;
+        } else if (four > zero && four > one) {
+            return RingCase.Four;
+        } else {
+            return RingCase.Zero;
+        }
     }
 
     private void log(String message) {
