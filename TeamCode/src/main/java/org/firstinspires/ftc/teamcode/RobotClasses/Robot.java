@@ -36,7 +36,7 @@ public class Robot {
 
     private final int highGoalDelay = 200;
     private final int psDelay = 900;
-    private final int flickDelay = 150;
+    private final int flickDelay = 200;
     private double[] target = {};
 
     // State Variables
@@ -140,7 +140,7 @@ public class Robot {
                 shooter.flywheelHighGoal();
                 vThresh = Constants.HIGH_GOAL_VELOCITY - 50;
 
-                target = shootTargets(x, 63.5, PI / 2, 3);
+                target = shootTargets(x, 63, PI / 2, 3);
             } else {
                 shooter.flywheelPowershot();
                 if(!isAuto){
