@@ -35,7 +35,7 @@ public class Robot {
     private double odoWeight = 1;
 
     private final int highGoalDelay = 200;
-    private final int psDelay = 700;
+    private final int psDelay = 900;
     private final int flickDelay = 150;
     private double[] target = {};
 
@@ -140,7 +140,7 @@ public class Robot {
                 shooter.flywheelHighGoal();
                 vThresh = Constants.HIGH_GOAL_VELOCITY - 50;
 
-                target = shootTargets(x, 65, PI / 2, 3);
+                target = shootTargets(x, 63.5, PI / 2, 3);
             } else {
                 shooter.flywheelPowershot();
                 if(!isAuto){
@@ -159,7 +159,7 @@ public class Robot {
 
             // Move to shooting position
             if (!isAtPose(target[0], target[1], target[2])) {
-                setTargetPoint(target[0], target[1], target[2], 0.4, 0.4, 4.7);
+                setTargetPoint(target[0], target[1], target[2], 0.2, 0.2, 4);
                 log("("+x+", "+y+", "+theta+") Moving to shoot position: " + Arrays.toString(target));
             }
 
@@ -191,7 +191,7 @@ public class Robot {
                         Robot.log("updated target");
                     }
                 }
-                setTargetPoint(target[0], target[1], target[2], 0.4, 0.4, 4.7);
+                setTargetPoint(target[0], target[1], target[2], 0.2, 0.2, 4);
                 shooter.setFlapAngle(target[3]);
             }
 
