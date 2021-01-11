@@ -4,11 +4,13 @@ import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.Debug.Logger;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
@@ -24,6 +26,8 @@ public class Robot {
     public Shooter shooter;
     public T265 t265;
     public Logger logger;
+
+    private List<LynxModule> allHubs;
 
     // Class Constants
     private final int loggerUpdatePeriod = 2;
@@ -95,6 +99,11 @@ public class Robot {
             odoWeight = 1;
         }
 
+        allHubs = op.hardwareMap.getAll(LynxModule.class);
+        for (LynxModule hub : allHubs) {
+            hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
+        }
+
         this.op = op;
         this.isAuto = isAuto;
     }
@@ -125,6 +134,7 @@ public class Robot {
                 {90.00, 68.99, theta2, 0.0380}
         };
 
+        // Track time after start
         if (firstLoop) {
             startTime = System.currentTimeMillis();
             firstLoop = false;
@@ -301,6 +311,11 @@ public class Robot {
         }
         drawRobot(x, y, theta, "black");
         sendPacket();
+
+        // Clear bulk cache
+        for (LynxModule hub : allHubs) {
+            hub.clearBulkCache();
+        }
     }
 
     // Set variables for high goal shoot

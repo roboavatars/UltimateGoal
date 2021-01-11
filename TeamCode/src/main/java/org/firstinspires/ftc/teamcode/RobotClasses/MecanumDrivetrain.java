@@ -202,6 +202,11 @@ public class MecanumDrivetrain {
             pod2 = response.getEncoder(0) * 0.00300622055 * 2;
             pod3 = response.getEncoder(2) * 0.00300622055 * 2;
 
+            // need to know which motor is in the port
+//            pod1 = motorBackRight.getCurrentPosition() * 0.00300622055 * 2;
+//            pod2 = motorFrontLeft.getCurrentPosition() * 0.00300622055 * 2;
+//            pod3 = motorBackLeft.getCurrentPosition() * 0.00300622055 * 2;
+
             deltapod1 = pod1 - lastpod1;
             deltapod2 = pod2 - lastpod2;
             deltapod3 = pod3 - lastpod3;
