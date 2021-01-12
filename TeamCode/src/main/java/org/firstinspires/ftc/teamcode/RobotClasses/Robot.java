@@ -164,6 +164,9 @@ public class Robot {
             if (shooter.magHome) {
                 intake.intakeOff();
                 shooter.magShoot();
+                if (!isAuto) {
+                    intake.sticksFourth();
+                }
                 log("Mag up");
             }
 
@@ -232,6 +235,9 @@ public class Robot {
                         log("Feed home");
                     } else {
                         shooter.magHome();
+                        if (!isAuto) {
+                            intake.sticksOut();
+                        }
                         shoot = false;
                         log("Shoot done");
                     }
