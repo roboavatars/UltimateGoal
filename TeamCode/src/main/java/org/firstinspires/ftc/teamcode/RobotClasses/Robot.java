@@ -215,6 +215,9 @@ public class Robot {
                     if (isAtPose(target[0], target[1], target[2]/*, 0.5, 0.5, PI/35*/)) {
                         if (numRings == 3) {
                             shooter.feedTop();
+                            if (!isAuto) {
+                                intake.sticksOut();
+                            }
                             log("Feed ring 1");
                         } else if (numRings == 2) {
                             shooter.feedBottom();
@@ -235,9 +238,6 @@ public class Robot {
                         log("Feed home");
                     } else {
                         shooter.magHome();
-                        if (!isAuto) {
-                            intake.sticksOut();
-                        }
                         shoot = false;
                         log("Shoot done");
                     }
