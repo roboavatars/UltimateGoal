@@ -176,16 +176,17 @@ public class RedAuto extends LinearOpMode {
                 Pose curPose = deliverWobblePath.getRobotPose(curTime);
                 robot.setTargetPoint(curPose.getX(), curPose.getY(), deliverWobbleThetaSpline.position(curTime));
 
-                if (time.seconds() > deliverWobbleTime + 1) {
+                if (time.seconds() > deliverWobbleTime + 1.5) {
+                    robot.wobbleArm.setArmPosition(-160);
+                } else if (time.seconds() > deliverWobbleTime + 0.75) {
                     robot.wobbleArm.unClampWobble();
-                } else if (time.seconds() > deliverWobbleTime) {
+                } else if (time.seconds() > deliverWobbleTime - 0.25) {
                     robot.wobbleArm.armDown();
                 }
 
-                if (time.seconds() > deliverWobbleTime + 1.5) {
+                if (time.seconds() > deliverWobbleTime + 2) {
 
                     robot.wobbleArm.clampWobble();
-                    robot.wobbleArm.setArmPosition(-160);
 
                     Waypoint[] intakeWobble2Waypoints;
                     if (ringCase == RingCase.Zero) {
