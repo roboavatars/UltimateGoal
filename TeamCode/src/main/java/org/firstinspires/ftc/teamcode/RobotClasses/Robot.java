@@ -150,7 +150,11 @@ public class Robot {
                 shooter.flywheelHighGoal();
                 vThresh = Constants.HIGH_GOAL_VELOCITY - 50;
 
-                target = shootTargets(x, 63, PI / 2, 3);
+                double shootY = 63;
+                if(isAuto){
+                    shootY = 59;
+                }
+                target = shootTargets(x, shootY, PI / 2, 3);
             } else {
                 shooter.flywheelPowershot();
                 if(!isAuto){

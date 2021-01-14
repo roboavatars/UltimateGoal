@@ -68,6 +68,7 @@ public class RedAuto extends LinearOpMode {
 
         waitForStart();
 
+        robot.shooter.flywheelHighGoal();
         robot.intake.openBlocker();
 
         sleep(500);
@@ -272,7 +273,7 @@ public class RedAuto extends LinearOpMode {
                 if (ringCase != RingCase.Four || robot.y < 40) {
                     robot.setTargetPoint(curPose.getX(), curPose.getY(), intakeStackThetaSpline.position(curTime));
                 } else {
-                    double input = Math.min(40 + 4.5*time.seconds() + 1.5*Math.sin(12*time.seconds()), 64);
+                    double input = Math.min(40 + 3.5*time.seconds() + 1.5*Math.sin(12*time.seconds()), 64);
                     robot.setTargetPoint(110, input, Math.PI / 2, 0.2, 0.15, 1.2);
                 }
 
@@ -321,6 +322,8 @@ public class RedAuto extends LinearOpMode {
                 if (time.seconds() > deliverWobble2Time + 1) {
                     if (ringCase == RingCase.Four) {
                         shootHighGoal2 = false;
+
+                        robot.shooter.flywheelHighGoal();
 
                         Waypoint[] shootHighGoal2Waypoints;
                         shootHighGoal2Waypoints = new Waypoint[] {
