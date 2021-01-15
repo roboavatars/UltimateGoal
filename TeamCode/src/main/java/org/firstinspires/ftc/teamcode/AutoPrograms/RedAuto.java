@@ -227,7 +227,7 @@ public class RedAuto extends LinearOpMode {
                 Pose curPose = intakeWobble2Path.getRobotPose(curTime);
                 robot.setTargetPoint(curPose.getX(), curPose.getY(), intakeWobble2ThetaSpline.position(curTime), 0.5, 0.3, 2.4);
 
-                if (!reached && robot.isAtPose(124.5, 37, 5*PI/12)) {
+                if (!reached && robot.isAtPose(124.5, 37, 5*PI/12, 0.5, 0.5, PI/35)) {
                     reached = true;
                     reachedTime = curTime;
                 }
