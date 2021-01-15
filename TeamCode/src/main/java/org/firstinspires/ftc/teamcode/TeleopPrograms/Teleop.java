@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Debug.Logger;
+import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import java.util.Arrays;
@@ -97,10 +98,19 @@ public class Teleop extends LinearOpMode {
 //            if (isStickAuto && robot.numRings == 0) {
 //                double x = robot.x;
 //                double y = robot.y;
-//                if (84 <= x && x <= 107 && 31 <= y && y <= 107) {
-//                    robot.intake.sticksOut();
+//                double theta = robot.theta;
+//                double buffer = 6;
+//                double[] leftPos = new double[] {x - 27 * Math.sin(theta) + 7 * Math.cos(theta), y + 27 * Math.cos(theta) + 7 * Math.sin(theta)};
+//                double[] rightPos = new double[] {x + 27 * Math.sin(theta) + 7 * Math.cos(theta), y - 27 * Math.cos(theta) + 7 * Math.sin(theta)};
+//                if (48 + buffer <= leftPos[0] && leftPos[0] <= 144 - buffer && 0 + buffer <= leftPos[1] && leftPos[1] <= 144 - buffer) {
+//                    robot.intake.stickLeft(Constants.L_OUT_POS);
 //                } else {
-//                    robot.intake.sticksHome();
+//                    robot.intake.stickLeft(Constants.L_HALF_POS);
+//                }
+//                if (48 + buffer <= rightPos[0] && rightPos[0] <= 144 - buffer && 0 + buffer <= rightPos[1] && rightPos[1] <= 144 - buffer) {
+//                    robot.intake.stickRight(Constants.R_OUT_POS);
+//                } else {
+//                    robot.intake.stickRight(Constants.R_HALF_POS);
 //                }
 //            }
 

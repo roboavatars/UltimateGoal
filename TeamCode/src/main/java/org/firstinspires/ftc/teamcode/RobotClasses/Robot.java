@@ -191,7 +191,7 @@ public class Robot {
                 numRings = 3;
                 shootTime = System.currentTimeMillis();
                 preShoot = false;
-                log("Ready to shoot " + (highGoal ? "high goal" : "powershot"));
+                log("Ready to shoot " + (highGoal ? "high goal" : "powershot") + ", velocity: " + shooter.getVelocity());
             }
         }
 

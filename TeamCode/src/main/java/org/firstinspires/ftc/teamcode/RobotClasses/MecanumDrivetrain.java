@@ -69,7 +69,7 @@ public class MecanumDrivetrain {
     private final double motorUpdateTolerance = 0.05;
 
     // Constants
-    public static double OdometryTrackWidth = 13.77;
+    public static double OdometryTrackWidth = 13.76;
     public static double OdometryHorizontalOffset = -3.165;
     private final double OdometryHeadingThreshold = Math.PI / 8;
 
@@ -97,6 +97,7 @@ public class MecanumDrivetrain {
         motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
+        motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
         imu = new LynxEmbeddedIMU(new BetterI2cDeviceSyncImplOnSimple(
@@ -197,15 +198,9 @@ public class MecanumDrivetrain {
     // update position from odometry
     public void updatePose() {
         try {
-            LynxGetBulkInputDataResponse response = revBulkData();
-            pod1 = -response.getEncoder(3) * 0.00300622055 * 2;
-            pod2 = response.getEncoder(0) * 0.00300622055 * 2;
-            pod3 = response.getEncoder(2) * 0.00300622055 * 2;
-
-            // need to know which motor is in the port
-//            pod1 = motorBackRight.getCurrentPosition() * 0.00300622055 * 2;
-//            pod2 = motorFrontLeft.getCurrentPosition() * 0.00300622055 * 2;
-//            pod3 = motorBackLeft.getCurrentPosition() * 0.00300622055 * 2;
+            pod1 = motorBackLeft.getCurrentPosition() * 0.00300622055 * -2;
+            pod2 = motorBackRight.getCurrentPosition() * 0.00300622055 * -2;
+            pod3 = motorFrontLeft.getCurrentPosition() * 0.00300622055 * 2;
 
             deltapod1 = pod1 - lastpod1;
             deltapod2 = pod2 - lastpod2;

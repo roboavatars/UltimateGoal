@@ -14,7 +14,7 @@ public class OdometryTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        dt = new MecanumDrivetrain(this, 57, 135, Math.PI/2);
+        dt = new MecanumDrivetrain(this, 90, 9, Math.PI/2);
 
         waitForStart();
 
