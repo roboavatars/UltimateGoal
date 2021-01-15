@@ -78,7 +78,7 @@ public class RedAuto extends LinearOpMode {
         Robot.log("Ring case: " + ringCase);
 
         double[][] wobbleDelivery = {{121, 82}, {96, 103}, {124, 125}};
-        double[][] wobble2Delivery = {{119, 74}, {96, 92}, {118, 131}};
+        double[][] wobble2Delivery = {{119, 74}, {96, 92}, {118, 128}};
         double[] wobbleCor;
         double[] wobble2Cor;
         if (ringCase == RingCase.Zero) {
@@ -227,7 +227,7 @@ public class RedAuto extends LinearOpMode {
                 Pose curPose = intakeWobble2Path.getRobotPose(curTime);
                 robot.setTargetPoint(curPose.getX(), curPose.getY(), intakeWobble2ThetaSpline.position(curTime), 0.5, 0.3, 2.4);
 
-                if (!reached && robot.isAtPose(124.5, 37, 5*PI/12)) {
+                if (!reached && robot.isAtPose(124.5, 37, 5*PI/12, 0.5, 0.5, PI/35)) {
                     reached = true;
                     reachedTime = curTime;
                 }
@@ -277,17 +277,15 @@ public class RedAuto extends LinearOpMode {
                 if (ringCase != RingCase.Four || robot.y < 40) {
                     robot.setTargetPoint(curPose.getX(), curPose.getY(), intakeStackThetaSpline.position(curTime));
                 } else {
-                    double input = Math.min(64, 41 + 3.5 * curTime + 1.5 * Math.sin(12 * curTime));
+                    double input = Math.min(60, 41 + 3.5 * time.seconds() + 1.5 * Math.sin(12 * time.seconds()));
                     robot.setTargetPoint(110, input, Math.PI / 2, 0.2, 0.15, 1.2);
                 }
 
-                if ((ringCase != RingCase.Four && time.seconds() > intakeStackTime) || (ringCase == RingCase.Four && time.seconds() > intakeStackTime + 0.5)) {
-                    if (ringCase != RingCase.Four || time.seconds() > intakeStackTime + 1.75) {
-                        robot.highGoalShoot();
+                if ((ringCase != RingCase.Four && time.seconds() > intakeStackTime) || (ringCase == RingCase.Four && time.seconds() > intakeStackTime + 1.75)) {
+                    robot.highGoalShoot();
 
-                        intakeStack = true;
-                        time.reset();
-                    }
+                    intakeStack = true;
+                    time.reset();
                 }
             }
 
@@ -324,6 +322,7 @@ public class RedAuto extends LinearOpMode {
 
                 if (time.seconds() > deliverWobble2Time + 1.25) {
                     robot.wobbleArm.clampWobble();
+                    robot.intake.intakeOff();
 
                     if (ringCase == RingCase.Four) {
                         shootHighGoal2 = false;

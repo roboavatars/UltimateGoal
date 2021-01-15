@@ -6,6 +6,7 @@ import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.Debug.Logger;
 
@@ -28,6 +29,7 @@ public class Robot {
     public Logger logger;
 
     private List<LynxModule> allHubs;
+    private VoltageSensor batterySensor;
 
     // Class Constants
     private final int loggerUpdatePeriod = 2;
@@ -88,7 +90,7 @@ public class Robot {
     // Constructor
     public Robot(LinearOpMode op, double x, double y, double theta, boolean isAuto) {
         drivetrain = new MecanumDrivetrain(op, x, y, theta);
-        intake = new Intake(op);
+        intake = new Intake(op, isAuto);
         shooter = new Shooter(op);
         wobbleArm = new WobbleArm(op, isAuto);
         logger = new Logger();
@@ -106,6 +108,9 @@ public class Robot {
 
         this.op = op;
         this.isAuto = isAuto;
+
+        batterySensor = op.hardwareMap.voltageSensor.iterator().next();
+        log("Voltage: " + batterySensor.getVoltage() + "v");
     }
 
     // Stop logger and t265
@@ -151,7 +156,7 @@ public class Robot {
                 vThresh = Constants.HIGH_GOAL_VELOCITY - 50;
 
                 double shootY = 63;
-                if(isAuto){
+                if (isAuto){
                     shootY = 59;
                 }
                 target = shootTargets(x, shootY, PI / 2, 3);
@@ -205,7 +210,6 @@ public class Robot {
                 } else {
                     if (numRings == 3 || System.currentTimeMillis() - flickTime > flickDelay) {
                         target = powerTargets[numRings - 1]; // flick move done flick // flick done move done flick
-                        Robot.log("updated target");
                     }
                 }
                 setTargetPoint(target[0], target[1], target[2], 0.2, 0.2, 4);
@@ -303,15 +307,18 @@ public class Robot {
         }
 
         // Dashboard Telemetry
+        if (batterySensor.getVoltage() < 12.5) {
+            addPacket("1 1***", "BATTERY VOLTAGE (" + batterySensor.getVoltage() + "v) < 12.5!!!!");
+        }
         addPacket("1 X", String.format("%.5f", x));
         addPacket("2 Y", String.format("%.5f", y));
         addPacket("3 Theta", String.format("%.5f", theta));
-        addPacket("4 Angle Pos", String.format("%.5f", shooter.flapServo.getPosition()));
-        addPacket("5 Shooter Velocity", shooter.getVelocity());
-        addPacket("6 numRings", numRings);
-        addPacket("7 shoot", shoot  + " " + preShoot + " " + highGoal);
-        addPacket("8 Time", (System.currentTimeMillis() - startTime) / 1000);
-        addPacket("9 Update Frequency (Hz)", 1 / timeDiff);
+        addPacket("4 Shooter Velocity", shooter.getVelocity());
+        addPacket("5 numRings", numRings);
+        addPacket("6 shoot", shoot  + " " + preShoot + " " + highGoal);
+        addPacket("7 Time", (System.currentTimeMillis() - startTime) / 1000);
+        addPacket("8 Update Frequency (Hz)", 1 / timeDiff);
+        addPacket("9 Battery Voltage", batterySensor.getVoltage());
 
         // Dashboard Drawings
         drawGoal("black");

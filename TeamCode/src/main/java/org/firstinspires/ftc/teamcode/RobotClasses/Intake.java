@@ -12,12 +12,13 @@ public class Intake {
     private Servo lStickServo;
     private Servo rStickServo;
     private Servo blockerServo;
+    private boolean isAuto;
 
     public boolean on = false;
     public boolean reverse = false;
     public boolean forward = false;
 
-    public Intake(LinearOpMode op) {
+    public Intake(LinearOpMode op, boolean isAuto) {
         intakeMotor = op.hardwareMap.get(DcMotorEx.class, "intake");
         lStickServo = op.hardwareMap.get(Servo.class, "leftStick");
         rStickServo = op.hardwareMap.get(Servo.class, "rightStick");
@@ -27,6 +28,7 @@ public class Intake {
 
         closeBlocker();
 
+        this.isAuto = isAuto;
         op.telemetry.addData("Status", "Intake initialized");
     }
 
@@ -57,8 +59,10 @@ public class Intake {
     }
 
     public void sticksHome() {
-        lStickServo.setPosition(Constants.L_HOME_POS);
-        rStickServo.setPosition(Constants.R_HOME_POS);
+        if (!isAuto) {
+            lStickServo.setPosition(Constants.L_HOME_POS);
+            rStickServo.setPosition(Constants.R_HOME_POS);
+        }
     }
 
     public void sticksHalf() {
