@@ -88,7 +88,7 @@ public class Robot {
     // Constructor
     public Robot(LinearOpMode op, double x, double y, double theta, boolean isAuto) {
         drivetrain = new MecanumDrivetrain(op, x, y, theta);
-        intake = new Intake(op);
+        intake = new Intake(op, isAuto);
         shooter = new Shooter(op);
         wobbleArm = new WobbleArm(op, isAuto);
         logger = new Logger();
@@ -151,7 +151,7 @@ public class Robot {
                 vThresh = Constants.HIGH_GOAL_VELOCITY - 50;
 
                 double shootY = 63;
-                if(isAuto){
+                if (isAuto){
                     shootY = 59;
                 }
                 target = shootTargets(x, shootY, PI / 2, 3);
@@ -205,7 +205,6 @@ public class Robot {
                 } else {
                     if (numRings == 3 || System.currentTimeMillis() - flickTime > flickDelay) {
                         target = powerTargets[numRings - 1]; // flick move done flick // flick done move done flick
-                        Robot.log("updated target");
                     }
                 }
                 setTargetPoint(target[0], target[1], target[2], 0.2, 0.2, 4);

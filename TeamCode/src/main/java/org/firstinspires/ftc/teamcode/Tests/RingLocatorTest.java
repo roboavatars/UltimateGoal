@@ -14,14 +14,14 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 @TeleOp(name = "Ring Locator Pipeline Test")
 public class RingLocatorTest extends LinearOpMode {
 
-//    private Robot robot;
+    private Robot robot;
     private RingLocator detector;
     private double[] ringPos;
     private double intakePower;
 
     @Override
     public void runOpMode() {
-//        robot = new Robot(this, 135, 9, Math.PI/2, false);
+        robot = new Robot(this, 135, 9, Math.PI/2, false);
         detector = new RingLocator(this);
         detector.start();
 
@@ -48,7 +48,7 @@ public class RingLocatorTest extends LinearOpMode {
 //
 //            ringPos = detector.getAbsRingPos(robot.x, robot.y, robot.theta);
 //            if (!gamepad1.b) {
-//                robot.drivetrain.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
+                robot.drivetrain.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
 //            } else {
 //                if (ringPos[0] != -1) {
 //                    robot.setTargetPoint(ringPos[0], ringPos[1], robot.theta);
@@ -58,7 +58,7 @@ public class RingLocatorTest extends LinearOpMode {
 //                intakePower = 1;
 //            }
 //            robot.intake.setPower(intakePower);
-//            robot.update();
+            robot.update();
 
             addPacket("Absolute Coords", Arrays.toString(ringPos));
             addPacket("Relative Coords", Arrays.toString(detector.getRelRingPos()));
