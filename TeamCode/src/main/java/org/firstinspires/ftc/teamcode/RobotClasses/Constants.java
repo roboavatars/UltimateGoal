@@ -27,7 +27,7 @@ public class Constants {
 
     public static double MAG_HOME_POS = 0.30;
     public static double MAG_VIBRATE_POS = 0.26;
-    public static double MAG_SHOOT_POS = 0.495;
+    public static double MAG_SHOOT_POS = 0.51;
 
     public static double FEED_HOME_POS = 0.13;
     public static double FEED_TOP_POS = 1;
