@@ -52,10 +52,11 @@ public class Logger {
      * Takes the file number from getLastFileNumber() and converts it to a file name
      */
     private static String getLogName(boolean fileWrite) {
-        Robot.log(basePath + (getLastFileNumber() + 1) + ".csv");
         if (fileWrite) {
+            Robot.log("Writing to: " + basePath + (getLastFileNumber() + 1) + ".csv");
             return basePath + (getLastFileNumber() + 1) + ".csv";
         } else {
+            Robot.log("Reading from: " + basePath + getLastFileNumber() + ".csv");
             return basePath + getLastFileNumber() + ".csv";
         }
     }

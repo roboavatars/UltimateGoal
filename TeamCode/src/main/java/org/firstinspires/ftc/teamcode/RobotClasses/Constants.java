@@ -19,7 +19,7 @@ public class Constants {
     public static double BLOCKER_OPEN_POS = 1;
 
     // Shooter
-    public static int HIGH_GOAL_VELOCITY = 1380;
+    public static int HIGH_GOAL_VELOCITY = 1350;
     public static int POWERSHOT_VELOCITY = 850;
 
     public static double FLAP_HOME_POS = 0;

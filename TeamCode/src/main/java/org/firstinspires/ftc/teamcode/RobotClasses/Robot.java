@@ -75,7 +75,7 @@ public class Robot {
     private final double shootYCor = 150;
 
     // Powershot Debug Variables
-    public static double theta0 = 1.7053;
+    public static double theta0 = 1.6753;
     public static double theta1 = 1.6209;
     public static double theta2 = 1.5125;
     public static double[][] powerTargets = {
@@ -110,7 +110,7 @@ public class Robot {
         this.isAuto = isAuto;
 
         batterySensor = op.hardwareMap.voltageSensor.iterator().next();
-        log("Voltage: " + batterySensor.getVoltage() + "v");
+        log("Battery Voltage: " + batterySensor.getVoltage() + "v");
     }
 
     // Stop logger and t265
@@ -207,7 +207,7 @@ public class Robot {
             if (numRings > 0) {
                 if (highGoal) {
                     target = shootTargets(3);
-                } else {
+                } else if (!highGoal) {
                     if (numRings == 3 || System.currentTimeMillis() - flickTime > flickDelay) {
                         target = powerTargets[numRings - 1]; // flick move done flick // flick done move done flick
                     }
@@ -221,6 +221,7 @@ public class Robot {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position
                     if (isAtPose(target[0], target[1], target[2]/*, 0.5, 0.5, PI/35*/)) {
+                        log("In shoot Velocity: " + shooter.getVelocity());
                         if (numRings == 3) {
                             shooter.feedTop();
                             if (!isAuto) {
@@ -303,6 +304,7 @@ public class Robot {
 
         // Log Data
         if (cycleCounter % loggerUpdatePeriod == 0) {
+            Log.w("hmmm", x+" "+y);
             logger.logData(System.currentTimeMillis()-startTime, x, y, theta, vx, vy, w, ax, ay, a, numRings, shooter.magHome, shooter.feedHome, lastTarget);
         }
 
