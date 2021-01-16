@@ -10,7 +10,7 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 public class OdometryTest extends LinearOpMode {
 
     private MecanumDrivetrain dt;
-    private double x, y, theta;
+    private double x, y, theta, prevTime;
 
     @Override
     public void runOpMode() {
@@ -18,16 +18,24 @@ public class OdometryTest extends LinearOpMode {
 
         waitForStart();
 
-        while(opModeIsActive()){
+        while(opModeIsActive()) {
+
+            dt.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
+
             dt.updatePose();
             x = dt.x;
             y = dt.y;
             theta = dt.theta;
 
+            double curTime = (double) System.currentTimeMillis() / 1000;
+            double timeDiff = curTime - prevTime;
+            prevTime = curTime;
+
             drawRobot(x, y, theta, "green");
             addPacket("X", x);
             addPacket("Y", y);
             addPacket("Theta", theta);
+            addPacket("8 Update Frequency (Hz)", 1 / timeDiff);
             sendPacket();
 
             telemetry.addData("X: " , x);
