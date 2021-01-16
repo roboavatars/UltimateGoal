@@ -14,6 +14,8 @@ public class Intake {
     private Servo blockerServo;
     private boolean isAuto;
 
+    private double lastIntakePow = 0;
+
     public boolean on = false;
     public boolean reverse = false;
     public boolean forward = false;
@@ -33,29 +35,25 @@ public class Intake {
     }
 
     public void intakeOn() {
-        intakeMotor.setPower(1);
-        on = true;
-        reverse = false;
-        forward = true;
+        setPower(1);
     }
 
     public void intakeRev() {
-        intakeMotor.setPower(-1);
-        on = true;
-        reverse = true;
-        forward = false;
+        setPower(-1);
     }
 
     public void intakeOff() {
-        intakeMotor.setPower(0);
-        on = false;
-        reverse = false;
-        forward = false;
+        setPower(0);
     }
 
     public void setPower(double power) {
-        intakeMotor.setPower(power);
-        on = power != 0;
+        if (power != lastIntakePow) {
+            intakeMotor.setPower(power);
+            on = power != 0;
+            if (power > 0) { forward = true; }
+            else if (power < 0) { reverse = true; }
+            lastIntakePow = power;
+        }
     }
 
     public void sticksHome() {

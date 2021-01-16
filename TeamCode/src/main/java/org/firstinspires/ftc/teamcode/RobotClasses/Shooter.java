@@ -15,6 +15,9 @@ public class Shooter {
     private Servo magServo;
     private Servo feedServo;
 
+    private double lastVelocity = 0;
+    private double lastFlap = 0;
+
     public boolean magHome = true;
     public boolean magVibrate = false;
     public boolean feedHome = true;
@@ -53,8 +56,11 @@ public class Shooter {
     }
 
     public void setVelocity(double velocity) {
-        shooterMotor1.setVelocity(velocity);
-        shooterMotor2.setVelocity(velocity);
+        if (velocity != lastVelocity) {
+            shooterMotor1.setVelocity(velocity);
+            shooterMotor2.setVelocity(velocity);
+            lastVelocity = velocity;
+        }
     }
 
     public double getVelocity() {
@@ -62,8 +68,10 @@ public class Shooter {
     }
 
     public void setFlapAngle(double angle) {
-        if (getFlapAngle() > 0 && getFlapAngle() < Constants.FLAP_MAX_POS) {
+        double curPos = getFlapAngle();
+        if (angle != lastFlap && curPos > 0 && curPos < Constants.FLAP_MAX_POS) {
             flapServo.setPosition(angle);
+            lastFlap = angle;
         }
     }
 

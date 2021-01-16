@@ -30,6 +30,7 @@ public class Robot {
 
     private List<LynxModule> allHubs;
     private VoltageSensor batterySensor;
+    private boolean startVoltTooLow = false;
 
     // Class Constants
     private final int loggerUpdatePeriod = 2;
@@ -111,6 +112,7 @@ public class Robot {
 
         batterySensor = op.hardwareMap.voltageSensor.iterator().next();
         log("Battery Voltage: " + batterySensor.getVoltage() + "v");
+        if (batterySensor.getVoltage() < 12.4) { startVoltTooLow = true; }
     }
 
     // Stop logger and t265
@@ -207,7 +209,7 @@ public class Robot {
             if (numRings > 0) {
                 if (highGoal) {
                     target = shootTargets(3);
-                } else if (!highGoal) {
+                } else {
                     if (numRings == 3 || System.currentTimeMillis() - flickTime > flickDelay) {
                         target = powerTargets[numRings - 1]; // flick move done flick // flick done move done flick
                     }
@@ -304,14 +306,11 @@ public class Robot {
 
         // Log Data
         if (cycleCounter % loggerUpdatePeriod == 0) {
-            Log.w("hmmm", x+" "+y);
             logger.logData(System.currentTimeMillis()-startTime, x, y, theta, vx, vy, w, ax, ay, a, numRings, shooter.magHome, shooter.feedHome, lastTarget);
         }
 
         // Dashboard Telemetry
-        if (batterySensor.getVoltage() < 12.5) {
-            addPacket("1 1***", "BATTERY VOLTAGE (" + batterySensor.getVoltage() + "v) < 12.5!!!!");
-        }
+        if (startVoltTooLow) { addPacket("1 1***", "Starting Battery Voltage < 12.5!!!!"); }
         addPacket("1 X", String.format("%.5f", x));
         addPacket("2 Y", String.format("%.5f", y));
         addPacket("3 Theta", String.format("%.5f", theta));
@@ -320,7 +319,6 @@ public class Robot {
         addPacket("6 shoot", shoot  + " " + preShoot + " " + highGoal);
         addPacket("7 Time", (System.currentTimeMillis() - startTime) / 1000);
         addPacket("8 Update Frequency (Hz)", 1 / timeDiff);
-        addPacket("9 Battery Voltage", batterySensor.getVoltage());
 
         // Dashboard Drawings
         drawGoal("black");
