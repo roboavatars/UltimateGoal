@@ -393,7 +393,7 @@ public class RedAuto extends LinearOpMode {
                     Pose curPose = parkPath.getRobotPose(curTime);
                     robot.setTargetPoint(curPose.getX(), curPose.getY(), parkThetaSpline.position(curTime) + PI);
 
-                    if (robot.isAtPose(curPose.getX(), curPose.getY(), PI / 2)) {
+                    if (time.seconds() > parkTime) {
                         robot.intake.sticksOut();
                         robot.wobbleArm.armDown();
 
