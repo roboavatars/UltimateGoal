@@ -50,8 +50,14 @@ public class Intake {
         if (power != lastIntakePow) {
             intakeMotor.setPower(power);
             on = power != 0;
-            if (power > 0) { forward = true; }
-            else if (power < 0) { reverse = true; }
+            if (power > 0) {
+                forward = true;
+                reverse = false;
+            }
+            else if (power < 0) {
+                forward = false;
+                reverse = true;
+            }
             lastIntakePow = power;
         }
     }

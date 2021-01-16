@@ -29,7 +29,7 @@ public class Robot {
     public Logger logger;
 
     private List<LynxModule> allHubs;
-    private VoltageSensor batterySensor;
+    private VoltageSensor battery;
     private boolean startVoltTooLow = false;
 
     // Class Constants
@@ -110,9 +110,14 @@ public class Robot {
         this.op = op;
         this.isAuto = isAuto;
 
-        batterySensor = op.hardwareMap.voltageSensor.iterator().next();
-        log("Battery Voltage: " + batterySensor.getVoltage() + "v");
-        if (batterySensor.getVoltage() < 12.4) { startVoltTooLow = true; }
+        battery = op.hardwareMap.voltageSensor.iterator().next();
+        log("Battery Voltage: " + battery.getVoltage() + "v");
+        if (battery.getVoltage() < 12.4) {
+            startVoltTooLow = true;
+        }
+        drawGoal("black");
+        drawRobot(x, y, theta, "black");
+        sendPacket();
     }
 
     // Stop logger and t265
@@ -310,7 +315,9 @@ public class Robot {
         }
 
         // Dashboard Telemetry
-        if (startVoltTooLow) { addPacket("1 1***", "Starting Battery Voltage < 12.5!!!!"); }
+        if (startVoltTooLow) {
+            addPacket("1 1***", "Starting Battery Voltage < 12.5!!!!");
+        }
         addPacket("1 X", String.format("%.5f", x));
         addPacket("2 Y", String.format("%.5f", y));
         addPacket("3 Theta", String.format("%.5f", theta));
@@ -389,7 +396,7 @@ public class Robot {
         double flapAngle = -0.0001 * Math.pow(d, 2) + 0.0167 * d - 0.4905;
 
         // Calculate Robot Angle
-        double alignRobotAngle = Math.atan2(dy, dx) + 0.0013 * d - 0.2262 - thetaOffset;
+        double alignRobotAngle = Math.atan2(dy, dx) + 0.0013 * d - 0.2332 - thetaOffset;
         double alignRobotX = shooterX - 6.5 * Math.sin(alignRobotAngle);
         double alignRobotY = shooterY + 6.5 * Math.cos(alignRobotAngle);
 
