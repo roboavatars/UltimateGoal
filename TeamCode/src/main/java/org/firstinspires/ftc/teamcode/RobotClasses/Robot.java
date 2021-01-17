@@ -164,7 +164,7 @@ public class Robot {
 
                 double shootY = 63;
                 if (isAuto){
-                    shootY = 59;
+                    shootY = 144 - Math.sqrt(Math.pow(98,2) - Math.pow(x - 57,2));
                 }
                 target = shootTargets(x, shootY, PI / 2, 3);
             } else {
