@@ -42,7 +42,7 @@ public class Robot {
     private double odoWeight = 1;
 
     private final int highGoalDelay = 200;
-    private final int psDelay = 900;
+    private final int psDelay = 800;
     private final int flickDelay = 200;
     private double[] target = {};
 
@@ -76,13 +76,13 @@ public class Robot {
     private final double shootYCor = 150;
 
     // Powershot Debug Variables
-    public static double theta0 = 1.6753;
-    public static double theta1 = 1.6209;
-    public static double theta2 = 1.5125;
+    public static double theta0 = 1.6334;
+    public static double theta1 = 1.5784;
+    public static double theta2 = 1.5244;
     public static double[][] powerTargets = {
-            {85.00, 67.80, theta0, 0.0330},
-            {88.00, 68.39, theta1, 0.0355},
-            {90.00, 68.99, theta2, 0.0380}
+            {85, 63, theta0, 0},
+            {87, 63, theta1, 0},
+            {89, 63, theta2, 0}
     };
 
     // OpMode Stuff
@@ -141,9 +141,9 @@ public class Robot {
 
         // Powershot Debug
         powerTargets = new double[][] {
-                {85.00, 67.80, theta0, 0.0330},
-                {88.00, 68.39, theta1, 0.0355},
-                {90.00, 68.99, theta2, 0.0380}
+                {85, 63, theta0, 0},
+                {87, 63, theta1, 0},
+                {89, 63, theta2, 0}
         };
 
         // Track time after start
@@ -193,7 +193,7 @@ public class Robot {
             }
 
             // Start auto-feed when mag is up, velocity is high enough, and robot is at position
-            else if (!shooter.magHome && shooter.getVelocity() > vThresh && isAtPose(target[0], target[1], target[2]/*, 0.75, 0.75, PI/35*/)) {
+            else if (!shooter.magHome && shooter.getVelocity() > vThresh && isAtPose(target[0], target[1], target[2])) {
                 if (highGoal) {
                     shootDelay = highGoalDelay;
                 } else {
@@ -219,7 +219,7 @@ public class Robot {
                         target = powerTargets[numRings - 1]; // flick move done flick // flick done move done flick
                     }
                 }
-                setTargetPoint(target[0], target[1], target[2], 0.2, 0.2, 4);
+                setTargetPoint(target[0], target[1], target[2], 0.4, 0.4, 4);
                 shooter.setFlapAngle(target[3]);
             }
 
@@ -227,7 +227,7 @@ public class Robot {
             if (System.currentTimeMillis() - shootTime > shootDelay) {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position
-                    if (isAtPose(target[0], target[1], target[2]/*, 0.5, 0.5, PI/35*/)) {
+                    if (isAtPose(target[0], target[1], target[2])) {
                         log("In shoot Velocity: " + shooter.getVelocity());
                         if (numRings == 3) {
                             shooter.feedTop();

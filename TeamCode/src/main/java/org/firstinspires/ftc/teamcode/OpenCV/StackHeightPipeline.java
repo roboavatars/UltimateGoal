@@ -31,7 +31,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
     public static int WIDTH_THRESH = 15;
     public static double ONE_MIN = 1.5;
     public static double ONE_MAX = 2.7;
-    public static double FOUR_MIN = 0.6;
+    public static double FOUR_MIN = 0.5;
 
     // Results
     private double[] result = new double[3];

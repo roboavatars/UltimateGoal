@@ -96,6 +96,8 @@ public class RedAuto extends LinearOpMode {
             intakeStackTime = 1.25;
             deliverWobbleTime = 2.0;
         }
+        boolean psFinish = false;
+        double psFinishTime = 0;
         boolean reached = false;
         double reachedTime = 0;
         boolean doneShooting = false;
@@ -104,7 +106,7 @@ public class RedAuto extends LinearOpMode {
 
         Waypoint[] startLineWaypoints = new Waypoint[] {
                 new Waypoint(90, 9, PI/2, 40, 50, 0, 0),
-                new Waypoint(90, 59, PI/2, 10, -30, 0, startLineTime),
+                new Waypoint(87, 63, PI/2, 10, -30, 0, startLineTime),
         };
         Path startLinePath = new Path(new ArrayList<>(Arrays.asList(startLineWaypoints)));
 
@@ -133,17 +135,16 @@ public class RedAuto extends LinearOpMode {
                 Pose curPose = startLinePath.getRobotPose(curTime);
                 robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta());
 
-                //robot.shooter.flywheelPowershot();
-                robot.shooter.flywheelHighGoal();
+                robot.shooter.flywheelPowershot();
+//                robot.shooter.flywheelHighGoal();
 
                 if (time.seconds() > startLineTime - 1.25) {
                     robot.wobbleArm.setArmPosition(-300);
                 }
 
                 if (time.seconds() > startLineTime) {
-
-                    //robot.powerShotShoot();
-                    robot.highGoalShoot();
+                    robot.powerShotShoot();
+//                    robot.highGoalShoot();
 
                     startLine = true;
                     time.reset();
@@ -152,25 +153,30 @@ public class RedAuto extends LinearOpMode {
 
             // Time block to shoot powershots
             else if (!shootPowerShots) {
+                double curTime = time.seconds();
+                if (!robot.preShoot && !robot.shoot && robot.numRings == 0) {
+                    if (!psFinish) {
+                        psFinish = true;
+                        psFinishTime = curTime;
+                    } else if (curTime > psFinishTime + 0.2) {
+                        Waypoint[] deliverWobbleWaypoints;
+                        if (ringCase == RingCase.Zero) {
+                            deliverWobbleWaypoints = new Waypoint[] {
+                                    new Waypoint(robot.x, robot.y, robot.theta, 20, 30, 0, 0),
+                                    new Waypoint(wobbleCor[0], wobbleCor[1], 13*PI/12, 10, -20, 0, deliverWobbleTime),
+                            };
+                        } else {
+                            deliverWobbleWaypoints = new Waypoint[] {
+                                    new Waypoint(robot.x, robot.y, robot.theta, 30, 30, 0, 0),
+                                    new Waypoint(wobbleCor[0], wobbleCor[1], 13*PI/12, 30, -20, 0, deliverWobbleTime),
+                            };
+                        }
+                        deliverWobbleThetaSpline = new Spline(robot.theta, 0.3, 0, 13*PI/12, 0, 0, deliverWobbleTime);
+                        deliverWobblePath = new Path(new ArrayList<>(Arrays.asList(deliverWobbleWaypoints)));
 
-                if (!robot.preShoot && !robot.shoot || time.seconds() > shootPowerShotsTime) {
-                    Waypoint[] deliverWobbleWaypoints;
-                    if (ringCase == RingCase.Zero) {
-                        deliverWobbleWaypoints = new Waypoint[] {
-                                new Waypoint(robot.x, robot.y, robot.theta, 20, 30, 0, 0),
-                                new Waypoint(wobbleCor[0], wobbleCor[1], 13*PI/12, 10, -20, 0, deliverWobbleTime),
-                        };
-                    } else {
-                        deliverWobbleWaypoints = new Waypoint[] {
-                                new Waypoint(robot.x, robot.y, robot.theta, 30, 30, 0, 0),
-                                new Waypoint(wobbleCor[0], wobbleCor[1], 13*PI/12, 30, -20, 0, deliverWobbleTime),
-                        };
+                        shootPowerShots = true;
+                        time.reset();
                     }
-                    deliverWobbleThetaSpline = new Spline(robot.theta, 0.3, 0, 13*PI/12, 0, 0, deliverWobbleTime);
-                    deliverWobblePath = new Path(new ArrayList<>(Arrays.asList(deliverWobbleWaypoints)));
-
-                    shootPowerShots = true;
-                    time.reset();
                 }
             }
 
