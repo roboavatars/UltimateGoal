@@ -96,8 +96,8 @@ public class RedAuto extends LinearOpMode {
             intakeStackTime = 1.25;
             deliverWobbleTime = 2.0;
         }
-        boolean psFinish = false;
-        double psFinishTime = 0;
+        boolean hgFinish = false;
+        double hgFinishTime = 0;
         boolean reached = false;
         double reachedTime = 0;
         boolean doneShooting = false;
@@ -135,16 +135,16 @@ public class RedAuto extends LinearOpMode {
                 Pose curPose = startLinePath.getRobotPose(curTime);
                 robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta());
 
-                robot.shooter.flywheelPowershot();
-//                robot.shooter.flywheelHighGoal();
+//                robot.shooter.flywheelPowershot();
+                robot.shooter.flywheelHighGoal();
 
                 if (time.seconds() > startLineTime - 1.25) {
                     robot.wobbleArm.setArmPosition(-300);
                 }
 
                 if (time.seconds() > startLineTime) {
-                    robot.powerShotShoot();
-//                    robot.highGoalShoot();
+//                    robot.powerShotShoot();
+                    robot.highGoalShoot();
 
                     startLine = true;
                     time.reset();
@@ -155,10 +155,10 @@ public class RedAuto extends LinearOpMode {
             else if (!shootPowerShots) {
                 double curTime = time.seconds();
                 if (!robot.preShoot && !robot.shoot && robot.numRings == 0) {
-                    if (!psFinish) {
-                        psFinish = true;
-                        psFinishTime = curTime;
-                    } else if (curTime > psFinishTime + 0.2) {
+                    if (!hgFinish) {
+                        hgFinish = true;
+                        hgFinishTime = curTime;
+                    } else if (curTime > hgFinishTime + 0.2) {
                         Waypoint[] deliverWobbleWaypoints;
                         if (ringCase == RingCase.Zero) {
                             deliverWobbleWaypoints = new Waypoint[] {
