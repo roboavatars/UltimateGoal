@@ -399,7 +399,6 @@ public class RedAuto extends LinearOpMode {
                     if (!doneShooting) {
                         doneShooting = true;
                         time.reset();
-                        Robot.log("done shooting");
                     }
                     double curTime = Math.min(time.seconds(), parkTime);
                     Pose curPose = parkPath.getRobotPose(curTime);
