@@ -11,7 +11,7 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 
 @TeleOp
 @Config
-public class DoubleFlickerTest extends LinearOpMode {
+public class FlickerTest extends LinearOpMode {
 
     public static double midPos = Constants.FEED_MID_POS;
     public static double homePos = Constants.FEED_HOME_POS;
