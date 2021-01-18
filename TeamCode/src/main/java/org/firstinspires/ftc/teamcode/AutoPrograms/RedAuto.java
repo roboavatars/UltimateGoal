@@ -58,7 +58,7 @@ public class RedAuto extends LinearOpMode {
         double startLineTime = 1.75;
         double shootPowerShotsTime = 3.0;
         double deliverWobbleTime = 1.5;
-        double intakeWobble2Time = 4.0;
+        double intakeWobble2Time = 5.0;
         double intakeStackTime = 3.0;
         double shootHighGoalTime = 3.0;
         double deliverWobble2Time = 2.0;
@@ -70,6 +70,7 @@ public class RedAuto extends LinearOpMode {
 
         robot.shooter.flywheelHighGoal();
         robot.intake.openBlocker();
+        robot.wobbleArm.setArmPosition(-120);
 
         sleep(300);
 
@@ -106,7 +107,7 @@ public class RedAuto extends LinearOpMode {
 
         Waypoint[] startLineWaypoints = new Waypoint[] {
                 new Waypoint(90, 9, PI/2, 40, 50, 0, 0),
-                new Waypoint(87, 63, PI/2, 10, -30, 0, startLineTime),
+                new Waypoint(87, 60, PI/2, 10, -30, 0, startLineTime),
         };
         Path startLinePath = new Path(new ArrayList<>(Arrays.asList(startLineWaypoints)));
 
@@ -201,7 +202,7 @@ public class RedAuto extends LinearOpMode {
                                 new Waypoint(robot.x, robot.y, robot.theta, -10, -50, 0, 0),
                                 new Waypoint(wobbleCor[0] - 4, wobbleCor[1] - 5, robot.theta, -10, -50, 0, 0.25),
                                 new Waypoint(127, 63, PI/2, -20, -5, 0, 1),
-                                new Waypoint(125, 36.5, 5*PI/12, 0, 30, 0, intakeWobble2Time),
+                                new Waypoint(124.5, 36.5, 5*PI/12, 0, 30, 0, intakeWobble2Time),
                         };
                         intakeWobble2ThetaSpline = new Spline(robot.theta, 0.7, 0, 5*PI/12, 0, 0, intakeWobble2Time);
                     } else if (ringCase == RingCase.One) {
@@ -209,7 +210,7 @@ public class RedAuto extends LinearOpMode {
                                 new Waypoint(robot.x, robot.y, robot.theta, -10, -50, 0, 0),
                                 new Waypoint(wobbleCor[0] - 4, wobbleCor[1] - 5, robot.theta, -10, -50, 0, 0.25),
                                 new Waypoint(127, 66, PI/2, -30, -5, 0, 1.5),
-                                new Waypoint(125, 36.5, 5*PI/12, 0, 30, 0, intakeWobble2Time),
+                                new Waypoint(124.5, 36.5, 5*PI/12, 0, 30, 0, intakeWobble2Time),
                         };
                         intakeWobble2ThetaSpline = new Spline(robot.theta, 0.5, 0, 5*PI/12, 0, 0, intakeWobble2Time);
                     } else {
@@ -217,7 +218,7 @@ public class RedAuto extends LinearOpMode {
                                 new Waypoint(robot.x, robot.y, robot.theta, -30, -50, 0, 0),
                                 new Waypoint(wobbleCor[0] - 4, wobbleCor[1] - 5, robot.theta, -10, -50, 0, 0.25),
                                 new Waypoint(128, 66, PI/2, -30, -5, 0, 2),
-                                new Waypoint(125, 36.5, 5*PI/12, 0, 60, 0, intakeWobble2Time),
+                                new Waypoint(124.5, 36.5, 5*PI/12, 0, 60, 0, intakeWobble2Time),
                         };
                         intakeWobble2ThetaSpline = new Spline(robot.theta, 1, 0, 5*PI/12, 0, 0, intakeWobble2Time);
                     }
@@ -234,7 +235,7 @@ public class RedAuto extends LinearOpMode {
                 Pose curPose = intakeWobble2Path.getRobotPose(curTime);
                 robot.setTargetPoint(curPose.getX(), curPose.getY(), intakeWobble2ThetaSpline.position(curTime), 0.50, 0.25, 2.4);
 
-                if (!reached && robot.isAtPose(125, 36.5, 5*PI/12, 0.5, 0.5, PI/35)) {
+                if (!reached && robot.isAtPose(124.5, 36.5, 5*PI/12, 0.5, 0.5, PI/35)) {
                     reached = true;
                     reachedTime = curTime;
                 }
@@ -255,7 +256,6 @@ public class RedAuto extends LinearOpMode {
                 if (reached && time.seconds() > reachedTime + 1.5) {
                     if (ringCase != RingCase.Zero) {
                         robot.intake.intakeOn();
-//                        robot.shooter.flywheelHighGoal();
                     }
 
                     Waypoint[] intakeStackWaypoints;

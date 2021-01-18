@@ -19,19 +19,19 @@ public class Constants {
     public static double BLOCKER_OPEN_POS = 1;
 
     // Shooter
-    public static int HIGH_GOAL_VELOCITY = 1310;
-    public static int POWERSHOT_VELOCITY = 790;
+    public static int HIGH_GOAL_VELOCITY = 1340;
+    public static int POWERSHOT_VELOCITY = 860;
 
     public static double FLAP_HOME_POS = 0;
     public static double FLAP_MAX_POS = 0.15;
 
     public static double MAG_HOME_POS = 0.30;
     public static double MAG_VIBRATE_POS = 0.26;
-    public static double MAG_SHOOT_POS = 0.51;
+    public static double MAG_SHOOT_POS = 0.50;
 
-    public static double FEED_HOME_POS = 0.13;
-    public static double FEED_TOP_POS = 1;
-    public static double FEED_BOTTOM_POS = 0.13;
+    public static double FEED_HOME_POS = 1;
+    public static double FEED_MID_POS = 0.48;
+    public static double FEED_TOP_POS = 0.13;
 
     // Wobble Arm
     public static int WOBBLE_UP_POS = -80;

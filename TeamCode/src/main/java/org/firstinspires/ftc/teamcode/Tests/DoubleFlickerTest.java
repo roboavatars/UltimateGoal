@@ -1,28 +1,29 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.Shooter;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 
 @TeleOp
-@Disabled//@Config
+@Config
 public class DoubleFlickerTest extends LinearOpMode {
 
-    public static double topShoot = 1;
-    public static double home = 0.28;
-    public static double bottomShoot = 0.28;
+    public static double midPos = Constants.FEED_MID_POS;
+    public static double homePos = Constants.FEED_HOME_POS;
+    public static double topPos = Constants.FEED_TOP_POS;
     public static int pos = 1;
-    public static boolean debug = true;
+    public static boolean debug = false;
     private double position;
 
     private boolean shootToggle = false;
     private long shootTime;
-    private int delay = 4;
-    public static int period = 160;
+    private int delay = 6;
+    public static int period = 150;
 
     private Shooter shooter;
 
@@ -37,11 +38,11 @@ public class DoubleFlickerTest extends LinearOpMode {
         while(opModeIsActive()) {
             if (debug) {
                 if (pos == 0) {
-                    position = topShoot;
-                } else if (pos == 2) {
-                    position = bottomShoot;
+                    position = midPos;
                 } else if (pos == 1) {
-                    position = home;
+                    position = homePos;
+                } else if (pos == 2) {
+                    position = topPos;
                 }
                 servo.setPosition(position);
             } else {
@@ -62,30 +63,38 @@ public class DoubleFlickerTest extends LinearOpMode {
 
                 // Reset flicker
                 if (gamepad1.a) {
-                    if (delay == 4) {
+                    if (delay == 6) {
                         delay = 0;
                     }
                 }
 
                 // Flicker flicks after period milliseconds
-                if (delay == 0 || (delay != 4 && System.currentTimeMillis() - shootTime > period)) {
+                if (delay == 0 || (delay != 6 && System.currentTimeMillis() - shootTime > period)) {
                     shootTime = System.currentTimeMillis();
                     if (delay == 0) {
-                        position = topShoot;
+                        position = midPos;
                         delay++;
                     } else if (delay == 1) {
-                        position = bottomShoot;
+                        position = homePos;
                         delay++;
                     } else if (delay == 2) {
-                        position = topShoot;
+                        position = midPos;
                         delay++;
                     } else if (delay == 3) {
-                        position = home;
+                        position = homePos;
+                        delay++;
+                    } else if (delay == 4) {
+                        position = midPos;
+                        delay++;
+                    } else if (delay == 5) {
+                        position = homePos;
                         delay++;
                     }
                     servo.setPosition(position);
                 }
             }
+            addPacket("delay", delay);
+            sendPacket();
         }
     }
 }

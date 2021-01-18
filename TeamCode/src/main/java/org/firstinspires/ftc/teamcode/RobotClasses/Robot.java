@@ -41,10 +41,11 @@ public class Robot {
     private final double thetaK = 2.4;
     private double odoWeight = 1;
 
-    private final int highGoalDelay = 200;
-    private final int psDelay = 800;
-    private final int flickDelay = 200;
+    public static int highGoalDelay = 150;
+    public static int psDelay = 800;
+    public static int flickDelay = 150;
     private double[] target = {};
+    private boolean flickHome = true;
 
     // State Variables
     private final boolean isAuto;
@@ -164,7 +165,7 @@ public class Robot {
 
                 double shootY = 63;
                 if (isAuto){
-                    shootY = 144 - Math.sqrt(Math.pow(98,2) - Math.pow(x - 57,2));
+                    shootY = 144 - Math.sqrt(Math.pow(96,2) - Math.pow(x - 108,2));
                 }
                 target = shootTargets(x, shootY, PI / 2, 3);
             } else {
@@ -230,33 +231,43 @@ public class Robot {
                     if (isAtPose(target[0], target[1], target[2])) {
                         log("In shoot Velocity: " + shooter.getVelocity());
                         if (numRings == 3) {
-                            shooter.feedTop();
-                            if (!isAuto) {
-                                intake.sticksOut();
+                            if (flickHome) {
+                                shooter.feedMid();
+                            } else {
+                                shooter.feedHome();
+                                if (!isAuto) {
+                                    intake.sticksOut();
+                                }
+                                log("Feed ring 1");
+                                numRings--;
                             }
-                            log("Feed ring 1");
                         } else if (numRings == 2) {
-                            shooter.feedBottom();
-                            log("Feed ring 2");
+                            if (flickHome) {
+                                shooter.feedMid();
+                            } else {
+                                shooter.feedHome();
+                                log("Feed ring 2");
+                                numRings--;
+                            }
                         } else if (numRings == 1) {
-                            shooter.feedTop();
-                            log("Feed ring 3");
+                            if (flickHome) {
+                                shooter.feedMid();
+                            } else {
+                                shooter.feedHome();
+                                log("Feed ring 3");
+                                numRings--;
+                            }
                         }
-                        numRings--;
+                        flickHome = !flickHome;
                         flickTime = System.currentTimeMillis();
                     } else {
                         log("("+x+", "+y+", "+theta+") Not at shoot position: " + Arrays.toString(target));
                     }
                 } else {
-                    if (!shooter.feedHome) {
-                        shooter.flywheelOff();
-                        shooter.feedHome();
-                        log("Feed home");
-                    } else {
-                        shooter.magHome();
-                        shoot = false;
-                        log("Shoot done");
-                    }
+                    shooter.flywheelOff();
+                    shooter.magHome();
+                    shoot = false;
+                    log("Shoot done");
                 }
                 shootTime = System.currentTimeMillis();
             }
@@ -345,6 +356,7 @@ public class Robot {
     // Set variables for high goal shoot
     public void highGoalShoot() {
         if (!preShoot) {
+            flickHome = true;
             preShoot = true;
             highGoal = true;
         }
@@ -353,6 +365,7 @@ public class Robot {
     // Set variables for powershot shoot
     public void powerShotShoot() {
         if (!preShoot) {
+            flickHome = true;
             preShoot = true;
             highGoal = false;
         }
