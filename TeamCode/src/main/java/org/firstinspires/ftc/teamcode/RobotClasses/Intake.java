@@ -74,6 +74,10 @@ public class Intake {
         rStickServo.setPosition(Constants.R_HALF_POS);
     }
 
+    public void leftHalf() {
+        lStickServo.setPosition(Constants.L_HALF_POS);
+    }
+
     public void sticksFourth() {
         lStickServo.setPosition(Constants.L_QUARTER_POS);
         rStickServo.setPosition(Constants.R_QUARTER_POS);

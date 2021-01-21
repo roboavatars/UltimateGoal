@@ -6,7 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 public class Constants {
     // Intake
     public static double L_HOME_POS = 1;
-    public static double L_HALF_POS = 0.50;
+    public static double L_HALF_POS = 0.77;
     public static double L_QUARTER_POS = 0.36;
     public static double L_OUT_POS = 0.23;
 
@@ -19,11 +19,11 @@ public class Constants {
     public static double BLOCKER_OPEN_POS = 1;
 
     // Shooter
-    public static int HIGH_GOAL_VELOCITY = 1340;
-    public static int POWERSHOT_VELOCITY = 860;
+    public static int HIGH_GOAL_VELOCITY = 1240;
+    public static int POWERSHOT_VELOCITY = 850;
 
     public static double FLAP_HOME_POS = 0;
-    public static double FLAP_MAX_POS = 0.15;
+    public static double FLAP_MAX_POS = 0.34;
 
     public static double MAG_HOME_POS = 0.30;
     public static double MAG_VIBRATE_POS = 0.26;

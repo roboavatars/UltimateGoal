@@ -66,7 +66,7 @@ public class Teleop extends LinearOpMode {
 
             // Rev up flywheel for high goal
             if (gamepad2.y) {
-                robot.shooter.flywheelHighGoal();
+                robot.shooter.flywheelHG();
             }
 
             // Stick extension/retraction

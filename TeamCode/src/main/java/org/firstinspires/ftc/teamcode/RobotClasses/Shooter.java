@@ -43,11 +43,11 @@ public class Shooter {
         op.telemetry.addData("Status", "Shooter initialized");
     }
 
-    public void flywheelHighGoal() {
+    public void flywheelHG() {
         setVelocity(Constants.HIGH_GOAL_VELOCITY);
     }
 
-    public void flywheelPowershot() {
+    public void flywheelPS() {
         setVelocity(Constants.POWERSHOT_VELOCITY);
     }
 

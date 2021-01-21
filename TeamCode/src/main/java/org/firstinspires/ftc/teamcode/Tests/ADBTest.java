@@ -1,7 +1,7 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -11,8 +11,9 @@ import java.util.Random;
 
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 
-@TeleOp //@Config
-public class adbTest extends LinearOpMode {
+@TeleOp
+@Disabled
+public class ADBTest extends LinearOpMode {
 
     public static String str = "Hello :-)";
 

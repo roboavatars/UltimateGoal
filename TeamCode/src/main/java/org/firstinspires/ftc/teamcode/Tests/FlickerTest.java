@@ -52,7 +52,7 @@ public class FlickerTest extends LinearOpMode {
                     shootToggle = true;
                     if (shooter.magHome) {
                         shooter.magShoot();
-                        shooter.flywheelHighGoal();
+                        shooter.flywheelHG();
                     } else {
                         shooter.magHome();
                         shooter.flywheelOff();

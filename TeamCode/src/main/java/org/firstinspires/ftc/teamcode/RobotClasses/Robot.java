@@ -42,7 +42,7 @@ public class Robot {
     private double odoWeight = 1;
 
     public static int highGoalDelay = 150;
-    public static int psDelay = 800;
+    public static int psDelay = 650;
     public static int flickDelay = 150;
     private double[] target = {};
     private boolean flickHome = true;
@@ -77,8 +77,8 @@ public class Robot {
     private final double shootYCor = 150;
 
     // Powershot Debug Variables
-    public static double theta0 = 1.6334;
-    public static double theta1 = 1.5784;
+    public static double theta0 = 1.6534;
+    public static double theta1 = 1.5984;
     public static double theta2 = 1.5244;
     public static double[][] powerTargets = {
             {85, 63, theta0, 0},
@@ -160,16 +160,16 @@ public class Robot {
             double[] target;
             int vThresh;
             if (highGoal) {
-                shooter.flywheelHighGoal();
+                shooter.flywheelHG();
                 vThresh = Constants.HIGH_GOAL_VELOCITY - 50;
 
                 double shootY = 63;
                 if (isAuto){
-                    shootY = 144 - Math.sqrt(Math.pow(96,2) - Math.pow(x - 108,2));
+                    shootY = 144 - Math.sqrt(Math.pow(88,2) - Math.pow(x - 108,2));
                 }
                 target = shootTargets(x, shootY, PI / 2, 3);
             } else {
-                shooter.flywheelPowershot();
+                shooter.flywheelPS();
                 if(!isAuto){
                     intake.sticksOut();
                 }
@@ -188,7 +188,7 @@ public class Robot {
             }
 
             // Move to shooting position
-            if (!isAtPose(target[0], target[1], target[2])) {
+            if (!isAtPose(target[0], target[1], target[2], 0.75, 0.75, (isAuto && !highGoal) ? PI/40 : PI/35)) {
                 setTargetPoint(target[0], target[1], target[2], 0.2, 0.2, 4);
                 log("("+x+", "+y+", "+theta+") Moving to shoot position: " + Arrays.toString(target));
             }
@@ -316,9 +316,13 @@ public class Robot {
         a = (w - prevW) / timeDiff;
 
         // Remember Previous Motion Info
-        prevX = x; prevY = y; prevTheta = theta;
+        prevX = x;
+        prevY = y;
+        prevTheta = theta;
         prevTime = curTime;
-        prevVx = vx; prevVy = vy; prevW = w;
+        prevVx = vx;
+        prevVy = vy;
+        prevW = w;
 
         // Log Data
         if (cycleCounter % loggerUpdatePeriod == 0) {
@@ -409,7 +413,7 @@ public class Robot {
         double flapAngle = -0.0001 * Math.pow(d, 2) + 0.0167 * d - 0.4905;
 
         // Calculate Robot Angle
-        double alignRobotAngle = Math.atan2(dy, dx) + 0.0013 * d - 0.2332 - thetaOffset;
+        double alignRobotAngle = Math.atan2(dy, dx) + 0.0013 * d - 0.2182 - thetaOffset;
         double alignRobotX = shooterX - 6.5 * Math.sin(alignRobotAngle);
         double alignRobotY = shooterY + 6.5 * Math.cos(alignRobotAngle);
 

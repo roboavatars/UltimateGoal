@@ -1,19 +1,22 @@
 package org.firstinspires.ftc.teamcode.TeleopPrograms;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import static java.lang.Math.PI;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 @TeleOp
+@Disabled
 public class Regression extends LinearOpMode {
 
     public int startX = 90;
     public int startY = 9;
-    public double startTheta = Math.PI / 2;
+    public double startTheta = PI/2;
 
     private final double xyTol = 1;
-    private final double thetaTol = Math.PI / 35;
+    private final double thetaTol = PI/35;
 
     private double d;
 
@@ -38,7 +41,7 @@ public class Regression extends LinearOpMode {
                     robot.shooter.flywheelOff();
                 } else {
                     robot.shooter.magShoot();
-                    robot.shooter.flywheelHighGoal();
+                    robot.shooter.flywheelHG();
                 }
                 flywheelOn = !flywheelOn;
             } else if (!gamepad1.left_bumper && flywheelToggle) {
