@@ -189,7 +189,7 @@ public class Robot {
 
             // Move to shooting position
             if (!isAtPose(target[0], target[1], target[2], 0.75, 0.75, (isAuto && !highGoal) ? PI/40 : PI/35)) {
-                setTargetPoint(target[0], target[1], target[2], 0.2, 0.2, 4);
+                setTargetPoint(target[0], target[1], target[2], 0.4, 0.4, 4);
                 log("("+x+", "+y+", "+theta+") Moving to shoot position: " + Arrays.toString(target));
             }
 

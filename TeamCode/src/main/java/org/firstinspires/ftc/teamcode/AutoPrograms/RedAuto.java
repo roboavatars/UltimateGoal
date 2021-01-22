@@ -80,8 +80,8 @@ public class RedAuto extends LinearOpMode {
         RingCase ringCase = detector.getModeResult();
         Robot.log("Ring case: " + ringCase);
 
-        double[][] wobbleDelivery = {{121, 82}, {96, 103}, {124, 125}};
-        double[][] wobble2Delivery = {{119, 74}, {96, 92}, {121, 122}};
+        double[][] wobbleDelivery = {{121, 82}, {96, 103}, {128, 125}};
+        double[][] wobble2Delivery = {{119, 74}, {96, 92}, {124, 122}};
         double[] wobbleCor;
         double[] wobble2Cor;
         if (ringCase == RingCase.Zero) {
@@ -289,11 +289,11 @@ public class RedAuto extends LinearOpMode {
                 if (ringCase != RingCase.Four || robot.y < 40) {
                     robot.setTargetPoint(curPose.getX(), curPose.getY(), intakeStackThetaSpline.position(curTime));
                 } else {
-                    double input = Math.min(64, 41 + 3.5 * time.seconds() + 1.5 * Math.sin(12 * time.seconds()));
+                    double input = Math.min(72, 41 + 4.5 * time.seconds() + 1.5 * Math.sin(12 * time.seconds()));
                     robot.setTargetPoint(110, input, Math.PI / 2, 0.2, 0.15, 1.2);
                 }
 
-                if ((ringCase != RingCase.Four && time.seconds() > intakeStackTime) || (ringCase == RingCase.Four && time.seconds() > intakeStackTime + 2)) {
+                if ((ringCase != RingCase.Four && time.seconds() > intakeStackTime) || (ringCase == RingCase.Four && time.seconds() > intakeStackTime + 2.75)) {
                     robot.highGoalShoot();
 
                     Robot.log("intake done-----------------");
