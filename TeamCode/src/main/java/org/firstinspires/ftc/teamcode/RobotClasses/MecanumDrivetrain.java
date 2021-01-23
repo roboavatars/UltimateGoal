@@ -69,8 +69,8 @@ public class MecanumDrivetrain {
     private final double motorUpdateTolerance = 0.05;
 
     // Constants
-    public static double OdometryTrackWidth = 13.76;
-    public static double OdometryHorizontalOffset = -3.165;
+    public static double OdometryTrackWidth = 13.825;
+    public static double OdometryHorizontalOffset = -3.16;
     private final double OdometryHeadingThreshold = Math.PI / 8;
 
     public boolean zeroStrafeCorrection = false;
