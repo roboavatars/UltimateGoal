@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -10,7 +11,8 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Shooter;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 
 @TeleOp
-@Config
+//@Config
+@Disabled
 public class FlickerTest extends LinearOpMode {
 
     public static double midPos = Constants.FEED_MID_POS;

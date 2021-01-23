@@ -69,6 +69,11 @@ public class Teleop extends LinearOpMode {
                 robot.shooter.flywheelHG();
             }
 
+            // Stop shoot sequence
+            if (gamepad2.b) {
+                robot.cancelShoot();
+            }
+
             // Stick extension/retraction
             if (gamepad2.x && !stickToggle) {
                 stickToggle = true;
@@ -170,6 +175,13 @@ public class Teleop extends LinearOpMode {
             // Reset theta offset
             if (gamepad2.dpad_up) {
                 robot.thetaOffset = 0;
+            }
+
+            if (gamepad1.dpad_up) {
+                robot.shooter.flapServo.setPosition(robot.shooter.getFlapAngle() + 0.001);
+            }
+            if (gamepad1.dpad_down) {
+                robot.shooter.flapServo.setPosition(robot.shooter.getFlapAngle() - 0.001);
             }
 
             // Drivetrain controls

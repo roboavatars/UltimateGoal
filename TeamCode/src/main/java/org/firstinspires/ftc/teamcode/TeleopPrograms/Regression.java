@@ -8,7 +8,6 @@ import static java.lang.Math.PI;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 @TeleOp
-@Disabled
 public class Regression extends LinearOpMode {
 
     public int startX = 90;
@@ -41,7 +40,7 @@ public class Regression extends LinearOpMode {
                     robot.shooter.flywheelOff();
                 } else {
                     robot.shooter.magShoot();
-                    robot.shooter.flywheelHG();
+                    robot.shooter.flywheelPS();
                 }
                 flywheelOn = !flywheelOn;
             } else if (!gamepad1.left_bumper && flywheelToggle) {
@@ -55,26 +54,20 @@ public class Regression extends LinearOpMode {
             }
 
             if (gamepad1.right_trigger > 0) {
-                double[] target = robot.shootTargets(3);
+                double[] target = Robot.powerTargets[2];
                 d = Math.sqrt(Math.pow(robot.x - 108, 2) + Math.pow(robot.y - 150, 2));
 
                 if (!(Math.abs(robot.x - target[0]) < xyTol && Math.abs(robot.y - target[1]) < xyTol && Math.abs(robot.theta - target[2]) < thetaTol)) {
                     robot.setTargetPoint(target[0], target[1], target[2]);
-                    robot.shooter.setFlapAngle(target[3]);
+                    //robot.shooter.setFlapAngle(target[3]);
                 }
-            } else if (robotCentric) {
+            }
+
+            if (robotCentric) {
                 robot.drivetrain.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
             } else {
                 robot.drivetrain.setGlobalControls(gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x);
             }
-
-//            if (gamepad1.a) {
-//                shooterVelocity += 1;
-//                robot.shooter.setShooterVelocity(shooterVelocity);
-//            } else if (gamepad1.b) {
-//                shooterVelocity -= 1;
-//                robot.shooter.setShooterVelocity(shooterVelocity);
-//            }
 
             if (gamepad1.dpad_up) {
                 robot.shooter.flapServo.setPosition(robot.shooter.getFlapAngle() + 0.001);

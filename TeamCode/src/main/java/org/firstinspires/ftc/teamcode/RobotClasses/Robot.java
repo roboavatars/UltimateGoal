@@ -42,8 +42,8 @@ public class Robot {
     private double odoWeight = 1;
 
     public static int highGoalDelay = 150;
-    public static int psDelay = 650;
-    public static int flickDelay = 150;
+    public static int psDelay = 600;
+    public static int flickDelay = 10;
     private double[] target = {};
     private boolean flickHome = true;
 
@@ -66,6 +66,10 @@ public class Robot {
     public double vibrateTime;
     public double vibrateDelay = 100;
     public double thetaOffset = 0;
+
+    public double feedHomeDelay = 100;
+    public double feedHomeTime;
+    public boolean waitFeed = false;
 
     // Motion Variables
     public double x, y, theta;
@@ -170,7 +174,7 @@ public class Robot {
                 target = shootTargets(x, shootY, PI / 2, 3);
             } else {
                 shooter.flywheelPS();
-                if(!isAuto){
+                if (!isAuto){
                     intake.sticksOut();
                 }
                 vThresh = Constants.POWERSHOT_VELOCITY - 40;
@@ -230,36 +234,21 @@ public class Robot {
                     // Shoot ring only if robot at position
                     if (isAtPose(target[0], target[1], target[2])) {
                         log("In shoot Velocity: " + shooter.getVelocity());
-                        if (numRings == 3) {
-                            if (flickHome) {
-                                shooter.feedMid();
-                            } else {
-                                shooter.feedHome();
-                                if (!isAuto) {
-                                    intake.sticksOut();
-                                }
-                                log("Feed ring 1");
-                                numRings--;
-                            }
-                        } else if (numRings == 2) {
-                            if (flickHome) {
-                                shooter.feedMid();
-                            } else {
-                                shooter.feedHome();
-                                log("Feed ring 2");
-                                numRings--;
-                            }
-                        } else if (numRings == 1) {
-                            if (flickHome) {
-                                shooter.feedMid();
-                            } else {
-                                shooter.feedHome();
-                                log("Feed ring 3");
-                                numRings--;
-                            }
+
+                        if (flickHome) {
+                            shooter.feedMid();
+                        } else {
+                            shooter.feedHome();
+                            numRings--;
                         }
+
+                        if (numRings == 3 && !isAuto) {
+                            intake.sticksOut();
+                        }
+
                         flickHome = !flickHome;
                         flickTime = System.currentTimeMillis();
+                        log("Feed ring");
                     } else {
                         log("("+x+", "+y+", "+theta+") Not at shoot position: " + Arrays.toString(target));
                     }
@@ -287,6 +276,12 @@ public class Robot {
                 vibrateMag = false;
             }
             vibrateTime = System.currentTimeMillis();
+        }
+
+        // Wait for feed to go home before mag down
+        if (waitFeed && System.currentTimeMillis() - feedHomeTime > feedHomeDelay) {
+            shooter.magHome();
+            waitFeed = false;
         }
 
         // Update Position
@@ -372,6 +367,22 @@ public class Robot {
             flickHome = true;
             preShoot = true;
             highGoal = false;
+        }
+    }
+
+    // Cancel shoot sequence
+    public void cancelShoot() {
+        preShoot = false;
+        shoot = false;
+        numRings = 0;
+        shooter.flywheelOff();
+        intake.sticksOut();
+        if (shooter.feedHome) {
+            shooter.magHome();
+        } else {
+            shooter.feedHome();
+            waitFeed = true;
+            feedHomeTime = System.currentTimeMillis();
         }
     }
 
