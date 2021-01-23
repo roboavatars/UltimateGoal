@@ -137,12 +137,14 @@ public class RedAuto extends LinearOpMode {
                 robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta());
 
                 if (time.seconds() > startLineTime - 1.25) {
-                    robot.shooter.flywheelPS();
+//                    robot.shooter.flywheelPS();
+                    robot.shooter.flywheelHG();
                     robot.wobbleArm.setArmPosition(-300);
                 }
 
                 if (time.seconds() > startLineTime) {
-                    robot.powerShotShoot();
+//                    robot.powerShotShoot();
+                    robot.highGoalShoot();
 
                     startLine = true;
                     time.reset();
@@ -308,7 +310,7 @@ public class RedAuto extends LinearOpMode {
 
             // Time block to shoot into high goal
             else if (!shootHighGoal) {
-                if (!robot.preShoot && !robot.shoot || time.seconds() > shootHighGoalTime) {
+                if (!robot.preShoot && !robot.shoot && robot.numRings == 0) {
                     robot.intake.intakeOn();
 
                     Waypoint[] deliverWobble2Waypoints = new Waypoint[] {
