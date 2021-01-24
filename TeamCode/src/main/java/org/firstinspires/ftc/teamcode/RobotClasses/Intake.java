@@ -28,7 +28,7 @@ public class Intake {
 
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        closeBlocker();
+        blockerUp();
 
         this.isAuto = isAuto;
         op.telemetry.addData("Status", "Intake initialized");
@@ -96,15 +96,15 @@ public class Intake {
         rStickServo.setPosition(position);
     }
 
-    public void closeBlocker() {
-        blockerServo.setPosition(Constants.BLOCKER_CLOSE_POS);
+    public void blockerUp() {
+        blockerServo.setPosition(Constants.BLOCKER_UP_POS);
     }
 
-    public void openBlocker() {
-        blockerServo.setPosition(Constants.BLOCKER_OPEN_POS);
+    public void blockerDown() {
+        blockerServo.setPosition(Constants.BLOCKER_DOWN_POS);
     }
 
     public void setBlocker(double position) {
-        blockerServo.setPosition(position * (Constants.BLOCKER_OPEN_POS - Constants.BLOCKER_CLOSE_POS) + Constants.BLOCKER_CLOSE_POS);
+        blockerServo.setPosition(position * (Constants.BLOCKER_DOWN_POS - Constants.BLOCKER_UP_POS) + Constants.BLOCKER_UP_POS);
     }
 }

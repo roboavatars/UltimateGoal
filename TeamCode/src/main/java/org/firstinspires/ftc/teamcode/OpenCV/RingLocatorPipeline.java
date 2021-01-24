@@ -31,7 +31,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
     public static double CAM_FRONT = 7; // y distance between camera and robot center
     public static double CAM_PHI = Math.toRadians(12.5);
     public static double CAM_VFOV = Math.toRadians(43);
-    public static double CAM_HFOV = Math.toRadians(72);
+    public static double CAM_HFOV = Math.toRadians(60);
 
     // Image Processing Mats
     private RingProcessor processor;
@@ -148,6 +148,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
 
         double targetX = robotX + ringX * Math.sin(robotTheta) + ringY * Math.cos(robotTheta);
         double targetY = robotY + ringX * Math.cos(robotTheta) + ringY * Math.sin(robotTheta);
+        double targetTheta = Math.atan2(targetY - robotY, targetX - robotX);
 
         // Ignore ring if it's out of field
         if (targetX < 48 || targetX > 144 || targetY < 0 || targetY > 144) {
@@ -155,7 +156,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
             targetY = -1;
         }
 
-        return new double[] {targetX, targetY};
+        return new double[] {targetX, targetY, targetTheta};
     }
 
     // Returns distance between ring and center of robot

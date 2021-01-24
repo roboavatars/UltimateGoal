@@ -68,7 +68,7 @@ public class RedAuto extends LinearOpMode {
 
         waitForStart();
 
-        robot.intake.openBlocker();
+        robot.intake.blockerDown();
         robot.intake.leftHalf();
         robot.wobbleArm.setArmPosition(-120);
 

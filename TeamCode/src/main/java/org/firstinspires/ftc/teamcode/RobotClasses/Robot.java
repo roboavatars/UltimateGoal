@@ -224,7 +224,7 @@ public class Robot {
                         target = powerTargets[numRings - 1]; // flick move done flick // flick done move done flick
                     }
                 }
-                setTargetPoint(target[0], target[1], target[2], 0.4, 0.4, 4);
+                setTargetPoint(target[0], target[1], target[2], 0.5, 0.5, 4);
                 shooter.setFlapAngle(target[3]);
             }
 
@@ -344,7 +344,7 @@ public class Robot {
             drawRobot(t265.getCamX(), t265.getCamY(), t265.getCamTheta(), "red");
         }
         drawRobot(x, y, theta, "black");
-        sendPacket();
+//        sendPacket();
 
         // Clear bulk cache
         for (LynxModule hub : allHubs) {
