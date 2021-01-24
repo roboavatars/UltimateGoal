@@ -424,7 +424,7 @@ public class Robot {
         double flapAngle = -0.0001 * Math.pow(d, 2) + 0.0167 * d - 0.4905;
 
         // Calculate Robot Angle
-        double alignRobotAngle = Math.atan2(dy, dx) + 0.0013 * d - 0.2232 - thetaOffset;
+        double alignRobotAngle = Math.atan2(dy, dx) + 0.0013 * d - 0.2300 - thetaOffset;
         double alignRobotX = shooterX - 6.5 * Math.sin(alignRobotAngle);
         double alignRobotY = shooterY + 6.5 * Math.cos(alignRobotAngle);
 
