@@ -181,7 +181,6 @@ public class NewRedAuto extends LinearOpMode {
 
             // Intake start stack
             else if (!intakeStack) {
-
                 if (!goForSinx) {
                     double curTime = Math.min(time.seconds(), goToStackTime);
                     Pose curPose = goToStackPath.getRobotPose(curTime);
@@ -192,7 +191,7 @@ public class NewRedAuto extends LinearOpMode {
                         time.reset();
                     }
                 } else {
-                    double input = Math.min(70, 37 + 4 * time.seconds() + 2.5 * Math.sin(12 * time.seconds()));
+                    double input = Math.min(70, 38 + 8 * time.seconds() + 2.5 * Math.sin(8 * time.seconds()));
                     robot.setTargetPoint(109, input, Math.PI / 2, 0.2, 0.15, 1.2);
                 }
 
@@ -302,7 +301,7 @@ public class NewRedAuto extends LinearOpMode {
                     robot.setTargetPoint(curPose.getX(), curPose.getY(), intakeWobble2ThetaSpline.position(curTime), 0.50, 0.25, 1.5);
                 }
 
-                if (!reached && robot.isAtPose(124, 36.5, 5*PI/12, 0.4, 0.4, PI/35)) {
+                if (!reached && robot.isAtPose(124, 36.5, 5*PI/12, 0.5, 0.5, PI/35)) {
                     reached = true;
                     reachedTime = curTime;
                 }
