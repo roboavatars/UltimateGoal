@@ -3,24 +3,11 @@ package org.firstinspires.ftc.teamcode.RobotClasses;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.lynx.LynxEmbeddedIMU;
-import com.qualcomm.hardware.lynx.LynxI2cDeviceSynchV2;
-import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.hardware.lynx.commands.core.LynxGetBulkInputDataCommand;
-import com.qualcomm.hardware.lynx.commands.core.LynxGetBulkInputDataResponse;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
-import com.qualcomm.robotcore.hardware.I2cDeviceSynchImplOnSimple;
-import com.qualcomm.robotcore.hardware.I2cDeviceSynchSimple;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
-import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 @SuppressWarnings("FieldCanBeLocal") @Config
 public class MecanumDrivetrain {
@@ -70,7 +57,7 @@ public class MecanumDrivetrain {
 
     // Constants
     public static double OdometryTrackWidth = 13.825;
-    public static double OdometryHorizontalOffset = -3.16;
+    public static double OdometryHorizontalOffset = -3.30;
     private final double OdometryHeadingThreshold = Math.PI / 8;
 
     public boolean zeroStrafeCorrection = false;
