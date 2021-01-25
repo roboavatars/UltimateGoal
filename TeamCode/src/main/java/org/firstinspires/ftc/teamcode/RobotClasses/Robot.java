@@ -36,9 +36,12 @@ public class Robot {
     private final int loggerUpdatePeriod = 2;
     private final double xyTolerance = 1;
     private final double thetaTolerance = PI / 35;
-    private final double xK = 0.30;
-    private final double yK = 0.30;
-    private final double thetaK = 2.4;
+    private final double xKp = 0.30;
+    private final double yKp = 0.30;
+    private final double thetaKp = 2.4;
+    private final double xKd = 0.030;
+    private final double yKd = 0.030;
+    private final double thetaKd = 0.24;
     private double odoWeight = 1;
 
     public static int highGoalDelay = 150;
@@ -433,11 +436,11 @@ public class Robot {
 
     // Set target point (default K values)
     public void setTargetPoint(double xTarget, double yTarget, double thetaTarget) {
-        setTargetPoint(xTarget, yTarget, thetaTarget, xK, yK, thetaK);
+        setTargetPoint(xTarget, yTarget, thetaTarget, xKp, yKp, thetaKp);
     }
 
-    // Set target point (custom K values)
-    public void setTargetPoint(double xTarget, double yTarget, double thetaTarget, double xK, double yK, double thetaK) {
+    // Set target point (custom Kp values)
+    public void setTargetPoint(double xTarget, double yTarget, double thetaTarget, double xKp, double yKp, double thetaKp) {
         // Make Sure thetaTarget is Between 0 and 2pi
         thetaTarget = thetaTarget % (PI * 2);
         if (thetaTarget < 0) {
@@ -454,7 +457,26 @@ public class Robot {
 
         //log("setTargetPoint-" + xTarget + " " + " " + yTarget + " " + thetaTarget);
 
-        drivetrain.setGlobalControls(-xK * (x - xTarget), -yK * (y - yTarget), -thetaK * (thetaControl));
+        drivetrain.setGlobalControls(-xKp * (x - xTarget), -yKp * (y - yTarget), -thetaKp * (thetaControl));
+    }
+
+    // Set target point (custom Kp and Kv values)
+    public void setTargetPoint(double xTarget, double yTarget, double thetaTarget, double xKp, double yKp, double thetaKp, double xKd, double yKd, double thetaKd) {
+        // Make Sure thetaTarget is Between 0 and 2pi
+        thetaTarget = thetaTarget % (PI * 2);
+        if (thetaTarget < 0) {
+            thetaTarget += PI * 2;
+        }
+
+        // Picking the Smaller Distance to Rotate
+        double thetaControl;
+        if (Math.abs(theta - thetaTarget) > PI) {
+            thetaControl = theta - thetaTarget - 2 * PI;
+        } else {
+            thetaControl = theta - thetaTarget;
+        }
+
+        drivetrain.setGlobalControls(-xKp * (x - xTarget) - xKd * (vx), -yKp * (y - yTarget) - yKd * (vy), -thetaKp * (thetaControl) - thetaKd * (w));
     }
 
     // Check if robot is at a certain point/angle (default tolerance)
