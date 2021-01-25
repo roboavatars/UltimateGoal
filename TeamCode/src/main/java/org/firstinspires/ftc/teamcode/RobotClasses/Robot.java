@@ -455,9 +455,7 @@ public class Robot {
             thetaControl = theta - thetaTarget;
         }
 
-        //log("setTargetPoint-" + xTarget + " " + " " + yTarget + " " + thetaTarget);
-
-        drivetrain.setGlobalControls(-xKp * (x - xTarget), -yKp * (y - yTarget), -thetaKp * (thetaControl));
+        drivetrain.setGlobalControls(xKp * (xTarget - x), yKp * (yTarget - y), thetaKp * (-thetaControl));
     }
 
     // Set target point (custom Kp and Kv values)
@@ -476,7 +474,7 @@ public class Robot {
             thetaControl = theta - thetaTarget;
         }
 
-        drivetrain.setGlobalControls(-xKp * (x - xTarget) - xKd * (vx), -yKp * (y - yTarget) - yKd * (vy), -thetaKp * (thetaControl) - thetaKd * (w));
+        drivetrain.setGlobalControls(xKp * (xTarget - x) + xKd * (-vx), yKp * (yTarget - y) + yKd * (-vy), thetaKp * (-thetaControl) + thetaKd * (-w));
     }
 
     // Check if robot is at a certain point/angle (default tolerance)
