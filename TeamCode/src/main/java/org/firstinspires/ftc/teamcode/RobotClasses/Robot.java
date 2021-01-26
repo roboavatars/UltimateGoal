@@ -68,7 +68,7 @@ public class Robot {
     public double shootDelay;
     public double vibrateTime;
     public double vibrateDelay = 100;
-    public double thetaOffset = 0;
+    public double xOffset = 0;
 
     public double feedHomeDelay = 100;
     public double feedHomeTime;
@@ -427,8 +427,8 @@ public class Robot {
         double flapAngle = -0.0001 * Math.pow(d, 2) + 0.0167 * d - 0.4905;
 
         // Calculate Robot Angle
-        double alignRobotAngle = Math.atan2(dy, dx) + 0.0013 * d - 0.2300 - thetaOffset;
-        double alignRobotX = shooterX - 6.5 * Math.sin(alignRobotAngle);
+        double alignRobotAngle = Math.atan2(dy, dx) + 0.0013 * d - 0.2300;
+        double alignRobotX = shooterX - 6.5 * Math.sin(alignRobotAngle) + xOffset;
         double alignRobotY = shooterY + 6.5 * Math.cos(alignRobotAngle);
 
         return new double[] {alignRobotX, alignRobotY, alignRobotAngle, flapAngle};

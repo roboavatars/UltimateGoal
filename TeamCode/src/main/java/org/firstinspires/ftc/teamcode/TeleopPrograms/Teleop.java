@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Debug.Logger;
-import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import java.util.Arrays;
@@ -156,25 +155,25 @@ public class Teleop extends LinearOpMode {
             // Reset odo for powershot
             if (gamepad1.x) {
                 robot.resetOdo(87, 63, Math.PI / 2);
-                robot.thetaOffset = 0;
+                robot.xOffset = 0;
             }
 
             // Reset odo in corner
             if (gamepad2.left_trigger != 0) {
                 robot.resetOdo(135, 9, Math.PI / 2);
-                robot.thetaOffset = 0;
+                robot.xOffset = 0;
             }
 
-            // Change shooting theta offset to compensate for odo drift
+            // Change shooting x offset to compensate for odo drift
             if (gamepad2.dpad_left) {
-                robot.thetaOffset -= 0.01;
+                robot.xOffset -= 0.01;
             } else if (gamepad2.dpad_right) {
-                robot.thetaOffset += 0.01;
+                robot.xOffset += 0.01;
             }
 
             // Reset theta offset
             if (gamepad2.dpad_up) {
-                robot.thetaOffset = 0;
+                robot.xOffset = 0;
             }
 
             if (gamepad1.dpad_up) {
