@@ -166,9 +166,9 @@ public class Teleop extends LinearOpMode {
 
             // Change shooting x offset to compensate for odo drift
             if (gamepad2.dpad_left) {
-                robot.xOffset -= 0.01;
+                robot.xOffset -= 0.1;
             } else if (gamepad2.dpad_right) {
-                robot.xOffset += 0.01;
+                robot.xOffset += 0.1;
             }
 
             // Reset theta offset
