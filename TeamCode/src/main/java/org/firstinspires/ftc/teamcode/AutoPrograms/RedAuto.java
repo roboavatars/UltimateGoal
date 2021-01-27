@@ -14,9 +14,10 @@ import org.firstinspires.ftc.teamcode.Pathing.Waypoint;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+
 import static java.lang.Math.PI;
 
-@Autonomous(name = "2 RedAuto")
+@Autonomous
 public class RedAuto extends LinearOpMode {
 
     @Override

@@ -26,16 +26,17 @@ public class NewRedAuto extends LinearOpMode {
         /*
         Timeline:
             detect stack
-            move to line
-            shoot 3 preloaded rings at powershots
-            drop off wobble goal at corresponding zone
-            go back to start to pick up second wobble
-            intake stack rings
+            move to line to shoot the 3 preloaded rings at powershots
+            intake 3 rings from stack
+            shoot rings into high goal
             detect rings that bounced back from powershot
-            shoot stack rings into high goal
+            intake last rings
+            collect powershot bounce backs
+            drop off wobble goal at corresponding zone
+            go back to pick up second wobble
+            shoot bounce back rings into high goal
             drop off second wobble at corresponding zone
-            intake and shoot bounced off rings
-            park
+            park on line
         */
 
         Robot robot = new Robot(this, 90, 9, PI/2, true);
@@ -60,26 +61,44 @@ public class NewRedAuto extends LinearOpMode {
 
         // Segment Times
         double startLineTime = 1.5;
-        double shootPowerShotsTime = 4.0;
+        double shootPowerShotsTime = 2.5;
         double goToStackTime = 1.5;
         double intakeStackTime = 2.0;
-        double shootHighGoal1Time = 2.0;
+        double shootHighGoal1Time = 1.5;
         double bounceBackTime = 4.0;
         double deliverWobbleTime = 1.5;
         double intakeWobble2Time = 4.5;
         double goToHighShootTime = 0.5;
-        double shootHighGoal2Time = 2.0;
+        double shootHighGoal2Time = 1.5;
         double deliverWobble2Time = 2.0;
         double parkTime = 1.5;
-        // 4 extra seconds for wobble related tasks
+
+        Waypoint[] startLineWaypoints = new Waypoint[] {
+                new Waypoint(90, 9, PI/2, 40, 50, 0, 0),
+                new Waypoint(90, 58, PI/2, 10, -30, 0, startLineTime),
+        };
+        Path startLinePath = new Path(new ArrayList<>(Arrays.asList(startLineWaypoints)));
+
+        // Paths and Theta splines
+        Path goToStackPath = null;
+        Spline goToStackThetaSpline = null;
+        Path bounceBackPath = null;
+        Path deliverWobblePath = null;
+        Path intakeWobble2Path = null;
+        Spline intakeWobble2ThetaSpline = null;
+        Path goToHighShootPath = null;
+        Path deliverWobble2Path = null;
+        Path parkPath = null;
+        Spline parkThetaSpline = null;
+
+        // Other action variables
+        boolean psFinish = false;
+        double psFinishTime = 0;
+        boolean goForSinx = false;
+        boolean reached = false;
+        double reachedTime = 0;
 
         waitForStart();
-
-        robot.intake.blockerDown();
-        robot.intake.leftHalf();
-        robot.wobbleArm.setArmPosition(-120);
-
-        sleep(300);
 
         // Wobble coordinates based on ring case
         RingCase ringCase = detector.getModeResult();
@@ -92,7 +111,6 @@ public class NewRedAuto extends LinearOpMode {
         if (ringCase == RingCase.Zero) {
             wobbleCor = wobbleDelivery[0];
             wobble2Cor = wobble2Delivery[0];
-//            intakeWobble2Time = 3.0;
             intakeStack = true;
         } else if (ringCase == RingCase.One) {
             wobbleCor = wobbleDelivery[1];
@@ -100,38 +118,18 @@ public class NewRedAuto extends LinearOpMode {
         } else {
             wobbleCor = wobbleDelivery[2];
             wobble2Cor = wobble2Delivery[2];
-//            intakeStackTime = 1.25;
-//            deliverWobbleTime = 2.0;
         }
-
-        boolean psFinish = false;
-        double psFinishTime = 0;
-        boolean goForSinx = false;
-        boolean reached = false;
-        double reachedTime = 0;
 
         detector.stop();
 
-        Waypoint[] startLineWaypoints = new Waypoint[] {
-                new Waypoint(90, 9, PI/2, 40, 50, 0, 0),
-                new Waypoint(90, 58, PI/2, 10, -30, 0, startLineTime),
-        };
-        Path startLinePath = new Path(new ArrayList<>(Arrays.asList(startLineWaypoints)));
+        robot.intake.blockerDown();
+        robot.intake.leftHalf();
+        robot.wobbleArm.setArmPosition(-120);
+        robot.wobbleArm.clampWobble();
 
-        Path goToStackPath = null;
-        Spline goToStackThetaSpline = null;
-        Path bounceBackPath = null;
-        Path deliverWobblePath = null;
-        Path intakeWobble2Path = null;
-        Spline intakeWobble2ThetaSpline = null;
-        Path goToHighShootPath = null;
-        Path deliverWobble2Path = null;
-        Path parkPath = null;
-        Spline parkThetaSpline = null;
+        sleep(300);
 
         ElapsedTime time = new ElapsedTime();
-
-        robot.wobbleArm.clampWobble();
 
         while(opModeIsActive()) {
 
@@ -222,6 +220,7 @@ public class NewRedAuto extends LinearOpMode {
                 }
             }
 
+            // Collect bounce backed rings
             else if (!bounceBack) {
                 double curTime = Math.min(time.seconds(), bounceBackTime);
                 Pose curPose = bounceBackPath.getRobotPose(curTime);
@@ -333,6 +332,7 @@ public class NewRedAuto extends LinearOpMode {
                 }
             }
 
+            // Go to high goal shoot spot
             else if (!goToHighShoot) {
                 double curTime = Math.min(time.seconds(), startLineTime);
                 Pose curPose = goToHighShootPath.getRobotPose(curTime);
@@ -414,6 +414,8 @@ public class NewRedAuto extends LinearOpMode {
                 if (time.seconds() > parkTime) {
                     robot.intake.sticksOut();
                     robot.wobbleArm.armDown();
+
+                    Robot.log("Auto finished in " + ((System.currentTimeMillis() - robot.startTime) / 1000) + " seconds");
 
                     park = true;
                 }

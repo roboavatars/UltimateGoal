@@ -66,6 +66,7 @@ public class Robot {
     public double shootTime;
     public double flickTime;
     public double shootDelay;
+    public double startShootTime;
     public double vibrateTime;
     public double vibrateDelay = 100;
     public double xOffset = 0;
@@ -77,7 +78,7 @@ public class Robot {
     // Motion Variables
     public double x, y, theta;
     private double prevX, prevY, prevTheta, vx, vy, w, prevVx, prevVy, prevW, prevTime, ax, ay, a;
-    private double startTime;
+    public double startTime;
 
     // Shooter Variables
     private final double[] shootXCor = {76.5, 84, 91.5, 108};
@@ -212,6 +213,7 @@ public class Robot {
                 shootTime = System.currentTimeMillis();
                 preShoot = false;
                 log("Ready to shoot " + (highGoal ? "high goal" : "powershot") + ", velocity: " + shooter.getVelocity());
+                log("Pre shoot time: " +  ((System.currentTimeMillis() - startShootTime) / 1000) + " seconds");
             }
         }
 
@@ -260,6 +262,7 @@ public class Robot {
                     shooter.magHome();
                     shoot = false;
                     log("Shoot done");
+                    log("Total shoot time: " +  ((System.currentTimeMillis() - startShootTime) / 1000) + " seconds");
                 }
                 shootTime = System.currentTimeMillis();
             }
@@ -324,7 +327,8 @@ public class Robot {
 
         // Log Data
         if (cycleCounter % loggerUpdatePeriod == 0) {
-            logger.logData(System.currentTimeMillis()-startTime, x, y, theta, vx, vy, w, ax, ay, a, numRings, shooter.magHome, shooter.feedHome, lastTarget);
+            logger.logData(System.currentTimeMillis()-startTime, x, y, theta, vx, vy, w, ax, ay, a,
+                    numRings, shooter.magHome, shooter.feedHome, lastTarget);
         }
 
         // Dashboard Telemetry
@@ -361,6 +365,8 @@ public class Robot {
             flickHome = true;
             preShoot = true;
             highGoal = true;
+            startShootTime = System.currentTimeMillis();
+            log("High goal shoot initiated");
         }
     }
 
@@ -370,6 +376,8 @@ public class Robot {
             flickHome = true;
             preShoot = true;
             highGoal = false;
+            startShootTime = System.currentTimeMillis();
+            log("Powershot shoot initiated");
         }
     }
 
@@ -387,6 +395,7 @@ public class Robot {
             waitFeed = true;
             feedHomeTime = System.currentTimeMillis();
         }
+        log("Shoot cancelled");
     }
 
     // Calculate robot pose for auto aim
@@ -459,7 +468,8 @@ public class Robot {
     }
 
     // Set target point (custom Kp and Kv values)
-    public void setTargetPoint(double xTarget, double yTarget, double thetaTarget, double xKp, double yKp, double thetaKp, double xKd, double yKd, double thetaKd) {
+    public void setTargetPoint(double xTarget, double yTarget, double thetaTarget,
+                               double xKp, double yKp, double thetaKp, double xKd, double yKd, double thetaKd) {
         // Make Sure thetaTarget is Between 0 and 2pi
         thetaTarget = thetaTarget % (PI * 2);
         if (thetaTarget < 0) {
@@ -474,7 +484,8 @@ public class Robot {
             thetaControl = theta - thetaTarget;
         }
 
-        drivetrain.setGlobalControls(xKp * (xTarget - x) + xKd * (-vx), yKp * (yTarget - y) + yKd * (-vy), thetaKp * (-thetaControl) + thetaKd * (-w));
+        drivetrain.setGlobalControls(xKp * (xTarget - x) + xKd * (-vx), yKp * (yTarget - y) + yKd * (-vy),
+                thetaKp * (-thetaControl) + thetaKd * (-w));
     }
 
     // Check if robot is at a certain point/angle (default tolerance)
