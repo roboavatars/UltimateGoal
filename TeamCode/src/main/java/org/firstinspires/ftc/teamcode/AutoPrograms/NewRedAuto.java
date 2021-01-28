@@ -46,7 +46,15 @@ public class NewRedAuto extends LinearOpMode {
         StackHeightDetector detector = new StackHeightDetector(this);
         detector.start();
 
-//        RingLocator locator = new RingLocator(this);
+        RingLocator locator = new RingLocator(this);
+        final int ringLocatorUpdatePeriod = 3;
+        boolean locateRings = false;
+        ArrayList<double[]> rings = new ArrayList(3);
+        rings.add(null);
+        rings.add(null);
+        rings.add(null);
+
+        int cycleCounter = 0;
 
         // Segments
         boolean startLine = false;
@@ -93,10 +101,10 @@ public class NewRedAuto extends LinearOpMode {
         Path parkPath = null;
         Spline parkThetaSpline = null;
 
-        // Other action variables
+        // Other variables
         boolean psFinish = false;
         double psFinishTime = 0;
-        boolean goForSinx = false;
+        boolean startOscillation = false;
         boolean reached = false;
         double reachedTime = 0;
 
@@ -134,6 +142,14 @@ public class NewRedAuto extends LinearOpMode {
         ElapsedTime time = new ElapsedTime();
 
         while(opModeIsActive()) {
+            cycleCounter++;
+
+            // Update ring positions if enabled
+            if (locateRings && cycleCounter % ringLocatorUpdatePeriod == 0) {
+//                rings.set(0, new double[1]);
+//                rings.set(1, new double[1]);
+//                rings.set(2, new double[1]);
+            }
 
             // Go to shooting line to shoot powershots
             if (!startLine) {
@@ -143,13 +159,11 @@ public class NewRedAuto extends LinearOpMode {
 
                 if (time.seconds() > startLineTime - 1.25) {
 //                    robot.shooter.flywheelPS();
-//                    robot.shooter.flywheelHG();
                     robot.wobbleArm.setArmPosition(-300);
                 }
 
                 if (time.seconds() > startLineTime) {
                     robot.powerShotShoot();
-//                    robot.highGoalShoot();
 
                     startLine = true;
                     time.reset();
@@ -181,13 +195,17 @@ public class NewRedAuto extends LinearOpMode {
 
             // Intake start stack
             else if (!intakeStack) {
-                if (!goForSinx) {
+                if (!startOscillation) {
                     double curTime = Math.min(time.seconds(), goToStackTime);
                     Pose curPose = goToStackPath.getRobotPose(curTime);
                     robot.setTargetPoint(curPose.getX(), curPose.getY(), goToStackThetaSpline.position(curTime), 0.3, 0.3, 3.5);
                     if (robot.isAtPose(109, 37, PI/2, 1.5, 1.5, PI/12)) {
-                        goForSinx = true;
+                        startOscillation = true;
                         robot.intake.intakeOn();
+
+                        locator.start();
+                        locateRings = true;
+
                         time.reset();
                     }
                 } else {
@@ -195,11 +213,8 @@ public class NewRedAuto extends LinearOpMode {
                     robot.setTargetPoint(109, input, PI/2, 0.2, 0.15, 1.2);
                 }
 
-                if (goForSinx && ((ringCase != RingCase.Four && time.seconds() > intakeStackTime)
-                        || (ringCase == RingCase.Four && time.seconds() > intakeStackTime))) {
-
+                if (startOscillation && ((ringCase != RingCase.Four && time.seconds() > intakeStackTime) || (ringCase == RingCase.Four && time.seconds() > intakeStackTime))) {
                     robot.highGoalShoot();
-//                    locator.start();
 
                     intakeStack = true;
                     time.reset();
@@ -212,23 +227,22 @@ public class NewRedAuto extends LinearOpMode {
 
                     robot.intake.intakeOn();
 
-                    double[][] ringPos = new double[][] {
-                            {86, 130}, {94, 120}, {110, 130}
-                    };
+                    rings.add(new double[] {86, 130});
+                    rings.add(new double[] {94, 110});
+                    rings.add(new double[] {110, 120});
+                    locator.stop();
+                    locateRings = false;
 
-//                    locator.getAbsRingPos(robot.x, robot.y, robot.theta);
-//                    locator.stop();
-
-                    Waypoint[] bounceBackWaypoints = new Waypoint[]{
+                    Waypoint[] bounceBackWaypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, robot.theta, 50, 60, 0, 0),
 
-                            new Waypoint(ringPos[2][0], ringPos[2][1] - 10, PI/2, 20, 30, 0, 1),
-                            new Waypoint(ringPos[2][0] - 2, ringPos[2][1] - 10, PI/2, -30, -30, 0, 1.75),
+                            new Waypoint(rings.get(2)[0], rings.get(2)[1], PI/2, 20, 30, 0, 1),
+                            new Waypoint(rings.get(2)[0] - 2, rings.get(2)[1], PI/2, -30, -30, 0, 1.75),
 
-                            new Waypoint(ringPos[1][0], ringPos[1][1] - 10, PI/2, 20, 30, 0, 2.5),
-                            new Waypoint(ringPos[1][0] - 2, ringPos[1][1] - 10, PI/2, -30, -30, 0, 3.25),
+                            new Waypoint(rings.get(1)[0], rings.get(1)[1], PI/2, 20, 30, 0, 2.5),
+                            new Waypoint(rings.get(1)[0] - 2, rings.get(1)[1], PI/2, -30, -30, 0, 3.25),
 
-                            new Waypoint(ringPos[0][0], ringPos[0][1] - 2, PI/2, 20, 30, 0, bounceBackTime),
+                            new Waypoint(rings.get(0)[0], rings.get(0)[1] - 2, PI/2, 20, 30, 0, bounceBackTime),
                     };
                     bounceBackPath = new Path(new ArrayList<>(Arrays.asList(bounceBackWaypoints)));
 
@@ -411,7 +425,7 @@ public class NewRedAuto extends LinearOpMode {
                     } else {
                         parkWaypoints = new Waypoint[] {
                                 new Waypoint(robot.x, robot.y, robot.theta, 40, 50, 0, 0),
-                                new Waypoint(94, 83, PI/2, 30, -30, 0, parkTime),
+                                new Waypoint(98, 85, PI/2, 20, 20, 0, parkTime),
                         };
                     }
                     parkThetaSpline = new Spline(5*PI/4, 0, 0, PI/2, 0, 0, parkTime);

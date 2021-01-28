@@ -36,12 +36,12 @@ public class Robot {
     private final int loggerUpdatePeriod = 2;
     private final double xyTolerance = 1;
     private final double thetaTolerance = PI / 35;
-    private final double xKp = 0.30;
-    private final double yKp = 0.30;
-    private final double thetaKp = 2.4;
-    private final double xKd = 0.030;
-    private final double yKd = 0.030;
-    private final double thetaKd = 0.24;
+    public static double xKp = 0.30;
+    public static double yKp = 0.30;
+    public static double thetaKp = 2.4;
+    public static double xKd = 0.030;
+    public static double yKd = 0.030;
+    public static double thetaKd = 0.24;
     private double odoWeight = 1;
 
     public static int highGoalDelay = 150;
@@ -213,7 +213,7 @@ public class Robot {
                 shootTime = System.currentTimeMillis();
                 preShoot = false;
                 log("Ready to shoot " + (highGoal ? "high goal" : "powershot") + ", velocity: " + shooter.getVelocity());
-                log("Pre shoot time: " +  ((System.currentTimeMillis() - startShootTime) / 1000) + " seconds");
+                log("Pre shoot time: " +  (System.currentTimeMillis() - startShootTime) + " ms");
             }
         }
 
@@ -262,7 +262,7 @@ public class Robot {
                     shooter.magHome();
                     shoot = false;
                     log("Shoot done");
-                    log("Total shoot time: " +  ((System.currentTimeMillis() - startShootTime) / 1000) + " seconds");
+                    log("Total shoot time: " +  (System.currentTimeMillis() - startShootTime) + " ms");
                 }
                 shootTime = System.currentTimeMillis();
             }
@@ -327,8 +327,7 @@ public class Robot {
 
         // Log Data
         if (cycleCounter % loggerUpdatePeriod == 0) {
-            logger.logData(System.currentTimeMillis()-startTime, x, y, theta, vx, vy, w, ax, ay, a,
-                    numRings, shooter.magHome, shooter.feedHome, lastTarget);
+            logger.logData(System.currentTimeMillis()-startTime, x, y, theta, vx, vy, w, ax, ay, a, numRings, shooter.magHome, shooter.feedHome, lastTarget);
         }
 
         // Dashboard Telemetry
@@ -446,6 +445,7 @@ public class Robot {
     // Set target point (default K values)
     public void setTargetPoint(double xTarget, double yTarget, double thetaTarget) {
         setTargetPoint(xTarget, yTarget, thetaTarget, xKp, yKp, thetaKp);
+//        setTargetPoint(xTarget, yTarget, thetaTarget, xKp, yKp, thetaKp, xKd, yKd, thetaKd);
     }
 
     // Set target point (custom Kp values)
@@ -468,8 +468,7 @@ public class Robot {
     }
 
     // Set target point (custom Kp and Kv values)
-    public void setTargetPoint(double xTarget, double yTarget, double thetaTarget,
-                               double xKp, double yKp, double thetaKp, double xKd, double yKd, double thetaKd) {
+    public void setTargetPoint(double xTarget, double yTarget, double thetaTarget, double xKp, double yKp, double thetaKp, double xKd, double yKd, double thetaKd) {
         // Make Sure thetaTarget is Between 0 and 2pi
         thetaTarget = thetaTarget % (PI * 2);
         if (thetaTarget < 0) {
@@ -484,8 +483,7 @@ public class Robot {
             thetaControl = theta - thetaTarget;
         }
 
-        drivetrain.setGlobalControls(xKp * (xTarget - x) + xKd * (-vx), yKp * (yTarget - y) + yKd * (-vy),
-                thetaKp * (-thetaControl) + thetaKd * (-w));
+        drivetrain.setGlobalControls(xKp * (xTarget - x) + xKd * (-vx), yKp * (yTarget - y) + yKd * (-vy), thetaKp * (-thetaControl) + thetaKd * (-w));
     }
 
     // Check if robot is at a certain point/angle (default tolerance)

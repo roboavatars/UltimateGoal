@@ -8,6 +8,7 @@ import static java.lang.Math.PI;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 @TeleOp
+@Disabled
 public class Regression extends LinearOpMode {
 
     public int startX = 90;
