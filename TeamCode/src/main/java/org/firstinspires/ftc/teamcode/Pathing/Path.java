@@ -8,7 +8,7 @@ public class Path {
     private ArrayList<Waypoint> waypoints;
     private double totaltime;
 
-    public Path(ArrayList<Waypoint> waypoints){
+    public Path(ArrayList<Waypoint> waypoints) {
         // Defining waypoint Arraylist
         this.waypoints = waypoints;
 
@@ -16,12 +16,12 @@ public class Path {
         SplineGenerator splinegen = new SplineGenerator();
 
         // Find Total Time to Make Sure Nothing is Going Wrong on Pose Calls
-        totaltime = waypoints.get(waypoints.size()-1).time;
+        totaltime = waypoints.get(waypoints.size() - 1).time;
 
-        for (int i = 0; i < waypoints.size()-1; i++) {
+        for (int i = 0; i < waypoints.size() - 1; i++) {
             // Get Relevant waypoints
             Waypoint waypoint1 = waypoints.get(i);
-            Waypoint waypoint2 = waypoints.get(i+1);
+            Waypoint waypoint2 = waypoints.get(i + 1);
 
             // Define All Variables For Spline
             double startx = waypoint1.x;
@@ -30,22 +30,21 @@ public class Path {
             double endy = waypoint2.y;
             double starttheta = waypoint1.theta;
             double endtheta = waypoint2.theta;
-            double startxdot = waypoint1.xdot;
-            double endxdot = waypoint2.xdot;
-            double startydot = waypoint1.ydot;
-            double endydot = waypoint2.ydot;
-            double startxdotdot = waypoint1.xdotdot;
-            double endxdotdot = waypoint2.xdotdot;
-            double startydotdot = waypoint1.ydotdot;
-            double endydotdot = waypoint2.ydotdot;
-            double time = waypoint2.time-waypoint1.time;
+            double startvx = waypoint1.vx;
+            double endvx = waypoint2.vx;
+            double startvy = waypoint1.vy;
+            double endvy = waypoint2.vy;
+            double startax = waypoint1.ax;
+            double endax = waypoint2.ax;
+            double startay = waypoint1.ay;
+            double enday = waypoint2.ay;
+            double time = waypoint2.time - waypoint1.time;
 
             // Make Sure waypoints Are Correct
-            assert waypoint2.time>waypoint1.time: "Waypoint times are not correct";
+            assert waypoint2.time > waypoint1.time: "Waypoint times are not correct";
 
             // Generate Splines and Add Them to Array
-            Spline[] segment = splinegen.SplineBetweenTwoPoints(startx, starty, endx, endy, starttheta, endtheta,
-                    startxdot, endxdot, startydot, endydot, startxdotdot, endxdotdot, startydotdot, endydotdot, time);
+            Spline[] segment = splinegen.SplineBetweenTwoPoints(startx, starty, endx, endy, starttheta, endtheta, startvx, endvx, startvy, endvy, startax, endax, startay, enday, time);
             splines.add(segment);
 
             // Add Time
@@ -53,14 +52,14 @@ public class Path {
         }
     }
 
-    public Pose getRobotPose(double time){
+    public Pose getRobotPose(double time) {
         int splineindex = 0;
 
-        if(totaltime <= time){
+        if (totaltime <= time) {
             splineindex = waypointTimes.size() - 1;
-        } else{
+        } else {
             for (int i = 0; i < waypointTimes.size(); i++) {
-                if(waypointTimes.get(i) > time){
+                if (waypointTimes.get(i) > time) {
                     splineindex = i;
                     break;
                 }
@@ -70,7 +69,10 @@ public class Path {
         Spline[] currentspline = splines.get(splineindex);
         double x = currentspline[0].position(splinetime);
         double y = currentspline[1].position(splinetime);
-        double theta = Math.atan2(currentspline[1].velocity(splinetime), currentspline[0].velocity(splinetime));
-        return new Pose(x, y, theta);
+        double vx = currentspline[0].velocity(splinetime);
+        double vy = currentspline[1].velocity(splinetime);
+        double theta = Math.atan2(vy, vx);
+        double w = (vx * currentspline[1].accel(splinetime) - vy * currentspline[0].accel(splinetime)) / (Math.pow(vx, 2) + Math.pow(vy, 2));
+        return new Pose(x, y, theta, vx, vy, w);
     }
 }
