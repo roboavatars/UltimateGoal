@@ -67,15 +67,15 @@ public class Shooter {
         return shooterMotor1.getVelocity();
     }
 
-    public void setFlapAngle(double angle) {
-        double curPos = getFlapAngle();
-        if (angle != lastFlap && curPos > 0 && curPos < Constants.FLAP_MAX_POS) {
-            flapServo.setPosition(angle);
-            lastFlap = angle;
+    public void setFlapPos(double pos) {
+        double curPos = getFlapPosition();
+        if (pos != lastFlap && curPos > 0 && curPos < Constants.FLAP_MAX_POS) {
+            flapServo.setPosition(pos);
+            lastFlap = pos;
         }
     }
 
-    public double getFlapAngle() {
+    public double getFlapPosition() {
         return flapServo.getPosition();
     }
 

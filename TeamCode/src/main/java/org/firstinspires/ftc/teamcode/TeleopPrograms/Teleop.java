@@ -177,10 +177,10 @@ public class Teleop extends LinearOpMode {
             }
 
             if (gamepad1.dpad_up) {
-                robot.shooter.flapServo.setPosition(robot.shooter.getFlapAngle() + 0.001);
+                robot.shooter.flapServo.setPosition(robot.shooter.getFlapPosition() + 0.001);
             }
             if (gamepad1.dpad_down) {
-                robot.shooter.flapServo.setPosition(robot.shooter.getFlapAngle() - 0.001);
+                robot.shooter.flapServo.setPosition(robot.shooter.getFlapPosition() - 0.001);
             }
 
             // Drivetrain controls

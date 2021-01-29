@@ -55,7 +55,7 @@ public class Regression extends LinearOpMode {
             }
 
             if (gamepad1.right_trigger > 0) {
-                double[] target = Robot.powerTargets[2];
+                double[] target = robot.shootTargets(3);
                 d = Math.sqrt(Math.pow(robot.x - 108, 2) + Math.pow(robot.y - 150, 2));
 
                 if (!(Math.abs(robot.x - target[0]) < xyTol && Math.abs(robot.y - target[1]) < xyTol && Math.abs(robot.theta - target[2]) < thetaTol)) {
@@ -71,10 +71,10 @@ public class Regression extends LinearOpMode {
             }
 
             if (gamepad1.dpad_up) {
-                robot.shooter.flapServo.setPosition(robot.shooter.getFlapAngle() + 0.001);
+                robot.shooter.flapServo.setPosition(robot.shooter.getFlapPosition() + 0.001);
             }
             if (gamepad1.dpad_down) {
-                robot.shooter.flapServo.setPosition(robot.shooter.getFlapAngle() - 0.001);
+                robot.shooter.flapServo.setPosition(robot.shooter.getFlapPosition() - 0.001);
             }
 
             robot.update();
@@ -85,7 +85,7 @@ public class Regression extends LinearOpMode {
             telemetry.addData("Distance", d);
             telemetry.addData("numRings", robot.numRings);
             telemetry.addData("Shooter Velocity", robot.shooter.getVelocity());
-            telemetry.addData("Flap Angle", robot.shooter.getFlapAngle());
+            telemetry.addData("Flap Angle", robot.shooter.getFlapPosition());
             telemetry.update();
 
         }

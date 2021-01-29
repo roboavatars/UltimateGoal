@@ -9,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 @TeleOp
 @Config
 //@Disabled
-public class SideFlapTest extends LinearOpMode {
+public class HardwareTest extends LinearOpMode {
 
     public static double homePos = 0;
     public static double outPos = 0.34;

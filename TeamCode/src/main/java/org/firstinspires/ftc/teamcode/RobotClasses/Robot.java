@@ -46,8 +46,8 @@ public class Robot {
     private double odoWeight = 1;
 
     public static int highGoalDelay = 150;
-    public static int psDelay = 600;
-    public static int flickDelay = 10;
+    public static int psDelay = 150;
+//    public static int flickDelay = 10;
     private double[] target = {};
     private boolean flickHome = true;
 
@@ -65,7 +65,7 @@ public class Robot {
 
     // Time and Delay Variables
     public double shootTime;
-    public double flickTime;
+//    public double flickTime;
     public double shootDelay;
     public double startShootTime;
     public double vibrateTime;
@@ -86,14 +86,20 @@ public class Robot {
     private final double shootYCor = 150;
 
     // Powershot Debug Variables
-    public static double theta0 = 1.6534;
-    public static double theta1 = 1.5984;
-    public static double theta2 = 1.5244;
-    public static double[][] powerTargets = {
-            {85, 63, theta0, 0},
-            {87, 63, theta1, 0},
-            {89, 63, theta2, 0}
-    };
+//    public static double theta0 = 1.6534;
+//    public static double theta1 = 1.5984;
+//    public static double theta2 = 1.5244;
+//    public static double[][] powerTargets = {
+//            {85, 63, theta0, 0},
+//            {87, 63, theta1, 0},
+//            {89, 63, theta2, 0}
+//    };
+    public double[] psShoot = new double[] {89, 63};
+
+    public static double flap0 = 1.6534;
+    public static double flap1 = 1.5984;
+    public static double flap2 = 1.5244;
+    public static double[] flapPositions = {flap0, flap1, flap2};
 
     // OpMode Stuff
     private LinearOpMode op;
@@ -150,11 +156,7 @@ public class Robot {
         cycleCounter++;
 
         // Powershot Debug
-        powerTargets = new double[][] {
-                {85, 63, theta0, 0},
-                {87, 63, theta1, 0},
-                {89, 63, theta2, 0}
-        };
+        flapPositions = new double[] {flap0, flap1, flap2};
 
         // Track time after start
         if (firstLoop) {
@@ -183,7 +185,7 @@ public class Robot {
                     intake.sticksOut();
                 }
                 vThresh = Constants.POWERSHOT_VELOCITY - 40;
-                target = shootTargets(powerTargets[2][0], powerTargets[2][1], PI / 2, 2);
+                target = shootTargets(psShoot[0], psShoot[1], PI / 2, 2);
             }
 
             // Turn off intake and put mag up
@@ -226,12 +228,13 @@ public class Robot {
                 if (highGoal) {
                     target = shootTargets(3);
                 } else {
-                    if (numRings == 3 || System.currentTimeMillis() - flickTime > flickDelay) {
-                        target = powerTargets[numRings - 1]; // flick move done flick // flick done move done flick
-                    }
+//                    if (numRings == 3 || System.currentTimeMillis() - flickTime > flickDelay) {
+//                        target = powerTargets[numRings - 1]; // flick move done flick // flick done move done flick
+//                    }
+                    target = shootTargets(2);
+                    shooter.setFlapPos(flapPositions[numRings-1]);
                 }
                 setTargetPoint(target[0], target[1], target[2], 0.4, 0.4, 4);
-                shooter.setFlapAngle(target[3]);
             }
 
             // Auto feed rings
@@ -253,7 +256,7 @@ public class Robot {
                         }
 
                         flickHome = !flickHome;
-                        flickTime = System.currentTimeMillis();
+//                        flickTime = System.currentTimeMillis();
                         log("Feed ring");
                     } else {
                         log("("+x+", "+y+", "+theta+") Not at shoot position: " + Arrays.toString(target));
@@ -431,16 +434,13 @@ public class Robot {
             drawLine(shooterX, shooterY, targetX, targetY, "blue");
         }
 
-        // Calculate Flap Angle
-        double d = Math.sqrt(Math.pow(targetX - shooterX, 2) + Math.pow(targetY - shooterY, 2));
-        double flapAngle = -0.0001 * Math.pow(d, 2) + 0.0167 * d - 0.4905;
-
         // Calculate Robot Angle
+        double d = Math.sqrt(Math.pow(targetX - shooterX, 2) + Math.pow(targetY - shooterY, 2));
         double alignRobotAngle = Math.atan2(dy, dx) + 0.0013 * d - 0.2300;
         double alignRobotX = shooterX - 6.5 * Math.sin(alignRobotAngle) + xOffset;
         double alignRobotY = shooterY + 6.5 * Math.cos(alignRobotAngle);
 
-        return new double[] {alignRobotX, alignRobotY, alignRobotAngle, flapAngle};
+        return new double[] {alignRobotX, alignRobotY, alignRobotAngle};
     }
 
     // Set target point (default K values)
