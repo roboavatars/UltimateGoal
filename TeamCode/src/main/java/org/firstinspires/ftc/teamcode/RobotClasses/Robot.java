@@ -445,7 +445,6 @@ public class Robot {
     // Set target point (default K values)
     public void setTargetPoint(double xTarget, double yTarget, double thetaTarget) {
         setTargetPoint(xTarget, yTarget, thetaTarget, xKp, yKp, thetaKp);
-//        setTargetPoint(xTarget, yTarget, thetaTarget, xKp, yKp, thetaKp, xKd, yKd, thetaKd);
     }
 
     // Set target point (custom Kp values)
@@ -467,8 +466,13 @@ public class Robot {
         drivetrain.setGlobalControls(xKp * (xTarget - x), yKp * (yTarget - y), thetaKp * (-thetaControl));
     }
 
-    // Set target point (custom Kp and Kv values)
-    public void setTargetPoint(double xTarget, double yTarget, double thetaTarget, double xKp, double yKp, double thetaKp, double xKd, double yKd, double thetaKd) {
+    // Set target point (with velocity specification)
+    public void setTargetPoint(double xTarget, double yTarget, double thetaTarget, double vxTarget, double vyTarget, double wTarget, double dummy) {
+        setTargetPoint(xTarget, yTarget, thetaTarget, vxTarget, vyTarget, wTarget, xKp, yKp, thetaKp, xKd, yKd, thetaKd);
+    }
+
+    // Set target point (with velocity specification, custom Kp and Kv values)
+    public void setTargetPoint(double xTarget, double yTarget, double thetaTarget, double vxTarget, double vyTarget, double wTarget, double xKp, double yKp, double thetaKp, double xKd, double yKd, double thetaKd) {
         // Make Sure thetaTarget is Between 0 and 2pi
         thetaTarget = thetaTarget % (PI * 2);
         if (thetaTarget < 0) {
@@ -483,7 +487,7 @@ public class Robot {
             thetaControl = theta - thetaTarget;
         }
 
-        drivetrain.setGlobalControls(xKp * (xTarget - x) + xKd * (-vx), yKp * (yTarget - y) + yKd * (-vy), thetaKp * (-thetaControl) + thetaKd * (-w));
+        drivetrain.setGlobalControls(xKp * (xTarget - x) + xKd * (vxTarget - vx), yKp * (yTarget - y) + yKd * (vyTarget - vy), thetaKp * (-thetaControl) + thetaKd * (wTarget - w));
     }
 
     // Check if robot is at a certain point/angle (default tolerance)
