@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.Debug.Logger;
+import org.firstinspires.ftc.teamcode.Pathing.Pose;
 
 import java.util.Arrays;
 import java.util.List;
@@ -447,6 +448,11 @@ public class Robot {
         setTargetPoint(xTarget, yTarget, thetaTarget, xKp, yKp, thetaKp);
     }
 
+    // Set target point (using pose)
+    public void setTargetPoint(Pose pose) {
+        setTargetPoint(pose.getX(), pose.getY(), pose.getTheta());
+    }
+
     // Set target point (custom Kp values)
     public void setTargetPoint(double xTarget, double yTarget, double thetaTarget, double xKp, double yKp, double thetaKp) {
         // Make Sure thetaTarget is Between 0 and 2pi
@@ -466,12 +472,22 @@ public class Robot {
         drivetrain.setGlobalControls(xKp * (xTarget - x), yKp * (yTarget - y), thetaKp * (-thetaControl));
     }
 
-    // Set target point (with velocity specification)
+    // Set target point (using pose, custom Kp values)
+    public void setTargetPoint(Pose pose, double xKp, double yKp, double thetaKp) {
+        setTargetPoint(pose.getX(), pose.getY(), pose.getTheta(), xKp, yKp, thetaKp);
+    }
+
+    // Set target point (velocity specification)
     public void setTargetPoint(double xTarget, double yTarget, double thetaTarget, double vxTarget, double vyTarget, double wTarget, double dummy) {
         setTargetPoint(xTarget, yTarget, thetaTarget, vxTarget, vyTarget, wTarget, xKp, yKp, thetaKp, xKd, yKd, thetaKd);
     }
 
-    // Set target point (with velocity specification, custom Kp and Kv values)
+    // Set target point (using pose, velocity specification)
+    public void setTargetPoint(Pose pose, double dummy) {
+        setTargetPoint(pose.getX(), pose.getY(), pose.getTheta(), pose.getVx(), pose.getVy(), pose.getW(), xKp, yKp, thetaKp, xKd, yKd, thetaKd);
+    }
+
+    // Set target point (velocity specification, custom Kp and Kv values)
     public void setTargetPoint(double xTarget, double yTarget, double thetaTarget, double vxTarget, double vyTarget, double wTarget, double xKp, double yKp, double thetaKp, double xKd, double yKd, double thetaKd) {
         // Make Sure thetaTarget is Between 0 and 2pi
         thetaTarget = thetaTarget % (PI * 2);
@@ -488,6 +504,11 @@ public class Robot {
         }
 
         drivetrain.setGlobalControls(xKp * (xTarget - x) + xKd * (vxTarget - vx), yKp * (yTarget - y) + yKd * (vyTarget - vy), thetaKp * (-thetaControl) + thetaKd * (wTarget - w));
+    }
+
+    // Set target point (using pose, velocity specification, custom Kp and Kv values)
+    public void setTargetPoint(Pose pose, double xKp, double yKp, double thetaKp, double xKd, double yKd, double thetaKd) {
+        setTargetPoint(pose.getX(), pose.getY(), pose.getTheta(), pose.getVx(), pose.getVy(), pose.getW(), xKp, yKp, thetaKp, xKd, yKd, thetaKd);
     }
 
     // Check if robot is at a certain point/angle (default tolerance)
