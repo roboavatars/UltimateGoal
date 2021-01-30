@@ -75,8 +75,8 @@ public class Robot {
     public boolean waitFeed = false;
 
     // Motion Variables
-    public double x, y, theta;
-    private double prevX, prevY, prevTheta, vx, vy, w, prevVx, prevVy, prevW, prevTime, ax, ay, a;
+    public double x, y, theta, vx, vy, w;
+    private double prevX, prevY, prevTheta, prevVx, prevVy, prevW, prevTime, ax, ay, a;
     public double startTime;
 
     // Shooter Variables

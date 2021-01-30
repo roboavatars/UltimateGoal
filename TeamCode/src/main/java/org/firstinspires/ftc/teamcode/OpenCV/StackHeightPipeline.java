@@ -29,7 +29,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
     // Thresholds
     public static int HEIGHT_THRESH = 3;
     public static int WIDTH_THRESH = 15;
-    public static double ONE_MIN = 1.5;
+    public static double ONE_MIN = 1.9;
     public static double ONE_MAX = 2.7;
     public static double FOUR_MIN = 0.5;
 

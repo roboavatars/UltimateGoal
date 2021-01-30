@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.Pathing.Path;
 import org.firstinspires.ftc.teamcode.Pathing.Pose;
 import org.firstinspires.ftc.teamcode.Pathing.Spline;
 import org.firstinspires.ftc.teamcode.Pathing.Waypoint;
-import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import java.util.ArrayList;
@@ -153,7 +152,6 @@ public class NewRedAuto extends LinearOpMode {
 
             // Go to shooting line to shoot powershots
             if (!startLine) {
-                Robot.log(";oih");
                 double curTime = Math.min(time.seconds(), startLineTime);
                 robot.setTargetPoint(startLinePath.getRobotPose(curTime));
 
@@ -209,7 +207,8 @@ public class NewRedAuto extends LinearOpMode {
                         time.reset();
                     }
                 } else {
-                    double input = Math.min(117,  94 + 8 * time.seconds() + 2.5 * Math.sin(8 * time.seconds()));
+//                    double input = Math.min(117,  94 + 8 * time.seconds() + 2.5 * Math.sin(8 * time.seconds()));
+                    double input = 110;
                     robot.setTargetPoint(input, 48, 0, 0.2, 0.15, 1.2);
                 }
 
@@ -227,9 +226,9 @@ public class NewRedAuto extends LinearOpMode {
 
                     robot.intake.intakeOn();
 
-                    rings.add(new double[] {86, 130});
-                    rings.add(new double[] {94, 110});
-                    rings.add(new double[] {110, 120});
+                    rings.add(locator.getAbsRingPos(robot.x, robot.y, robot.theta));
+                    rings.add(locator.getAbsRingPos(robot.x, robot.y, robot.theta));
+                    rings.add(locator.getAbsRingPos(robot.x, robot.y, robot.theta));
                     locator.stop();
                     locateRings = false;
 

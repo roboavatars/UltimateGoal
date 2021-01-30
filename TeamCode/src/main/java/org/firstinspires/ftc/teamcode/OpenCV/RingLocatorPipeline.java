@@ -151,9 +151,9 @@ public class RingLocatorPipeline extends OpenCvPipeline {
         double targetTheta = Math.atan2(targetY - robotY, targetX - robotX);
 
         // Ignore ring if it's out of field
-        if (targetX < 48 || targetX > 144 || targetY < 0 || targetY > 144) {
-            targetX = -1;
-            targetY = -1;
+        if (targetX < 48 || targetX > 144 || targetY < 80 || targetY > 144) {
+            targetX = robotX;
+            targetY = robotY;
         }
 
         return new double[] {targetX, targetY, targetTheta};

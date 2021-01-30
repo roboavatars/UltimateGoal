@@ -7,33 +7,39 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
+import org.firstinspires.ftc.teamcode.RobotClasses.Intake;
 import org.firstinspires.ftc.teamcode.RobotClasses.Shooter;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
+
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
 @TeleOp
-//@Config
-@Disabled
-public class FlickerTest extends LinearOpMode {
+@Config
+//@Disabled
+public class BottomFlickerTest extends LinearOpMode {
 
     public static double midPos = Constants.FEED_MID_POS;
-    public static double homePos = Constants.FEED_HOME_POS;
-    public static double topPos = Constants.FEED_TOP_POS;
+    public static double homePos = Constants.FEED_TOP_POS;
+    public static double topPos = Constants.FEED_HOME_POS;
     public static int pos = 1;
     public static boolean debug = false;
     private double position;
 
+    private boolean magToggle = false;
     private boolean shootToggle = false;
     private long shootTime;
     private int delay = 6;
-    public static int period = 150;
+    public static int period = 200;
 
     private Shooter shooter;
+    private Intake intake;
 
     @Override
     public void runOpMode() {
 
         Servo servo = hardwareMap.get(Servo.class, "feedServo");
         shooter = new Shooter(this);
+        intake = new Intake(this, false);
 
         waitForStart();
 
@@ -48,6 +54,27 @@ public class FlickerTest extends LinearOpMode {
                 }
                 servo.setPosition(position);
             } else {
+
+                // Intake on/off/rev
+                if (gamepad1.right_trigger > 0) {
+                    intake.intakeOn();
+                } else if (gamepad1.left_trigger > 0) {
+                    intake.intakeRev();
+                } else {
+                    intake.intakeOff();
+                }
+
+                // Toggle mag for shoot/home position
+                if (gamepad1.y && !magToggle) {
+                    magToggle = true;
+                    if (shooter.magHome) {
+                        shooter.magShoot();
+                    } else {
+                        shooter.magHome();
+                    }
+                } else if (!gamepad1.x && magToggle) {
+                    magToggle = false;
+                }
 
                 // Toggle flywheel/mag for shoot/home position
                 if (gamepad1.x && !shootToggle) {
