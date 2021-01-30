@@ -5,6 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import static java.lang.Math.PI;
+
+import org.firstinspires.ftc.teamcode.R;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 @TeleOp
@@ -17,8 +19,6 @@ public class Regression extends LinearOpMode {
 
     private final double xyTol = 1;
     private final double thetaTol = PI/35;
-
-    private double d;
 
     private Robot robot;
     private final boolean robotCentric = false;
@@ -55,12 +55,10 @@ public class Regression extends LinearOpMode {
             }
 
             if (gamepad1.right_trigger > 0) {
-                double[] target = robot.shootTargets(3);
-                d = Math.sqrt(Math.pow(robot.x - 108, 2) + Math.pow(robot.y - 150, 2));
+                double[] target = robot.shootTargets(Robot.psShoot[0], Robot.psShoot[1], PI / 2, 2);
 
                 if (!(Math.abs(robot.x - target[0]) < xyTol && Math.abs(robot.y - target[1]) < xyTol && Math.abs(robot.theta - target[2]) < thetaTol)) {
                     robot.setTargetPoint(target[0], target[1], target[2]);
-                    //robot.shooter.setFlapAngle(target[3]);
                 }
             }
 
@@ -82,7 +80,6 @@ public class Regression extends LinearOpMode {
             telemetry.addData("Robot X", robot.x);
             telemetry.addData("Robot Y", robot.y);
             telemetry.addData("Robot Theta", robot.theta);
-            telemetry.addData("Distance", d);
             telemetry.addData("numRings", robot.numRings);
             telemetry.addData("Shooter Velocity", robot.shooter.getVelocity());
             telemetry.addData("Flap Angle", robot.shooter.getFlapPosition());

@@ -37,17 +37,16 @@ public class Robot {
     private final int loggerUpdatePeriod = 2;
     private final double xyTolerance = 1;
     private final double thetaTolerance = PI / 35;
-    public static double xKp = 0.30;
-    public static double yKp = 0.30;
-    public static double thetaKp = 2.4;
-    public static double xKd = 0.030;
-    public static double yKd = 0.030;
-    public static double thetaKd = 0.24;
+    public static double xKp = 0.6;
+    public static double yKp = 0.6;
+    public static double thetaKp = 6.0;
+    public static double xKd = 0.05;
+    public static double yKd = 0.05;
+    public static double thetaKd = 0.4;
     private double odoWeight = 1;
 
     public static int highGoalDelay = 150;
-    public static int psDelay = 150;
-//    public static int flickDelay = 10;
+    public static int psDelay = 200;
     private double[] target = {};
     private boolean flickHome = true;
 
@@ -65,7 +64,6 @@ public class Robot {
 
     // Time and Delay Variables
     public double shootTime;
-//    public double flickTime;
     public double shootDelay;
     public double startShootTime;
     public double vibrateTime;
@@ -94,11 +92,11 @@ public class Robot {
 //            {87, 63, theta1, 0},
 //            {89, 63, theta2, 0}
 //    };
-    public double[] psShoot = new double[] {89, 63};
+    public static double[] psShoot = new double[] {87, 63};
 
-    public static double flap0 = 1.6534;
-    public static double flap1 = 1.5984;
-    public static double flap2 = 1.5244;
+    public static double flap0 = 0.45;
+    public static double flap1 = 0.46;
+    public static double flap2 = 0.5;
     public static double[] flapPositions = {flap0, flap1, flap2};
 
     // OpMode Stuff
@@ -156,7 +154,7 @@ public class Robot {
         cycleCounter++;
 
         // Powershot Debug
-        flapPositions = new double[] {flap0, flap1, flap2};
+        flapPositions = new double[] {flap2, flap1, flap0};
 
         // Track time after start
         if (firstLoop) {
@@ -186,6 +184,7 @@ public class Robot {
                 }
                 vThresh = Constants.POWERSHOT_VELOCITY - 40;
                 target = shootTargets(psShoot[0], psShoot[1], PI / 2, 2);
+                shooter.setFlapPos(flapPositions[2]);
             }
 
             // Turn off intake and put mag up
@@ -233,6 +232,7 @@ public class Robot {
 //                    }
                     target = shootTargets(2);
                     shooter.setFlapPos(flapPositions[numRings-1]);
+                    lastTarget = numRings-1;
                 }
                 setTargetPoint(target[0], target[1], target[2], 0.4, 0.4, 4);
             }
@@ -256,10 +256,7 @@ public class Robot {
                         }
 
                         flickHome = !flickHome;
-//                        flickTime = System.currentTimeMillis();
                         log("Feed ring");
-                    } else {
-                        log("("+x+", "+y+", "+theta+") Not at shoot position: " + Arrays.toString(target));
                     }
                 } else {
                     shooter.flywheelOff();
@@ -413,7 +410,7 @@ public class Robot {
             power3- (91.5,144,24)
             high goal- (108,144,35.5) */
 
-        lastTarget = targetNum;
+        if (highGoal) lastTarget = targetNum;
 
         double targetX = shootXCor[targetNum];
         double targetY = shootYCor;
@@ -449,7 +446,7 @@ public class Robot {
     }
 
     // Set target point (using pose)
-    public void setTargetPoint(Pose pose) {
+    public void setTargetPoint(Pose pose, double placeholder) {
         setTargetPoint(pose.getX(), pose.getY(), pose.getTheta());
     }
 
@@ -469,7 +466,8 @@ public class Robot {
             thetaControl = theta - thetaTarget;
         }
 
-        drivetrain.setGlobalControls(xKp * (xTarget - x), yKp * (yTarget - y), thetaKp * (-thetaControl));
+        drivetrain.setGlobalControls(xKp * (xTarget - x) + xKd * (-vx), yKp * (yTarget - y) + yKd * (-vy), thetaKp * (-thetaControl) + thetaKd * (-w));
+
     }
 
     // Set target point (using pose, custom Kp values)
@@ -483,8 +481,12 @@ public class Robot {
     }
 
     // Set target point (using pose, velocity specification)
-    public void setTargetPoint(Pose pose, double dummy) {
+    public void setTargetPoint(Pose pose) {
         setTargetPoint(pose.getX(), pose.getY(), pose.getTheta(), pose.getVx(), pose.getVy(), pose.getW(), xKp, yKp, thetaKp, xKd, yKd, thetaKd);
+    }
+
+    public void setTargetPoint(Pose pose, double theta, double w) {
+        setTargetPoint(pose.getX(), pose.getY(), theta, pose.getVx(), pose.getVy(), w, xKp, yKp, thetaKp, xKd, yKd, thetaKd);
     }
 
     // Set target point (velocity specification, custom Kp and Kv values)

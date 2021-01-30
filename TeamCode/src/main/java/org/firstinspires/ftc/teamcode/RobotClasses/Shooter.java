@@ -68,8 +68,7 @@ public class Shooter {
     }
 
     public void setFlapPos(double pos) {
-        double curPos = getFlapPosition();
-        if (pos != lastFlap && curPos > 0 && curPos < Constants.FLAP_MAX_POS) {
+        if (pos != lastFlap) {
             flapServo.setPosition(pos);
             lastFlap = pos;
         }

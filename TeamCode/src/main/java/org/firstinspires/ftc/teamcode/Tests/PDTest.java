@@ -26,23 +26,23 @@ public class PDTest extends LinearOpMode {
 
         while(opModeIsActive()) {
 
-            if (gamepad1.dpad_left) {
-                robot.setTargetPoint(61, 72, PI/2, Robot.xKp, Robot.yKp, Robot.thetaKp, Robot.xKd, Robot.yKd, Robot.thetaKd);
-            } else if (gamepad1.dpad_right) {
-                robot.setTargetPoint(131, 72, PI/2, Robot.xKp, Robot.yKp, Robot.thetaKp, Robot.xKd, Robot.yKd, Robot.thetaKd);
-            } else if (gamepad1.dpad_up) {
-                robot.setTargetPoint(96, 132, PI/2, Robot.xKp, Robot.yKp, Robot.thetaKp, Robot.xKd, Robot.yKd, Robot.thetaKd);
-            } else if (gamepad1.dpad_down) {
-                robot.setTargetPoint(96, 12, PI/2, Robot.xKp, Robot.yKp, Robot.thetaKp, Robot.xKd, Robot.yKd, Robot.thetaKd);
-            } else if (gamepad1.left_bumper) {
-                robot.setTargetPoint(96, 72, PI, Robot.xKp, Robot.yKp, Robot.thetaKp, Robot.xKd, Robot.yKd, Robot.thetaKd);
-            } else if (gamepad1.right_bumper) {
-                robot.setTargetPoint(96, 72, 0, Robot.xKp, Robot.yKp, Robot.thetaKp, Robot.xKd, Robot.yKd, Robot.thetaKd);
-            } else if (gamepad1.a) {
-                robot.setTargetPoint(targetX, targetY, targetTheta, Robot.xKp, Robot.yKp, Robot.thetaKp, Robot.xKd, Robot.yKd, Robot.thetaKd);
-            } else {
-                robot.drivetrain.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
-            }
+//            if (gamepad1.dpad_left) {
+//                robot.setTargetPoint(61, 72, PI/2, Robot.xKp, Robot.yKp, Robot.thetaKp, Robot.xKd, Robot.yKd, Robot.thetaKd);
+//            } else if (gamepad1.dpad_right) {
+//                robot.setTargetPoint(131, 72, PI/2, Robot.xKp, Robot.yKp, Robot.thetaKp, Robot.xKd, Robot.yKd, Robot.thetaKd);
+//            } else if (gamepad1.dpad_up) {
+//                robot.setTargetPoint(96, 132, PI/2, Robot.xKp, Robot.yKp, Robot.thetaKp, Robot.xKd, Robot.yKd, Robot.thetaKd);
+//            } else if (gamepad1.dpad_down) {
+//                robot.setTargetPoint(96, 12, PI/2, Robot.xKp, Robot.yKp, Robot.thetaKp, Robot.xKd, Robot.yKd, Robot.thetaKd);
+//            } else if (gamepad1.left_bumper) {
+//                robot.setTargetPoint(96, 72, PI, Robot.xKp, Robot.yKp, Robot.thetaKp, Robot.xKd, Robot.yKd, Robot.thetaKd);
+//            } else if (gamepad1.right_bumper) {
+//                robot.setTargetPoint(96, 72, 0, Robot.xKp, Robot.yKp, Robot.thetaKp, Robot.xKd, Robot.yKd, Robot.thetaKd);
+//            } else if (gamepad1.a) {
+//                robot.setTargetPoint(targetX, targetY, targetTheta, Robot.xKp, Robot.yKp, Robot.thetaKp, Robot.xKd, Robot.yKd, Robot.thetaKd);
+//            } else {
+//                robot.drivetrain.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
+//            }
 
             robot.update();
         }
