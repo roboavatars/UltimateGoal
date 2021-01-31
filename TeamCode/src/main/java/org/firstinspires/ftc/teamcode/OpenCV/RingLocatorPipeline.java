@@ -96,10 +96,9 @@ public class RingLocatorPipeline extends OpenCvPipeline {
 //                log("width: " + width);
 //                log("height: " + height);
 
-                Imgproc.ellipse(input, ellipse, new Scalar(0, 255, 0), 1);
-
                 // Analyze Valid Contours
                 if (height > HEIGHT_THRESH && width > WIDTH_THRESH) {
+                    Imgproc.ellipse(input, ellipse, new Scalar(0, 255, 0), 1);
 
                     // Calculate Center of Ring if Y is in Valid Domain
                     if (0 < yPix && yPix < 0.8827) {
@@ -116,6 +115,8 @@ public class RingLocatorPipeline extends OpenCvPipeline {
                             ringPos = new double[] {xRel, yRel};
                         }
                     }
+                } else {
+                    Imgproc.ellipse(input, ellipse, new Scalar(255, 0, 0), 1);
                 }
             }
         }

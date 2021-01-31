@@ -28,8 +28,6 @@ public class Intake {
         rStickServo = op.hardwareMap.get(Servo.class, "rightStick");
         blockerServo = op.hardwareMap.get(Servo.class, "blocker");
 
-        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-
         blockerUp();
 
         this.isAuto = isAuto;

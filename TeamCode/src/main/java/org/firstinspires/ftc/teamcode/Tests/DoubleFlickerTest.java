@@ -4,7 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.CRServo;
 
 import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.Intake;
@@ -37,7 +37,7 @@ public class DoubleFlickerTest extends LinearOpMode {
     @Override
     public void runOpMode() {
 
-        Servo servo = hardwareMap.get(Servo.class, "feedServo");
+        CRServo servo = hardwareMap.get(CRServo.class, "feedServo");
         shooter = new Shooter(this);
         intake = new Intake(this, false);
 
@@ -52,7 +52,7 @@ public class DoubleFlickerTest extends LinearOpMode {
                 } else if (pos == 2) {
                     position = topPos;
                 }
-                servo.setPosition(position);
+                servo.setPower(1);
             } else {
 
                 // Intake on/off/rev
@@ -100,21 +100,10 @@ public class DoubleFlickerTest extends LinearOpMode {
                 // Flicker flicks after period milliseconds
                 if (delay == 0 || (delay != 4 && System.currentTimeMillis() - shootTime > period)) {
                     shootTime = System.currentTimeMillis();
-                    if (delay == 0) {
-                        position = topPos;
-                        delay++;
-                    } else if (delay == 1) {
-                        position = bottomPos;
-                        delay++;
-                    } else if (delay == 2) {
-                        position = topPos;
-                        delay++;
-                    } else if (delay == 3) {
-                        position = homePos;
-                        delay++;
-                    }
-                    servo.setPosition(position);
+                    servo.setPower(1);
+                    delay++;
                 }
+                servo.setPower(0);
             }
             addPacket("delay", delay);
             sendPacket();

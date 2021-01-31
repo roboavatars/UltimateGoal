@@ -145,8 +145,8 @@ public class Teleop extends LinearOpMode {
 
             // Slow align mode
             if (gamepad1.right_stick_button) {
-                xySpeed = 0.4;
-                thSpeed = 0.12;
+                xySpeed = 0.3;
+                thSpeed = 0.09;
             } else {
                 xySpeed = 1;
                 thSpeed = 1;

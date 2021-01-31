@@ -438,54 +438,6 @@ public class Robot {
         return new double[] {alignRobotX, alignRobotY, alignRobotAngle};
     }
 
-    // Set target point (default K values)
-    public void setTargetPoint(double xTarget, double yTarget, double thetaTarget) {
-        setTargetPoint(xTarget, yTarget, thetaTarget, xKp, yKp, thetaKp);
-    }
-
-    // Set target point (using pose)
-    public void setTargetPoint(Pose pose, double placeholder) {
-        setTargetPoint(pose.getX(), pose.getY(), pose.getTheta());
-    }
-
-    // Set target point (custom Kp values)
-    public void setTargetPoint(double xTarget, double yTarget, double thetaTarget, double xKp, double yKp, double thetaKp) {
-        // Make Sure thetaTarget is Between 0 and 2pi
-        thetaTarget = thetaTarget % (PI * 2);
-        if (thetaTarget < 0) {
-            thetaTarget += PI * 2;
-        }
-
-        // Picking the Smaller Distance to Rotate
-        double thetaControl;
-        if (Math.abs(theta - thetaTarget) > PI) {
-            thetaControl = theta - thetaTarget - 2 * PI;
-        } else {
-            thetaControl = theta - thetaTarget;
-        }
-
-        drivetrain.setGlobalControls(xKp * (xTarget - x) + xKd * (-vx), yKp * (yTarget - y) + yKd * (-vy), thetaKp * (-thetaControl) + thetaKd * (-w));
-    }
-
-    // Set target point (using pose, custom Kp values)
-    public void setTargetPoint(Pose pose, double xKp, double yKp, double thetaKp) {
-        setTargetPoint(pose.getX(), pose.getY(), pose.getTheta(), xKp, yKp, thetaKp);
-    }
-
-    // Set target point (velocity specification)
-    public void setTargetPoint(double xTarget, double yTarget, double thetaTarget, double vxTarget, double vyTarget, double wTarget, double dummy) {
-        setTargetPoint(xTarget, yTarget, thetaTarget, vxTarget, vyTarget, wTarget, xKp, yKp, thetaKp, xKd, yKd, thetaKd);
-    }
-
-    // Set target point (using pose, velocity specification)
-    public void setTargetPoint(Pose pose) {
-        setTargetPoint(pose.getX(), pose.getY(), pose.getTheta(), pose.getVx(), pose.getVy(), pose.getW(), xKp, yKp, thetaKp, xKd, yKd, thetaKd);
-    }
-
-    public void setTargetPoint(Pose pose, double theta, double w) {
-        setTargetPoint(pose.getX(), pose.getY(), theta, pose.getVx(), pose.getVy(), w, xKp, yKp, thetaKp, xKd, yKd, thetaKd);
-    }
-
     // Set target point (velocity specification, custom Kp and Kv values)
     public void setTargetPoint(double xTarget, double yTarget, double thetaTarget, double vxTarget, double vyTarget, double wTarget, double xKp, double yKp, double thetaKp, double xKd, double yKd, double thetaKd) {
         // Make Sure thetaTarget is Between 0 and 2pi
@@ -507,7 +459,27 @@ public class Robot {
         drivetrain.setGlobalControls(xKp * (xTarget - x) + xKd * (vxTarget - vx), yKp * (yTarget - y) + yKd * (vyTarget - vy), thetaKp * (-thetaControl) + thetaKd * (wTarget - w));
     }
 
-    // Set target point (using pose, velocity specification, custom Kp and Kv values)
+    // Set target point (default Kp and Kv gains)
+    public void setTargetPoint(double xTarget, double yTarget, double thetaTarget) {
+        setTargetPoint(xTarget, yTarget, thetaTarget, 0, 0, 0, xKp, yKp, thetaKp, xKd, yKd, thetaKd);
+    }
+
+    // Set target point (velocity specification, default Kp and Kv gains)
+    public void setTargetPoint(double xTarget, double yTarget, double thetaTarget, double vxTarget, double vyTarget, double wTarget) {
+        setTargetPoint(xTarget, yTarget, thetaTarget, vxTarget, vyTarget, wTarget, xKp, yKp, thetaKp, xKd, yKd, thetaKd);
+    }
+
+    // Set target point (using pose, velocity specification, default Kp and Kv gains)
+    public void setTargetPoint(Pose pose) {
+        setTargetPoint(pose.getX(), pose.getY(), pose.getTheta(), pose.getVx(), pose.getVy(), pose.getW(), xKp, yKp, thetaKp, xKd, yKd, thetaKd);
+    }
+
+    // Set target point (using pose, custom theta and omega, default Kp and Kv gains)
+    public void setTargetPoint(Pose pose, double theta, double w) {
+        setTargetPoint(pose.getX(), pose.getY(), theta, pose.getVx(), pose.getVy(), w, xKp, yKp, thetaKp, xKd, yKd, thetaKd);
+    }
+
+    // Set target point (using pose, velocity specification, custom Kp and Kv gains)
     public void setTargetPoint(Pose pose, double xKp, double yKp, double thetaKp, double xKd, double yKd, double thetaKd) {
         setTargetPoint(pose.getX(), pose.getY(), pose.getTheta(), pose.getVx(), pose.getVy(), pose.getW(), xKp, yKp, thetaKp, xKd, yKd, thetaKd);
     }
