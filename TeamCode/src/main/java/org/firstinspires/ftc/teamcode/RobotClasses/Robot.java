@@ -95,7 +95,7 @@ public class Robot {
     public static double[] psShoot = new double[] {87, 63};
 
     public static double flap0 = 0.45;
-    public static double flap1 = 0.46;
+    public static double flap1 = 0.47;
     public static double flap2 = 0.5;
     public static double[] flapPositions = {flap0, flap1, flap2};
 

@@ -207,9 +207,7 @@ public class NewRedAuto extends LinearOpMode {
                         time.reset();
                     }
                 } else {
-//                    double input = Math.min(117,  94 + 8 * time.seconds() + 2.5 * Math.sin(8 * time.seconds()));
-                    double input = 110;
-                    robot.setTargetPoint(input, 48, 0, 0.2, 0.15, 1.2);
+                    robot.setTargetPoint(110, 48, 0, 0.2, 0.15, 1.2);
                 }
 
                 if (startOscillation && ((ringCase != RingCase.Four && time.seconds() > intakeStackTime) || (ringCase == RingCase.Four && time.seconds() > intakeStackTime))) {
