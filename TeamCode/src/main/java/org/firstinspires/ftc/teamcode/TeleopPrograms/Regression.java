@@ -55,7 +55,7 @@ public class Regression extends LinearOpMode {
             }
 
             if (gamepad1.right_trigger > 0) {
-                double[] target = robot.shootTargets(Robot.psShoot[0], Robot.psShoot[1], PI / 2, 2);
+                double[] target = robot.shootTargets(robot.psShoot[0], robot.psShoot[1], PI / 2, 2);
 
                 if (!(Math.abs(robot.x - target[0]) < xyTol && Math.abs(robot.y - target[1]) < xyTol && Math.abs(robot.theta - target[2]) < thetaTol)) {
                     robot.setTargetPoint(target[0], target[1], target[2]);

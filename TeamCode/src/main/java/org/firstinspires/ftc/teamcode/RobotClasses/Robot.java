@@ -92,7 +92,8 @@ public class Robot {
 //            {87, 63, theta1, 0},
 //            {89, 63, theta2, 0}
 //    };
-    public static double[] psShoot = new double[] {87, 63};
+
+    public final double[] psShoot = new double[] {87, 63};
 
     public static double flap0 = 0.45;
     public static double flap1 = 0.47;
@@ -198,8 +199,8 @@ public class Robot {
             }
 
             // Move to shooting position
-            if (!isAtPose(target[0], target[1], target[2], 1, 1, (isAuto && !highGoal) ? PI/40 : PI/35)) {
-                setTargetPoint(target[0], target[1], target[2], 0.4, 0.4, 3);
+            if (!isAtPose(target[0], target[1], target[2], 0.5, 0.5, (isAuto && !highGoal) ? PI/40 : PI/35)) {
+                setTargetPoint(target[0], target[1], target[2]);
                 log("("+x+", "+y+", "+theta+") Moving to shoot position: " + Arrays.toString(target));
             }
 
@@ -227,14 +228,11 @@ public class Robot {
                 if (highGoal) {
                     target = shootTargets(3);
                 } else {
-//                    if (numRings == 3 || System.currentTimeMillis() - flickTime > flickDelay) {
-//                        target = powerTargets[numRings - 1]; // flick move done flick // flick done move done flick
-//                    }
                     target = shootTargets(2);
                     shooter.setFlapPos(flapPositions[numRings-1]);
                     lastTarget = numRings-1;
                 }
-                setTargetPoint(target[0], target[1], target[2], 0.4, 0.4, 4);
+                setTargetPoint(target[0], target[1], target[2]);
             }
 
             // Auto feed rings
@@ -467,7 +465,6 @@ public class Robot {
         }
 
         drivetrain.setGlobalControls(xKp * (xTarget - x) + xKd * (-vx), yKp * (yTarget - y) + yKd * (-vy), thetaKp * (-thetaControl) + thetaKd * (-w));
-
     }
 
     // Set target point (using pose, custom Kp values)
@@ -504,6 +501,8 @@ public class Robot {
         } else {
             thetaControl = theta - thetaTarget;
         }
+
+        drawRobot(xTarget, yTarget, thetaTarget, "blue");
 
         drivetrain.setGlobalControls(xKp * (xTarget - x) + xKd * (vxTarget - vx), yKp * (yTarget - y) + yKd * (vyTarget - vy), thetaKp * (-thetaControl) + thetaKd * (wTarget - w));
     }

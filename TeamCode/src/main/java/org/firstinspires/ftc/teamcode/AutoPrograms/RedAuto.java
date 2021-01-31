@@ -17,7 +17,7 @@ import java.util.Arrays;
 
 import static java.lang.Math.PI;
 
-@Autonomous(name = "2 OldRedAuto")
+@Autonomous(name = "OldRedAuto")
 public class RedAuto extends LinearOpMode {
 
     @Override
