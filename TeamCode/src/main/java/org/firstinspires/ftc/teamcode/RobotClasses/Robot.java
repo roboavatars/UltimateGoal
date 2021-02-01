@@ -242,21 +242,25 @@ public class Robot {
                     if (isAtPose(target[0], target[1], target[2])) {
                         log("In shoot Velocity: " + shooter.getVelocity());
 
-                        if (flickHome) {
-                            shooter.feedMid();
-                        } else {
+                        if (numRings == 3) {
+                            shooter.feedTop();
+                            if (!isAuto) {
+                                intake.sticksOut();
+                            }
+                            log("Feed ring 1");
+                        } else if (numRings == 2) {
                             shooter.feedHome();
-                            numRings--;
-                        }
-
-                        if (numRings == 3 && !isAuto) {
-                            intake.sticksOut();
+                            log("Feed ring 2");
+                        } else if (numRings == 1) {
+                            shooter.feedTop();
+                            log("Feed ring 3");
                         }
 
                         flickHome = !flickHome;
                         log("Feed ring");
                     }
                 } else {
+                    shooter.feedHome();
                     shooter.flywheelOff();
                     shooter.magHome();
                     shoot = false;
