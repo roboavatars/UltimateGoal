@@ -5,7 +5,6 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.CRServo;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class Shooter {
@@ -14,7 +13,7 @@ public class Shooter {
     public DcMotorEx shooterMotor2;
     public Servo flapServo;
     private Servo magServo;
-    private CRServo feedServo;
+    private Servo feedServo;
 
     private double lastVelocity = 0;
     private double lastFlap = 0;
@@ -28,14 +27,14 @@ public class Shooter {
         shooterMotor2 = op.hardwareMap.get(DcMotorEx.class, "shooter2");
         shooterMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooterMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-//        shooterMotor1.setVelocityPIDFCoefficients(55, 0, 0, 16);
-//        shooterMotor2.setVelocityPIDFCoefficients(55, 0, 0, 16);
+        shooterMotor1.setVelocityPIDFCoefficients(55, 0, 0, 16);
+        shooterMotor2.setVelocityPIDFCoefficients(55, 0, 0, 16);
         shooterMotor1.setDirection(DcMotorSimple.Direction.FORWARD);
         shooterMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         flapServo = op.hardwareMap.get(Servo.class, "flapServo");
         magServo = op.hardwareMap.get(Servo.class, "magServo");
-        feedServo = op.hardwareMap.get(CRServo.class, "feedServo");
+        feedServo = op.hardwareMap.get(Servo.class, "feedServo");
 
         flapHome();
         feedHome();
@@ -101,17 +100,17 @@ public class Shooter {
     }
 
     public void feedHome() {
-//        feedServo.setPosition(Constants.FEED_HOME_POS);
+        feedServo.setPosition(Constants.FEED_HOME_POS);
         feedHome = true;
     }
 
     public void feedMid() {
-//        feedServo.setPosition(Constants.FEED_MID_POS);
+        feedServo.setPosition(Constants.FEED_MID_POS);
         feedHome = false;
     }
 
     public void feedTop() {
-//        feedServo.setPosition(Constants.FEED_TOP_POS);
+        feedServo.setPosition(Constants.FEED_TOP_POS);
         feedHome = false;
     }
 }
