@@ -26,11 +26,11 @@ public class Constants {
 
     public static double MAG_HOME_POS = 0.30;
     public static double MAG_VIBRATE_POS = 0.26;
-    public static double MAG_SHOOT_POS = 0.50;
+    public static double MAG_SHOOT_POS = 0.51;
 
-    public static double FEED_HOME_POS = 1;
-    public static double FEED_MID_POS = 0.48;
-    public static double FEED_TOP_POS = 0.13;
+    public static double FEED_HOME_POS = 0.9;
+    public static double FEED_MID_POS = 0.9;
+    public static double FEED_TOP_POS = 0;
 
     // Wobble Arm
     public static int WOBBLE_UP_POS = -80;
