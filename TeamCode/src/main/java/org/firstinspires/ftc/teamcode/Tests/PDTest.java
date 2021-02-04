@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -12,6 +13,7 @@ import static java.lang.Math.PI;
 
 @Config
 @TeleOp(name = "PD Controller Test")
+@Disabled
 public class PDTest extends LinearOpMode {
 
     private Robot robot;

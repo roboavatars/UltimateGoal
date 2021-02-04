@@ -48,7 +48,7 @@ public class MecanumDrivetrain {
     private double lastpod2 = 0;
     private double lastpod3 = 0;
 
-    // Motor Caching Stuff
+    // Motor Caching
     private double lastFRPower = 0;
     private double lastBRPower = 0;
     private double lastFLPower = 0;
@@ -56,9 +56,16 @@ public class MecanumDrivetrain {
     private final double motorUpdateTolerance = 0.05;
 
     // Constants
-    public static double OdometryTrackWidth = 13.825;
-    public static double OdometryHorizontalOffset = -3.30;
+    private final double OdometryTrackWidth = 13.825;
+    private final double OdometryHorizontalOffset = -3.30;
     private final double OdometryHeadingThreshold = Math.PI / 8;
+    public final double xKp = 0.6;
+    public final double yKp = 0.6;
+    public final double thetaKp = 6.0;
+    public final double xKd = 0.05;
+    public final double yKd = 0.05;
+    public final double thetaKd = 0.4;
+
 
     public boolean zeroStrafeCorrection = false;
 

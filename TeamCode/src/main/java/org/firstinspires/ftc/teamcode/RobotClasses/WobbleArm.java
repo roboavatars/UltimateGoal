@@ -16,10 +16,10 @@ public class WobbleArm {
         wobbleServo = op.hardwareMap.get(Servo.class, "wobbleServo");
         wobbleMotor = op.hardwareMap.get(DcMotorEx.class, "wobbleMotor");
 
-        clampWobble();
+        clamp();
         this.isAuto = isAuto;
         if (isAuto) {
-            armUp();
+            up();
             wobbleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             wobbleMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         } else {
@@ -33,14 +33,14 @@ public class WobbleArm {
         wobbleMotor.setPower(power);
     }
 
-    public void armUp() {
-        clampWobble();
+    public void up() {
+        clamp();
         setPosition(Constants.WOBBLE_UP_POS);
         wobbleMotor.setPower(0.4);
     }
 
-    public void armDown() {
-        clampWobble();
+    public void down() {
+        clamp();
         setPosition(Constants.WOBBLE_DOWN_POS);
         wobbleMotor.setPower(0.4);
     }
@@ -54,11 +54,11 @@ public class WobbleArm {
         wobbleMotor.setPower(0.4);
     }
 
-    public void clampWobble() {
+    public void clamp() {
         wobbleServo.setPosition(Constants.CLAMP_WOBBLE_POS);
     }
 
-    public void unClampWobble() {
+    public void unClamp() {
         wobbleServo.setPosition(Constants.UNCLAMP_WOBBLE_POS);
     }
 }

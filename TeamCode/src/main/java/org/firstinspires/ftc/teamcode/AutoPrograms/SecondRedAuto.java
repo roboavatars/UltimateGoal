@@ -20,8 +20,10 @@ import java.util.Arrays;
 
 import static java.lang.Math.PI;
 
-@Autonomous @Disabled
-public class BadRedAuto extends LinearOpMode {
+@Deprecated
+@Autonomous
+@Disabled
+public class SecondRedAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -131,7 +133,7 @@ public class BadRedAuto extends LinearOpMode {
         robot.intake.blockerDown();
         robot.intake.leftHalf();
         robot.wobbleArm.setArmPosition(-120);
-        robot.wobbleArm.clampWobble();
+        robot.wobbleArm.clamp();
 
         ElapsedTime time = new ElapsedTime();
 
@@ -194,7 +196,7 @@ public class BadRedAuto extends LinearOpMode {
                     robot.setTargetPoint(110, 48, 0);
                 }
 
-                if (time.seconds() > goToStackTime+intakeStackTime) {
+                if (time.seconds() > goToStackTime + intakeStackTime) {
                     robot.highGoalShoot();
 
                     locator = new RingLocator(this);
@@ -258,9 +260,9 @@ public class BadRedAuto extends LinearOpMode {
                 if (time.seconds() > deliverWobbleTime + 1) {
                     robot.wobbleArm.setArmPosition(-300);
                 } else if (time.seconds() > deliverWobbleTime + 0.75) {
-                    robot.wobbleArm.unClampWobble();
+                    robot.wobbleArm.unClamp();
                 } else if (time.seconds() > deliverWobbleTime + 0.25) {
-                    robot.wobbleArm.armDown();
+                    robot.wobbleArm.down();
                 }
 
                 if (time.seconds() > deliverWobbleTime + 1.25) {
@@ -324,11 +326,11 @@ public class BadRedAuto extends LinearOpMode {
                 if (reached && time.seconds() > reachedTime + 1) {
                     robot.wobbleArm.setArmPosition(-300);
                 } else if (reached && time.seconds() > reachedTime + 0.5) {
-                    robot.wobbleArm.clampWobble();
+                    robot.wobbleArm.clamp();
                 } else if (time.seconds() > intakeWobble2Time - 1.5) {
-                    robot.wobbleArm.unClampWobble();
+                    robot.wobbleArm.unClamp();
                 } else if (time.seconds() > intakeWobble2Time - 2) {
-                    robot.wobbleArm.armDown();
+                    robot.wobbleArm.down();
                 }
 
                 if (reached && time.seconds() > reachedTime + 1.5) {
@@ -388,14 +390,14 @@ public class BadRedAuto extends LinearOpMode {
                 if (time.seconds() > bounceDeliverWobble2Time + 1) {
                     robot.wobbleArm.setArmPosition(-300);
                 } else if (time.seconds() > bounceDeliverWobble2Time + 0.75) {
-                    robot.wobbleArm.unClampWobble();
+                    robot.wobbleArm.unClamp();
                 } else if (time.seconds() > bounceDeliverWobble2Time + 0.25) {
-                    robot.wobbleArm.armDown();
+                    robot.wobbleArm.down();
                 }
 
                 if (time.seconds() > bounceDeliverWobble2Time + 1.25) {
 
-                    robot.wobbleArm.clampWobble();
+                    robot.wobbleArm.clamp();
                     robot.intake.off();
 
                     Waypoint[] parkWaypoints;
@@ -431,7 +433,7 @@ public class BadRedAuto extends LinearOpMode {
 
                 if (time.seconds() > parkTime) {
                     robot.intake.sticksOut();
-                    robot.wobbleArm.armDown();
+                    robot.wobbleArm.down();
 
                     Robot.log("Auto finished in " + ((System.currentTimeMillis() - robot.startTime) / 1000) + " seconds");
 

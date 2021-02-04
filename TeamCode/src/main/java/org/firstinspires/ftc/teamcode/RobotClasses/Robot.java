@@ -38,12 +38,6 @@ public class Robot {
     private final int loggerUpdatePeriod = 2;
     private final double xyTolerance = 1;
     private final double thetaTolerance = PI / 35;
-    public static double xKp = 0.6;
-    public static double yKp = 0.6;
-    public static double thetaKp = 6.0;
-    public static double xKd = 0.05;
-    public static double yKd = 0.05;
-    public static double thetaKd = 0.4;
 
     private double odoWeight = 1;
 
@@ -55,7 +49,6 @@ public class Robot {
     public boolean shoot = false;
     public boolean highGoal = false;
     public boolean preShoot = false;
-    private boolean flickHome = true;
     private boolean waitFeed = false;
     public int lastTarget = -1;
 
@@ -77,8 +70,8 @@ public class Robot {
     private final double[] shootXCor = {76.5, 84, 91.5, 108};
     private final double shootYCor = 150;
 
-    public int shootyOverride = 0;
-    public int numRingsOverride = 3;
+    public int shootYOverride = 0;
+    public int numRingsPreset = 3;
     public double xOffset = 0;
 
     // Powershot Debug Variables
@@ -121,7 +114,7 @@ public class Robot {
             startVoltTooLow = true;
         }
         drawGoal("black");
-        drawRobot(x, y, theta, "black");
+        drawRobot(this, "black");
         sendPacket();
     }
 
@@ -166,8 +159,8 @@ public class Robot {
                 double shootY = 63;
                 if (isAuto) {
                     shootY = 144 - Math.sqrt(Math.pow(88,2) - Math.pow(x - 108,2));
-                    if (shootyOverride != 0) {
-                        shootY = shootyOverride;
+                    if (shootYOverride != 0) {
+                        shootY = shootYOverride;
                     }
                 }
                 target = shootTargets(x, shootY, PI/2, 3);
@@ -178,7 +171,7 @@ public class Robot {
                 }
                 vThresh = Constants.POWERSHOT_VELOCITY - 40;
                 target = shootTargets(psShootPos[0], psShootPos[1], PI/2, 2);
-                shooter.setFlapPos(flapPositions[2]);
+                shooter.setFlapPosition(flapPositions[2]);
             }
 
             // Turn off intake and put mag up
@@ -194,7 +187,7 @@ public class Robot {
             // Move to shooting position
             if (!isAtPose(target[0], target[1], target[2], 0.5, 0.5, (isAuto && !highGoal) ? PI/40 : PI/35)) {
                 setTargetPoint(target[0], target[1], target[2]);
-                log("("+round(x)+", "+round(y)+", "+round(theta)+") Moving to shoot position: " + Arrays.toString(target));
+                log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") Moving to shoot position: " + Arrays.toString(target));
             }
 
             // Start auto-feed when mag is up, velocity is high enough, and robot is at position
@@ -205,11 +198,8 @@ public class Robot {
                     shootDelay = psDelay;
                 }
                 shoot = true;
-                numRings = 3;
-                if (numRings != numRingsOverride) {
-                    numRings = numRingsOverride;
-                }
-                shootyOverride = 0;
+                numRings = numRingsPreset;
+                shootYOverride = 0;
                 shootTime = System.currentTimeMillis();
                 preShoot = false;
                 log("Ready to shoot " + (highGoal ? "high goal" : "powershot") + ", velocity: " + shooter.getVelocity());
@@ -222,13 +212,13 @@ public class Robot {
 
             // Maintain/change robot alignment, set flap
             double[] target = {};
-            if (numRings > (3-numRingsOverride)) {
+            if (numRings > 0) {
                 if (highGoal) {
                     target = shootTargets(3);
                     lastTarget = 3;
                 } else {
                     target = shootTargets(2);
-                    shooter.setFlapPos(flapPositions[numRings-1]);
+                    shooter.setFlapPosition(flapPositions[numRings-1]);
                     lastTarget = numRings-1;
                 }
                 setTargetPoint(target[0], target[1], target[2]);
@@ -236,7 +226,7 @@ public class Robot {
 
             // Auto feed rings
             if (System.currentTimeMillis() - shootTime > shootDelay) {
-                if (numRings > (3-numRingsOverride)) {
+                if (numRings > 0) {
                     // Shoot ring only if robot at position
                     if (isAtPose(target[0], target[1], target[2])) {
                         log("In shoot Velocity: " + shooter.getVelocity());
@@ -256,7 +246,6 @@ public class Robot {
                         }
                         numRings--;
 
-                        flickHome = !flickHome;
                         log("Feed ring");
                     }
                 } else {
@@ -264,7 +253,6 @@ public class Robot {
                     shooter.flywheelOff();
                     shooter.magHome();
                     shoot = false;
-                    numRingsOverride = 0;
                     log("Shoot done");
                     log("Total shoot time: " +  (System.currentTimeMillis() - startShootTime) + " ms");
                 }
@@ -315,8 +303,7 @@ public class Robot {
 
         // Log Data
         if (cycleCounter % loggerUpdatePeriod == 0) {
-            logger.logData(System.currentTimeMillis()-startTime, x, y, theta, vx, vy, w, ax, ay, a,
-                    numRings, shooter.magHome, shooter.feedHome, lastTarget);
+            logger.logData(System.currentTimeMillis()-startTime, x, y, theta, vx, vy, w, ax, ay, a, numRings, shooter.magHome, shooter.feedHome, lastTarget);
         }
 
         // Dashboard Telemetry
@@ -338,7 +325,7 @@ public class Robot {
         if (odoWeight != 1) {
             drawRobot(t265.getCamX(), t265.getCamY(), t265.getCamTheta(), "red");
         }
-        drawRobot(x, y, theta, "black");
+        drawRobot(this, "black");
         if (ringPos.size() > 0) {
             for (double[] ring : ringPos) {
                 drawRing(ring[0], ring[1]);
@@ -353,22 +340,26 @@ public class Robot {
     }
 
     // Set variables for high goal shoot
-    public void highGoalShoot() {
+    public void highGoalShoot(int numRings) {
         if (!preShoot) {
-            flickHome = true;
             preShoot = true;
             highGoal = true;
+            numRingsPreset = numRings;
             startShootTime = System.currentTimeMillis();
             log("High goal shoot initiated");
         }
     }
 
+    public void highGoalShoot() {
+        highGoalShoot(3);
+    }
+
     // Set variables for powershot shoot
     public void powerShotShoot() {
         if (!preShoot) {
-            flickHome = true;
             preShoot = true;
             highGoal = false;
+            numRingsPreset = 3;
             startShootTime = System.currentTimeMillis();
             log("Powershot shoot initiated");
         }
@@ -378,7 +369,9 @@ public class Robot {
     public void cancelShoot() {
         preShoot = false;
         shoot = false;
-        numRings = 0; numRingsOverride = 0; shootyOverride = 0;
+        numRings = 0;
+        numRingsPreset = 0;
+        shootYOverride = 0;
         shooter.flywheelOff();
         intake.sticksOut();
         if (shooter.feedHome) {
@@ -432,8 +425,7 @@ public class Robot {
     }
 
     // Set target point (velocity specification, custom Kp and Kv values)
-    public void setTargetPoint(double xTarget, double yTarget, double thetaTarget, double vxTarget, double vyTarget, double wTarget,
-                               double xKp, double yKp, double thetaKp, double xKd, double yKd, double thetaKd) {
+    public void setTargetPoint(double xTarget, double yTarget, double thetaTarget, double vxTarget, double vyTarget, double wTarget, double xKp, double yKp, double thetaKp, double xKd, double yKd, double thetaKd) {
         // Make Sure thetaTarget is Between 0 and 2pi
         thetaTarget = thetaTarget % (PI * 2);
         if (thetaTarget < 0) {
@@ -450,28 +442,27 @@ public class Robot {
 
         drawRobot(xTarget, yTarget, thetaTarget, "blue");
 
-        drivetrain.setGlobalControls(xKp * (xTarget - x) + xKd * (vxTarget - vx), yKp * (yTarget - y) + yKd * (vyTarget - vy),
-                thetaKp * (-thetaControl) + thetaKd * (wTarget - w));
+        drivetrain.setGlobalControls(xKp * (xTarget - x) + xKd * (vxTarget - vx), yKp * (yTarget - y) + yKd * (vyTarget - vy), thetaKp * (-thetaControl) + thetaKd * (wTarget - w));
     }
 
     // Set target point (default Kp and Kv gains)
     public void setTargetPoint(double xTarget, double yTarget, double thetaTarget) {
-        setTargetPoint(xTarget, yTarget, thetaTarget, 0, 0, 0, xKp, yKp, thetaKp, xKd, yKd, thetaKd);
+        setTargetPoint(xTarget, yTarget, thetaTarget, 0, 0, 0, drivetrain.xKp, drivetrain.yKp, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
     }
 
     // Set target point (velocity specification, default Kp and Kv gains)
     public void setTargetPoint(double xTarget, double yTarget, double thetaTarget, double vxTarget, double vyTarget, double wTarget) {
-        setTargetPoint(xTarget, yTarget, thetaTarget, vxTarget, vyTarget, wTarget, xKp, yKp, thetaKp, xKd, yKd, thetaKd);
+        setTargetPoint(xTarget, yTarget, thetaTarget, vxTarget, vyTarget, wTarget, drivetrain.xKp, drivetrain.yKp, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
     }
 
     // Set target point (using pose, velocity specification, default Kp and Kv gains)
     public void setTargetPoint(Pose pose) {
-        setTargetPoint(pose.getX(), pose.getY(), pose.getTheta(), pose.getVx(), pose.getVy(), pose.getW(), xKp, yKp, thetaKp, xKd, yKd, thetaKd);
+        setTargetPoint(pose.getX(), pose.getY(), pose.getTheta(), pose.getVx(), pose.getVy(), pose.getW(), drivetrain.xKp, drivetrain.yKp, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
     }
 
     // Set target point (using pose, custom theta and omega, default Kp and Kv gains)
     public void setTargetPoint(Pose pose, double theta, double w) {
-        setTargetPoint(pose.getX(), pose.getY(), theta, pose.getVx(), pose.getVy(), w, xKp, yKp, thetaKp, xKd, yKd, thetaKd);
+        setTargetPoint(pose.getX(), pose.getY(), theta, pose.getVx(), pose.getVy(), w, drivetrain.xKp, drivetrain.yKp, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
     }
 
     // Set target point (using pose, velocity specification, custom Kp and Kv gains)

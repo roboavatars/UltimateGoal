@@ -4,7 +4,6 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.Debug.Dashboard;
 import org.firstinspires.ftc.teamcode.OpenCV.RingLocator;
 import org.firstinspires.ftc.teamcode.OpenCV.StackHeightDetector;
 import org.firstinspires.ftc.teamcode.OpenCV.StackHeightPipeline.RingCase;
@@ -19,8 +18,8 @@ import java.util.Arrays;
 
 import static java.lang.Math.PI;
 
-@Autonomous(name = "1 RedAuto", preselectTeleOp = "Teleop")
-public class RedAuto extends LinearOpMode {
+@Autonomous(name = "1 Red Auto", preselectTeleOp = "Teleop")
+public class NewRedAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -133,7 +132,7 @@ public class RedAuto extends LinearOpMode {
         robot.intake.blockerDown();
         robot.intake.leftHalf();
         robot.wobbleArm.setArmPosition(-120);
-        robot.wobbleArm.clampWobble();
+        robot.wobbleArm.clamp();
 
         ElapsedTime time = new ElapsedTime();
 
@@ -148,7 +147,7 @@ public class RedAuto extends LinearOpMode {
                 if (time.seconds() > goToStackTime) {
                     robot.wobbleArm.setArmPosition(-300);
 
-                    robot.shootyOverride = 40;
+                    robot.shootYOverride = 40;
                     robot.highGoalShoot();
 
                     goToStack = true;
@@ -170,13 +169,12 @@ public class RedAuto extends LinearOpMode {
             // Intake start stack
             else if (!intakeStack) {
                 if (time.seconds() < intakeStackTime) {
-                    /*double input = Math.min(55, 40 + 6 * time.seconds() + 1.5 * Math.sin(8 * time.seconds()));
-                    robot.setTargetPoint(108, input, PI/2, 0.8, 0.6, 6);*/
+//                    double input = Math.min(55, 40 + 6 * time.seconds() + 1.5 * Math.sin(8 * time.seconds()));
+//                    robot.setTargetPoint(108, input, PI/2, 0.8, 0.6, 6);
                     robot.setTargetPoint(108, 48, PI/2);
                 } else if (time.seconds() < shootHighGoal1RingTime) {
-                    robot.shootyOverride = 55;
-                    robot.numRingsOverride = 1;
-                    robot.highGoalShoot();
+                    robot.shootYOverride = 55;
+                    robot.highGoalShoot(1);
                 } else if (time.seconds() < intakeStack2Time) {
                     robot.setTargetPoint(108, 58, PI/2);
                 }
@@ -272,14 +270,14 @@ public class RedAuto extends LinearOpMode {
                 if (time.seconds() > deliverWobbleTime + 0.75) {
                     robot.wobbleArm.setArmPosition(-300);
                 } else if (time.seconds() > deliverWobbleTime - 0.25) {
-                    robot.wobbleArm.unClampWobble();
+                    robot.wobbleArm.unClamp();
                 } else if (time.seconds() > deliverWobbleTime - 1) {
                     robot.wobbleArm.setArmPosition(-600);
                 }
 
                 if (time.seconds() > deliverWobbleTime + 1) {
 
-                    robot.wobbleArm.clampWobble();
+                    robot.wobbleArm.clamp();
                     robot.intake.off();
 
                     Waypoint[] intakeWobble2Waypoints = new Waypoint[] {
@@ -314,11 +312,11 @@ public class RedAuto extends LinearOpMode {
                 if (reachedWgPickup && time.seconds() > reachedTime + 1) {
                     robot.wobbleArm.setArmPosition(-300);
                 } else if (reachedWgPickup && time.seconds() > reachedTime + 0.5) {
-                    robot.wobbleArm.clampWobble();
+                    robot.wobbleArm.clamp();
                 } else if (time.seconds() > intakeWobble2Time - 1.5) {
-                    robot.wobbleArm.unClampWobble();
+                    robot.wobbleArm.unClamp();
                 } else if (time.seconds() > intakeWobble2Time - 2) {
-                    robot.wobbleArm.armDown();
+                    robot.wobbleArm.down();
                 }
 
                 if (reachedWgPickup && time.seconds() > reachedTime + 1.5) {
@@ -370,14 +368,14 @@ public class RedAuto extends LinearOpMode {
                 if (time.seconds() > deliverWobble2Time + 0.75) {
                     robot.wobbleArm.setArmPosition(-300);
                 } else if (time.seconds() > deliverWobble2Time - 0.25) {
-                    robot.wobbleArm.unClampWobble();
+                    robot.wobbleArm.unClamp();
                 } else if (time.seconds() > deliverWobble2Time - 1) {
                     robot.wobbleArm.setArmPosition(-600);
                 }
 
                 if (time.seconds() > deliverWobble2Time + 1) {
 
-                    robot.wobbleArm.clampWobble();
+                    robot.wobbleArm.clamp();
 
                     Waypoint[] parkWaypoints;
                     if (ringCase == RingCase.Zero) {
@@ -412,7 +410,7 @@ public class RedAuto extends LinearOpMode {
 
                 if (time.seconds() > parkTime) {
                     robot.intake.sticksOut();
-                    robot.wobbleArm.armDown();
+                    robot.wobbleArm.down();
 
                     Robot.log("Auto finished in " + ((System.currentTimeMillis() - robot.startTime) / 1000) + " seconds");
 

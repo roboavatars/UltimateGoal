@@ -9,9 +9,9 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import java.util.Arrays;
 
-@TeleOp @Config
+@TeleOp
+@Config
 public class Teleop extends LinearOpMode {
-
     public int startX = 90;
     public int startY = 9;
     public double startTheta = Math.PI/2;
@@ -128,9 +128,9 @@ public class Teleop extends LinearOpMode {
             if (gamepad2.a && !clampToggle) {
                 clampToggle = true;
                 if (clamped) {
-                    robot.wobbleArm.unClampWobble();
+                    robot.wobbleArm.unClamp();
                 } else {
-                    robot.wobbleArm.clampWobble();
+                    robot.wobbleArm.clamp();
                 }
                 clamped = !clamped;
             } else if (!gamepad2.a && clampToggle) {

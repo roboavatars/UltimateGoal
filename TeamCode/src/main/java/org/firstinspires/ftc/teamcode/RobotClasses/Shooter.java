@@ -67,10 +67,10 @@ public class Shooter {
         return shooterMotor1.getVelocity();
     }
 
-    public void setFlapPos(double pos) {
-        if (pos != lastFlap) {
-            flapServo.setPosition(pos);
-            lastFlap = pos;
+    public void setFlapPosition(double position) {
+        if (position != lastFlap) {
+            flapServo.setPosition(position);
+            lastFlap = position;
         }
     }
 
@@ -87,13 +87,6 @@ public class Shooter {
         magHome = true;
         magVibrate = false;
     }
-
-    public void magVibrate() {
-        magServo.setPosition(Constants.MAG_VIBRATE_POS);
-        magHome = false;
-        magVibrate = true;
-    }
-
     public void magShoot() {
         magServo.setPosition(Constants.MAG_SHOOT_POS);
         magHome = false;

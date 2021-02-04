@@ -3,10 +3,16 @@ package org.firstinspires.ftc.teamcode.Debug;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
+import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
+
 public class Dashboard {
 
     public static FtcDashboard dashboard = FtcDashboard.getInstance();
     public static TelemetryPacket packet = new TelemetryPacket();
+
+    public static void drawRobot(Robot robot, String color) {
+        drawRobot(robot.x, robot.y, robot.theta, color);
+    }
 
     public static void drawRobot(double robotX, double robotY, double robotTheta, String color) {
         double r = 9 * Math.sqrt(2);

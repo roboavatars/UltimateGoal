@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.AutoPrograms;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -17,9 +18,10 @@ import java.util.Arrays;
 
 import static java.lang.Math.PI;
 
+@Deprecated
 @Autonomous
-public class OldRedAuto extends LinearOpMode {
-
+@Disabled
+public class FirstRedAuto extends LinearOpMode {
     @Override
     public void runOpMode() {
         /*
@@ -127,7 +129,7 @@ public class OldRedAuto extends LinearOpMode {
 
         ElapsedTime time = new ElapsedTime();
 
-        robot.wobbleArm.clampWobble();
+        robot.wobbleArm.clamp();
 
         while(opModeIsActive()) {
 
@@ -194,9 +196,9 @@ public class OldRedAuto extends LinearOpMode {
                 if (time.seconds() > deliverWobbleTime + 1) {
                     robot.wobbleArm.setArmPosition(-300);
                 } else if (time.seconds() > deliverWobbleTime + 0.75) {
-                    robot.wobbleArm.unClampWobble();
+                    robot.wobbleArm.unClamp();
                 } else if (time.seconds() > deliverWobbleTime + 0.25) {
-                    robot.wobbleArm.armDown();
+                    robot.wobbleArm.down();
                 }
 
                 if (time.seconds() > deliverWobbleTime + 1.25) {
@@ -251,11 +253,11 @@ public class OldRedAuto extends LinearOpMode {
                 if (reached && time.seconds() > reachedTime + 1) {
                     robot.wobbleArm.setArmPosition(-300);
                 } else if (reached && time.seconds() > reachedTime + 0.5) {
-                    robot.wobbleArm.clampWobble();
+                    robot.wobbleArm.clamp();
                 } else if (time.seconds() > intakeWobble2Time - 1.5) {
-                    robot.wobbleArm.unClampWobble();
+                    robot.wobbleArm.unClamp();
                 } else if (time.seconds() > intakeWobble2Time - 2) {
-                    robot.wobbleArm.armDown();
+                    robot.wobbleArm.down();
                 }
 
                 if (reached && time.seconds() > reachedTime + 1.5) {
@@ -335,13 +337,13 @@ public class OldRedAuto extends LinearOpMode {
                 if (time.seconds() > deliverWobble2Time + 1) {
                     robot.wobbleArm.setArmPosition(-300);
                 } else if (time.seconds() > deliverWobble2Time + 0.75) {
-                    robot.wobbleArm.unClampWobble();
+                    robot.wobbleArm.unClamp();
                 } else if (time.seconds() > deliverWobble2Time + 0.25) {
-                    robot.wobbleArm.armDown();
+                    robot.wobbleArm.down();
                 }
 
                 if (time.seconds() > deliverWobble2Time + 1.25) {
-                    robot.wobbleArm.clampWobble();
+                    robot.wobbleArm.clamp();
                     robot.intake.off();
 
                     if (ringCase == RingCase.Four) {
@@ -393,7 +395,7 @@ public class OldRedAuto extends LinearOpMode {
                     };
                     parkPath = new Path(new ArrayList<>(Arrays.asList(parkWaypoints)));
 
-                    robot.wobbleArm.armDown();
+                    robot.wobbleArm.down();
                     robot.intake.off();
                     robot.highGoalShoot();
                     shootHighGoal2 = true;
@@ -415,7 +417,7 @@ public class OldRedAuto extends LinearOpMode {
 
                     if (time.seconds() > parkTime) {
                         robot.intake.sticksOut();
-                        robot.wobbleArm.armDown();
+                        robot.wobbleArm.down();
 
                         park = true;
                     }
