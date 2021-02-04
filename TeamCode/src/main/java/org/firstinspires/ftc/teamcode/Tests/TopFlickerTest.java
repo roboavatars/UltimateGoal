@@ -13,7 +13,7 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 
 @TeleOp
 @Config
-//@Disabled
+@Disabled
 public class TopFlickerTest extends LinearOpMode {
 
     public static double midPos = Constants.FEED_MID_POS;
@@ -55,11 +55,11 @@ public class TopFlickerTest extends LinearOpMode {
 
                 // Intake on/off/rev
                 if (gamepad1.right_trigger > 0) {
-                    intake.intakeOn();
+                    intake.on();
                 } else if (gamepad1.left_trigger > 0) {
-                    intake.intakeRev();
+                    intake.reverse();
                 } else {
-                    intake.intakeOff();
+                    intake.off();
                 }
 
                 // Toggle mag for shoot/home position

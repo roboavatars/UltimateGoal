@@ -35,21 +35,13 @@ public class WobbleArm {
 
     public void armUp() {
         clampWobble();
-        if (isAuto) {
-            setPosition(Constants.WOBBLE_UP_POS);
-        } else {
-            setPosition(Constants.WOBBLE_UP_TELEOP_POS);
-        }
+        setPosition(Constants.WOBBLE_UP_POS);
         wobbleMotor.setPower(0.4);
     }
 
     public void armDown() {
         clampWobble();
-        if (isAuto) {
-            setPosition(Constants.WOBBLE_DOWN_POS);
-        } else {
-            setPosition(Constants.WOBBLE_DOWN_TELEOP_POS);
-        }
+        setPosition(Constants.WOBBLE_DOWN_POS);
         wobbleMotor.setPower(0.4);
     }
 

@@ -49,11 +49,11 @@ public class Teleop extends LinearOpMode {
         while (opModeIsActive()) {
             // Intake on/off/rev
             if (gamepad1.right_trigger > 0) {
-                robot.intake.intakeOn();
+                robot.intake.on();
             } else if (gamepad1.left_trigger > 0) {
-                robot.intake.intakeRev();
-            } else if (!robot.vibrateMag) {
-                robot.intake.intakeOff();
+                robot.intake.reverse();
+            } else {
+                robot.intake.off();
             }
 
             // Auto high goal and powershot shoot
@@ -135,12 +135,6 @@ public class Teleop extends LinearOpMode {
                 clamped = !clamped;
             } else if (!gamepad2.a && clampToggle) {
                 clampToggle = false;
-            }
-
-            // Mag vibrate to unstuck rings
-            if (gamepad1.b) {
-                robot.vibrateMag = true;
-                robot.vibrateTime = System.currentTimeMillis();
             }
 
             // Slow align mode

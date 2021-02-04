@@ -34,15 +34,15 @@ public class Intake {
         op.telemetry.addData("Status", "Intake initialized");
     }
 
-    public void intakeOn() {
+    public void on() {
         setPower(1);
     }
 
-    public void intakeRev() {
+    public void reverse() {
         setPower(-1);
     }
 
-    public void intakeOff() {
+    public void off() {
         setPower(0);
     }
 
