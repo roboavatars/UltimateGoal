@@ -33,8 +33,6 @@ public class StackHeightPipeline extends OpenCvPipeline {
     public static double ONE_MAX = 2.7;
     public static double FOUR_MIN = 0.5;
 
-    public int x1 = 240, y1 = 40, w = 80, h = 80;
-
     // Results
     private double[] result = new double[3];
     private RingCase ringCase = RingCase.Zero;
@@ -63,7 +61,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         // Process Image
-        processorOut = processor.processFrame(new Mat(input, new Rect(x1, y1, w, h)));
+        processorOut = processor.processFrame(new Mat(input, new Rect(240, 40, 80, 80)));
         input = processorOut[0];
         processed = processorOut[1];
 
@@ -89,7 +87,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
                 double wh_ratio = width/height;
                 log("Loop(" + i + "): " + width + " " + height + " " + wh_ratio);
 
-                result = new double[]{width, height, wh_ratio};
+                result = new double[] {width, height, wh_ratio};
 
                 // Checking WH ratio because heights were inconsistent in testing images
                 // This works better at a higher camera angle but comparing the height would be better for a lower camera angle.
@@ -105,8 +103,8 @@ public class StackHeightPipeline extends OpenCvPipeline {
 
         // No Contours Detected
         if (i == 0) {
-            result = new double[]{0,0,0};
-            ringCase = RingCase.Zero;
+            result = new double[] {0,0,0};
+            ringCase = RingCase.Four;
             log("No Contours Detected");
         }
 

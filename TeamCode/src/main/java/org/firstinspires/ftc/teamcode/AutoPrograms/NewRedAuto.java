@@ -107,7 +107,7 @@ public class NewRedAuto extends LinearOpMode {
         waitForStart();
 
         // Wobble coordinates based on ring case
-        RingCase ringCase = RingCase.Four; //detector.getModeResult();
+        RingCase ringCase = detector.getModeResult();
         Robot.log("Ring case: " + ringCase);
 
         double[][] wobbleDelivery = {{121, 82}, {96, 103}, {122, 130}};

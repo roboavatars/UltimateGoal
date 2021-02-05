@@ -465,12 +465,12 @@ public class Robot {
         setTargetPoint(pose.getX(), pose.getY(), theta, pose.getVx(), pose.getVy(), w, drivetrain.xKp, drivetrain.yKp, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
     }
 
-    public void setTargetPoint(Pose pose, double theta, double w, double xyK) {
-        setTargetPoint(pose.getX(), pose.getY(), theta, pose.getVx(), pose.getVy(), w, xyK, xyK, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
+    public void setTargetPoint(Pose pose, double theta, double w, double xyKp) {
+        setTargetPoint(pose.getX(), pose.getY(), theta, pose.getVx(), pose.getVy(), w, xyKp, xyKp, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
     }
 
-    public void setTargetPoint(Pose pose, double xyK) {
-        setTargetPoint(pose.getX(), pose.getY(), theta, pose.getVx(), pose.getVy(), w, xyK, xyK, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
+    public void setTargetPoint(Pose pose, double xyKp) {
+        setTargetPoint(pose.getX(), pose.getY(), theta, pose.getVx(), pose.getVy(), w, xyKp, xyKp, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
     }
 
     // Set target point (using pose, velocity specification, custom Kp and Kv gains)
