@@ -19,7 +19,6 @@ public class Shooter {
     private double lastFlap = 0;
 
     public boolean magHome = true;
-    public boolean magVibrate = false;
     public boolean feedHome = true;
 
     public Shooter(LinearOpMode op) {
@@ -85,7 +84,6 @@ public class Shooter {
     public void magHome() {
         magServo.setPosition(Constants.MAG_HOME_POS);
         magHome = true;
-        magVibrate = false;
     }
     public void magShoot() {
         magServo.setPosition(Constants.MAG_SHOOT_POS);

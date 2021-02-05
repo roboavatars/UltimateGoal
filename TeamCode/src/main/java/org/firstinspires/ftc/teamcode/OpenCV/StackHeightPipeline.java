@@ -33,6 +33,8 @@ public class StackHeightPipeline extends OpenCvPipeline {
     public static double ONE_MAX = 2.7;
     public static double FOUR_MIN = 0.5;
 
+    public int x1 = 240, y1 = 40, w = 80, h = 80;
+
     // Results
     private double[] result = new double[3];
     private RingCase ringCase = RingCase.Zero;
@@ -61,7 +63,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         // Process Image
-        processorOut = processor.processFrame(new Mat(input, new Rect(240, 40, 80, 80)));
+        processorOut = processor.processFrame(new Mat(input, new Rect(x1, y1, w, h)));
         input = processorOut[0];
         processed = processorOut[1];
 
@@ -104,7 +106,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
         // No Contours Detected
         if (i == 0) {
             result = new double[]{0,0,0};
-            ringCase = RingCase.Four;
+            ringCase = RingCase.Zero;
             log("No Contours Detected");
         }
 

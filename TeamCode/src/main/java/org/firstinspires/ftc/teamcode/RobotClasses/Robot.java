@@ -70,7 +70,7 @@ public class Robot {
     private final double[] shootXCor = {76.5, 84, 91.5, 108};
     private final double shootYCor = 150;
 
-    public int shootYOverride = 0;
+    public double shootYOverride = 0;
     public int numRingsPreset = 3;
     public double xOffset = 0;
 
@@ -245,8 +245,6 @@ public class Robot {
                             log("Feed ring 3");
                         }
                         numRings--;
-
-                        log("Feed ring");
                     }
                 } else {
                     shooter.feedHome();
@@ -318,6 +316,7 @@ public class Robot {
         addPacket("6 shoot", shoot  + " " + preShoot + " " + highGoal);
         addPacket("7 Time", (System.currentTimeMillis() - startTime) / 1000);
         addPacket("8 Update Frequency (Hz)", 1 / timeDiff);
+        addPacket("pos", wobbleArm.getPosition());
 
         // Dashboard Drawings
         drawGoal("black");
@@ -341,10 +340,11 @@ public class Robot {
 
     // Set variables for high goal shoot
     public void highGoalShoot(int numRings) {
-        if (!preShoot) {
+        if (!preShoot && !shoot) {
             preShoot = true;
             highGoal = true;
             numRingsPreset = numRings;
+            if (numRings != 3) log("Shooting with " + numRings + " rings");
             startShootTime = System.currentTimeMillis();
             log("High goal shoot initiated");
         }
@@ -356,7 +356,7 @@ public class Robot {
 
     // Set variables for powershot shoot
     public void powerShotShoot() {
-        if (!preShoot) {
+        if (!preShoot && !shoot) {
             preShoot = true;
             highGoal = false;
             numRingsPreset = 3;
@@ -463,6 +463,14 @@ public class Robot {
     // Set target point (using pose, custom theta and omega, default Kp and Kv gains)
     public void setTargetPoint(Pose pose, double theta, double w) {
         setTargetPoint(pose.getX(), pose.getY(), theta, pose.getVx(), pose.getVy(), w, drivetrain.xKp, drivetrain.yKp, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
+    }
+
+    public void setTargetPoint(Pose pose, double theta, double w, double xyK) {
+        setTargetPoint(pose.getX(), pose.getY(), theta, pose.getVx(), pose.getVy(), w, xyK, xyK, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
+    }
+
+    public void setTargetPoint(Pose pose, double xyK) {
+        setTargetPoint(pose.getX(), pose.getY(), theta, pose.getVx(), pose.getVy(), w, xyK, xyK, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
     }
 
     // Set target point (using pose, velocity specification, custom Kp and Kv gains)

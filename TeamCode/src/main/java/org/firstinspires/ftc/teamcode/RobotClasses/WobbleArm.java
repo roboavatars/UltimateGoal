@@ -54,6 +54,10 @@ public class WobbleArm {
         wobbleMotor.setPower(0.4);
     }
 
+    public int getPosition() {
+        return wobbleMotor.getCurrentPosition();
+    }
+
     public void clamp() {
         wobbleServo.setPosition(Constants.CLAMP_WOBBLE_POS);
     }
