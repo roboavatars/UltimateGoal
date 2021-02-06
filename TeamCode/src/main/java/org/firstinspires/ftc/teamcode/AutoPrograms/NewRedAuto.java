@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.OpenCV.Ring;
 import org.firstinspires.ftc.teamcode.OpenCV.RingLocator;
 import org.firstinspires.ftc.teamcode.OpenCV.StackHeightDetector;
 import org.firstinspires.ftc.teamcode.OpenCV.StackHeightPipeline.RingCase;
@@ -48,7 +49,7 @@ public class NewRedAuto extends LinearOpMode {
         detector.start();
 
         RingLocator locator = null; // cannot run two pipelines at same time
-        ArrayList<double[]> ringPos = new ArrayList<>(3);
+        ArrayList<Ring> ringPos = new ArrayList<>(3);
         robot.ringPos = ringPos;
 
         // Segments
@@ -219,22 +220,22 @@ public class NewRedAuto extends LinearOpMode {
 
                         robot.intake.on();
 
-//                        ringPos.add(locator.getAbsRingPos(robot.x, robot.y, robot.theta));
-                        ringPos.add(new double[] {86, 130});
-                        ringPos.add(new double[] {94, 110});
-                        ringPos.add(new double[] {110, 120});
+//                        ringPos = locator.getRings(robot.x, robot.y, robot.theta);
+                        ringPos.add(new Ring(86, 130));
+                        ringPos.add(new Ring(94, 110));
+                        ringPos.add(new Ring(110, 120));
                         locator.stop();
 
                         Waypoint[] bounceBackWaypoints = new Waypoint[] {
                                 new Waypoint(robot.x, robot.y, robot.theta, 50, 60, 0, 0),
 
-                                new Waypoint(ringPos.get(0)[0], ringPos.get(0)[1] - 15, PI/2, 30, 40, 0, 1.5),
-                                new Waypoint(ringPos.get(0)[0] + 3, ringPos.get(0)[1] - 5, PI/2, -30, -10, 0, 3.0),
+                                new Waypoint(ringPos.get(0).getX(), ringPos.get(0).getY() - 15, PI/2, 30, 40, 0, 1.5),
+                                new Waypoint(ringPos.get(0).getX() + 3, ringPos.get(0).getY() - 5, PI/2, -30, -10, 0, 3.0),
 
-                                new Waypoint(ringPos.get(1)[0], ringPos.get(1)[1] - 15, PI/2, 30, 30, 0, 4.0),
-                                new Waypoint(ringPos.get(1)[0] + 3, ringPos.get(1)[1] - 5, PI/2, -30, -10, 0, 5.0),
+                                new Waypoint(ringPos.get(1).getX(), ringPos.get(1).getY() - 15, PI/2, 30, 30, 0, 4.0),
+                                new Waypoint(ringPos.get(1).getX() + 3, ringPos.get(1).getY() - 5, PI/2, -30, -10, 0, 5.0),
 
-                                new Waypoint(ringPos.get(2)[0], ringPos.get(2)[1], PI/2, 30, 40, 0, bounceBackTime),
+                                new Waypoint(ringPos.get(2).getX(), ringPos.get(2).getY(), PI/2, 30, 40, 0, bounceBackTime),
                         };
                         bounceBackPath = new Path(new ArrayList<>(Arrays.asList(bounceBackWaypoints)));
 

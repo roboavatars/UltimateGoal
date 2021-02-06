@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.Debug;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 
+import org.firstinspires.ftc.teamcode.OpenCV.Ring;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 public class Dashboard {
@@ -35,7 +36,9 @@ public class Dashboard {
         packet.fieldOverlay().setStroke(color).strokeLine(y1 - 72, 72 - x1, y2 - 72, 72 - x2);
     }
 
-    public static void drawRing(double x, double y) {
+    public static void drawRing(Ring ring) {
+        double x = ring.getX();
+        double y = ring.getY();
         packet.fieldOverlay().setFill("orange").fillCircle(x, y,  2.5);
         packet.fieldOverlay().setFill("white").fillCircle(x, y,  1.5);
     }

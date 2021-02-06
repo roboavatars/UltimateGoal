@@ -49,7 +49,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
     private double yRel;
     private double dist;
     private double distMin;
-    private double[] ringPos = new double[2];
+    private ArrayList<Ring> rings = new ArrayList<>();
 
     public RingLocatorPipeline() {
         // Clear Old Images
@@ -76,7 +76,6 @@ public class RingLocatorPipeline extends OpenCvPipeline {
         Imgproc.findContours(processed, contours, new Mat(), Imgproc.RETR_LIST, Imgproc.CHAIN_APPROX_SIMPLE);
 
         // Loop Through Contours
-        distMin = 48 * Math.sqrt(13); // Longest Diagonal on Field
         for (MatOfPoint contour : contours) {
             Point[] contourArray = contour.toArray();
 
@@ -101,18 +100,15 @@ public class RingLocatorPipeline extends OpenCvPipeline {
                     Imgproc.ellipse(input, ellipse, new Scalar(0, 255, 0), 1);
 
                     // Calculate Center of Ring if Y is in Valid Domain
-                    if (0 < yPix && yPix < 0.8827) {
+                    if (0 < yPix && yPix < 0.7296) {
                         double[] xy = map2Dto3D(xPix, yPix);
-                        xRel = xy[0];
-                        yRel = xy[1];
-                        dist = Math.hypot(xRel, yRel);
+                        Ring curRing = new Ring(xy[0], xy[1]);
 
-                        log("(" + xRel + ", " + yRel + ") " + dist);
+                        log("(" + curRing.getRelX() + ", " + curRing.getRelY() + ") " + curRing.getRelDist());
 
-                        // Save Closest Ring Position to Robot
-                        if (0 < yRel && dist < distMin) {
-                            distMin = dist;
-                            ringPos = new double[] {xRel, yRel};
+                        // Save Ring Position
+                        if (0 < yRel) {
+                            rings.add(curRing);
                         }
                     }
                 } else {
@@ -121,13 +117,11 @@ public class RingLocatorPipeline extends OpenCvPipeline {
             }
         }
 
-        // Return (-1, -1) If No Rings Detected
-        if (distMin == 48 * Math.sqrt(13)) {
-            ringPos = new double[] {-1, -1};
+        // Return (0, 0) If No Rings Detected
+        if (rings.size() == 0) {
+            rings.add(new Ring(0, 0));
             log("No Rings Detected");
         }
-
-        log("Result: " + Arrays.toString(ringPos));
 
         return input;
     }
@@ -142,32 +136,9 @@ public class RingLocatorPipeline extends OpenCvPipeline {
         return new double[] {Math.tan(hfov) * xPix * Math.hypot(CAM_HEIGHT, y), y};
     }
 
-    // Returns ring's absolute position using robot's position and ring's position relative to camera
-    public double[] getAbsRingPos(double robotX, double robotY, double robotTheta) {
-        double ringX = ringPos[0];
-        double ringY = ringPos[1] + CAM_FRONT;
-
-        double targetX = robotX + ringX * Math.sin(robotTheta) + ringY * Math.cos(robotTheta);
-        double targetY = robotY + ringX * Math.cos(robotTheta) + ringY * Math.sin(robotTheta);
-        double targetTheta = Math.atan2(targetY - robotY, targetX - robotX);
-
-        // Ignore ring if it's out of field
-        if (targetX < 48 || targetX > 144 || targetY < 80 || targetY > 144) {
-            targetX = robotX;
-            targetY = robotY;
-        }
-
-        return new double[] {targetX, targetY, targetTheta};
-    }
-
-    // Returns distance between ring and center of robot
-    public double getDist() {
-        return Math.hypot(ringPos[0], ringPos[1] + CAM_FRONT);
-    }
-
-    // Returns ring's position relative to camera
-    public double[] getRelRingPos() {
-        return ringPos;
+    // Return rings
+    public ArrayList<Ring> getRings() {
+        return rings;
     }
 
     private void log(String message) {

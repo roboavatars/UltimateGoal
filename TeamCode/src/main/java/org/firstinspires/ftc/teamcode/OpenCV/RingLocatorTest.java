@@ -71,12 +71,12 @@ public class RingLocatorTest extends LinearOpMode {
                 }
             }
 
-            ringPos = detector.getAbsRingPos(robot.x, robot.y, robot.theta);
+            ringPos = detector.getRings(robot.x, robot.y, robot.theta).get(0).getAbsCoords();
             if (!gamepad1.b) {
                 robot.drivetrain.setControls(-0.5 * gamepad1.left_stick_y, -0.5 * gamepad1.left_stick_x, -0.5 * gamepad1.right_stick_x);
             } else {
                 if (ringPos[0] != -1) {
-                    robot.setTargetPoint(ringPos[0], ringPos[1], ringPos[2], 0.30, 0.30, 4);
+                    robot.setTargetPoint(ringPos[0], ringPos[1], ringPos[2], 0, 0, 0);
                     intakePower = 1;
                 } else {
                     robot.drivetrain.setControls(0, 0, 0);
@@ -86,7 +86,6 @@ public class RingLocatorTest extends LinearOpMode {
             robot.update();
 
             addPacket("Absolute Coords", Arrays.toString(ringPos));
-            addPacket("Relative Coords", Arrays.toString(detector.getRelRingPos()));
             addPacket("FPS", detector.getFPS());
             addPacket("Frame Count", detector.getFrameCount());
             sendPacket();

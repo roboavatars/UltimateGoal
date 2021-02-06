@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 
 import org.firstinspires.ftc.teamcode.Debug.Logger;
+import org.firstinspires.ftc.teamcode.OpenCV.Ring;
 import org.firstinspires.ftc.teamcode.Pathing.Pose;
 
 import java.util.ArrayList;
@@ -81,7 +82,7 @@ public class Robot {
     public static double flap2 = 0.5;
     public static double[] flapPositions = {flap0, flap1, flap2};
 
-    public ArrayList<double[]> ringPos = new ArrayList<>();
+    public ArrayList<Ring> ringPos = new ArrayList<>();
 
     // OpMode Stuff
     private LinearOpMode op;
@@ -325,10 +326,8 @@ public class Robot {
             drawRobot(t265.getCamX(), t265.getCamY(), t265.getCamTheta(), "red");
         }
         drawRobot(this, "black");
-        if (ringPos.size() > 0) {
-            for (double[] ring : ringPos) {
-                drawRing(ring[0], ring[1]);
-            }
+        for (Ring ring : ringPos) {
+            drawRing(ring);
         }
         sendPacket();
 

@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Debug.Dashboard;
+import org.firstinspires.ftc.teamcode.OpenCV.Ring;
 import org.firstinspires.ftc.teamcode.OpenCV.RingLocator;
 import org.firstinspires.ftc.teamcode.OpenCV.StackHeightDetector;
 import org.firstinspires.ftc.teamcode.OpenCV.StackHeightPipeline.RingCase;
@@ -51,7 +52,7 @@ public class SecondRedAuto extends LinearOpMode {
         detector.start();
 
         RingLocator locator = null; //new RingLocator(this);
-        ArrayList<double[]> rings = new ArrayList<>(3);
+        ArrayList<Ring> rings = new ArrayList<>(3);
 
         // Segments
         boolean startLine = false;
@@ -138,9 +139,8 @@ public class SecondRedAuto extends LinearOpMode {
         ElapsedTime time = new ElapsedTime();
 
         while (opModeIsActive()) {
-
-            for (double[] ring : rings) {
-                Dashboard.drawRing(ring[0], ring[1]);
+            for (Ring ring : rings) {
+                Dashboard.drawRing(ring);
             }
 
             // Go to shooting line to shoot powershots
@@ -213,19 +213,19 @@ public class SecondRedAuto extends LinearOpMode {
 
                     robot.intake.on();
 
-                    rings.add(locator.getAbsRingPos(robot.x, robot.y, robot.theta));
-                    rings.add(new double[] {86, 130});
-//                    rings.add(new double[] {94, 110});
-                    rings.add(new double[] {110, 120});
+//                    rings = locator.getRings(robot.x, robot.y, robot.theta);
+                    rings.add(new Ring(86, 130));
+                    rings.add(new Ring(94, 110));
+                    rings.add(new Ring(110, 120));
                     locator.stop();
 
                     Waypoint[] bounceBackWaypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, robot.theta, 50, 60, 0, 0),
 
-                            new Waypoint(rings.get(2)[0], rings.get(2)[1], PI/2, 30, -30, 0, 1.5),
-                            new Waypoint(rings.get(2)[0] - 2, rings.get(2)[1] - 10, PI/2, -40, 30, 0, 2.25),
+                            new Waypoint(rings.get(2).getX(), rings.get(2).getY(), PI/2, 30, -30, 0, 1.5),
+                            new Waypoint(rings.get(2).getX() - 2, rings.get(2).getY() - 10, PI/2, -40, 30, 0, 2.25),
 
-                            new Waypoint(rings.get(1)[0], rings.get(1)[1], PI/2, 40, 40, 0, bounceBackTime),
+                            new Waypoint(rings.get(1).getX(), rings.get(1).getY(), PI/2, 40, 40, 0, bounceBackTime),
                     };
                     bounceBackPath = new Path(new ArrayList<>(Arrays.asList(bounceBackWaypoints)));
 
@@ -368,7 +368,7 @@ public class SecondRedAuto extends LinearOpMode {
 
                     Waypoint[] bounceDeliverWobble2Waypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, robot.theta, 50, 40, 0, 0),
-                            new Waypoint(rings.get(0)[0], rings.get(0)[1] - 2, 2*PI/3, 20, 30, 0, 1.75),
+                            new Waypoint(rings.get(0).getX(), rings.get(0).getY() - 2, 2*PI/3, 20, 30, 0, 1.75),
                             new Waypoint(wobble2Cor[0], wobble2Cor[1], PI, 30, 20, 0, bounceDeliverWobble2Time),
                     };
                     bounceDeliverWobble2Path = new Path(new ArrayList<>(Arrays.asList(bounceDeliverWobble2Waypoints)));
