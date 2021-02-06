@@ -59,8 +59,8 @@ public class Robot {
     public double startShootTime;
     public double feedHomeTime;
     public double feedHomeDelay = 100;
-    public static int highGoalDelay = 150;
-    public static int psDelay = 200;
+    public static int highGoalDelay = 250;
+    public static int psDelay = 250;
 
     // Motion Variables
     public double x, y, theta, vx, vy, w;
@@ -248,10 +248,11 @@ public class Robot {
                         numRings--;
                     }
                 } else {
-                    shooter.feedHome();
                     shooter.flywheelOff();
-                    shooter.magHome();
+                    shooter.feedHome();
                     shoot = false;
+                    waitFeed = true;
+                    feedHomeTime = System.currentTimeMillis();
                     log("Shoot done");
                     log("Total shoot time: " +  (System.currentTimeMillis() - startShootTime) + " ms");
                 }
@@ -464,8 +465,8 @@ public class Robot {
         setTargetPoint(pose.getX(), pose.getY(), theta, pose.getVx(), pose.getVy(), w, drivetrain.xKp, drivetrain.yKp, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
     }
 
-    public void setTargetPoint(Pose pose, double theta, double w, double xyKp) {
-        setTargetPoint(pose.getX(), pose.getY(), theta, pose.getVx(), pose.getVy(), w, xyKp, xyKp, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
+    public void setTargetPoint(Pose pose, double theta, double w, double xyKd) {
+        setTargetPoint(pose.getX(), pose.getY(), theta, pose.getVx(), pose.getVy(), w, drivetrain.xKp, drivetrain.yKp, drivetrain.thetaKp, xyKd, xyKd, drivetrain.thetaKd);
     }
 
     public void setTargetPoint(Pose pose, double xyKp) {

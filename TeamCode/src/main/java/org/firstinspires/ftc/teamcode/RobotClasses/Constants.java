@@ -32,7 +32,7 @@ public class Constants {
     public static double FEED_TOP_POS = 0;
 
     // Wobble Arm
-    public static int WOBBLE_UP_POS = -100;
+    public static int WOBBLE_UP_POS = -50;
     public static int WOBBLE_DOWN_POS = -520;
 
     public static double CLAMP_WOBBLE_POS = 0.20;
