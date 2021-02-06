@@ -45,11 +45,8 @@ public class RingLocatorPipeline extends OpenCvPipeline {
     private double yPix;
 
     // Ring Position Variables
-    private double xRel;
-    private double yRel;
-    private double dist;
-    private double distMin;
     private ArrayList<Ring> rings = new ArrayList<>();
+    private ArrayList<Ring> prevRings = new ArrayList<>();
 
     public RingLocatorPipeline() {
         // Clear Old Images
@@ -107,7 +104,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
                         log("(" + curRing.getRelX() + ", " + curRing.getRelY() + ") " + curRing.getRelDist());
 
                         // Save Ring Position
-                        if (0 < yRel) {
+                        if (curRing.getRelY() > 0) {
                             rings.add(curRing);
                         }
                     }
@@ -122,6 +119,8 @@ public class RingLocatorPipeline extends OpenCvPipeline {
             rings.add(new Ring(0, 0));
             log("No Rings Detected");
         }
+
+        prevRings = rings;
 
         return input;
     }
@@ -138,7 +137,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
 
     // Return rings
     public ArrayList<Ring> getRings() {
-        return rings;
+        return new ArrayList<>(prevRings);
     }
 
     private void log(String message) {
