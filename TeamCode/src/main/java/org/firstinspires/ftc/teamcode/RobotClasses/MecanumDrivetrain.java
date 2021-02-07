@@ -234,8 +234,8 @@ public class MecanumDrivetrain {
             theta = theta % (Math.PI * 2);
             if (theta < 0) theta += Math.PI * 2;
 
-            x = offsetX + Math.sin(theta);
-            y = offsetY + Math.cos(theta);
+            x = offsetX + CenterOffset * Math.sin(theta);
+            y = offsetY + CenterOffset * Math.cos(theta);
 
             lastpod1 = pod1;
             lastpod2 = pod2;
