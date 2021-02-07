@@ -37,10 +37,10 @@ public class Dashboard {
     }
 
     public static void drawRing(Ring ring) {
-        double x = ring.getX();
-        double y = ring.getY();
-        packet.fieldOverlay().setFill("orange").fillCircle(x, y,  2.5);
-        packet.fieldOverlay().setFill("white").fillCircle(x, y,  1.5);
+        double x = ring.getY() - 72;
+        double y = 72 - ring.getX();
+        packet.fieldOverlay().setFill("orange").fillCircle(x, y, 2.5);
+        packet.fieldOverlay().setFill("white").fillCircle(x, y, 1.5);
     }
 
     public static void addPacket(String key, Object value) {

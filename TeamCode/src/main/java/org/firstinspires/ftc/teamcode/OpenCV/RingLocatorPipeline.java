@@ -16,15 +16,18 @@ import org.openftc.easyopencv.OpenCvPipeline;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Config
 public class RingLocatorPipeline extends OpenCvPipeline {
 
     // CV Thresholds
-    public static double HEIGHT_THRESH = 15;
-    public static double WIDTH_THRESH = 3;
+    public static double HEIGHT_MIN = 15;
+    public static double HEIGHT_MAX = 130;
+    public static double WIDTH_MIN = 3;
+    public static double WIDTH_MAX = 75;
+    public static double ANGLE_MIN = 70;
+    public static double ANGLE_MAX = 110;
 
     // Camera Constants
     public static double CAM_HEIGHT = 8;
@@ -41,6 +44,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
     // Ellipse Variables
     private double width;
     private double height;
+    private double angle;
     private double xPix;
     private double yPix;
 
@@ -84,6 +88,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
                 // Save Ellipse Data
                 width = ellipse.size.width;
                 height = ellipse.size.height;
+                angle = ellipse.angle;
                 xPix = ellipse.center.x / 160 - 1; // x ∈ [-1, 1]
                 yPix = 1 - ellipse.center.y / 180; // y ∈ (0, 1)
 
@@ -93,7 +98,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
 //                log("height: " + height);
 
                 // Analyze Valid Contours
-                if (height > HEIGHT_THRESH && width > WIDTH_THRESH) {
+                if (HEIGHT_MIN < height && height < HEIGHT_MAX && WIDTH_MIN < width && width < WIDTH_MAX && ANGLE_MIN < angle && angle < ANGLE_MAX) {
                     Imgproc.ellipse(input, ellipse, new Scalar(0, 255, 0), 1);
 
                     // Calculate Center of Ring if Y is in Valid Domain
@@ -101,6 +106,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
                         double[] xy = map2Dto3D(xPix, yPix);
                         Ring curRing = new Ring(xy[0], xy[1]);
 
+                        log("width, height, angle: " + width + ", " + height + ", " + angle);
                         log("(" + curRing.getRelX() + ", " + curRing.getRelY() + ") " + curRing.getRelDist());
 
                         // Save Ring Position
@@ -120,7 +126,11 @@ public class RingLocatorPipeline extends OpenCvPipeline {
             log("No Rings Detected");
         }
 
-        prevRings = rings;
+        prevRings.clear();
+        for (Ring ring : rings) {
+            prevRings.add(ring.clone());
+        }
+        rings.clear();
 
         return input;
     }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpenCV;
 
+import android.annotation.SuppressLint;
 import android.util.Log;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -22,17 +23,6 @@ public class Ring {
         this.relY = relY;
     }
 
-//    public Ring(double absX, double absY, boolean isAbs) {
-//        this.absX = absX;
-//        this.absY = absY;
-//    }
-//
-//    public Ring(double relX, double relY, double robotX, double robotY, double robotTheta) {
-//        this.relX = relX;
-//        this.relY = relY;
-//        calcAbsCoords(robotX, robotY, robotTheta);
-//    }
-
     // Return a sorted list with up to three coordinate-filtered rings
     public static ArrayList<Ring> getRingCoords(ArrayList<Ring> rings, double minX, double minY, double maxX, double maxY, double robotX, double robotY) {
         // Remove rings out of bounds
@@ -46,12 +36,12 @@ public class Ring {
             }
         }
 
-        Log.w("robot-log", "rings2: " + rings);
+        Log.w("robot-log", "rings2: " + rings + "\n");
 
         // Sort rings based on ascending x value
         rings.sort((r1, r2) -> Double.compare(r1.getX(), r2.getX()));
 
-        Log.w("robot-log", "rings3: " + rings);
+        Log.w("robot-log", "rings3: " + rings + "\n");
 
         // Return up to three rings
         if (rings.size() > 3) {
@@ -66,11 +56,20 @@ public class Ring {
     // Calculate ring absolute coordinates using relative coordinates and robot position
     public void calcAbsCoords(double robotX, double robotY, double robotTheta) {
         absX = robotX + relX * Math.sin(robotTheta) + relY * Math.cos(robotTheta);
-        absY = robotY - relX * Math.cos(robotTheta) + relY * Math.sin(robotTheta);
+        absY = robotY + RingLocatorPipeline.CAM_FRONT - relX * Math.cos(robotTheta) + relY * Math.sin(robotTheta);
     }
 
+    @SuppressLint("DefaultLocale")
     public String toString() {
-        return "Relative: (" + relX + ", " + relY + "), Absolute: (" + absX + ", " + absY + ")";
+        return "R(" + String.format("%.3f", relX) + ", " + String.format("%.3f", relY) + "), A(" + String.format("%.3f", absX) + ", " + String.format("%.3f", absY) + ")";
+    }
+
+    public Ring clone() {
+        return new Ring(relX, relY, absX, absY);
+    }
+
+    public double[] driveToRing(double robotX, double robotY) {
+        return new double[] {absX, absY, Math.atan2(absY - robotY, absX - robotX)};
     }
 
     public double[] getRelCoords() {

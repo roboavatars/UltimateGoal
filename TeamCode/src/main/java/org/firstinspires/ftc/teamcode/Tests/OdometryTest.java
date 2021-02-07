@@ -19,7 +19,6 @@ public class OdometryTest extends LinearOpMode {
         waitForStart();
 
         while(opModeIsActive()) {
-
             dt.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
 
             dt.updatePose();
