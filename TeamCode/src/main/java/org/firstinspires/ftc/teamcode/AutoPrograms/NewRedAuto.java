@@ -20,7 +20,7 @@ import java.util.Arrays;
 import static java.lang.Math.PI;
 
 @Autonomous(name = "1 Red Auto", preselectTeleOp = "Teleop")
-public class RedAuto extends LinearOpMode {
+public class NewRedAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -48,9 +48,9 @@ public class RedAuto extends LinearOpMode {
         StackHeightDetector detector = new StackHeightDetector(this);
         detector.start();
 
-        RingLocator locator = null; // cannot run two pipelines at same time
-        ArrayList<Ring> ringPos = new ArrayList<>(3);
-        robot.ringPos = ringPos;
+        RingLocator locator = null;
+        ArrayList<Ring> rings = new ArrayList<>(3);
+        robot.ringPos = rings;
 
         // Segments
         boolean goToStack = false;
@@ -75,13 +75,14 @@ public class RedAuto extends LinearOpMode {
         double intakeStack2Time = 1.5;
         double goToPowerShootTime = 1.0;
         double shootPowerShotsTime = 1.5;
-        double bounceBackTime = 6.0;
+        double bounceBackTime = 6.75;
         double deliverWobbleTime = 1.0;
         double intakeWobble2Time = 3.5;
         double goToHighShootTime = 0.5;
         double shootHighGoal2Time = 1.5;
         double deliverWobble2Time = 1.75;
         double parkTime = 2.0;
+        double ringTime = 0.75;
 
         Waypoint[] goToStackWaypoints = new Waypoint[] {
                 new Waypoint(114, 9, PI/2, 40, 50, 0, 0),
@@ -91,7 +92,7 @@ public class RedAuto extends LinearOpMode {
 
         // Paths and Theta splines
         Path goToPowerShootPath = null;
-        Path bounceBackPath = null;
+        Path ringPath = null;
         Path deliverWobblePath = null;
         Path intakeWobble2Path = null;
         Path goToHighShootPath = null;
@@ -235,24 +236,47 @@ public class RedAuto extends LinearOpMode {
 
                         robot.intake.on();
 
-//                        ringPos = locator.getRings(robot.x, robot.y, robot.theta);
-                        ringPos.add(new Ring(0, 0, 86, 125));
-                        ringPos.add(new Ring(0, 0, 98, 120));
-                        ringPos.add(new Ring(0, 0, 110, 125));
+//                        rings = locator.getRings(robot.x, robot.y, robot.theta);
+                        rings.add(new Ring(0, 0, 86, 125));
+                        rings.add(new Ring(0, 0, 98, 120));
+                        rings.add(new Ring(0, 0, 110, 125));
                         locator.stop();
 
-                        Waypoint[] bounceBackWaypoints = new Waypoint[] {
-                                new Waypoint(robot.x, robot.y, robot.theta, 50, 60, 0, 0),
-
-                                new Waypoint(ringPos.get(0).getX(), ringPos.get(0).getY() - 15, PI/2, 30, 40, 0, 1.5),
-                                new Waypoint(ringPos.get(0).getX() + 3, ringPos.get(0).getY() - 5, PI/2, -30, -10, 0, 3.0),
-
-                                new Waypoint(ringPos.get(1).getX(), ringPos.get(1).getY() - 15, PI/2, 30, 30, 0, 4.0),
-                                new Waypoint(ringPos.get(1).getX() + 3, ringPos.get(1).getY() - 5, PI/2, -30, -10, 0, 5.0),
-
-                                new Waypoint(ringPos.get(2).getX(), ringPos.get(2).getY(), PI/2, 30, 40, 0, bounceBackTime),
-                        };
-                        bounceBackPath = new Path(new ArrayList<>(Arrays.asList(bounceBackWaypoints)));
+                        ArrayList<Waypoint> ringWaypoints = new ArrayList<>(3);
+                        ringWaypoints.add(new Waypoint(robot.x, robot.y, robot.theta, 50, 60, 0, 0));
+                        if (rings.size() >= 1) {
+                            ringTime += 2.5;
+                            double[] ringPos = rings.get(0).driveToRing(90, 33);
+                            ringWaypoints.add(new Waypoint(ringPos[0] - 4, ringPos[1] - 4, PI/4, 30, 40, 0, 0.75));
+                            ringWaypoints.add(new Waypoint(ringPos[0] + 4, ringPos[1] + 4, PI/4, 30, 40, 0, 1.25));
+                            if (rings.size() >= 2) {
+                                double ringY = rings.get(1).driveToRing(90, 33)[1];
+                                ringWaypoints.add(new Waypoint(ringPos[0], ringY - 15, PI/2, -30, -10, 0, 2.00));
+                            } else {
+                                ringWaypoints.add(new Waypoint(ringPos[0] + 4, ringPos[1] - 10, PI/2, -30, -10, 0, 2.00));
+                            }
+                        }
+                        if (rings.size() >= 2) {
+                            ringTime += 2.5;
+                            double[] ringPos = rings.get(1).driveToRing(90, 33);
+                            ringWaypoints.add(new Waypoint(ringPos[0] - 4, ringPos[1] - 4, PI/4, 30, 40, 0, 2.75));
+                            ringWaypoints.add(new Waypoint(ringPos[0] + 4, ringPos[1] + 4, PI/4, 30, 40, 0, 3.25));
+                            if (rings.size() == 3) {
+                                double ringY = rings.get(2).driveToRing(90, 33)[1];
+                                ringWaypoints.add(new Waypoint(ringPos[0], ringY - 15, PI/2, -30, -10, 0, 4.00));
+                            } else {
+                                ringWaypoints.add(new Waypoint(ringPos[0] + 4, ringPos[1] - 10, PI/2, -30, -10, 0, 4.00));
+                            }
+                        }
+                        if (rings.size() == 3) {
+                            ringTime += 2.5;
+                            double[] ringPos = rings.get(2).driveToRing(90, 33);
+                            ringWaypoints.add(new Waypoint(ringPos[0] - 4, ringPos[1] - 4, PI/4, 30, 40, 0, 4.75));
+                            ringWaypoints.add(new Waypoint(ringPos[0] + 4, ringPos[1] + 4, PI/4, 30, 40, 0, 5.25));
+                            ringWaypoints.add(new Waypoint(ringPos[0], ringPos[1] - 10, PI/2, -30, -10, 0, 6.00));
+                        }
+                        ringWaypoints.add(new Waypoint(90, 60, PI/2, 30, 40, 0, ringTime));
+                        ringPath = new Path(ringWaypoints);
 
                         shootPowerShots = true;
                         time.reset();
@@ -262,10 +286,13 @@ public class RedAuto extends LinearOpMode {
 
             // Collect bounce backed rings
             else if (!bounceBack) {
-                robot.setTargetPoint(bounceBackPath.getRobotPose(Math.min(time.seconds(), bounceBackTime)), PI/2, 0, 0.1);
+                if ((0.75 < ringTime && ringTime < 1.25) || (2.75 < ringTime && ringTime < 3.25) || (4.75 < ringTime && ringTime < 5.25)) {
+                    robot.setTargetPoint(ringPath.getRobotPose(time.seconds()), PI/4, 0);
+                } else {
+                    robot.setTargetPoint(ringPath.getRobotPose(time.seconds()), PI/2, 0);
+                }
 
                 if (time.seconds() > bounceBackTime) {
-
                     Waypoint[] deliverWobbleWaypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, robot.theta, -40, -50, 0, 0),
                             new Waypoint(wobbleCor[0], wobbleCor[1], PI, -30, -30, 0, deliverWobbleTime),

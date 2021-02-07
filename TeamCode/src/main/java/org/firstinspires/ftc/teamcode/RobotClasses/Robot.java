@@ -32,6 +32,7 @@ public class Robot {
     public T265 t265;
     public Logger logger;
 
+    private ElapsedTime profiler;
     private List<LynxModule> allHubs;
     private VoltageSensor battery;
     private boolean startVoltTooLow = false;
@@ -102,6 +103,8 @@ public class Robot {
             odoWeight = 1;
         }
 
+        profiler = new ElapsedTime();
+
         allHubs = op.hardwareMap.getAll(LynxModule.class);
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
@@ -137,9 +140,6 @@ public class Robot {
     }
 
     public void update() {
-
-        ElapsedTime t = new ElapsedTime();
-
         cycleCounter++;
 
         // Powershot Debug
@@ -151,7 +151,7 @@ public class Robot {
             firstLoop = false;
         }
 
-        Log.w("time1", t.milliseconds()+"");
+        profiler.reset();
 
         // Pre-shoot tasks: Turn on flywheel, move robot to shooting position, mag up, start auto-feed once ready
         if (preShoot) {
@@ -214,6 +214,8 @@ public class Robot {
             }
         }
 
+        profile(1);
+
         // Shoot tasks: change/maintain shooting position, auto feed rings
         if (shoot && numRings >= 0 && !shooter.magHome) {
 
@@ -266,13 +268,15 @@ public class Robot {
             }
         }
 
+        profile(2);
+
         // Wait for feed to go home before mag down
         if (waitFeed && System.currentTimeMillis() - feedHomeTime > feedHomeDelay) {
             shooter.magHome();
             waitFeed = false;
         }
 
-        Log.w("time2", t.milliseconds()+"");
+        profile(3);
 
         // Update Position
         drivetrain.updatePose();
@@ -281,7 +285,7 @@ public class Robot {
             t265.updateCamPose();
         }
 
-        Log.w("time3", t.milliseconds()+"");
+        profile(4);
 
         // Calculate Motion Info
         double curTime = System.currentTimeMillis() / 1000.0;
@@ -311,18 +315,18 @@ public class Robot {
         prevVy = vy;
         prevW = w;
 
-        Log.w("time4", t.milliseconds()+"");
+        profile(5);
 
         // Log Data
         if (cycleCounter % loggerUpdatePeriod == 0) {
-            logger.logData(System.currentTimeMillis()-startTime, x, y, theta, vx, vy, w, ax, ay, a, numRings, shooter.magHome, shooter.feedHome, lastTarget);
+            logger.logData(System.currentTimeMillis() - startTime, x, y, theta, vx, vy, w, ax, ay, a, numRings, shooter.magHome, shooter.feedHome, lastTarget);
         }
 
-        Log.w("time5", t.milliseconds()+"");
+        profile(6);
 
         // Dashboard Telemetry
         if (startVoltTooLow) {
-            addPacket("1 1***", "Starting Battery Voltage < 12.5!!!!");
+            addPacket("0", "Starting Battery Voltage < 12.5!!!!");
         }
         addPacket("1 X", round(x));
         addPacket("2 Y", round(y));
@@ -346,13 +350,14 @@ public class Robot {
         }
         sendPacket();
 
-        Log.w("time6", t.milliseconds()+"");
-        t.reset();
+        profile(7);
 
         // Clear bulk cache
         for (LynxModule hub : allHubs) {
             hub.clearBulkCache();
         }
+
+        profile(8);
     }
 
     // Set variables for high goal shoot
@@ -508,6 +513,10 @@ public class Robot {
     // Logging
     public static void log(String message) {
         Log.w("robot-log", message);
+    }
+
+    private void profile(int num) {
+        Log.w("profiler", num + ": " + profiler.milliseconds());
     }
 
     @SuppressLint("DefaultLocale")

@@ -37,9 +37,9 @@ public class RingLocatorTest extends LinearOpMode {
 
         sleep(1000);
         ElapsedTime timer = new ElapsedTime();
-        rings = detector.getRings(90, 33, PI/2);
+        rings = detector.getRings(robot.x, robot.y, robot.theta);
         
-        ringWaypoints.add(new Waypoint(90, 33, PI/2, 50, 60, 0, 0));
+        ringWaypoints.add(new Waypoint(robot.x, robot.y, robot.theta, 50, 60, 0, 0));
         if (rings.size() >= 1) {
             time += 3.0;
             double[] ringPos = rings.get(0).driveToRing(90, 33);
