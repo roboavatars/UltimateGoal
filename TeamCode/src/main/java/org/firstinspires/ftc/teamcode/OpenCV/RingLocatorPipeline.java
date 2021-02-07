@@ -150,7 +150,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
         return new ArrayList<>(prevRings);
     }
 
-    private void log(String message) {
+    public void log(String message) {
         Log.w("ring-locator-pipe", message);
     }
 }

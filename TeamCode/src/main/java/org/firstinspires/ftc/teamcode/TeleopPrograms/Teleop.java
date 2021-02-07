@@ -191,8 +191,6 @@ public class Teleop extends LinearOpMode {
             telemetry.addData("X", robot.x);
             telemetry.addData("Y", robot.y);
             telemetry.addData("Theta", robot.theta);
-            double d = Math.sqrt(Math.pow(robot.x - 108, 2) + Math.pow(robot.y - 150, 2));
-            telemetry.addData("High Goal Distance", d);
             telemetry.addData("# Rings", robot.numRings);
             telemetry.addData("Shooter Velocity", robot.shooter.getVelocity());
             telemetry.update();

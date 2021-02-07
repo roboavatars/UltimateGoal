@@ -36,18 +36,18 @@ public class Ring {
             }
         }
 
-        Log.w("robot-log", "rings2: " + rings + "\n");
+        Log.w("ring-locator-pipe", "rings2: " + rings + "\n");
 
         // Sort rings based on ascending x value
         rings.sort((r1, r2) -> Double.compare(r1.getX(), r2.getX()));
 
-        Log.w("robot-log", "rings3: " + rings + "\n");
+        Log.w("ring-locator-pipe", "rings3: " + rings + "\n");
 
         // Return up to three rings
         if (rings.size() > 3) {
-            return new ArrayList<Ring>(rings.subList(0, 3));
+            return new ArrayList<>(rings.subList(0, 3));
         } else if (rings.size() == 0) {
-            return new ArrayList<Ring>(Arrays.asList(new Ring(0, 0, robotX, robotY)));
+            return new ArrayList<>(Arrays.asList(new Ring(0, 0, robotX, robotY)));
         } else {
             return rings;
         }

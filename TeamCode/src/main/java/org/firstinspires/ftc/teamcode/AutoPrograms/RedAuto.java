@@ -20,7 +20,7 @@ import java.util.Arrays;
 import static java.lang.Math.PI;
 
 @Autonomous(name = "1 Red Auto", preselectTeleOp = "Teleop")
-public class NewRedAuto extends LinearOpMode {
+public class RedAuto extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -56,6 +56,7 @@ public class NewRedAuto extends LinearOpMode {
         boolean goToStack = false;
         boolean shootHighGoal = false;
         boolean intakeStack = false;
+        boolean intakeStack2 = false;
         boolean goToPowerShoot = false;
         boolean shootPowerShots = false;
         boolean bounceBack = false;
@@ -70,8 +71,8 @@ public class NewRedAuto extends LinearOpMode {
         double goToStackTime = 1.0;
         double shootHighGoal1Time = 1.5;
         double intakeStackTime = 2.0;
-        double shootHighGoal1RingTime = 3.0;
-        double intakeStack2Time = 3.5;
+        double shootHighGoal1RingTime = 1.0;
+        double intakeStack2Time = 1.5;
         double goToPowerShootTime = 1.0;
         double shootPowerShotsTime = 1.5;
         double bounceBackTime = 6.0;
@@ -167,37 +168,48 @@ public class NewRedAuto extends LinearOpMode {
 
             // Intake start stack
             else if (!intakeStack) {
-                if (!shotRing && robot.y < 50) {
-//                    double input = Math.min(55, 40 + 6 * time.seconds() + 1.5 * Math.sin(8 * time.seconds()));
-//                    robot.setTargetPoint(108, input, PI/2, 0.8, 0.6, 6);
-                    robot.setTargetPoint(108, 50, PI/2);
-                } else if (!shotRing && robot.y > 50 && robot.intake.reverse) {
-                    robot.shootYOverride = 50;
-                    robot.highGoalShoot(1);
-                    shotRing = true;
-                } else if (shotRing && !robot.preShoot && !robot.shoot && robot.numRings == 0 && robot.y > 50) {
-                    robot.setTargetPoint(108, 55, PI/2);
-                }
+//                double input = Math.min(55, 40 + 6 * time.seconds() + 1.5 * Math.sin(8 * time.seconds()));
+//                robot.setTargetPoint(108, input, PI/2, 0.8, 0.6, 6);
+                robot.setTargetPoint(108, 55, PI/2);
 
                 if (time.seconds() < intakeStackTime - 0.5) {
                     robot.intake.reverse();
                 }
 
-                if (time.seconds() > intakeStack2Time) {
+                if (time.seconds() > intakeStackTime) {
 
-                    robot.shooter.flywheelPS();
-
-                    locator = new RingLocator(this);
-                    locator.start();
-
-                    Waypoint[] goToPowerShootWaypoints = new Waypoint[] {
-                            new Waypoint(robot.x, robot.y, robot.theta, 30, 20, 0, 0),
-                            new Waypoint(87, 63, PI/2, 30, 30, 0, goToPowerShootTime),
-                    };
-                    goToPowerShootPath = new Path(new ArrayList<>(Arrays.asList(goToPowerShootWaypoints)));
+                    robot.shootYOverride = robot.y;
+                    robot.highGoalShoot(1);
 
                     intakeStack = true;
                     time.reset();
+                }
+            }
+
+            else if (!intakeStack2) {
+                if (!robot.preShoot && !robot.shoot && robot.numRings == 0) {
+                    if (!shotRing) {
+                        shotRing = true;
+                        time.reset();
+                    }
+                    robot.setTargetPoint(108, 65, PI/2);
+
+                    if (time.seconds() > intakeStack2Time) {
+
+                        robot.shooter.flywheelPS();
+
+                        locator = new RingLocator(this);
+                        locator.start();
+
+                        Waypoint[] goToPowerShootWaypoints = new Waypoint[] {
+                                new Waypoint(robot.x, robot.y, robot.theta, 30, 20, 0, 0),
+                                new Waypoint(87, 63, PI/2, 30, 30, 0, goToPowerShootTime),
+                        };
+                        goToPowerShootPath = new Path(new ArrayList<>(Arrays.asList(goToPowerShootWaypoints)));
+
+                        intakeStack2 = true;
+                        time.reset();
+                    }
                 }
             }
 
@@ -215,19 +227,18 @@ public class NewRedAuto extends LinearOpMode {
 
             // Time block to shoot powershot
             else if (!shootPowerShots) {
-                double curTime = time.seconds();
                 if (!robot.preShoot && !robot.shoot && robot.numRings == 0) {
                     if (!psFinish) {
                         psFinish = true;
-                        psFinishTime = curTime;
-                    } else if (curTime > psFinishTime + 0.25) {
+                        psFinishTime = time.seconds();
+                    } else if (time.seconds() > psFinishTime + 0.25) {
 
                         robot.intake.on();
 
 //                        ringPos = locator.getRings(robot.x, robot.y, robot.theta);
-                        ringPos.add(new Ring(0, 0, 86, 130));
-                        ringPos.add(new Ring(0, 0, 94, 110));
-                        ringPos.add(new Ring(0, 0, 110, 120));
+                        ringPos.add(new Ring(0, 0, 86, 125));
+                        ringPos.add(new Ring(0, 0, 98, 120));
+                        ringPos.add(new Ring(0, 0, 110, 125));
                         locator.stop();
 
                         Waypoint[] bounceBackWaypoints = new Waypoint[] {

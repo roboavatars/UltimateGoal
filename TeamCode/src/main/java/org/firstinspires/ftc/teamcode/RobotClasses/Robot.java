@@ -7,6 +7,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
+import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.Debug.Logger;
 import org.firstinspires.ftc.teamcode.OpenCV.Ring;
@@ -38,7 +39,7 @@ public class Robot {
     // Class Constants
     private final int loggerUpdatePeriod = 2;
     private final double xyTolerance = 1;
-    private final double thetaTolerance = PI / 35;
+    private final double thetaTolerance = PI/35;
 
     private double odoWeight = 1;
 
@@ -136,6 +137,9 @@ public class Robot {
     }
 
     public void update() {
+
+        ElapsedTime t = new ElapsedTime();
+
         cycleCounter++;
 
         // Powershot Debug
@@ -146,6 +150,8 @@ public class Robot {
             startTime = System.currentTimeMillis();
             firstLoop = false;
         }
+
+        Log.w("time1", t.milliseconds()+"");
 
         // Pre-shoot tasks: Turn on flywheel, move robot to shooting position, mag up, start auto-feed once ready
         if (preShoot) {
@@ -186,13 +192,13 @@ public class Robot {
             }
 
             // Move to shooting position
-            if (!isAtPose(target[0], target[1], target[2], 0.5, 0.5, (isAuto && !highGoal) ? PI/40 : PI/35)) {
+            if (!isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/35)) {
                 setTargetPoint(target[0], target[1], target[2]);
                 log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") Moving to shoot position: " + Arrays.toString(target));
             }
 
             // Start auto-feed when mag is up, velocity is high enough, and robot is at position
-            else if (!shooter.magHome && shooter.getVelocity() > vThresh && isAtPose(target[0], target[1], target[2])) {
+            else if (!shooter.magHome && shooter.getVelocity() > vThresh && isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/35)) {
                 if (highGoal) {
                     shootDelay = highGoalDelay;
                 } else {
@@ -266,12 +272,16 @@ public class Robot {
             waitFeed = false;
         }
 
+        Log.w("time2", t.milliseconds()+"");
+
         // Update Position
         drivetrain.updatePose();
         if (odoWeight != 1) {
             //t265.sendOdometryData(vx, vy);
             t265.updateCamPose();
         }
+
+        Log.w("time3", t.milliseconds()+"");
 
         // Calculate Motion Info
         double curTime = System.currentTimeMillis() / 1000.0;
@@ -301,10 +311,14 @@ public class Robot {
         prevVy = vy;
         prevW = w;
 
+        Log.w("time4", t.milliseconds()+"");
+
         // Log Data
         if (cycleCounter % loggerUpdatePeriod == 0) {
             logger.logData(System.currentTimeMillis()-startTime, x, y, theta, vx, vy, w, ax, ay, a, numRings, shooter.magHome, shooter.feedHome, lastTarget);
         }
+
+        Log.w("time5", t.milliseconds()+"");
 
         // Dashboard Telemetry
         if (startVoltTooLow) {
@@ -313,12 +327,12 @@ public class Robot {
         addPacket("1 X", round(x));
         addPacket("2 Y", round(y));
         addPacket("3 Theta", round(theta));
-        addPacket("4 Shooter Velocity", shooter.getVelocity());
+//        addPacket("4 Shooter Velocity", shooter.getVelocity());
         addPacket("5 numRings", numRings);
         addPacket("6 shoot", shoot  + " " + preShoot + " " + highGoal);
         addPacket("7 Time", (System.currentTimeMillis() - startTime) / 1000);
         addPacket("8 Update Frequency (Hz)", 1 / timeDiff);
-        addPacket("pos", wobbleArm.getPosition());
+        addPacket("diff", timeDiff);
 
         // Dashboard Drawings
         drawGoal("black");
@@ -331,6 +345,9 @@ public class Robot {
             drawRing(ring);
         }
         sendPacket();
+
+        Log.w("time6", t.milliseconds()+"");
+        t.reset();
 
         // Clear bulk cache
         for (LynxModule hub : allHubs) {

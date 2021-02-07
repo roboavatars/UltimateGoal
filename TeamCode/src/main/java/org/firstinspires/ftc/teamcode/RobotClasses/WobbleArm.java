@@ -12,6 +12,8 @@ public class WobbleArm {
     private Servo wobbleServo;
     private boolean isAuto;
 
+    private double lastWobblePow = 0;
+
     public WobbleArm(LinearOpMode op, boolean isAuto) {
         wobbleServo = op.hardwareMap.get(Servo.class, "wobbleServo");
         wobbleMotor = op.hardwareMap.get(DcMotorEx.class, "wobbleMotor");
@@ -23,14 +25,17 @@ public class WobbleArm {
             wobbleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
             wobbleMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
         } else {
-            setPower(0);
+            wobbleMotor.setPower(0);
         }
 
         op.telemetry.addData("Status", "Wobble Arm initialized");
     }
 
     public void setPower(double power) {
-        wobbleMotor.setPower(power);
+        if (power != lastWobblePow) {
+            wobbleMotor.setPower(power);
+            lastWobblePow = power;
+        }
     }
 
     public void up() {

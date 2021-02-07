@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.OpenCV;
 
-import android.util.Log;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -12,12 +10,11 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 
 import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 
-@TeleOp(name = "0 Ring Locator Pipeline Test")
+@TeleOp(name = "Ring Locator Pipeline Test")
 public class RingLocatorTest extends LinearOpMode {
 
     private Robot robot;

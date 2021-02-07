@@ -35,6 +35,7 @@ public class OdometryTest extends LinearOpMode {
             addPacket("Y", y);
             addPacket("Theta", theta);
             addPacket("8 Update Frequency (Hz)", 1 / timeDiff);
+            addPacket("diff", timeDiff);
             sendPacket();
 
             telemetry.addData("X: " , x);

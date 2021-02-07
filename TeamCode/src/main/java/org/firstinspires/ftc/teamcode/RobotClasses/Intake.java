@@ -17,6 +17,7 @@ public class Intake {
     private boolean isAuto;
 
     private double lastIntakePow = 0;
+    private double lastBlocker = 0;
 
     public boolean on = false;
     public boolean reverse = false;
@@ -53,8 +54,7 @@ public class Intake {
             if (power > 0) {
                 forward = true;
                 reverse = false;
-            }
-            else if (power < 0) {
+            } else if (power < 0) {
                 forward = false;
                 reverse = true;
             }
@@ -105,6 +105,9 @@ public class Intake {
     }
 
     public void setBlocker(double position) {
-        blockerServo.setPosition(position * (Constants.BLOCKER_DOWN_POS - Constants.BLOCKER_UP_POS) + Constants.BLOCKER_UP_POS);
+        if (position != lastBlocker) {
+            blockerServo.setPosition(position * (Constants.BLOCKER_DOWN_POS - Constants.BLOCKER_UP_POS) + Constants.BLOCKER_UP_POS);
+            lastBlocker = position;
+        }
     }
 }
