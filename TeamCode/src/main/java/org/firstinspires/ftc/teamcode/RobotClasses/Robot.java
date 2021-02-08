@@ -92,6 +92,10 @@ public class Robot {
     // Constructor
     public Robot(LinearOpMode op, double x, double y, double theta, boolean isAuto) {
         drivetrain = new MecanumDrivetrain(op, x, y, theta);
+        this.x = x;
+        this.y = y;
+        this.theta = theta;
+
         intake = new Intake(op, isAuto);
         shooter = new Shooter(op);
         wobbleArm = new WobbleArm(op, isAuto);

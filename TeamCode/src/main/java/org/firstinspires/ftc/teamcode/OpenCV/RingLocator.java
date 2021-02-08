@@ -11,7 +11,7 @@ public class RingLocator extends BaseDetector {
 
     private RingLocatorPipeline pipeline;
     public static double minX = 57;
-    public static double minY = 80;
+    public static double minY = 72;
     public static double maxX = 135;
     public static double maxY = 135;
 

@@ -32,9 +32,9 @@ public class RingLocatorPipeline extends OpenCvPipeline {
     // Camera Constants
     public static double CAM_HEIGHT = 8;
     public static double CAM_FRONT = 7; // y distance between camera and robot center
-    public static double CAM_PHI = Math.toRadians(12.5);
-    public static double CAM_VFOV = Math.toRadians(43);
-    public static double CAM_HFOV = Math.toRadians(60);
+    public static double CAM_PHI = Math.toRadians(12.8);
+    public static double CAM_VFOV = Math.toRadians(45);
+    public static double CAM_HFOV = Math.toRadians(58);
 
     // Image Processing Mats
     private RingProcessor processor;
