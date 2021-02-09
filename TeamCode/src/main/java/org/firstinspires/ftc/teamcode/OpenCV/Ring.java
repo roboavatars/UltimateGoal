@@ -2,6 +2,9 @@ package org.firstinspires.ftc.teamcode.OpenCV;
 
 import android.annotation.SuppressLint;
 import android.util.Log;
+
+import org.firstinspires.ftc.teamcode.OpenCV.RingLocator.RingLocatorPipeline;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 

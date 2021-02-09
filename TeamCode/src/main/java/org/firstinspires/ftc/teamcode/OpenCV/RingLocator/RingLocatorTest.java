@@ -1,7 +1,9 @@
-package org.firstinspires.ftc.teamcode.OpenCV;
+package org.firstinspires.ftc.teamcode.OpenCV.RingLocator;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
+import org.firstinspires.ftc.teamcode.OpenCV.Ring;
 
 import java.util.ArrayList;
 

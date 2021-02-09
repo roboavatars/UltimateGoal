@@ -1,9 +1,7 @@
-package org.firstinspires.ftc.teamcode.OpenCV;
+package org.firstinspires.ftc.teamcode.OpenCV.StackHeight;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-
-import org.firstinspires.ftc.teamcode.OpenCV.StackHeightDetector;
 
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 

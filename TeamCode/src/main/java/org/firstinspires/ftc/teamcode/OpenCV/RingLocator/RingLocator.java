@@ -1,9 +1,11 @@
-package org.firstinspires.ftc.teamcode.OpenCV;
-
-import android.util.Log;
+package org.firstinspires.ftc.teamcode.OpenCV.RingLocator;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.teamcode.OpenCV.BaseDetector;
+import org.firstinspires.ftc.teamcode.OpenCV.Ring;
+
 import java.util.ArrayList;
 
 @Config

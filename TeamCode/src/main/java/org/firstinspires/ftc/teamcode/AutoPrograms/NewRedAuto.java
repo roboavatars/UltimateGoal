@@ -5,9 +5,9 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.OpenCV.Ring;
-import org.firstinspires.ftc.teamcode.OpenCV.RingLocator;
-import org.firstinspires.ftc.teamcode.OpenCV.StackHeightDetector;
-import org.firstinspires.ftc.teamcode.OpenCV.StackHeightPipeline.RingCase;
+import org.firstinspires.ftc.teamcode.OpenCV.RingLocator.RingLocator;
+import org.firstinspires.ftc.teamcode.OpenCV.StackHeight.StackHeightDetector;
+import org.firstinspires.ftc.teamcode.OpenCV.StackHeight.StackHeightPipeline.RingCase;
 import org.firstinspires.ftc.teamcode.Pathing.Path;
 import org.firstinspires.ftc.teamcode.Pathing.Pose;
 import org.firstinspires.ftc.teamcode.Pathing.Spline;

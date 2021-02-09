@@ -1,6 +1,8 @@
-package org.firstinspires.ftc.teamcode.OpenCV;
+package org.firstinspires.ftc.teamcode.OpenCV.StackHeight;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+
+import org.firstinspires.ftc.teamcode.OpenCV.BaseDetector;
 
 public class StackHeightDetector extends BaseDetector {
 
