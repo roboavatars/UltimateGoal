@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.spartronics4915.lib.T265Camera;
 
+import static java.lang.Math.PI;
+
 @SuppressWarnings("FieldCanBeLocal")
 public class T265 {
 
@@ -18,6 +20,8 @@ public class T265 {
     // Constants
     public static double ODOMETRY_COVARIANCE = 1;
     private final double INCH_TO_METER = 0.0254;
+    private double xOffset = 8.65;
+    private double yOffset = -8;
 
     // Position Variables
     private double x;
@@ -31,9 +35,6 @@ public class T265 {
     public T265(LinearOpMode op, double initX, double initY, double initTheta) {
         this.op = op;
         this.hardwareMap = op.hardwareMap;
-
-        double xPrime = -0.3*Math.cos(initTheta) + 8.65*Math.sin(initTheta);
-        double yPrime = -0.3*Math.sin(initTheta) - 8.65*Math.cos(initTheta);
 
         t265Cam = new T265Camera(new Transform2d(), ODOMETRY_COVARIANCE, hardwareMap.appContext);
         setCameraPose(initX, initY, initTheta);
@@ -55,10 +56,10 @@ public class T265 {
     }
 
     public void setCameraPose(double x, double y, double theta) {
-        double xPrime = -0.3 * Math.cos(theta) + 8.65 * Math.sin(theta);
-        double yPrime = -0.3 * Math.sin(theta) - 8.65 * Math.cos(theta);
+        double xPrime = yOffset * Math.cos(theta) + xOffset * Math.sin(theta);
+        double yPrime = yOffset * Math.sin(theta) - xOffset * Math.cos(theta);
 
-        t265Cam.setPose(new Pose2d((x + xPrime) * INCH_TO_METER, (y + yPrime) * INCH_TO_METER, new Rotation2d(theta - Math.PI/2)));
+        t265Cam.setPose(new Pose2d((x + xPrime) * INCH_TO_METER, (y + yPrime) * INCH_TO_METER, new Rotation2d(theta - PI/2)));
     }
 
     public void sendOdometryData (double vx, double vy) {
@@ -70,16 +71,16 @@ public class T265 {
     }
 
     public double getCamX() {
-        double xPrime = -0.3*Math.cos(theta+Math.PI/2) + 8.65*Math.sin(theta+Math.PI/2);
-        return x-xPrime;
+        double xPrime = yOffset * Math.cos(theta + PI / 2) + xOffset * Math.sin(theta + PI / 2);
+        return x - xPrime;
     }
 
     public double getCamY() {
-        double yPrime = -0.3*Math.sin(theta+Math.PI/2) - 8.65*Math.cos(theta+Math.PI/2);
-        return y-yPrime;
+        double yPrime = yOffset * Math.sin(theta + PI / 2) - xOffset * Math.cos(theta + PI / 2);
+        return y - yPrime;
     }
 
     public double getCamTheta() {
-        return theta+Math.PI/2;
+        return theta + PI / 2;
     }
 }

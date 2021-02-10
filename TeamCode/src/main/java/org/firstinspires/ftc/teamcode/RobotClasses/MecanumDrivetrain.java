@@ -9,6 +9,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
+import static java.lang.Math.PI;
+
 @SuppressWarnings("FieldCanBeLocal") @Config
 public class MecanumDrivetrain {
 
@@ -59,10 +61,10 @@ public class MecanumDrivetrain {
 
     // Constants
     public static double ticksToInch = 0.00053009190;
-    public static double OdometryTrackWidth = 13.211;
+    public static double OdometryTrackWidth = 13.20;
     public static double CenterOffset = 0.253;
     public static double OdometryHorizontalOffset = -2.72;
-    private final double OdometryHeadingThreshold = Math.PI / 8;
+    private final double OdometryHeadingThreshold = PI/8;
 
     public final double xKp = 0.6;
     public final double yKp = 0.6;
@@ -196,8 +198,8 @@ public class MecanumDrivetrain {
     // update position from odometry
     public void updatePose() {
         try {
-            pod1 = motorBackRight.getCurrentPosition() * ticksToInch;
-            pod2 = motorFrontRight.getCurrentPosition() * ticksToInch;
+            pod1 = motorFrontRight.getCurrentPosition() * ticksToInch;
+            pod2 = motorBackRight.getCurrentPosition() * ticksToInch;
             pod3 = motorBackLeft.getCurrentPosition() * -ticksToInch;
 
             deltapod1 = pod1 - lastpod1;
@@ -230,8 +232,8 @@ public class MecanumDrivetrain {
             }
 
             theta += deltaheading;
-            theta = theta % (Math.PI * 2);
-            if (theta < 0) theta += Math.PI * 2;
+            theta = theta % (PI * 2);
+            if (theta < 0) theta += PI * 2;
 
             x = offsetX + CenterOffset * Math.sin(theta);
             y = offsetY + CenterOffset * Math.cos(theta);

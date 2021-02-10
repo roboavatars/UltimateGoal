@@ -36,11 +36,14 @@ public class OdometryTest extends LinearOpMode {
             addPacket("Theta", theta);
             addPacket("8 Update Frequency (Hz)", 1 / timeDiff);
             addPacket("diff", timeDiff);
+            addPacket("pod1", dt.pod1);
+            addPacket("pod2", dt.pod2);
+            addPacket("pod3", dt.pod3);
             sendPacket();
 
-            telemetry.addData("X: " , x);
-            telemetry.addData("Y: " , y);
-            telemetry.addData("Theta: " , theta);
+            telemetry.addData("X: ", x);
+            telemetry.addData("Y: ", y);
+            telemetry.addData("Theta: ", theta);
             telemetry.update();
         }
     }
