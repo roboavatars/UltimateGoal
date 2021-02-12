@@ -1,6 +1,9 @@
 package org.firstinspires.ftc.teamcode.RobotClasses;
 
-import com.acmerobotics.dashboard.config.Config;
+import android.os.Build;
+
+import androidx.annotation.RequiresApi;
+
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Transform2d;
@@ -8,6 +11,9 @@ import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.spartronics4915.lib.T265Camera;
+
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static java.lang.Math.PI;
 
@@ -28,16 +34,28 @@ public class T265 {
     private double y;
     private double theta;
 
+    // Other
+    @RequiresApi(api = Build.VERSION_CODES.O)
+    private Path mapPath = Paths.get(System.getProperty("java.io.tmpdir"), "map.bin").toAbsolutePath();
+//    private String mapPath = System.getProperty("java.io.tmpdir") + "/map.bin";
+//    private String mapPath = FileSystems.getDefault().getPath(System.getProperty("java.io.tmpdir"), "map.bin").toAbsolutePath().toString();
+//    private String mapPath = "/data/user/0/com.qualcomm.ftcrobotcontroller/cache/map.bin";
+
     // OpMode Stuff
     private LinearOpMode op;
     private HardwareMap hardwareMap;
 
+    public boolean isEmpty = false;
+
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public T265(LinearOpMode op, double initX, double initY, double initTheta) {
         this.op = op;
         this.hardwareMap = op.hardwareMap;
 
-        t265Cam = new T265Camera(new Transform2d(), ODOMETRY_COVARIANCE, hardwareMap.appContext);
+        t265Cam = new T265Camera(new Transform2d(), ODOMETRY_COVARIANCE, mapPath.toString(), hardwareMap.appContext);
         setCameraPose(initX, initY, initTheta);
+
+        if (mapPath.toFile().length() <= 0) isEmpty = true;
     }
 
     public void startCam() {
@@ -51,7 +69,9 @@ public class T265 {
         });
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.O)
     public void stopCam() {
+        t265Cam.exportRelocalizationMap(mapPath.toString());
         t265Cam.stop();
     }
 
@@ -71,16 +91,16 @@ public class T265 {
     }
 
     public double getCamX() {
-        double xPrime = yOffset * Math.cos(theta + PI / 2) + xOffset * Math.sin(theta + PI / 2);
+        double xPrime = yOffset * Math.cos(theta + PI/2) + xOffset * Math.sin(theta + PI/2);
         return x - xPrime;
     }
 
     public double getCamY() {
-        double yPrime = yOffset * Math.sin(theta + PI / 2) - xOffset * Math.cos(theta + PI / 2);
+        double yPrime = yOffset * Math.sin(theta + PI/2) - xOffset * Math.cos(theta + PI/2);
         return y - yPrime;
     }
 
     public double getCamTheta() {
-        return theta + PI / 2;
+        return theta + PI/2;
     }
 }
