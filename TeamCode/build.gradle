@@ -33,7 +33,7 @@ dependencies {
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
     implementation group: 'org.ejml', name: 'ejml-all', version: '0.39'
     implementation 'org.openftc:easyopencv:1.4.3'
-    implementation 'com.spartronics4915.lib:ftc265:2.0.1'
+    implementation 'com.spartronics4915.lib:ftc265:2.1.8'
 
     boolean useAar = false
     if (!useAar) {

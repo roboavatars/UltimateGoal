@@ -9,12 +9,11 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 @TeleOp(name = "Odometry Test")
 public class OdometryTest extends LinearOpMode {
 
-    private MecanumDrivetrain dt;
     private double x, y, theta, prevTime;
 
     @Override
     public void runOpMode() {
-        dt = new MecanumDrivetrain(this, 90, 9, Math.PI/2);
+        MecanumDrivetrain dt = new MecanumDrivetrain(this, 90, 9, Math.PI/2);
 
         waitForStart();
 
@@ -34,7 +33,7 @@ public class OdometryTest extends LinearOpMode {
             addPacket("X", x);
             addPacket("Y", y);
             addPacket("Theta", theta);
-            addPacket("8 Update Frequency (Hz)", 1 / timeDiff);
+            addPacket("Update Frequency (Hz)", 1 / timeDiff);
             addPacket("diff", timeDiff);
             addPacket("pod1", dt.pod1);
             addPacket("pod2", dt.pod2);

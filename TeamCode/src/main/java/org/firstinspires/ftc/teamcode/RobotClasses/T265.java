@@ -20,8 +20,8 @@ public class T265 {
     // Constants
     public static double ODOMETRY_COVARIANCE = 1;
     private final double INCH_TO_METER = 0.0254;
-    private double xOffset = 8.65;
-    private double yOffset = -8;
+    private double xOffset = 7.75;
+    private double yOffset = -7;
 
     // Position Variables
     private double x;
