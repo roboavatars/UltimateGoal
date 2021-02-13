@@ -30,6 +30,7 @@ public class T265 {
     private double theta;
 
     // Other
+    public double confidence = 0;
     private String mapPath = System.getProperty("java.io.tmpdir") + "/map.bin";
 //    private String mapPath = "/data/user/0/com.qualcomm.ftcrobotcontroller/cache/map.bin";
 
@@ -44,7 +45,9 @@ public class T265 {
         this.hardwareMap = op.hardwareMap;
 
         File file = new File(mapPath);
-        if (!file.exists() || file.length() == 0) isEmpty = true;
+        if (!file.exists() || file.length() == 0) {
+            isEmpty = true;
+        }
 
         if (!isEmpty) {
             t265Cam = new T265Camera(new Transform2d(), ODOMETRY_COVARIANCE, mapPath, hardwareMap.appContext);
@@ -82,7 +85,16 @@ public class T265 {
     }
 
     public void updateCamPose() {
-        t265Cam.getLastReceivedCameraUpdate();
+        T265Camera.CameraUpdate temp = t265Cam.getLastReceivedCameraUpdate();
+        if (temp.confidence == T265Camera.PoseConfidence.Low) {
+            confidence = 1;
+        } else if (temp.confidence == T265Camera.PoseConfidence.Medium) {
+            confidence = 2;
+        } else if (temp.confidence == T265Camera.PoseConfidence.High) {
+            confidence = 3;
+        } else {
+            confidence = 0;
+        }
     }
 
     public double getCamX() {

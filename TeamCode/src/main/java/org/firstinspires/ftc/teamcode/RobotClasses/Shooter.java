@@ -123,9 +123,14 @@ public class Shooter {
 
     public int getNumRings() {
         double dist = getDistance();
-        if (dist > zeroDist) return 0;
-        else if (dist > oneDist) return 1;
-        else if (dist > twoDist) return 2;
-        else return 3;
+        if (dist > zeroDist) {
+            return 0;
+        } else if (dist > oneDist) {
+            return 1;
+        } else if (dist > twoDist) {
+            return 2;
+        } else {
+            return 3;
+        }
     }
 }
