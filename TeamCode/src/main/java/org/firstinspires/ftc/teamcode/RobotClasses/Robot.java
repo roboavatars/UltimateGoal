@@ -145,6 +145,7 @@ public class Robot {
 
     public void update() {
         cycleCounter++;
+        profiler.reset();
 
         // Powershot Debug
         flapPositions = new double[] {flap2, flap1, flap0};
@@ -155,7 +156,11 @@ public class Robot {
             firstLoop = false;
         }
 
-        profiler.reset();
+//        if (cycleCounter % 15 == 0) {
+//            numRings = shooter.getNumRings();
+//        }
+
+        profile(1);
 
         // Pre-shoot tasks: Turn on flywheel, move robot to shooting position, mag up, start auto-feed once ready
         if (preShoot) {
@@ -218,7 +223,7 @@ public class Robot {
             }
         }
 
-        profile(1);
+        profile(2);
 
         // Shoot tasks: change/maintain shooting position, auto feed rings
         if (shoot && numRings >= 0 && !shooter.magHome) {
@@ -271,8 +276,6 @@ public class Robot {
                 shootTime = System.currentTimeMillis();
             }
         }
-
-        profile(2);
 
         // Wait for feed to go home before mag down
         if (waitFeed && System.currentTimeMillis() - feedHomeTime > feedHomeDelay) {
@@ -377,7 +380,7 @@ public class Robot {
     }
 
     public void highGoalShoot() {
-        highGoalShoot(3);
+        highGoalShoot(shooter.getNumRings());
     }
 
     // Set variables for powershot shoot

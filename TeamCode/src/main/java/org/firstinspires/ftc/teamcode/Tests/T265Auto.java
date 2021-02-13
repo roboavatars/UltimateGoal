@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
-
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -21,7 +17,6 @@ public class T265Auto extends LinearOpMode {
     private double y;
     private double theta;
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void runOpMode() {
 //        MecanumDrivetrain dt = new MecanumDrivetrain(this, startX, startY, startTheta);

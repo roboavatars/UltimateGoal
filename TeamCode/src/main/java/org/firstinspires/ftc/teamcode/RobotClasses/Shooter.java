@@ -1,12 +1,16 @@
 package org.firstinspires.ftc.teamcode.RobotClasses;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@SuppressWarnings("FieldCanBeLocal")
+import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
+@SuppressWarnings("FieldCanBeLocal") @Config
 public class Shooter {
 
     public DcMotorEx shooterMotor1;
@@ -14,12 +18,18 @@ public class Shooter {
     public Servo flapServo;
     private Servo magServo;
     private Servo feedServo;
+    private DistanceSensor ringSensor;
 
     private double lastVelocity = 0;
     private double lastFlap = 0;
 
     public boolean magHome = true;
     public boolean feedHome = true;
+
+    public static double zeroDist = 7;
+    public static double oneDist = 6;
+    public static double twoDist = 5;
+    public static double threeDist = 4;
 
     public Shooter(LinearOpMode op) {
         shooterMotor1 = op.hardwareMap.get(DcMotorEx.class, "shooter1");
@@ -34,6 +44,7 @@ public class Shooter {
         flapServo = op.hardwareMap.get(Servo.class, "flapServo");
         magServo = op.hardwareMap.get(Servo.class, "magServo");
         feedServo = op.hardwareMap.get(Servo.class, "feedServo");
+        ringSensor = op.hardwareMap.get(DistanceSensor.class, "ringSensor");
 
         flapHome();
         feedHome();
@@ -85,6 +96,7 @@ public class Shooter {
         magServo.setPosition(Constants.MAG_HOME_POS);
         magHome = true;
     }
+
     public void magShoot() {
         magServo.setPosition(Constants.MAG_SHOOT_POS);
         magHome = false;
@@ -103,5 +115,17 @@ public class Shooter {
     public void feedTop() {
         feedServo.setPosition(Constants.FEED_TOP_POS);
         feedHome = false;
+    }
+
+    public double getDistance() {
+        return ringSensor.getDistance(DistanceUnit.INCH);
+    }
+
+    public int getNumRings() {
+        double dist = getDistance();
+        if (dist > zeroDist) return 0;
+        else if (dist > oneDist) return 1;
+        else if (dist > twoDist) return 2;
+        else return 3;
     }
 }

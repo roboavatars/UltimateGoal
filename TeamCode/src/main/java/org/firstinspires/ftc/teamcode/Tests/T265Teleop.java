@@ -24,7 +24,6 @@ public class T265Teleop extends LinearOpMode {
     private double y;
     private double theta;
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     @Override
     public void runOpMode() {
         MecanumDrivetrain dt = new MecanumDrivetrain(this, startX, startY, startTheta);

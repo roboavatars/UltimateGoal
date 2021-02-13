@@ -1,9 +1,5 @@
 package org.firstinspires.ftc.teamcode.RobotClasses;
 
-import android.os.Build;
-
-import androidx.annotation.RequiresApi;
-
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Transform2d;
@@ -12,8 +8,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.spartronics4915.lib.T265Camera;
 
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.io.File;
 
 import static java.lang.Math.PI;
 
@@ -35,10 +30,7 @@ public class T265 {
     private double theta;
 
     // Other
-    @RequiresApi(api = Build.VERSION_CODES.O)
-    private Path mapPath = Paths.get(System.getProperty("java.io.tmpdir"), "map.bin").toAbsolutePath();
-//    private String mapPath = System.getProperty("java.io.tmpdir") + "/map.bin";
-//    private String mapPath = FileSystems.getDefault().getPath(System.getProperty("java.io.tmpdir"), "map.bin").toAbsolutePath().toString();
+    private String mapPath = System.getProperty("java.io.tmpdir") + "/map.bin";
 //    private String mapPath = "/data/user/0/com.qualcomm.ftcrobotcontroller/cache/map.bin";
 
     // OpMode Stuff
@@ -47,15 +39,19 @@ public class T265 {
 
     public boolean isEmpty = false;
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public T265(LinearOpMode op, double initX, double initY, double initTheta) {
         this.op = op;
         this.hardwareMap = op.hardwareMap;
 
-        t265Cam = new T265Camera(new Transform2d(), ODOMETRY_COVARIANCE, mapPath.toString(), hardwareMap.appContext);
-        setCameraPose(initX, initY, initTheta);
+        File file = new File(mapPath);
+        if (!file.exists() || file.length() == 0) isEmpty = true;
 
-        if (mapPath.toFile().length() <= 0) isEmpty = true;
+        if (!isEmpty) {
+            t265Cam = new T265Camera(new Transform2d(), ODOMETRY_COVARIANCE, mapPath, hardwareMap.appContext);
+        } else {
+            t265Cam = new T265Camera(new Transform2d(), ODOMETRY_COVARIANCE, hardwareMap.appContext);
+        }
+        setCameraPose(initX, initY, initTheta);
     }
 
     public void startCam() {
@@ -69,9 +65,8 @@ public class T265 {
         });
     }
 
-    @RequiresApi(api = Build.VERSION_CODES.O)
     public void stopCam() {
-        t265Cam.exportRelocalizationMap(mapPath.toString());
+        t265Cam.exportRelocalizationMap(mapPath);
         t265Cam.stop();
     }
 
@@ -82,7 +77,7 @@ public class T265 {
         t265Cam.setPose(new Pose2d((x + xPrime) * INCH_TO_METER, (y + yPrime) * INCH_TO_METER, new Rotation2d(theta - PI/2)));
     }
 
-    public void sendOdometryData (double vx, double vy) {
+    public void sendOdometryData(double vx, double vy) {
         t265Cam.sendOdometry(vx, vy);
     }
 
