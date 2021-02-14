@@ -40,17 +40,20 @@ public class WobbleArm {
 
     public void up() {
         clamp();
+        armUp();
+    }
+
+    public void armUp() {
         setPosition(Constants.WOBBLE_UP_POS);
         wobbleMotor.setPower(0.4);
     }
 
     public void down() {
         clamp();
-        setPosition(Constants.WOBBLE_DOWN_POS);
-        wobbleMotor.setPower(0.4);
+        armDown();
     }
 
-    public void ddown() {
+    public void armDown() {
         setPosition(Constants.WOBBLE_DOWN_POS);
         wobbleMotor.setPower(0.4);
     }

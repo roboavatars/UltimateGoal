@@ -16,6 +16,9 @@ public class Intake {
     private Servo blockerServo;
     private boolean isAuto;
 
+    private double leftStickPos;
+    private double rightStickPos;
+
     private double lastIntakePow = 0;
     private double lastBlocker = 0;
 
@@ -64,36 +67,41 @@ public class Intake {
 
     public void sticksHome() {
         if (!isAuto) {
-            lStickServo.setPosition(Constants.L_HOME_POS);
-            rStickServo.setPosition(Constants.R_HOME_POS);
+            leftStickPos = Constants.L_HOME_POS;
+            rightStickPos = Constants.R_HOME_POS;
         }
     }
 
     public void sticksHalf() {
-        lStickServo.setPosition(Constants.L_HALF_POS);
-        rStickServo.setPosition(Constants.R_HALF_POS);
+        leftStickPos = Constants.L_HALF_POS;
+        rightStickPos = Constants.R_HALF_POS;
     }
 
     public void leftHalf() {
-        lStickServo.setPosition(Constants.L_HALF_POS);
+        leftStickPos = Constants.L_HALF_POS;
     }
 
     public void sticksFourth() {
-        lStickServo.setPosition(Constants.L_QUARTER_POS);
-        rStickServo.setPosition(Constants.R_QUARTER_POS);
+        leftStickPos = Constants.L_QUARTER_POS;
+        rightStickPos = Constants.R_QUARTER_POS;
     }
 
     public void sticksOut() {
-        lStickServo.setPosition(Constants.L_OUT_POS);
-        rStickServo.setPosition(Constants.R_OUT_POS);
+        leftStickPos = Constants.L_OUT_POS;
+        rightStickPos = Constants.R_OUT_POS;
     }
 
     public void stickLeft(double position) {
-        lStickServo.setPosition(position);
+        leftStickPos = position;
     }
 
     public void stickRight(double position) {
-        rStickServo.setPosition(position);
+        rightStickPos = position;
+    }
+
+    public void stickUpdate() {
+        lStickServo.setPosition(leftStickPos);
+        rStickServo.setPosition(rightStickPos);
     }
 
     public void blockerUp() {

@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.RobotClasses;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -9,6 +11,8 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+
+import java.util.*;
 
 @SuppressWarnings("FieldCanBeLocal") @Config
 public class Shooter {
@@ -26,10 +30,14 @@ public class Shooter {
     public boolean magHome = true;
     public boolean feedHome = true;
 
-    public static double zeroDist = 7;
-    public static double oneDist = 6;
-    public static double twoDist = 5;
-    public static double threeDist = 4;
+    public static double zeroDist = 4.65;
+    public static double oneDist = 4.0;
+    public static double twoDist = 3.3;
+    public static double threeDist = 2.5;
+
+//    private ArrayList<Integer> caching = new ArrayList(Arrays.asList(new Integer[] {-1, -1, -1, -1, -1, -1}, new Integer[0]));
+//    private int cacheIndex = 0;
+    private int numRings = 3;
 
     public Shooter(LinearOpMode op) {
         shooterMotor1 = op.hardwareMap.get(DcMotorEx.class, "shooter1");
@@ -118,19 +126,49 @@ public class Shooter {
     }
 
     public double getDistance() {
-        return ringSensor.getDistance(DistanceUnit.INCH);
+        double distance = ringSensor.getDistance(DistanceUnit.INCH);
+        if (distance > 6) {
+            Log.w("robot-log", "Ring Sensor Value Too High");
+        }
+        return distance;
     }
 
     public int getNumRings() {
         double dist = getDistance();
+        int tempRings;
         if (dist > zeroDist) {
-            return 0;
+            tempRings = 0;
         } else if (dist > oneDist) {
-            return 1;
+            tempRings = 1;
         } else if (dist > twoDist) {
-            return 2;
+            tempRings = 2;
         } else {
-            return 3;
+            tempRings = 3;
         }
+
+        if (tempRings != 3 || numRings >= 2) {
+            numRings = tempRings;
+        }
+
+//        cacheIndex = (cacheIndex + 1) % caching.size();
+//        caching.set(cacheIndex, numRings);
+//
+//        int zero = Collections.frequency(caching, 0);
+//        int one = Collections.frequency(caching, 1);
+//        int two = Collections.frequency(caching, 2);
+//        int three = Collections.frequency(caching, 2);
+//        int max = Math.max(Math.max(Math.max(zero, one), two), three);
+//
+//        if (zero == max) {
+//            numRings = 0;
+//        } else if (one == max) {
+//            numRings = 1;
+//        } else if (two == max) {
+//            numRings = 2;
+//        } else if (three == max) {
+//            numRings = 3;
+//        }
+
+        return numRings;
     }
 }

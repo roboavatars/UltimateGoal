@@ -8,8 +8,8 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import static java.lang.Math.PI;
 
-@Autonomous(name = "intake etst", preselectTeleOp = "Teleop")
-public class intakeTest extends LinearOpMode {
+@Autonomous(name = "Intake Test", preselectTeleOp = "Teleop")
+public class IntakeTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -22,11 +22,9 @@ public class intakeTest extends LinearOpMode {
         waitForStart();
 
         robot.intake.on();
-
         ElapsedTime time = new ElapsedTime();
 
         while (opModeIsActive()) {
-
             double input = Math.min(60, 42 + 6 * time.seconds() + 1.5 * Math.sin(9 * time.seconds()));
             robot.setTargetPoint(108, input, PI/2);
 

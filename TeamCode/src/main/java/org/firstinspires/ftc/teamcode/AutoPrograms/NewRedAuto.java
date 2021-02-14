@@ -315,7 +315,7 @@ public class NewRedAuto extends LinearOpMode {
                 robot.setTargetPoint(deliverWobblePath.getRobotPose(curTime), PI, 0);
 
                 if (!reachedDeposit && robot.y > wobbleCor[1] - 5 && Math.abs(PI - robot.theta) < 0.5) {
-                    robot.wobbleArm.ddown();
+                    robot.wobbleArm.armDown();
                 }
 
                 if (!reachedDeposit && robot.isAtPose(wobbleCor[0], wobbleCor[1], PI, 2, 2, PI/8)) {
@@ -342,7 +342,7 @@ public class NewRedAuto extends LinearOpMode {
 
                     Waypoint[] intakeWobble2Waypoints2 = new Waypoint[] {
                             new Waypoint(robot.x - 10, robot.y, 3*PI/4, -5, -50, 0, 0),
-                            new Waypoint(100, 36.5, 5*PI/12, -0.1, 80, 0, 3),
+                            new Waypoint(104, 40, 5*PI/12, -0.1, 100, 0, 3),
                     };
                     intakeWobble2Path2 = new Path(new ArrayList<>(Arrays.asList(intakeWobble2Waypoints2)));
 
@@ -361,13 +361,13 @@ public class NewRedAuto extends LinearOpMode {
                     robot.setTargetPoint(curPose, curPose.getTheta()+PI, 0);
                 }
 
-                if (!reachedWgPickup && robot.isAtPose(100, 36.5, 5*PI/12, 0.5, 0.5, PI/12)) {
+                if (!reachedWgPickup && robot.isAtPose(104, 40, 5*PI/12, 0.5, 0.5, PI/12)) {
                     reachedWgPickup = true;
                     pickReachTime = curTime;
                 }
 
                 if (reachedWgPickup && time.seconds() > pickReachTime + 0.75) {
-                    robot.wobbleArm.setArmPosition(-300);
+                    robot.wobbleArm.setArmPosition(-330);
                 } else if (reachedWgPickup && time.seconds() > pickReachTime + 0.25) {
                     robot.wobbleArm.clamp();
                 }
@@ -420,7 +420,7 @@ public class NewRedAuto extends LinearOpMode {
                 robot.setTargetPoint(deliverWobble2Path.getRobotPose(curTime));
 
                 if (!reachedDeposit && robot.y > wobble2Cor[1] - 5 && Math.abs(PI - robot.theta) < 0.5) {
-                    robot.wobbleArm.ddown();
+                    robot.wobbleArm.armDown();
                 }
 
                 if (!reachedDeposit && robot.isAtPose(wobble2Cor[0], wobble2Cor[1], PI, 3, 3, PI/7)) {

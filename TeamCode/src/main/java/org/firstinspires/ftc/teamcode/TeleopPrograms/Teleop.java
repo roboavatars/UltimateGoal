@@ -5,6 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Debug.Logger;
+import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import java.util.Arrays;
@@ -26,7 +27,7 @@ public class Teleop extends LinearOpMode {
     // Toggles
     public boolean stickToggle = false;
     public boolean sticksOut = true;
-//    public boolean isStickAuto = true;
+    public boolean isStickAuto = true;
     public boolean clampToggle = false;
     public boolean clamped = true;
 
@@ -57,14 +58,14 @@ public class Teleop extends LinearOpMode {
             }
 
             // Auto high goal and powershot shoot
-            if (gamepad1.left_bumper) {
-                robot.highGoalShoot(3);
+            if (gamepad1.left_bumper/* || robot.numRings == 3*/) {
+                robot.highGoalShoot();
             } else if (gamepad1.right_bumper) {
                 robot.powerShotShoot();
             }
 
             // Rev up flywheel for high goal
-            if (gamepad2.y) {
+            if (gamepad2.y/* || robot.numRings == 2*/) {
                 robot.shooter.flywheelHG();
             }
 
@@ -74,49 +75,49 @@ public class Teleop extends LinearOpMode {
             }
 
             // Stick extension/retraction
+//            if (gamepad2.x && !stickToggle) {
+//                stickToggle = true;
+//                if (sticksOut) {
+//                    robot.intake.sticksHome();
+//                } else {
+//                    robot.intake.sticksOut();
+//                }
+//                sticksOut = !sticksOut;
+//            } else if (!gamepad2.x && stickToggle) {
+//                stickToggle = false;
+//            }
+
             if (gamepad2.x && !stickToggle) {
                 stickToggle = true;
-                if (sticksOut) {
+                if (!stickToggle) {
                     robot.intake.sticksHome();
+                    isStickAuto = false;
                 } else {
-                    robot.intake.sticksOut();
+                    isStickAuto = true;
                 }
-                sticksOut = !sticksOut;
             } else if (!gamepad2.x && stickToggle) {
                 stickToggle = false;
             }
 
-//            if (gamepad2.x && !stickToggle) {
-//                stickToggle = true;
-//                if (!stickToggle) {
-//                    robot.intake.sticksHome();
-//                    isStickAuto = false;
-//                } else {
-//                    isStickAuto = true;
-//                }
-//            } else if (!gamepad2.x && stickToggle) {
-//                stickToggle = false;
-//            }
-//
-//            // Sticks are in auto mode
-//            if (isStickAuto && robot.numRings == 0) {
-//                double x = robot.x;
-//                double y = robot.y;
-//                double theta = robot.theta;
-//                double buffer = 6;
-//                double[] leftPos = new double[] {x - 27 * Math.sin(theta) + 7 * Math.cos(theta), y + 27 * Math.cos(theta) + 7 * Math.sin(theta)};
-//                double[] rightPos = new double[] {x + 27 * Math.sin(theta) + 7 * Math.cos(theta), y - 27 * Math.cos(theta) + 7 * Math.sin(theta)};
-//                if (48 + buffer <= leftPos[0] && leftPos[0] <= 144 - buffer && 0 + buffer <= leftPos[1] && leftPos[1] <= 144 - buffer) {
-//                    robot.intake.stickLeft(Constants.L_OUT_POS);
-//                } else {
-//                    robot.intake.stickLeft(Constants.L_HALF_POS);
-//                }
-//                if (48 + buffer <= rightPos[0] && rightPos[0] <= 144 - buffer && 0 + buffer <= rightPos[1] && rightPos[1] <= 144 - buffer) {
-//                    robot.intake.stickRight(Constants.R_OUT_POS);
-//                } else {
-//                    robot.intake.stickRight(Constants.R_HALF_POS);
-//                }
-//            }
+            // Sticks are in auto mode
+            if (isStickAuto && robot.numRings == 0) {
+                double x = robot.x;
+                double y = robot.y;
+                double theta = robot.theta;
+                double buffer = 6;
+                double[] leftPos = new double[] {x - 27 * Math.sin(theta) + 7 * Math.cos(theta), y + 27 * Math.cos(theta) + 7 * Math.sin(theta)};
+                double[] rightPos = new double[] {x + 27 * Math.sin(theta) + 7 * Math.cos(theta), y - 27 * Math.cos(theta) + 7 * Math.sin(theta)};
+                if (48 + buffer <= leftPos[0] && leftPos[0] <= 144 - buffer && 0 + buffer <= leftPos[1] && leftPos[1] <= 144 - buffer) {
+                    robot.intake.stickLeft(Constants.L_OUT_POS);
+                } else {
+                    robot.intake.stickLeft(Constants.L_HALF_POS);
+                }
+                if (48 + buffer <= rightPos[0] && rightPos[0] <= 144 - buffer && 0 + buffer <= rightPos[1] && rightPos[1] <= 144 - buffer) {
+                    robot.intake.stickRight(Constants.R_OUT_POS);
+                } else {
+                    robot.intake.stickRight(Constants.R_HALF_POS);
+                }
+            }
 
             // Ring blocker
             robot.intake.setBlocker(gamepad2.right_trigger);
@@ -148,13 +149,13 @@ public class Teleop extends LinearOpMode {
 
             // Reset odo for powershot
             if (gamepad1.x) {
-                robot.resetOdo(87, 63, Math.PI / 2);
+                robot.resetOdo(87, 63, Math.PI/2);
                 robot.xOffset = 0;
             }
 
             // Reset odo in corner
             if (gamepad2.left_trigger != 0) {
-                robot.resetOdo(135, 9, Math.PI / 2);
+                robot.resetOdo(135, 9, Math.PI/2);
                 robot.xOffset = 0;
             }
 

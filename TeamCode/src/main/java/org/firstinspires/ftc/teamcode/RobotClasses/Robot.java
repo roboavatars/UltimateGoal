@@ -39,6 +39,7 @@ public class Robot {
 
     // Class Constants
     private final int loggerUpdatePeriod = 2;
+    private final int sensorUpdatePeriod = 15;
     private final double xyTolerance = 1;
     private final double thetaTolerance = PI/35;
 
@@ -61,10 +62,10 @@ public class Robot {
     public double startShootTime;
     public double feedHomeTime;
     public double feedHomeDelay = 100;
-    public static int highGoalDelay = 250;
-    public static int psDelay = 250;
+    public static int highGoalDelay = 200;
+    public static int psDelay = 500;
 
-    public double flickDelay = 50;
+    public static double flapDelay = 150;
     public double flickTime;
 
     // Motion Variables
@@ -85,7 +86,7 @@ public class Robot {
     public final double[] psShootPos = new double[] {87, 63};
     public static double flap0 = 0.43;
     public static double flap1 = 0.47;
-    public static double flap2 = 0.5;
+    public static double flap2 = 0.50;
     public static double[] flapPositions = {flap2, flap1, flap0};
 
     public ArrayList<Ring> ringPos = new ArrayList<>();
@@ -160,9 +161,9 @@ public class Robot {
             firstLoop = false;
         }
 
-//        if (cycleCounter % 15 == 0) {
-//            numRings = shooter.getNumRings();
-//        }
+        if (cycleCounter % sensorUpdatePeriod == 0) {
+            numRings = shooter.getNumRings();
+        }
 
         profile(1);
 
@@ -186,10 +187,11 @@ public class Robot {
                 target = shootTargets(x, shootY, PI/2, 3);
             } else {
                 shooter.flywheelPS();
-                if (!isAuto){
+                vThresh = Constants.POWERSHOT_VELOCITY - 40;
+
+                if (!isAuto) {
                     intake.sticksOut();
                 }
-                vThresh = Constants.POWERSHOT_VELOCITY - 40;
                 target = shootTargets(psShootPos[0], psShootPos[1], PI/2, 2);
                 shooter.setFlapPosition(flapPositions[2]);
             }
@@ -240,9 +242,9 @@ public class Robot {
                     lastTarget = 3;
                 } else {
                     target = shootTargets(2);
-                    if (numRings == 3 || System.currentTimeMillis() - flickTime > flickDelay) {
-                        shooter.setFlapPosition(flapPositions[numRings-1]);
-                        lastTarget = numRings-1;
+                    if (numRings == 3 || System.currentTimeMillis() - flickTime > flapDelay) {
+                        shooter.setFlapPosition(flapPositions[numRings - 1]);
+                        lastTarget = numRings - 1;
                     }
                 }
                 setTargetPoint(target[0], target[1], target[2]);
@@ -298,6 +300,7 @@ public class Robot {
             //t265.sendOdometryData(vx, vy);
             t265.updateCamPose();
         }
+        intake.stickUpdate();
 
         profile(4);
 
@@ -380,8 +383,12 @@ public class Robot {
             preShoot = true;
             highGoal = true;
             numRingsPreset = numRings;
-            if (numRings != 3) log("Shooting with " + numRings + " rings");
-            if (shootYOverride != 0) log("Shooting at y = " + shootYOverride);
+            if (numRings != 3) {
+                log("Shooting with " + numRings + " rings");
+            }
+            if (shootYOverride != 0) {
+                log("Shooting at y = " + shootYOverride);
+            }
             startShootTime = System.currentTimeMillis();
             log("High goal shoot initiated");
         }

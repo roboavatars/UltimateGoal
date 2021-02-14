@@ -13,16 +13,17 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 
-@TeleOp(name = "Distance Sensor Test") @Config
+@TeleOp(name = "Distance Sensor Test")
+@Config
 public class DistanceSensorTest extends LinearOpMode {
 
     private DistanceSensor ringSensor;
     private Robot robot;
-    private double distance;
+    private int numRings = 3;
 
-    public static double zeroDist = 4.55;
-    public static double oneDist = 3.9;
-    public static double twoDist = 3.2;
+    public static double zeroDist = 4.65;
+    public static double oneDist = 4.0;
+    public static double twoDist = 3.3;
     public static double threeDist = 2.5;
 
     @Override
@@ -41,13 +42,7 @@ public class DistanceSensorTest extends LinearOpMode {
                 robot.intake.off();
             }
 
-            double tempDist = getDistance();
-            if (tempDist != 3 || distance >= 2) {
-                distance = tempDist;
-            }
-            Log.w("distance", distance + "");
-
-            addPacket("Distance", distance);
+            addPacket("Distance", getDistance());
             addPacket("# Rings", getNumRings());
             addPacket("Zero", zeroDist);
             addPacket("One", oneDist);
@@ -55,8 +50,8 @@ public class DistanceSensorTest extends LinearOpMode {
             addPacket("Three", threeDist);
             sendPacket();
 
-            telemetry.addData("Distance", distance);
-            telemetry.addData("# Rings", getNumRings());
+            telemetry.addData("Distance", robot.shooter.getDistance());
+            telemetry.addData("# Rings", robot.shooter.getNumRings());
             telemetry.update();
         }
     }
@@ -67,14 +62,20 @@ public class DistanceSensorTest extends LinearOpMode {
 
     public int getNumRings() {
         double dist = getDistance();
+        int tempRings;
         if (dist > zeroDist) {
-            return 0;
+            tempRings = 0;
         } else if (dist > oneDist) {
-            return 1;
+            tempRings = 1;
         } else if (dist > twoDist) {
-            return 2;
+            tempRings = 2;
         } else {
-            return 3;
+            tempRings = 3;
         }
+
+        if (tempRings != 3 || numRings >= 2) {
+            numRings = tempRings;
+        }
+        return numRings;
     }
 }

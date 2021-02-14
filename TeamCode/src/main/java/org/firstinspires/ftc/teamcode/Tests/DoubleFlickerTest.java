@@ -7,20 +7,21 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.Intake;
+import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 import org.firstinspires.ftc.teamcode.RobotClasses.Shooter;
 
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
+import static java.lang.Math.PI;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 
 @TeleOp
 @Config
 //@Disabled
 public class DoubleFlickerTest extends LinearOpMode {
-
     public static double bottomPos = Constants.FEED_MID_POS;
     public static double homePos = Constants.FEED_HOME_POS;
     public static double topPos = Constants.FEED_TOP_POS;
     public static int pos = 1;
+    public static boolean magUp = false;
     public static boolean debug = false;
     private double position;
 
@@ -30,15 +31,22 @@ public class DoubleFlickerTest extends LinearOpMode {
     private int delay = 4;
     public static int period = 250;
 
+    private double x = 87;
+    private double y = 63;
+    public static double thetaLeft = 1.627;
+    public static double thetaMid = 1.571;
+    public static double thetaRight = 1.504;
+
     private Shooter shooter;
     private Intake intake;
+    private Robot robot;
 
     @Override
     public void runOpMode() {
-
         Servo servo = hardwareMap.get(Servo.class, "feedServo");
         shooter = new Shooter(this);
         intake = new Intake(this, false);
+        robot = new Robot(this, 87, 63, PI/2, false);
 
         waitForStart();
 
@@ -52,8 +60,13 @@ public class DoubleFlickerTest extends LinearOpMode {
                     position = topPos;
                 }
                 servo.setPosition(position);
-            } else {
 
+                if (magUp) {
+                    shooter.magShoot();
+                } else {
+                    shooter.magHome();
+                }
+            } else {
                 // Intake on/off/rev
                 if (gamepad1.right_trigger > 0) {
                     intake.on();
@@ -80,7 +93,7 @@ public class DoubleFlickerTest extends LinearOpMode {
                     shootToggle = true;
                     if (shooter.magHome) {
                         shooter.magShoot();
-                        shooter.flywheelHG();
+                        shooter.flywheelPS();
                     } else {
                         shooter.magHome();
                         shooter.flywheelOff();
@@ -100,14 +113,27 @@ public class DoubleFlickerTest extends LinearOpMode {
                 if (delay == 0 || (delay != 4 && System.currentTimeMillis() - shootTime > period)) {
                     shootTime = System.currentTimeMillis();
                     if (delay == 0) {
-                        position = topPos;
-                        delay++;
+                        if (robot.isAtPose(x, y, thetaLeft)) {
+                            position = topPos;
+                            delay++;
+                        } else {
+                            robot.setTargetPoint(x, y, thetaLeft);
+                        }
+
                     } else if (delay == 1) {
-                        position = bottomPos;
-                        delay++;
+                        if (robot.isAtPose(x, y, thetaMid)) {
+                            position = bottomPos;
+                            delay++;
+                        } else {
+                            robot.setTargetPoint(x, y, thetaMid);
+                        }
                     } else if (delay == 2) {
-                        position = topPos;
-                        delay++;
+                        if (robot.isAtPose(x, y, thetaRight)) {
+                            position = topPos;
+                            delay++;
+                        } else {
+                            robot.setTargetPoint(x, y, thetaRight);
+                        }
                     } else if (delay == 3) {
                         position = homePos;
                         delay++;
@@ -115,8 +141,9 @@ public class DoubleFlickerTest extends LinearOpMode {
                     servo.setPosition(position);
                 }
             }
+
             addPacket("delay", delay);
-            sendPacket();
+            robot.update();
         }
     }
 }
