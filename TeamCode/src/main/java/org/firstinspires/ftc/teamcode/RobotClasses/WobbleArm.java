@@ -50,6 +50,11 @@ public class WobbleArm {
         wobbleMotor.setPower(0.4);
     }
 
+    public void ddown() {
+        setPosition(Constants.WOBBLE_DOWN_POS);
+        wobbleMotor.setPower(0.4);
+    }
+
     private void setPosition(int position) {
         wobbleMotor.setTargetPosition(position);
     }

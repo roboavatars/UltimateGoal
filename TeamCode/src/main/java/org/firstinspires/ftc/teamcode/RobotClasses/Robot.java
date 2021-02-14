@@ -64,6 +64,9 @@ public class Robot {
     public static int highGoalDelay = 250;
     public static int psDelay = 250;
 
+    public double flickDelay = 50;
+    public double flickTime;
+
     // Motion Variables
     public double x, y, theta, vx, vy, w;
     private double prevX, prevY, prevTheta, prevVx, prevVy, prevW, prevTime, ax, ay, a;
@@ -76,13 +79,14 @@ public class Robot {
     public double shootYOverride = 0;
     public int numRingsPreset = 3;
     public double xOffset = 0;
+    public double thetaOffset = 0;
 
     // Powershot Debug Variables
     public final double[] psShootPos = new double[] {87, 63};
-    public static double flap0 = 0.45;
+    public static double flap0 = 0.43;
     public static double flap1 = 0.47;
     public static double flap2 = 0.5;
-    public static double[] flapPositions = {flap0, flap1, flap2};
+    public static double[] flapPositions = {flap2, flap1, flap0};
 
     public ArrayList<Ring> ringPos = new ArrayList<>();
 
@@ -236,8 +240,10 @@ public class Robot {
                     lastTarget = 3;
                 } else {
                     target = shootTargets(2);
-                    shooter.setFlapPosition(flapPositions[numRings-1]);
-                    lastTarget = numRings-1;
+                    if (numRings == 3 || System.currentTimeMillis() - flickTime > flickDelay) {
+                        shooter.setFlapPosition(flapPositions[numRings-1]);
+                        lastTarget = numRings-1;
+                    }
                 }
                 setTargetPoint(target[0], target[1], target[2]);
             }
@@ -263,6 +269,7 @@ public class Robot {
                             log("Feed ring 3");
                         }
                         numRings--;
+                        flickTime = System.currentTimeMillis();
                     }
                 } else {
                     shooter.flywheelOff();
@@ -374,6 +381,7 @@ public class Robot {
             highGoal = true;
             numRingsPreset = numRings;
             if (numRings != 3) log("Shooting with " + numRings + " rings");
+            if (shootYOverride != 0) log("Shooting at y = " + shootYOverride);
             startShootTime = System.currentTimeMillis();
             log("High goal shoot initiated");
         }
@@ -446,7 +454,7 @@ public class Robot {
 
         // Calculate Robot Angle
         double d = Math.sqrt(Math.pow(targetX - shooterX, 2) + Math.pow(targetY - shooterY, 2));
-        double alignRobotAngle = Math.atan2(dy, dx) + 0.0013 * d - 0.2300;
+        double alignRobotAngle = Math.atan2(dy, dx) + 0.0013 * d - 0.2300 - thetaOffset;
         double alignRobotX = shooterX - 6.5 * Math.sin(alignRobotAngle) + xOffset;
         double alignRobotY = shooterY + 6.5 * Math.cos(alignRobotAngle);
 
@@ -523,7 +531,7 @@ public class Robot {
     }
 
     private void profile(int num) {
-        Log.w("profiler", num + ": " + profiler.milliseconds());
+//        Log.w("profiler", num + ": " + profiler.milliseconds());
     }
 
     @SuppressLint("DefaultLocale")

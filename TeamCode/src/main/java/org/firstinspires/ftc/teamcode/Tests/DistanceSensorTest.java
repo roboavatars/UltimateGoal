@@ -13,8 +13,7 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 
-@TeleOp(name = "0 Distance Sensor Test")
-@Config
+@TeleOp(name = "Distance Sensor Test") @Config
 public class DistanceSensorTest extends LinearOpMode {
 
     private DistanceSensor ringSensor;

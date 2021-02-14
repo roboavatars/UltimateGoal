@@ -9,7 +9,6 @@ import static java.lang.Math.PI;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 @TeleOp
-@Disabled
 public class Regression extends LinearOpMode {
 
     public int startX = 90;
@@ -48,18 +47,18 @@ public class Regression extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
-                robot.shooter.feedMid();
+                robot.shooter.feedTop();
             } else {
                 robot.shooter.feedHome();
             }
 
-            if (gamepad1.right_trigger > 0) {
-                double[] target = robot.shootTargets(robot.psShootPos[0], robot.psShootPos[1], PI / 2, 2);
-
-                if (!(Math.abs(robot.x - target[0]) < xyTol && Math.abs(robot.y - target[1]) < xyTol && Math.abs(robot.theta - target[2]) < thetaTol)) {
-                    robot.setTargetPoint(target[0], target[1], target[2]);
-                }
-            }
+//            if (gamepad1.right_trigger > 0) {
+//                double[] target = robot.shootTargets(robot.psShootPos[0], robot.psShootPos[1], PI / 2, 2);
+//
+//                if (!(Math.abs(robot.x - target[0]) < xyTol && Math.abs(robot.y - target[1]) < xyTol && Math.abs(robot.theta - target[2]) < thetaTol)) {
+//                    robot.setTargetPoint(target[0], target[1], target[2]);
+//                }
+//            }
 
             if (robotCentric) {
                 robot.drivetrain.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
