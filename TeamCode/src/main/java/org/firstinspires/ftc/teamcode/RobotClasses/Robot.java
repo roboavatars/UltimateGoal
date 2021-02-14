@@ -161,9 +161,9 @@ public class Robot {
             firstLoop = false;
         }
 
-        if (cycleCounter % sensorUpdatePeriod == 0) {
-            numRings = shooter.getNumRings();
-        }
+//        if (cycleCounter % sensorUpdatePeriod == 0) {
+//            numRings = shooter.getNumRings();
+//        }
 
         profile(1);
 
@@ -395,7 +395,8 @@ public class Robot {
     }
 
     public void highGoalShoot() {
-        highGoalShoot(shooter.getNumRings());
+        //highGoalShoot(shooter.getNumRings());
+        highGoalShoot(3);
     }
 
     // Set variables for powershot shoot
