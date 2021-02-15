@@ -42,7 +42,7 @@ public class Ring {
         Log.w("ring-locator-pipe", "rings2: " + rings + "\n");
 
         // Sort rings based on ascending x value
-        rings.sort((r1, r2) -> Double.compare(r1.getX(), r2.getX()));
+        rings.sort((r1, r2) -> Double.compare(r1.getAbsDist(robotX, robotY), r2.getAbsDist(robotX, robotY)));
 
         Log.w("ring-locator-pipe", "rings3: " + rings + "\n");
 
