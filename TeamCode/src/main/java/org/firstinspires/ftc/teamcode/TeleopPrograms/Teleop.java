@@ -33,7 +33,6 @@ public class Teleop extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
         if (useAutoPos) {
             double[] initialPosition = Logger.readPos();
             telemetry.addData("Starting Position", Arrays.toString(initialPosition)); telemetry.update();
@@ -74,50 +73,33 @@ public class Teleop extends LinearOpMode {
                 robot.cancelShoot();
             }
 
-            // Stick extension/retraction
-//            if (gamepad2.x && !stickToggle) {
-//                stickToggle = true;
-//                if (sticksOut) {
-//                    robot.intake.sticksHome();
-//                } else {
-//                    robot.intake.sticksOut();
-//                }
-//                sticksOut = !sticksOut;
-//            } else if (!gamepad2.x && stickToggle) {
-//                stickToggle = false;
-//            }
-
+            // Stick Retraction/Extension Toggle
             if (gamepad2.x && !stickToggle) {
                 stickToggle = true;
-                if (!stickToggle) {
+                if (sticksOut) {
                     robot.intake.sticksHome();
-                    isStickAuto = false;
                 } else {
-                    isStickAuto = true;
+                    robot.intake.sticksOut();
                 }
+                sticksOut = !sticksOut;
             } else if (!gamepad2.x && stickToggle) {
                 stickToggle = false;
             }
 
-            // Sticks are in auto mode
-            if (isStickAuto && robot.numRings == 0) {
-                double x = robot.x;
-                double y = robot.y;
-                double theta = robot.theta;
-                double buffer = 6;
-                double[] leftPos = new double[] {x - 33 * Math.sin(theta) + 7 * Math.cos(theta), y + 33 * Math.cos(theta) + 7 * Math.sin(theta)};
-                double[] rightPos = new double[] {x + 27 * Math.sin(theta) + 7 * Math.cos(theta), y - 27 * Math.cos(theta) + 7 * Math.sin(theta)};
-                if (48 + buffer <= leftPos[0] && leftPos[0] <= 144 - buffer && 0 + buffer <= leftPos[1] && leftPos[1] <= 144 - buffer) {
-                    robot.intake.stickLeft(Constants.L_OUT_POS);
-                } else {
-                    robot.intake.stickLeft(Constants.L_HALF_POS);
-                }
-                if (48 + buffer <= rightPos[0] && rightPos[0] <= 144 - buffer && 0 + buffer <= rightPos[1] && rightPos[1] <= 144 - buffer) {
-                    robot.intake.stickRight(Constants.R_OUT_POS);
-                } else {
-                    robot.intake.stickRight(Constants.R_HALF_POS);
-                }
-            }
+            // Stick Retraction/Auto Toggle
+//            if (gamepad2.x && !stickToggle) {
+//                stickToggle = true;
+//                isStickAuto = !isStickAuto;
+//            } else if (!gamepad2.x && stickToggle) {
+//                stickToggle = false;
+//            }
+//
+//            // Auto Mode Sticks
+//            if (isStickAuto && robot.numRings == 0) {
+//                robot.intake.autoSticks(robot.x, robot.y, robot.theta, 6);
+//            } else if (!isStickAuto) {
+//                robot.intake.sticksHome();
+//            }
 
             // Ring blocker
             robot.intake.setBlocker(gamepad2.right_trigger);
@@ -150,25 +132,19 @@ public class Teleop extends LinearOpMode {
             // Reset odo for powershot
             if (gamepad1.x) {
                 robot.resetOdo(87, 63, Math.PI/2);
-                robot.xOffset = 0;
+                robot.thetaOffset = 0;
             }
 
-            // Reset odo in corner
-            if (gamepad2.left_trigger != 0) {
-                robot.resetOdo(135, 9, Math.PI/2);
-                robot.xOffset = 0;
-            }
-
-            // Change shooting x offset to compensate for odo drift
+            // Change shooting theta offset to compensate for odo drift
             if (gamepad2.dpad_left) {
-                robot.xOffset -= 0.1;
+                robot.thetaOffset -= 0.01;
             } else if (gamepad2.dpad_right) {
-                robot.xOffset += 0.1;
+                robot.thetaOffset += 0.01;
             }
 
             // Reset theta offset
             if (gamepad2.dpad_up) {
-                robot.xOffset = 0;
+                robot.thetaOffset = 0;
             }
 
             if (gamepad1.dpad_up) {

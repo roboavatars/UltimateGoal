@@ -43,7 +43,8 @@ public class Robot {
     private final double xyTolerance = 1;
     private final double thetaTolerance = PI/35;
 
-    private double odoWeight = 1;
+    private double odoCovariance = 1;
+    private boolean useT265 = false;
 
     // State Variables
     private final boolean isAuto;
@@ -61,11 +62,11 @@ public class Robot {
     public double shootDelay;
     public double startShootTime;
     public double feedHomeTime;
-    public double feedHomeDelay = 100;
-    public static int highGoalDelay = 200;
-    public static int psDelay = 500;
+    public double feedHomeDelay = 200;
+    public static int highGoalDelay = 250;
+    public static int psDelay = 450;
 
-    public static double flapDelay = 150;
+    public static double flapDelay = 250;
     public double flickTime;
 
     // Motion Variables
@@ -76,18 +77,22 @@ public class Robot {
     // Shooter Variables
     private final double[] shootXCor = {76.5, 84, 91.5, 108};
     private final double shootYCor = 150;
+    private double[] target = {};
 
     public double shootYOverride = 0;
     public int numRingsPreset = 3;
-    public double xOffset = 0;
     public double thetaOffset = 0;
 
     // Powershot Debug Variables
     public final double[] psShootPos = new double[] {87, 63};
-    public static double flap0 = 0.43;
-    public static double flap1 = 0.47;
-    public static double flap2 = 0.50;
-    public static double[] flapPositions = {flap2, flap1, flap0};
+    public static double theta0 = 1.681;
+    public static double theta1 = 1.571;
+    public static double theta2 = 1.441;
+    public static double[] thetaPositions = {theta2, theta1, theta0};
+//    public static double flap0 = 0.43;
+//    public static double flap1 = 0.47;
+//    public static double flap2 = 0.50;
+//    public static double[] flapPositions = {flap2, flap1, flap0};
 
     public ArrayList<Ring> ringPos = new ArrayList<>();
 
@@ -106,10 +111,12 @@ public class Robot {
         wobbleArm = new WobbleArm(op, isAuto);
         logger = new Logger();
         try {
-            t265 = new T265(op, x, y, theta); t265.startCam();
+            t265 = new T265(op, x, y, theta);
+            t265.startCam();
         } catch (Exception ex) {
-            log("Camera error"); ex.printStackTrace();
-            odoWeight = 1;
+            log("Camera error");
+            ex.printStackTrace();
+            useT265 = false;
         }
 
         profiler = new ElapsedTime();
@@ -135,7 +142,7 @@ public class Robot {
     // Stop logger and t265
     public void stop() {
         logger.stopLogging();
-        if (odoWeight != 1) {
+        if (useT265) {
             t265.stopCam();
         }
     }
@@ -143,7 +150,7 @@ public class Robot {
     // Reset Odometry
     public void resetOdo(double x, double y, double theta) {
         drivetrain.resetOdo(x, y, theta);
-        if (odoWeight != 1) {
+        if (useT265) {
             t265.setCameraPose(x, y, theta);
         }
     }
@@ -153,7 +160,7 @@ public class Robot {
         profiler.reset();
 
         // Powershot Debug
-        flapPositions = new double[] {flap2, flap1, flap0};
+        thetaPositions = new double[] {theta2, theta1, theta0};
 
         // Track time after start
         if (firstLoop) {
@@ -161,9 +168,9 @@ public class Robot {
             firstLoop = false;
         }
 
-//        if (cycleCounter % sensorUpdatePeriod == 0) {
-//            numRings = shooter.getNumRings();
-//        }
+        if (!isAuto && !preShoot && !shoot && cycleCounter % sensorUpdatePeriod == 0) {
+            numRings = shooter.getNumRings();
+        }
 
         profile(1);
 
@@ -192,8 +199,7 @@ public class Robot {
                 if (!isAuto) {
                     intake.sticksOut();
                 }
-                target = shootTargets(psShootPos[0], psShootPos[1], PI/2, 2);
-                shooter.setFlapPosition(flapPositions[2]);
+                target = new double[] {psShootPos[0], psShootPos[1], thetaPositions[2]};
             }
 
             // Turn off intake and put mag up
@@ -235,26 +241,22 @@ public class Robot {
         if (shoot && numRings >= 0 && !shooter.magHome) {
 
             // Maintain/change robot alignment, set flap
-            double[] target = {};
             if (numRings > 0) {
                 if (highGoal) {
                     target = shootTargets(3);
                     lastTarget = 3;
-                } else {
-                    target = shootTargets(2);
-                    if (numRings == 3 || System.currentTimeMillis() - flickTime > flapDelay) {
-                        shooter.setFlapPosition(flapPositions[numRings - 1]);
-                        lastTarget = numRings - 1;
-                    }
+                } else if (numRings == 3 || System.currentTimeMillis() - flickTime > flapDelay) {
+                    target = new double[] {psShootPos[0], psShootPos[1], thetaPositions[numRings - 1]};
+                    lastTarget = numRings - 1;
                 }
-                setTargetPoint(target[0], target[1], target[2]);
+                setTargetPoint(target[0], target[1], target[2], 0, 0, 0, 0.6, 0.6, 6.0, 0.05, 0.05, 0.4);
             }
 
             // Auto feed rings
             if (System.currentTimeMillis() - shootTime > shootDelay) {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position
-                    if (isAtPose(target[0], target[1], target[2])) {
+                    if (highGoal && isAtPose(target[0], target[1], target[2]) || !highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/200)) {
                         log("In shoot Velocity: " + shooter.getVelocity());
 
                         if (numRings == 3) {
@@ -272,6 +274,8 @@ public class Robot {
                         }
                         numRings--;
                         flickTime = System.currentTimeMillis();
+                    } else {
+                        log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") Moving to shoot position: " + Arrays.toString(target));
                     }
                 } else {
                     shooter.flywheelOff();
@@ -281,6 +285,8 @@ public class Robot {
                     feedHomeTime = System.currentTimeMillis();
                     log("Shoot done");
                     log("Total shoot time: " +  (System.currentTimeMillis() - startShootTime) + " ms");
+
+                    if (isAuto && !highGoal) drivetrain.setControls(0, 0, 0);
                 }
                 shootTime = System.currentTimeMillis();
             }
@@ -296,7 +302,7 @@ public class Robot {
 
         // Update Position
         drivetrain.updatePose();
-        if (odoWeight != 1) {
+        if (odoCovariance != 1) {
             //t265.sendOdometryData(vx, vy);
             t265.updateCamPose();
         }
@@ -307,10 +313,10 @@ public class Robot {
         // Calculate Motion Info
         double curTime = System.currentTimeMillis() / 1000.0;
         double timeDiff = curTime - prevTime;
-        if (odoWeight != 1) {
-            x = odoWeight * drivetrain.x + (1 - odoWeight) * t265.getCamX();
-            y = odoWeight * drivetrain.y + (1 - odoWeight) * t265.getCamY();
-            theta = odoWeight * drivetrain.theta + (1 - odoWeight) * t265.getCamTheta();
+        if (useT265) {
+            x = odoCovariance * drivetrain.x + (1 - odoCovariance) * t265.getCamX();
+            y = odoCovariance * drivetrain.y + (1 - odoCovariance) * t265.getCamY();
+            theta = odoCovariance * drivetrain.theta + (1 - odoCovariance) * t265.getCamTheta();
         } else {
             x = drivetrain.x;
             y = drivetrain.y;
@@ -358,8 +364,8 @@ public class Robot {
         // Dashboard Drawings
         drawGoal("black");
         drawRobot(drivetrain.x, drivetrain.y, drivetrain.theta, "green");
-        if (odoWeight != 1) {
-            drawRobot(t265.getCamX(), t265.getCamY(), t265.getCamTheta(), "red");
+        if (useT265) {
+            drawRobot(t265.getCamX(), t265.getCamY(), t265.getCamTheta(), t265.confidenceColor());
         }
         drawRobot(this, "black");
         for (Ring ring : ringPos) {
@@ -463,7 +469,7 @@ public class Robot {
         // Calculate Robot Angle
         double d = Math.sqrt(Math.pow(targetX - shooterX, 2) + Math.pow(targetY - shooterY, 2));
         double alignRobotAngle = Math.atan2(dy, dx) + 0.0013 * d - 0.2300 - thetaOffset;
-        double alignRobotX = shooterX - 6.5 * Math.sin(alignRobotAngle) + xOffset;
+        double alignRobotX = shooterX - 6.5 * Math.sin(alignRobotAngle);
         double alignRobotY = shooterY + 6.5 * Math.cos(alignRobotAngle);
 
         return new double[] {alignRobotX, alignRobotY, alignRobotAngle};

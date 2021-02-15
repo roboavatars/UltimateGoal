@@ -6,6 +6,8 @@ import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import org.firstinspires.ftc.teamcode.OpenCV.Ring;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
+import static java.lang.Math.PI;
+
 public class Dashboard {
 
     public static FtcDashboard dashboard = FtcDashboard.getInstance();
@@ -17,12 +19,11 @@ public class Dashboard {
 
     public static void drawRobot(double robotX, double robotY, double robotTheta, String color) {
         double r = 9 * Math.sqrt(2);
-        double pi = Math.PI;
         double x = robotY - 72;
         double y = 72 - robotX;
-        double theta = pi/2 + robotTheta;
-        double[] ycoords = {r * Math.sin(pi/4 + theta) + y, r * Math.sin(3 * pi/4 + theta) + y, r * Math.sin(5 * pi/4 + theta) + y, r * Math.sin(7 * pi/4 + theta) + y};
-        double[] xcoords = {r * Math.cos(pi/4 + theta) + x, r * Math.cos(3 * pi/4 + theta) + x, r * Math.cos(5 * pi/4 + theta) + x, r * Math.cos(7 * pi/4 + theta) + x};
+        double theta = PI/2 + robotTheta;
+        double[] ycoords = {r * Math.sin(PI/4 + theta) + y, r * Math.sin(3*PI/4 + theta) + y, r * Math.sin(5*PI/4 + theta) + y, r * Math.sin(7*PI/4 + theta) + y};
+        double[] xcoords = {r * Math.cos(PI/4 + theta) + x, r * Math.cos(3*PI/4 + theta) + x, r * Math.cos(5*PI/4 + theta) + x, r * Math.cos(7*PI/4 + theta) + x};
         packet.fieldOverlay().setFill(color).fillPolygon(xcoords, ycoords);
     }
 

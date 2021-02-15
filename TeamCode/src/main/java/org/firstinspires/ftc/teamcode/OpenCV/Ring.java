@@ -49,9 +49,11 @@ public class Ring {
         // Return up to three rings
         if (rings.size() > 3) {
             return new ArrayList<>(rings.subList(0, 3));
-        } else if (rings.size() == 0) {
-            return new ArrayList<>(Arrays.asList(new Ring(0, 0, robotX, robotY)));
-        } else {
+        }
+//        else if (rings.size() == 0) {
+//            return new ArrayList<>(Arrays.asList(new Ring(0, 0, robotX, robotY)));
+//        }
+        else {
             return rings;
         }
     }

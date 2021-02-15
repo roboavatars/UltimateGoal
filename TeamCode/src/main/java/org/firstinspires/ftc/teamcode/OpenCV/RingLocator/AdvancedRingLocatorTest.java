@@ -118,22 +118,7 @@ public class AdvancedRingLocatorTest extends LinearOpMode {
             }
 
             if (robot.numRings == 0) {
-                double x = robot.x;
-                double y = robot.y;
-                double theta = robot.theta;
-                double buffer = 8;
-                double[] leftPos = new double[] {x - 33 * Math.sin(theta) + 7 * Math.cos(theta), y + 33 * Math.cos(theta) + 7 * Math.sin(theta)};
-                double[] rightPos = new double[] {x + 27 * Math.sin(theta) + 7 * Math.cos(theta), y - 27 * Math.cos(theta) + 7 * Math.sin(theta)};
-                if (48 + buffer <= leftPos[0] && leftPos[0] <= 144 - buffer && 0 + buffer <= leftPos[1] && leftPos[1] <= 144 - buffer) {
-                    robot.intake.stickLeft(Constants.L_OUT_POS);
-                } else {
-                    robot.intake.stickLeft(Constants.L_HALF_POS);
-                }
-                if (48 + buffer <= rightPos[0] && rightPos[0] <= 144 - buffer && 0 + buffer <= rightPos[1] && rightPos[1] <= 144 - buffer) {
-                    robot.intake.stickRight(Constants.R_OUT_POS);
-                } else {
-                    robot.intake.stickRight(Constants.R_HALF_POS);
-                }
+                robot.intake.autoSticks(robot.x, robot.y, robot.theta, 6);
             }
 
             if (gamepad1.b || highGoal) {

@@ -62,7 +62,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         // Process Image
-        processorOut = processor.processFrame(new Mat(input, new Rect(240, 40, 80, 80)));
+        processorOut = processor.processFrame(new Mat(input, new Rect(65, 45, 90, 90)));
         input = processorOut[0];
         processed = processorOut[1];
 

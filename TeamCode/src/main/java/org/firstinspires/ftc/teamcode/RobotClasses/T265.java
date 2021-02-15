@@ -25,6 +25,9 @@ public class T265 {
     private double yOffset = -7;
 
     // Position Variables
+    private double startX;
+    private double startY;
+    private double startTheta;
     private double x;
     private double y;
     private double theta;
@@ -40,7 +43,7 @@ public class T265 {
 
     public boolean isEmpty = false;
 
-    public T265(LinearOpMode op, double initX, double initY, double initTheta) {
+    public T265(LinearOpMode op, double startX, double startY, double startTheta) {
         this.op = op;
         this.hardwareMap = op.hardwareMap;
 
@@ -54,13 +57,13 @@ public class T265 {
         } else {
             t265Cam = new T265Camera(new Transform2d(), ODOMETRY_COVARIANCE, hardwareMap.appContext);
         }
-        setCameraPose(initX, initY, initTheta);
+        setCameraPose(startX, startY, startTheta);
     }
 
     public void startCam() {
-        t265Cam.start((up) -> {
-            Translation2d translation = new Translation2d(up.pose.getTranslation().getX() / INCH_TO_METER, up.pose.getTranslation().getY() / INCH_TO_METER);
-            Rotation2d rotation = up.pose.getRotation();
+        t265Cam.start((state) -> {
+            Translation2d translation = new Translation2d(state.pose.getTranslation().getX() / INCH_TO_METER, state.pose.getTranslation().getY() / INCH_TO_METER);
+            Rotation2d rotation = state.pose.getRotation();
 
             x = translation.getX();
             y = translation.getY();
@@ -109,5 +112,17 @@ public class T265 {
 
     public double getCamTheta() {
         return theta + PI/2;
+    }
+
+    public String confidenceColor() {
+        if (confidence == 1) {
+            return "yellow";
+        } else if (confidence == 2) {
+            return "orange";
+        } else if (confidence == 3) {
+            return "green";
+        } else {
+            return "red";
+        }
     }
 }

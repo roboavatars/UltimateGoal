@@ -76,18 +76,6 @@ public class DoubleFlickerTest extends LinearOpMode {
                     intake.off();
                 }
 
-                // Toggle mag for shoot/home position
-                if (gamepad1.y && !magToggle) {
-                    magToggle = true;
-                    if (shooter.magHome) {
-                        shooter.magShoot();
-                    } else {
-                        shooter.magHome();
-                    }
-                } else if (!gamepad1.x && magToggle) {
-                    magToggle = false;
-                }
-
                 // Toggle flywheel/mag for shoot/home position
                 if (gamepad1.x && !shootToggle) {
                     shootToggle = true;
@@ -119,7 +107,6 @@ public class DoubleFlickerTest extends LinearOpMode {
                         } else {
                             robot.setTargetPoint(x, y, thetaLeft);
                         }
-
                     } else if (delay == 1) {
                         if (robot.isAtPose(x, y, thetaMid)) {
                             position = bottomPos;
