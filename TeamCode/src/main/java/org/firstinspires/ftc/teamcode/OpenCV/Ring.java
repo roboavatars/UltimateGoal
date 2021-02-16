@@ -1,12 +1,11 @@
 package org.firstinspires.ftc.teamcode.OpenCV;
 
 import android.annotation.SuppressLint;
-import android.util.Log;
 
 import org.firstinspires.ftc.teamcode.OpenCV.RingLocator.RingLocatorPipeline;
 
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 
 public class Ring {
     private final double relX;
@@ -38,24 +37,22 @@ public class Ring {
                 i++;
             }
         }
-
-        Log.w("ring-locator-pipe", "rings2: " + rings + "\n");
-
-        // Sort rings based on ascending x value
+        // Sort rings based on distance
         rings.sort((r1, r2) -> Double.compare(r1.getAbsDist(robotX, robotY), r2.getAbsDist(robotX, robotY)));
-
-        Log.w("ring-locator-pipe", "rings3: " + rings + "\n");
 
         // Return up to three rings
         if (rings.size() > 3) {
-            return new ArrayList<>(rings.subList(0, 3));
+            rings = new ArrayList<>(rings.subList(0, 3));
         }
-//        else if (rings.size() == 0) {
-//            return new ArrayList<>(Arrays.asList(new Ring(0, 0, robotX, robotY)));
-//        }
-        else {
-            return rings;
+//        return rings;
+
+        Ring closest = rings.get(0);
+        // find closet ring after first ring
+        if (rings.get(1).getAbsDist(closest.absX, closest.absY) > rings.get(2).getAbsDist(closest.absX, closest.absY)) {
+            Collections.swap(rings, 1, 2);
         }
+
+        return rings;
     }
 
     // Calculate ring absolute coordinates using relative coordinates and robot position

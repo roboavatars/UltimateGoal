@@ -31,15 +31,14 @@ public class RingLocator extends BaseDetector {
     // Return a sorted list with up to three coordinate-filtered rings
     public ArrayList<Ring> getRings(double robotX, double robotY, double robotTheta) {
         ArrayList<Ring> rings = pipeline.getRings();
-        pipeline.log("rings0: " + rings + "\n");
         for (int i = 0; i < rings.size(); i++) {
             try {
                 rings.get(i).calcAbsCoords(robotX, robotY, robotTheta);
             } catch (Exception ignore) {}
         }
-        pipeline.log("rings1: " + rings + "\n");
+
         rings = Ring.getRingCoords(rings, minX, minY, maxX, maxY, robotX, robotY);
-        pipeline.log("rings4: " + rings + "\n");
+
         return new ArrayList<>(rings);
     }
 }

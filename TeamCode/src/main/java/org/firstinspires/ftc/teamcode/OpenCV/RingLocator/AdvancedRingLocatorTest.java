@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.OpenCV.Ring;
 import org.firstinspires.ftc.teamcode.Pathing.Path;
 import org.firstinspires.ftc.teamcode.Pathing.Waypoint;
-import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import java.util.ArrayList;
@@ -20,17 +19,17 @@ public class AdvancedRingLocatorTest extends LinearOpMode {
 
     private Robot robot;
     private RingLocator detector;
+
     private ArrayList<Ring> rings;
-    private double time = 3.0;
-    private ArrayList<Waypoint> ringWaypoints = new ArrayList<>(3);
+    private double ringTime = 0;
     private Path ringPath;
-    private double intakePower;
+
+    private double intakePower = 0;
     private boolean start = false;
-    private boolean highGoal = false;
 
     @Override
     public void runOpMode() {
-        robot = new Robot(this, 87, 33, PI/2, false);
+        robot = new Robot(this, 87, 63, PI/2, false);
         robot.intake.blockerDown();
         detector = new RingLocator(this);
         detector.start();
@@ -53,21 +52,24 @@ public class AdvancedRingLocatorTest extends LinearOpMode {
         }
         ElapsedTime timer = new ElapsedTime();
 
-        ringWaypoints.add(new Waypoint(84, 60, PI/2, 60, 100, 0, 0));
+        ArrayList<Waypoint> ringWaypoints = new ArrayList<>();
+        ringWaypoints.add(new Waypoint(robot.x, robot.y, robot.theta, 50, 60, 0, 0));
+
+        double[] ringPos = rings.get(0).driveToRing(robot.x, robot.y);
         if (rings.size() >= 1) {
-            double[] ringPos = rings.get(0).driveToRing(90, 33);
-            ringWaypoints.add(new Waypoint(ringPos[0], ringPos[1], ringPos[2], 40, 30, 0, time += 1.0));
+            if (ringPos[1] > 135) ringPos[2] = PI/2;
+            ringWaypoints.add(new Waypoint(ringPos[0], ringPos[1], ringPos[2], 20, 30, 0, ringTime += 1.0));
         }
         if (rings.size() >= 2) {
-            double[] ringPos = rings.get(1).driveToRing(90, 33);
-            ringWaypoints.add(new Waypoint(ringPos[0], ringPos[1], ringPos[2], 40, 30, 0, time += 1.0));
+            ringPos = rings.get(1).driveToRing(ringPos[0], ringPos[1]);
+            if (ringPos[1] > 135) ringPos[2] = PI/2;
+            ringWaypoints.add(new Waypoint(ringPos[0], ringPos[1], ringPos[2], 20, 10, 0, ringTime += 1.0));
         }
         if (rings.size() == 3) {
-            double[] ringPos = rings.get(2).driveToRing(90, 33);
-            ringWaypoints.add(new Waypoint(ringPos[0], ringPos[1], ringPos[2], 40, 30, 0, time += 1.0));
+            ringPos = rings.get(2).driveToRing(ringPos[0], ringPos[1]);
+            if (ringPos[1] > 135) ringPos[2] = PI/2;
+            ringWaypoints.add(new Waypoint(ringPos[0], ringPos[1], ringPos[2], 20, 10, 0, ringTime += 1.0));
         }
-        ringWaypoints.add(new Waypoint(90, 60, PI/2, -30, -50, 0, time));
-
         ringPath = new Path(ringWaypoints);
 
         while (opModeIsActive()) {
@@ -79,7 +81,7 @@ public class AdvancedRingLocatorTest extends LinearOpMode {
                 intakePower = 1;
             } else if (gamepad1.left_trigger > 0) {
                 intakePower = -1;
-            } else {
+            } else if (!start) {
                 intakePower = 0;
             }
 
@@ -94,38 +96,29 @@ public class AdvancedRingLocatorTest extends LinearOpMode {
             }
 
             if (gamepad1.left_trigger != 0) {
-                robot.resetOdo(135, 9, PI/2);
+                robot.resetOdo(87, 63, PI/2);
             }
 
             if (robot.numRings == 0) {
                 robot.intake.autoSticks(robot.x, robot.y, robot.theta, 6);
             }
 
-            if (gamepad1.b || highGoal) {
-                robot.drivetrain.setControls(-0.5 * gamepad1.left_stick_y, -0.5 * gamepad1.left_stick_x, -0.5 * gamepad1.right_stick_x);
+            if (gamepad1.b) {
+                start = true;
                 timer.reset();
-            } else {
-                if (!highGoal && time < timer.seconds()) {
-//                    robot.highGoalShoot();
-                    highGoal = true;
-                    intakePower = -1;
-                    break;
-                } else {
-                    if (start) {
-                        double curTime = timer.seconds();
-                        robot.setTargetPoint(ringPath.getRobotPose(curTime));
-                        intakePower = 1;
-                    } else {
-                        if (robot.isAtPose(84, 60, PI/2, 2, 3, PI/30)) {
-                            start = true;
-                            timer.reset();
-                        } else {
-                            robot.setTargetPoint(84, 60, PI/2);
-                            intakePower = 0;
-                        }
-                    }
+            }
+
+            if (start) {
+                double curTime = timer.seconds();
+                robot.setTargetPoint(ringPath.getRobotPose(curTime));
+                intakePower = 1;
+
+                if (curTime > ringTime) {
+                    start = false;
+                    intakePower = 0;
                 }
             }
+
             robot.intake.setPower(intakePower);
             robot.update();
         }
