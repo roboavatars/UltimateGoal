@@ -206,7 +206,7 @@ public class Robot {
             if (shooter.magHome) {
                 intake.off();
                 shooter.magShoot();
-                if (!isAuto) {
+                if (!isAuto && numRingsPreset == 3) {
                     intake.sticksFourth();
                 }
                 log("Mag up");
@@ -257,8 +257,9 @@ public class Robot {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position
                     if (highGoal && isAtPose(target[0], target[1], target[2]) ||
-                            !highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/200)) {
+                            !highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/100)) {
                         log("In shoot Velocity: " + shooter.getVelocity());
+                        log(vx+" "+vy+" "+w);
 
                         if (shooter.feedHome) {
                             shooter.feedTop();
@@ -291,8 +292,6 @@ public class Robot {
                     shoot = false;
                     log("Shoot done");
                     log("Total shoot time: " +  (System.currentTimeMillis() - startShootTime) + " ms");
-
-                    if (isAuto && !highGoal) drivetrain.setControls(0, 0, 0);
                 }
                 shootTime = System.currentTimeMillis();
             }
@@ -365,7 +364,7 @@ public class Robot {
         addPacket("6 shoot", shoot  + " " + preShoot + " " + highGoal);
         addPacket("7 Time", (System.currentTimeMillis() - startTime) / 1000);
         addPacket("8 Update Frequency (Hz)", 1 / timeDiff);
-        addPacket("diff", timeDiff);
+        // addPacket("diff", timeDiff);
 
         // Dashboard Drawings
         drawGoal("black");

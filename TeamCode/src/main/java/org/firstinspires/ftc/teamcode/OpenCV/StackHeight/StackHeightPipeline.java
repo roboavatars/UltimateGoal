@@ -31,7 +31,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
     public static int HEIGHT_THRESH = 3;
     public static int WIDTH_THRESH = 15;
     public static double ONE_MIN = 1.9;
-    public static double ONE_MAX = 2.7;
+    public static double ONE_MAX = 4.0;
     public static double FOUR_MIN = 0.5;
 
     // Results
@@ -46,16 +46,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
     private Mat processed = new Mat();
 
     public StackHeightPipeline() {
-        // Clear Old Images
-        @SuppressLint("SdCardPath") File dir = new File("/sdcard/EasyOpenCV/stackHeight");
-        String[] children = dir.list();
-        if (children != null) {
-            for (String child : children) {
-                new File(dir, child).delete();
-            }
-        }
-
-        processor = new RingProcessor();
+        processor = new RingProcessor("height");
         Arrays.fill(results, RingCase.Four);
     }
 

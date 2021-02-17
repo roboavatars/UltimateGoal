@@ -55,7 +55,7 @@ public class Shooter {
         ringSensor = op.hardwareMap.get(DistanceSensor.class, "ringSensor");
 
         flapHome();
-        feedHome();
+//        feedHome();
         magHome();
 
         op.telemetry.addData("Status", "Shooter initialized");

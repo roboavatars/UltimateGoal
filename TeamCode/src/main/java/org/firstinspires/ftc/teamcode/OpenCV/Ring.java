@@ -46,10 +46,12 @@ public class Ring {
         }
 //        return rings;
 
-        Ring closest = rings.get(0);
-        // find closet ring after first ring
-        if (rings.get(1).getAbsDist(closest.absX, closest.absY) > rings.get(2).getAbsDist(closest.absX, closest.absY)) {
-            Collections.swap(rings, 1, 2);
+        if (rings.size() == 3) {
+            Ring closest = rings.get(0);
+            // find closet ring after first ring
+            if (rings.get(1).getAbsDist(closest.absX, closest.absY) > rings.get(2).getAbsDist(closest.absX, closest.absY)) {
+                Collections.swap(rings, 1, 2);
+            }
         }
 
         return rings;

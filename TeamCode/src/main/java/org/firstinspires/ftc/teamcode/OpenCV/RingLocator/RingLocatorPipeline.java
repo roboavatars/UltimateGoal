@@ -55,16 +55,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
     private ArrayList<Ring> prevRings = new ArrayList<>();
 
     public RingLocatorPipeline() {
-        // Clear Old Images
-        @SuppressLint("SdCardPath") File dir = new File("/sdcard/EasyOpenCV/ringLocator");
-        String[] children = dir.list();
-        if (children != null) {
-            for (String child : children) {
-                new File(dir, child).delete();
-            }
-        }
-
-        processor = new RingProcessor();
+        processor = new RingProcessor("locator");
     }
 
     @Override

@@ -29,17 +29,18 @@ public class RingProcessor {
     private Mat mask = new Mat();
     private Mat save;
 
-    private final String path = "/sdcard/EasyOpenCV/";
+    private String path = "/sdcard/EasyOpenCV/";
 
-    public RingProcessor() {
-        // Clear Old Images
+    public RingProcessor(String prefix) {
+        /*// Clear Old Images
         File dir = new File(path);
         String[] children = dir.list();
         if (children != null) {
             for (String child : children) {
                 new File(dir, child).delete();
             }
-        }
+        }*/
+        path += prefix + '-';
     }
 
     public Mat[] processFrame(Mat input) {

@@ -56,15 +56,18 @@ public class Teleop extends LinearOpMode {
                 robot.intake.off();
             }
 
-            // Auto high goal and powershot shoot
-            if (gamepad1.left_bumper/* || robot.numRings == 3*/) {
+            // High goal and powershot shoot
+            if (gamepad1.left_bumper) {
                 robot.highGoalShoot();
             } else if (gamepad1.right_bumper) {
                 robot.powerShotShoot();
             }
 
+            if (gamepad1.dpad_left) robot.highGoalShoot(2);
+            if (gamepad1.dpad_right) robot.highGoalShoot(1);
+
             // Rev up flywheel for high goal
-            if (gamepad2.y/* || robot.numRings == 2*/) {
+            if (gamepad2.y) {
                 robot.shooter.flywheelHG();
             }
 
