@@ -29,6 +29,7 @@ public class Shooter {
 
     public boolean magHome = true;
     public boolean feedHome = true;
+    public boolean sensorBroken = false;
 
     public static double zeroDist = 4.65;
     public static double oneDist = 4.0;
@@ -128,7 +129,7 @@ public class Shooter {
     public double getDistance() {
         double distance = ringSensor.getDistance(DistanceUnit.INCH);
         if (distance > 6) {
-            Log.w("robot-log", "Ring Sensor Value Too High");
+            sensorBroken = true;
         }
         return distance;
     }

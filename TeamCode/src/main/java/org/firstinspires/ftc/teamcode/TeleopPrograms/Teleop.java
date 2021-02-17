@@ -56,28 +56,30 @@ public class Teleop extends LinearOpMode {
                 robot.intake.off();
             }
 
-            // High goal and powershot shoot
+            // High goal, powershot, two ring, one ring shoot
             if (gamepad1.left_bumper) {
                 robot.highGoalShoot();
             } else if (gamepad1.right_bumper) {
                 robot.powerShotShoot();
-            }
-
-            if (gamepad1.dpad_left) {
+            } else if (gamepad1.dpad_left) {
                 robot.highGoalShoot(2);
-            }
-            if (gamepad1.dpad_right) {
+            } else if (gamepad1.dpad_right) {
                 robot.highGoalShoot(1);
-            }
-
-            // Rev up flywheel for high goal
-            if (gamepad2.y) {
-                robot.shooter.flywheelHG();
             }
 
             // Stop shoot sequence
             if (gamepad2.b) {
                 robot.cancelShoot();
+            }
+
+            // Rev up flywheel for high goal
+            if (gamepad2.y || (!robot.shooter.sensorBroken && robot.numRings == 2)) {
+                robot.shooter.flywheelHG();
+            }
+
+            // Auto raise sticks after 3 rings
+            if (!robot.shooter.sensorBroken && robot.numRings == 3) {
+                robot.intake.sticksFourth();
             }
 
             // Stick Retraction/Extension Toggle
@@ -172,6 +174,9 @@ public class Teleop extends LinearOpMode {
             robot.update();
 
             // Telemetry
+            if (robot.shooter.sensorBroken) {
+                telemetry.addData("Distance Sensor", "Broken");
+            }
             telemetry.addData("X", robot.x);
             telemetry.addData("Y", robot.y);
             telemetry.addData("Theta", robot.theta);

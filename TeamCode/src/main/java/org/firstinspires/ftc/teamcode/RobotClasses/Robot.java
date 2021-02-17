@@ -168,7 +168,7 @@ public class Robot {
             firstLoop = false;
         }
 
-        if (!isAuto && !preShoot && !shoot && loopCounter % sensorUpdatePeriod == 0) {
+        if (!isAuto && !preShoot && !shoot && !shooter.sensorBroken && loopCounter % sensorUpdatePeriod == 0) {
             numRings = shooter.getNumRings();
         }
 
@@ -219,7 +219,7 @@ public class Robot {
             }
 
             // Start auto-feed when mag is up, velocity is high enough, and robot is at position
-            else if (!shooter.magHome && shooter.getVelocity() > vThresh && isAtPose(target[0], target[1], target[2], isAuto ? 0.5 : 1, isAuto ? 0.5 : 1, PI/35)) {
+            else if (!shooter.magHome && shooter.getVelocity() > vThresh) {
                 if (highGoal) {
                     shootDelay = highGoalDelay;
                 } else {
@@ -357,6 +357,9 @@ public class Robot {
         if (startVoltTooLow) {
             addPacket("0", "Starting Battery Voltage < 12.5!!!!");
         }
+        if (shooter.sensorBroken) {
+            addPacket("00", "Distance Sensor Broken!!!!");
+        }
         addPacket("1 X", round(x));
         addPacket("2 Y", round(y));
         addPacket("3 Theta", round(theta));
@@ -407,8 +410,7 @@ public class Robot {
     }
 
     public void highGoalShoot() {
-        //highGoalShoot(shooter.getNumRings());
-        highGoalShoot(3);
+        highGoalShoot(!shooter.sensorBroken ? shooter.getNumRings() : 3);
     }
 
     // Set variables for powershot shoot
