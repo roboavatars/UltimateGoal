@@ -57,18 +57,24 @@ public class AdvancedRingLocatorTest extends LinearOpMode {
 
         double[] ringPos = rings.get(0).driveToRing(robot.x, robot.y);
         if (rings.size() >= 1) {
-            if (ringPos[1] > 135) ringPos[2] = PI/2;
-            ringWaypoints.add(new Waypoint(ringPos[0], ringPos[1], ringPos[2], 20, 30, 0, ringTime += 1.0));
+            if (ringPos[1] > 135) {
+                ringPos[2] = PI/2;
+            }
+            ringWaypoints.add(new Waypoint(ringPos[0], ringPos[1], ringPos[2], 20, 30, 0, ringTime += 1.5));
         }
         if (rings.size() >= 2) {
             ringPos = rings.get(1).driveToRing(ringPos[0], ringPos[1]);
-            if (ringPos[1] > 135) ringPos[2] = PI/2;
-            ringWaypoints.add(new Waypoint(ringPos[0], ringPos[1], ringPos[2], 20, 10, 0, ringTime += 1.0));
+            if (ringPos[1] > 135) {
+                ringPos[2] = PI/2;
+            }
+            ringWaypoints.add(new Waypoint(ringPos[0], ringPos[1], ringPos[2], 20, 20, 0, ringTime += 1.0));
         }
         if (rings.size() == 3) {
             ringPos = rings.get(2).driveToRing(ringPos[0], ringPos[1]);
-            if (ringPos[1] > 135) ringPos[2] = PI/2;
-            ringWaypoints.add(new Waypoint(ringPos[0], ringPos[1], ringPos[2], 20, 10, 0, ringTime += 1.0));
+            if (ringPos[1] > 135) {
+                ringPos[2] = PI/2;
+            }
+            ringWaypoints.add(new Waypoint(ringPos[0], ringPos[1], ringPos[2], 20, 20, 0, ringTime += 1.0));
         }
         ringPath = new Path(ringWaypoints);
 

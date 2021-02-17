@@ -259,7 +259,7 @@ public class Robot {
                     if (highGoal && isAtPose(target[0], target[1], target[2]) ||
                             !highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/100)) {
                         log("In shoot Velocity: " + shooter.getVelocity());
-                        log(vx+" "+vy+" "+w);
+                        log(vx + " " + vy + " " + w);
 
                         if (shooter.feedHome) {
                             shooter.feedTop();

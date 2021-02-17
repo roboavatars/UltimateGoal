@@ -60,7 +60,7 @@ public class WobbleArm {
 
     private void setPosition(int position) {
         wobbleMotor.setTargetPosition(position);
-        Robot.log("setpos to "+position);
+        Robot.log("wobble arm target pos: " + position);
     }
 
     public void setArmPosition(int position) {

@@ -1,72 +1,58 @@
-package org.firstinspires.ftc.teamcode.Tests;
+package org.firstinspires.ftc.teamcode.Tests.FlickerTests;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.Intake;
-import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 import org.firstinspires.ftc.teamcode.RobotClasses.Shooter;
-
-import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 
 @TeleOp
 @Config
-//@Disabled
-public class DoubleFlickerTest extends LinearOpMode {
-    public static double bottomPos = Constants.FEED_MID_POS;
+@Disabled
+public class TopFlickerTest extends LinearOpMode {
+
+    public static double midPos = Constants.FEED_MID_POS;
     public static double homePos = Constants.FEED_HOME_POS;
     public static double topPos = Constants.FEED_TOP_POS;
     public static int pos = 1;
-    public static boolean magUp = false;
     public static boolean debug = false;
     private double position;
 
     private boolean magToggle = false;
     private boolean shootToggle = false;
     private long shootTime;
-    private int delay = 4;
-    public static int period = 250;
-
-    private double x = 87;
-    private double y = 63;
-    public static double thetaLeft = 1.627;
-    public static double thetaMid = 1.571;
-    public static double thetaRight = 1.504;
+    private int delay = 6;
+    public static int period = 200;
 
     private Shooter shooter;
     private Intake intake;
-    private Robot robot;
 
     @Override
     public void runOpMode() {
+
         Servo servo = hardwareMap.get(Servo.class, "feedServo");
         shooter = new Shooter(this);
         intake = new Intake(this, false);
-        robot = new Robot(this, 87, 63, PI/2, false);
 
         waitForStart();
 
         while(opModeIsActive()) {
             if (debug) {
                 if (pos == 0) {
-                    position = bottomPos;
+                    position = midPos;
                 } else if (pos == 1) {
                     position = homePos;
                 } else if (pos == 2) {
                     position = topPos;
                 }
                 servo.setPosition(position);
-
-                if (magUp) {
-                    shooter.magShoot();
-                } else {
-                    shooter.magHome();
-                }
             } else {
+
                 // Intake on/off/rev
                 if (gamepad1.right_trigger > 0) {
                     intake.on();
@@ -76,12 +62,24 @@ public class DoubleFlickerTest extends LinearOpMode {
                     intake.off();
                 }
 
+                // Toggle mag for shoot/home position
+                if (gamepad1.y && !magToggle) {
+                    magToggle = true;
+                    if (shooter.magHome) {
+                        shooter.magShoot();
+                    } else {
+                        shooter.magHome();
+                    }
+                } else if (!gamepad1.x && magToggle) {
+                    magToggle = false;
+                }
+
                 // Toggle flywheel/mag for shoot/home position
                 if (gamepad1.x && !shootToggle) {
                     shootToggle = true;
                     if (shooter.magHome) {
                         shooter.magShoot();
-                        shooter.flywheelPS();
+                        shooter.flywheelHG();
                     } else {
                         shooter.magHome();
                         shooter.flywheelOff();
@@ -92,45 +90,38 @@ public class DoubleFlickerTest extends LinearOpMode {
 
                 // Reset flicker
                 if (gamepad1.a) {
-                    if (delay == 4) {
+                    if (delay == 6) {
                         delay = 0;
                     }
                 }
 
                 // Flicker flicks after period milliseconds
-                if (delay == 0 || (delay != 4 && System.currentTimeMillis() - shootTime > period)) {
+                if (delay == 0 || (delay != 6 && System.currentTimeMillis() - shootTime > period)) {
                     shootTime = System.currentTimeMillis();
                     if (delay == 0) {
-                        if (robot.isAtPose(x, y, thetaLeft)) {
-                            position = topPos;
-                            delay++;
-                        } else {
-                            robot.setTargetPoint(x, y, thetaLeft);
-                        }
+                        position = midPos;
+                        delay++;
                     } else if (delay == 1) {
-                        if (robot.isAtPose(x, y, thetaMid)) {
-                            position = bottomPos;
-                            delay++;
-                        } else {
-                            robot.setTargetPoint(x, y, thetaMid);
-                        }
+                        position = homePos;
+                        delay++;
                     } else if (delay == 2) {
-                        if (robot.isAtPose(x, y, thetaRight)) {
-                            position = topPos;
-                            delay++;
-                        } else {
-                            robot.setTargetPoint(x, y, thetaRight);
-                        }
+                        position = midPos;
+                        delay++;
                     } else if (delay == 3) {
+                        position = homePos;
+                        delay++;
+                    } else if (delay == 4) {
+                        position = midPos;
+                        delay++;
+                    } else if (delay == 5) {
                         position = homePos;
                         delay++;
                     }
                     servo.setPosition(position);
                 }
             }
-
             addPacket("delay", delay);
-            robot.update();
+            sendPacket();
         }
     }
 }

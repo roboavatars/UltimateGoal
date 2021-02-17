@@ -63,8 +63,12 @@ public class Teleop extends LinearOpMode {
                 robot.powerShotShoot();
             }
 
-            if (gamepad1.dpad_left) robot.highGoalShoot(2);
-            if (gamepad1.dpad_right) robot.highGoalShoot(1);
+            if (gamepad1.dpad_left) {
+                robot.highGoalShoot(2);
+            }
+            if (gamepad1.dpad_right) {
+                robot.highGoalShoot(1);
+            }
 
             // Rev up flywheel for high goal
             if (gamepad2.y) {

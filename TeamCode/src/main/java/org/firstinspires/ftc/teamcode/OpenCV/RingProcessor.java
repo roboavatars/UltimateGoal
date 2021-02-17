@@ -32,14 +32,6 @@ public class RingProcessor {
     private String path = "/sdcard/EasyOpenCV/";
 
     public RingProcessor(String prefix) {
-        /*// Clear Old Images
-        File dir = new File(path);
-        String[] children = dir.list();
-        if (children != null) {
-            for (String child : children) {
-                new File(dir, child).delete();
-            }
-        }*/
         path += prefix + '-';
     }
 

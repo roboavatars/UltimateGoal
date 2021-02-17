@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleopPrograms;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -8,6 +9,7 @@ import static java.lang.Math.PI;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 @TeleOp
+@Disabled
 public class Regression extends LinearOpMode {
 
     public int startX = 90;

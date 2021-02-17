@@ -18,9 +18,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static java.lang.Math.PI;
-import static org.firstinspires.ftc.teamcode.OpenCV.RingLocator.RingLocator.*;
 
-@Autonomous(name = "1 Red Auto", preselectTeleOp = "Teleop")
+@Autonomous(name = "0 Red Auto", preselectTeleOp = "Teleop")
 public class RedAuto extends LinearOpMode {
 
     @Override
@@ -287,7 +286,7 @@ public class RedAuto extends LinearOpMode {
                             rings.add(new Ring(0, 0, 86, 125));
                             rings.add(new Ring(0, 0, 98, 120));
                             rings.add(new Ring(0, 0, 110, 115));
-                            rings = Ring.getRingCoords(rings, minX, minY, maxX, maxY, robot.x, robot.y);
+                            rings = locator.getRings(robot.x, robot.y, robot.theta);
                         }
                         locator.stop();
 
@@ -296,17 +295,23 @@ public class RedAuto extends LinearOpMode {
 
                         double[] ringPos = rings.get(0).driveToRing(robot.x, robot.y);
                         if (rings.size() >= 1) {
-                            if (ringPos[1] > 135) ringPos[2] = PI/2;
+                            if (ringPos[1] > 135) {
+                                ringPos[2] = PI/2;
+                            }
                             ringWaypoints.add(new Waypoint(ringPos[0], ringPos[1], ringPos[2], 20, 30, 0, ringTime += 1.5));
                         }
                         if (rings.size() >= 2) {
                             ringPos = rings.get(1).driveToRing(ringPos[0], ringPos[1]);
-                            if (ringPos[1] > 135) ringPos[2] = PI/2;
+                            if (ringPos[1] > 135) {
+                                ringPos[2] = PI/2;
+                            }
                             ringWaypoints.add(new Waypoint(ringPos[0], ringPos[1], ringPos[2], 20, 20, 0, ringTime += 1.0));
                         }
                         if (rings.size() == 3) {
                             ringPos = rings.get(2).driveToRing(ringPos[0], ringPos[1]);
-                            if (ringPos[1] > 135) ringPos[2] = PI/2;
+                            if (ringPos[1] > 135) {
+                                ringPos[2] = PI/2;
+                            }
                             ringWaypoints.add(new Waypoint(ringPos[0], ringPos[1], ringPos[2], 20, 20, 0, ringTime += 1.0));
                         }
                         ringPath = new Path(ringWaypoints);
