@@ -49,13 +49,14 @@ public class Robot {
     // State Variables
     private final boolean isAuto;
     private boolean firstLoop = true;
-    private int cycleCounter = 0;
+    private int loopCounter = 0;
     public int numRings = 0;
     public boolean shoot = false;
     public boolean highGoal = false;
     public boolean preShoot = false;
     private boolean waitFeed = false;
     public int lastTarget = -1;
+    public int cycles = 0;
 
     // Time and Delay Variables
     public double shootTime;
@@ -65,7 +66,6 @@ public class Robot {
     public double feedHomeDelay = 200;
     public static int highGoalDelay = 250;
     public static int psDelay = 450;
-
     public static double flapDelay = 250;
     public double flickTime;
 
@@ -156,7 +156,7 @@ public class Robot {
     }
 
     public void update() {
-        cycleCounter++;
+        loopCounter++;
         profiler.reset();
 
         // Powershot Debug
@@ -168,7 +168,7 @@ public class Robot {
             firstLoop = false;
         }
 
-        if (!isAuto && !preShoot && !shoot && cycleCounter % sensorUpdatePeriod == 0) {
+        if (!isAuto && !preShoot && !shoot && loopCounter % sensorUpdatePeriod == 0) {
             numRings = shooter.getNumRings();
         }
 
@@ -219,7 +219,7 @@ public class Robot {
             }
 
             // Start auto-feed when mag is up, velocity is high enough, and robot is at position
-            else if (!shooter.magHome && shooter.getVelocity() > vThresh/* && isAtPose(target[0], target[1], target[2], isAuto ? 0.5 : 1, isAuto ? 0.5 : 1, PI/35)*/) {
+            else if (!shooter.magHome && shooter.getVelocity() > vThresh && isAtPose(target[0], target[1], target[2], isAuto ? 0.5 : 1, isAuto ? 0.5 : 1, PI/35)) {
                 if (highGoal) {
                     shootDelay = highGoalDelay;
                 } else {
@@ -290,6 +290,7 @@ public class Robot {
 //                    waitFeed = true;
 //                    feedHomeTime = System.currentTimeMillis();
                     shoot = false;
+                    cycles++;
                     log("Shoot done");
                     log("Total shoot time: " +  (System.currentTimeMillis() - startShootTime) + " ms");
                 }
@@ -346,7 +347,7 @@ public class Robot {
         profile(5);
 
         // Log Data
-        if (cycleCounter % loggerUpdatePeriod == 0) {
+        if (loopCounter % loggerUpdatePeriod == 0) {
             logger.logData(System.currentTimeMillis() - startTime, x, y, theta, vx, vy, w, ax, ay, a, numRings, shooter.magHome, shooter.feedHome, lastTarget);
         }
 

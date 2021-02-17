@@ -180,6 +180,7 @@ public class Teleop extends LinearOpMode {
             telemetry.update();
         }
 
+        Robot.log("Cycles: " + robot.cycles);
         robot.shooter.feedHome();
         robot.stop();
     }
