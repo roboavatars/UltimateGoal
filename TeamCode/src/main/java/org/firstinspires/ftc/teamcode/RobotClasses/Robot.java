@@ -213,13 +213,13 @@ public class Robot {
             }
 
             // Move to shooting position
-            if (!isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/35)) {
+            if (!isAtPose(target[0], target[1], target[2], isAuto ? 0.5 : 1, isAuto ? 0.5 : 1, PI/35)) {
                 setTargetPoint(target[0], target[1], target[2]);
                 log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") Moving to shoot position: " + Arrays.toString(target));
             }
 
             // Start auto-feed when mag is up, velocity is high enough, and robot is at position
-            else if (!shooter.magHome && shooter.getVelocity() > vThresh && isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/35)) {
+            else if (!shooter.magHome && shooter.getVelocity() > vThresh/* && isAtPose(target[0], target[1], target[2], isAuto ? 0.5 : 1, isAuto ? 0.5 : 1, PI/35)*/) {
                 if (highGoal) {
                     shootDelay = highGoalDelay;
                 } else {
