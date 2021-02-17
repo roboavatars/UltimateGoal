@@ -256,22 +256,27 @@ public class Robot {
             if (System.currentTimeMillis() - shootTime > shootDelay) {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position
-                    if (highGoal && isAtPose(target[0], target[1], target[2]) || !highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/200)) {
+                    if (highGoal && isAtPose(target[0], target[1], target[2]) ||
+                            !highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/200)) {
                         log("In shoot Velocity: " + shooter.getVelocity());
 
-                        if (numRings == 3) {
+                        if (shooter.feedHome) {
                             shooter.feedTop();
+                        } else {
+                            shooter.feedHome();
+                        }
+
+                        if (numRings == 3) {
                             if (!isAuto) {
                                 intake.sticksOut();
                             }
                             log("Feed ring 1");
                         } else if (numRings == 2) {
-                            shooter.feedHome();
                             log("Feed ring 2");
                         } else if (numRings == 1) {
-                            shooter.feedTop();
                             log("Feed ring 3");
                         }
+
                         numRings--;
                         flickTime = System.currentTimeMillis();
                     } else {
@@ -279,10 +284,11 @@ public class Robot {
                     }
                 } else {
                     shooter.flywheelOff();
-                    shooter.feedHome();
+                    shooter.magHome();
+//                    shooter.feedHome();
+//                    waitFeed = true;
+//                    feedHomeTime = System.currentTimeMillis();
                     shoot = false;
-                    waitFeed = true;
-                    feedHomeTime = System.currentTimeMillis();
                     log("Shoot done");
                     log("Total shoot time: " +  (System.currentTimeMillis() - startShootTime) + " ms");
 
@@ -354,7 +360,7 @@ public class Robot {
         addPacket("1 X", round(x));
         addPacket("2 Y", round(y));
         addPacket("3 Theta", round(theta));
-//        addPacket("4 Shooter Velocity", shooter.getVelocity());
+        addPacket("4 Shooter Velocity", shooter.getVelocity());
         addPacket("5 numRings", numRings);
         addPacket("6 shoot", shoot  + " " + preShoot + " " + highGoal);
         addPacket("7 Time", (System.currentTimeMillis() - startTime) / 1000);
@@ -425,13 +431,13 @@ public class Robot {
         shootYOverride = 0;
         shooter.flywheelOff();
         intake.sticksOut();
-        if (shooter.feedHome) {
+//        if (shooter.feedHome) {
             shooter.magHome();
-        } else {
-            shooter.feedHome();
-            waitFeed = true;
-            feedHomeTime = System.currentTimeMillis();
-        }
+//        } else {
+//            shooter.feedHome();
+//            waitFeed = true;
+//            feedHomeTime = System.currentTimeMillis();
+//        }
         log("Shoot cancelled");
     }
 
@@ -545,7 +551,7 @@ public class Robot {
     }
 
     private void profile(int num) {
-//        Log.w("profiler", num + ": " + profiler.milliseconds());
+        //Log.w("profiler", num + ": " + profiler.milliseconds());
     }
 
     @SuppressLint("DefaultLocale")

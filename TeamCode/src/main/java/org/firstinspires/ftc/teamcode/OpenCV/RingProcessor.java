@@ -29,7 +29,7 @@ public class RingProcessor {
     private Mat mask = new Mat();
     private Mat save;
 
-    private final String path = "/sdcard/EasyOpenCV/ringProcessor-";
+    private final String path = "/sdcard/EasyOpenCV/";
 
     public RingProcessor() {
         // Clear Old Images
