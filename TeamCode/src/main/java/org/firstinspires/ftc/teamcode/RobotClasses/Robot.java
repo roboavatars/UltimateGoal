@@ -56,7 +56,10 @@ public class Robot {
     public boolean preShoot = false;
     private boolean waitFeed = false;
     public int lastTarget = -1;
+
     public int cycles = 0;
+    public double cycleSum;
+    public double lastCycleTime;
 
     // Time and Delay Variables
     public double shootTime;
@@ -165,6 +168,7 @@ public class Robot {
         // Track time after start
         if (firstLoop) {
             startTime = System.currentTimeMillis();
+            lastCycleTime = System.currentTimeMillis();
             firstLoop = false;
         }
 
@@ -290,9 +294,14 @@ public class Robot {
 //                    waitFeed = true;
 //                    feedHomeTime = System.currentTimeMillis();
                     shoot = false;
-                    cycles++;
+
                     log("Shoot done");
                     log("Total shoot time: " +  (System.currentTimeMillis() - startShootTime) + " ms");
+                    double cycleTime = (System.currentTimeMillis() - lastCycleTime) / 1000;
+                    cycleSum += cycleTime;
+                    Log.w("cycle-log", "Cycle " + (cycles+1) + ": " + cycleTime + "s");
+                    lastCycleTime = System.currentTimeMillis();
+                    cycles++;
                 }
                 shootTime = System.currentTimeMillis();
             }

@@ -1,11 +1,12 @@
 package org.firstinspires.ftc.teamcode.TeleopPrograms;
 
+import android.util.Log;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Debug.Logger;
-import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import java.util.Arrays;
@@ -185,7 +186,8 @@ public class Teleop extends LinearOpMode {
             telemetry.update();
         }
 
-        Robot.log("Cycles: " + robot.cycles);
+        Log.w("cycle-log", "# Cycles: " + robot.cycles);
+        Log.w("cycle-log", "Avg cycle Time: " + (robot.cycleSum/robot.cycles) + "s");
         robot.shooter.feedHome();
         robot.stop();
     }
