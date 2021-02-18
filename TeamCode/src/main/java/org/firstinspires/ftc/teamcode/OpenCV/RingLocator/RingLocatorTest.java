@@ -30,6 +30,7 @@ public class RingLocatorTest extends LinearOpMode {
                 drawRing(ring);
             }
 
+            addPacket("Rings", rings);
             sendPacket();
         }
 

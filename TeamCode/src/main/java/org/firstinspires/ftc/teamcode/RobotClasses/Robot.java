@@ -57,7 +57,7 @@ public class Robot {
     private boolean waitFeed = false;
     public int lastTarget = -1;
 
-    public int cycles = 0;
+    public int cycles = 1;
     public double cycleSum;
     public double lastCycleTime;
 
@@ -299,7 +299,7 @@ public class Robot {
                     log("Total shoot time: " +  (System.currentTimeMillis() - startShootTime) + " ms");
                     double cycleTime = (System.currentTimeMillis() - lastCycleTime) / 1000;
                     cycleSum += cycleTime;
-                    Log.w("cycle-log", "Cycle " + (cycles+1) + ": " + cycleTime + "s");
+                    Log.w("cycle-log", "Cycle " + cycles + ": " + cycleTime + "s");
                     lastCycleTime = System.currentTimeMillis();
                     cycles++;
                 }

@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.AutoPrograms;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -8,7 +9,8 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import static java.lang.Math.PI;
 
-@Autonomous(name = "Intake Test", preselectTeleOp = "Teleop")
+@Autonomous(name = "Intake Test")
+@Disabled
 public class IntakeTest extends LinearOpMode {
 
     @Override

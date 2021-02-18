@@ -144,6 +144,7 @@ public class RedAuto extends LinearOpMode {
 
         robot.intake.blockerDown();
         robot.intake.leftHalf();
+        robot.intake.stickUpdate();
         robot.wobbleArm.clamp();
 
         ElapsedTime time = new ElapsedTime();
@@ -157,8 +158,7 @@ public class RedAuto extends LinearOpMode {
                 robot.shooter.flywheelHG();
 
                 if (time.seconds() > goToStackTime) {
-
-                    robot.wobbleArm.setArmPosition(-250);
+//                    robot.wobbleArm.setArmPosition(-250);
 
                     robot.shootYOverride = 38;
                     robot.thetaOffset = 0.03;
@@ -286,7 +286,7 @@ public class RedAuto extends LinearOpMode {
                             rings.add(new Ring(0, 0, 86, 125));
                             rings.add(new Ring(0, 0, 98, 120));
                             rings.add(new Ring(0, 0, 110, 115));
-                            rings = locator.getRings(robot.x, robot.y, robot.theta);
+//                            rings = locator.getRings(robot.x, robot.y, robot.theta);
                         }
                         locator.stop();
 
@@ -342,7 +342,7 @@ public class RedAuto extends LinearOpMode {
             else if (!deliverWobble) {
                 double curTime = Math.min(time.seconds(), deliverWobbleTime);
                 Pose curPose = deliverWobblePath.getRobotPose(curTime);
-                robot.setTargetPoint(curPose, curPose.getTheta()+PI, 0);
+                robot.setTargetPoint(curPose, curPose.getTheta() + PI, 0);
 
                 if (!reachedDeposit && Math.abs(robot.y - wobbleCor[1]) < 5 && Math.abs(PI - robot.theta) < 0.5) {
                     robot.wobbleArm.armDown();
@@ -379,11 +379,11 @@ public class RedAuto extends LinearOpMode {
 
             // Go to pick up second wobble goal
             else if (!intakeWobble2) {
-                double curTime = Math.min(time.seconds(), intakeWobble2Time+0.5);
+                double curTime = Math.min(time.seconds(), intakeWobble2Time + 0.5);
                 if (curTime < 0.5) {
                     robot.setTargetPoint(intakeWobble2Path.getRobotPose(curTime));
                 } else {
-                    Pose curPose = intakeWobble2Path2.getRobotPose(curTime-0.5);
+                    Pose curPose = intakeWobble2Path2.getRobotPose(curTime - 0.5);
                     if (robot.y > 50) {
                         robot.setTargetPoint(curPose, curPose.getTheta() + PI, 0);
                     } else {
@@ -469,12 +469,12 @@ public class RedAuto extends LinearOpMode {
                         parkPath = new Path(new ArrayList<>(Arrays.asList(parkWaypoints)));
 
                         if (ringCase == RingCase.One) {
-                            parkWaypoints2 = new Waypoint[]{
+                            parkWaypoints2 = new Waypoint[] {
                                     new Waypoint(robot.x - 10, robot.y, robot.theta, -30, -30, 0, 0),
-                                    new Waypoint(86, 84, PI/2, -30, -30, 0, parkTime),
+                                    new Waypoint(82, 84, PI/2, -30, -30, 0, parkTime),
                             };
                         } else {
-                            parkWaypoints2 = new Waypoint[]{
+                            parkWaypoints2 = new Waypoint[] {
                                     new Waypoint(robot.x - 10, robot.y, robot.theta, -40, -40, 0, 0),
                                     new Waypoint(104, 86, PI/2, -30, -40, 0, parkTime),
                             };
@@ -489,14 +489,14 @@ public class RedAuto extends LinearOpMode {
 
             // Park on line
             else if (!park) {
-                double curTime = Math.min(time.seconds(), parkTime+0.5);
+                double curTime = Math.min(time.seconds(), parkTime + 0.5);
                 if (ringCase == RingCase.Zero) {
                     robot.setTargetPoint(parkPath2.getRobotPose(curTime));
                 } else {
                     if (curTime < 0.5) {
                         robot.setTargetPoint(parkPath.getRobotPose(curTime));
                     } else {
-                        Pose curPose = parkPath2.getRobotPose(curTime-0.5);
+                        Pose curPose = parkPath2.getRobotPose(curTime - 0.5);
                         robot.setTargetPoint(curPose, curPose.getTheta() + PI, 0);
                     }
                 }

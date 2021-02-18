@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.OpenCV.StackHeight;
 
-import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -15,7 +14,6 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,8 +26,10 @@ public class StackHeightPipeline extends OpenCvPipeline {
     public enum RingCase {Zero, One, Four}
 
     // Thresholds
-    public static int HEIGHT_THRESH = 3;
-    public static int WIDTH_THRESH = 15;
+    public static int HEIGHT_MIN = 10;
+    public static int WIDTH_MIN = 20;
+    public static int HEIGHT_MAX = 60;
+    public static int WIDTH_MAX = 60;
     public static double ONE_MIN = 1.9;
     public static double ONE_MAX = 4.0;
     public static double FOUR_MIN = 0.5;
@@ -68,7 +68,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
             RotatedRect boundingRect = Imgproc.minAreaRect(areaPoints);
 
             // Reject Small Contours
-            if (boundingRect.size.height > HEIGHT_THRESH && boundingRect.size.width > WIDTH_THRESH) {
+            if (HEIGHT_MIN < boundingRect.size.height && boundingRect.size.height < HEIGHT_MAX && WIDTH_MIN < boundingRect.size.width && boundingRect.size.width < WIDTH_MAX) {
 
                 // Get Detection Size
                 Imgproc.rectangle(input, boundingRect.boundingRect(), new Scalar(0, 255, 0), 4);

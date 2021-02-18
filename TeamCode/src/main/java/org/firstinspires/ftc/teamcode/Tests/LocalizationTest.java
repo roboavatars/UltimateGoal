@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.RobotClasses.MecanumDrivetrain;
@@ -9,8 +10,8 @@ import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 
 @TeleOp(name = "Localization Test")
+@Disabled
 public class LocalizationTest extends LinearOpMode {
-
     private double dtX, dtY, dtTheta;
     private double camX, camY, camTheta;
     private double x, y, theta;

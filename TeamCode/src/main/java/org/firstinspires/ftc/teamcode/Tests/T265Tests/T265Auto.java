@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Tests.T265Tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -8,6 +9,7 @@ import org.firstinspires.ftc.teamcode.RobotClasses.T265;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 
 @TeleOp(name = "T265 Auto")
+@Disabled
 public class T265Auto extends LinearOpMode {
 
     private double startX = 111;

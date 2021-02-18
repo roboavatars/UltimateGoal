@@ -14,8 +14,8 @@ import java.util.ArrayList;
 import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 
-@TeleOp(name = "Advanced Ring Locator Pipeline Test")
-public class AdvancedRingLocatorTest extends LinearOpMode {
+@TeleOp(name = "Auto Ring Detection Test")
+public class AutoRingDetectionTest extends LinearOpMode {
 
     private Robot robot;
     private RingLocator detector;
