@@ -1,7 +1,5 @@
 package org.firstinspires.ftc.teamcode.RobotClasses;
 
-import android.util.Log;
-
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
@@ -11,8 +9,6 @@ import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-
-import java.util.*;
 
 @SuppressWarnings("FieldCanBeLocal") @Config
 public class Shooter {
@@ -55,9 +51,14 @@ public class Shooter {
         feedServo = op.hardwareMap.get(Servo.class, "feedServo");
         ringSensor = op.hardwareMap.get(DistanceSensor.class, "ringSensor");
 
-        flapHome();
-//        feedHome();
+        if (feedServo.getPosition() < 0.1) {
+            feedHome();
+        } else {
+            feedTop();
+        }
+
         magHome();
+        flapHome();
 
         op.telemetry.addData("Status", "Shooter initialized");
     }
@@ -93,12 +94,12 @@ public class Shooter {
         }
     }
 
-    public double getFlapPosition() {
-        return flapServo.getPosition();
-    }
-
     public void flapHome() {
         flapServo.setPosition(Constants.FLAP_HOME_POS);
+    }
+
+    public double getFlapPosition() {
+        return flapServo.getPosition();
     }
 
     public void magHome() {

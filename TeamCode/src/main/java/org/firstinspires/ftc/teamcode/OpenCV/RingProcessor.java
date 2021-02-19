@@ -6,13 +6,9 @@ import com.acmerobotics.dashboard.config.Config;
 
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
-import org.opencv.core.Rect;
 import org.opencv.core.Scalar;
-import org.opencv.core.Size;
 import org.opencv.imgcodecs.Imgcodecs;
 import org.opencv.imgproc.Imgproc;
-
-import java.io.File;
 
 @Config
 @SuppressLint("SdCardPath")
@@ -58,7 +54,7 @@ public class RingProcessor {
         saveMatToDisk("processed.jpg", processed);
         saveMatToDisk("mask.jpg", mask);
 
-        return new Mat[] {input, processed, mask};
+        return new Mat[] {processed, mask};
     }
 
     public void saveMatToDisk(String name, Mat mat) {

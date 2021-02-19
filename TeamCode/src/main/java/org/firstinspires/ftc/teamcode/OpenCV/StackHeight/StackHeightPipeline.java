@@ -53,9 +53,8 @@ public class StackHeightPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         // Process Image
-        processorOut = processor.processFrame(new Mat(input, new Rect(65, 45, 90, 90)));
-        input = processorOut[0];
-        processed = processorOut[1];
+        input = new Mat(input, new Rect(65, 45, 90, 90));
+        processed = processor.processFrame(input)[0];
 
         // Find Contours
         List<MatOfPoint> contours = new ArrayList<>();

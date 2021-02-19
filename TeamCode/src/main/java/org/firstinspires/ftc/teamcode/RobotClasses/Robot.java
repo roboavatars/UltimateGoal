@@ -67,7 +67,7 @@ public class Robot {
     public double startShootTime;
     public double feedHomeTime;
     public double feedHomeDelay = 200;
-    public static int highGoalDelay = 250;
+    public static int highGoalDelay = 300;
     public static int psDelay = 450;
     public static double flapDelay = 250;
     public double flickTime;
@@ -90,7 +90,7 @@ public class Robot {
     public final double[] psShootPos = new double[] {87, 63};
     public static double theta0 = 1.681;
     public static double theta1 = 1.571;
-    public static double theta2 = 1.441;
+    public static double theta2 = 1.473;
     public static double[] thetaPositions = {theta2, theta1, theta0};
 //    public static double flap0 = 0.43;
 //    public static double flap1 = 0.47;
@@ -261,7 +261,7 @@ public class Robot {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position
                     if (highGoal && isAtPose(target[0], target[1], target[2]) ||
-                            !highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/100)) {
+                            !highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/150)) {
                         log("In shoot Velocity: " + shooter.getVelocity());
                         log(vx + " " + vy + " " + w);
 
@@ -385,7 +385,7 @@ public class Robot {
         if (useT265) {
             drawRobot(t265.getCamX(), t265.getCamY(), t265.getCamTheta(), t265.confidenceColor());
         }
-        drawRobot(this, "black");
+//        drawRobot(this, "black");
         for (Ring ring : ringPos) {
             drawRing(ring);
         }
@@ -495,9 +495,9 @@ public class Robot {
     // Set target point (velocity specification, custom Kp and Kv values)
     public void setTargetPoint(double xTarget, double yTarget, double thetaTarget, double vxTarget, double vyTarget, double wTarget, double xKp, double yKp, double thetaKp, double xKd, double yKd, double thetaKd) {
         // Make Sure thetaTarget is Between 0 and 2pi
-        thetaTarget = thetaTarget % (PI * 2);
+        thetaTarget = thetaTarget % (2 * PI);
         if (thetaTarget < 0) {
-            thetaTarget += PI * 2;
+            thetaTarget += 2 * PI;
         }
 
         // Picking the Smaller Distance to Rotate
@@ -507,6 +507,8 @@ public class Robot {
         } else {
             thetaControl = theta - thetaTarget;
         }
+
+         // log("target theta: "+thetaTarget);
 
         drawRobot(xTarget, yTarget, thetaTarget, "blue");
 
@@ -533,8 +535,8 @@ public class Robot {
         setTargetPoint(pose.getX(), pose.getY(), theta, pose.getVx(), pose.getVy(), w, drivetrain.xKp, drivetrain.yKp, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
     }
 
-    public void setTargetPoint(Pose pose, double theta, double w, double xyKd) {
-        setTargetPoint(pose.getX(), pose.getY(), theta, pose.getVx(), pose.getVy(), w, drivetrain.xKp, drivetrain.yKp, drivetrain.thetaKp, xyKd, xyKd, drivetrain.thetaKd);
+    public void setTargetPoint(Pose pose, double theta, double w, double xyKp) {
+        setTargetPoint(pose.getX(), pose.getY(), theta, pose.getVx(), pose.getVy(), w, xyKp, xyKp, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
     }
 
     public void setTargetPoint(Pose pose, double xyKp) {

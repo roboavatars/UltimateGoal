@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.OpenCV.RingLocator;
 
-import android.annotation.SuppressLint;
 import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -16,7 +15,6 @@ import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
 import org.openftc.easyopencv.OpenCvPipeline;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -61,9 +59,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         // Process Image
-        processorOut = processor.processFrame(input);
-        input = processorOut[0];
-        processed = processorOut[1];
+        processed = processor.processFrame(input)[0];
 
         // Find Contours
         List<MatOfPoint> contours = new ArrayList<>();
