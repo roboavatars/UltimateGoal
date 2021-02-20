@@ -41,7 +41,7 @@ public class RingLocator extends BaseDetector {
             }
         }
 
-        rings = Ring.getRingCoords(rings, minX, minY, maxX, maxY, robotX, robotY);
+        rings = Ring.getRingCoords(rings, robotX, robotY);
 
         return new ArrayList<>(rings);
     }

@@ -15,16 +15,16 @@ public class Shooter {
 
     public DcMotorEx shooterMotor1;
     public DcMotorEx shooterMotor2;
-    public Servo flapServo;
+    private Servo flapServo;
     private Servo magServo;
-    private Servo feedServo;
+    public Servo feedServo;
     private DistanceSensor ringSensor;
 
     private double lastVelocity = 0;
     private double lastFlap = 0;
 
     public boolean magHome = true;
-    public boolean feedHome = true;
+    public boolean feedHome = false;
     public boolean sensorBroken = false;
 
     public static double zeroDist = 4.65;
@@ -51,12 +51,7 @@ public class Shooter {
         feedServo = op.hardwareMap.get(Servo.class, "feedServo");
         ringSensor = op.hardwareMap.get(DistanceSensor.class, "ringSensor");
 
-        if (feedServo.getPosition() < 0.1) {
-            feedHome();
-        } else {
-            feedTop();
-        }
-
+        feedTop();
         magHome();
         flapHome();
 

@@ -7,6 +7,8 @@ import org.firstinspires.ftc.teamcode.OpenCV.RingLocator.RingLocatorPipeline;
 import java.util.ArrayList;
 import java.util.Collections;
 
+import static org.firstinspires.ftc.teamcode.OpenCV.RingLocator.RingLocator.*;
+
 public class Ring {
     private final double relX;
     private final double relY;
@@ -57,23 +59,7 @@ public class Ring {
     }
 
     public static ArrayList<Ring> getRingCoords(ArrayList<Ring> rings, double robotX, double robotY) {
-        // Sort rings based on distance
-        rings.sort((r1, r2) -> Double.compare(r1.getAbsDist(robotX, robotY), r2.getAbsDist(robotX, robotY)));
-
-        // Return up to three rings
-        if (rings.size() > 3) {
-            rings = new ArrayList<>(rings.subList(0, 3));
-        }
-
-        if (rings.size() == 3) {
-            Ring closest = rings.get(0);
-            // find closet ring after first ring
-            if (rings.get(1).getAbsDist(closest.absX, closest.absY) > rings.get(2).getAbsDist(closest.absX, closest.absY)) {
-                Collections.swap(rings, 1, 2);
-            }
-        }
-
-        return rings;
+        return getRingCoords(rings, minX, minY, maxX, maxY, robotX, robotY);
     }
 
     // Calculate ring absolute coordinates using relative coordinates and robot position

@@ -35,6 +35,6 @@ public class Constants {
     public static int WOBBLE_UP_POS = -20;
     public static int WOBBLE_DOWN_POS = -520;
 
-    public static double CLAMP_WOBBLE_POS = 0.20;
-    public static double UNCLAMP_WOBBLE_POS = 0.75;
+    public static double CLAMP_WOBBLE_POS = 0;
+    public static double UNCLAMP_WOBBLE_POS = 0.6;
 }

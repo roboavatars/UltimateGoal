@@ -57,7 +57,7 @@ public class Robot {
     private boolean waitFeed = false;
     public int lastTarget = -1;
 
-    public int cycles = 1;
+    public int cycles = 0;
     public double cycleSum;
     public double lastCycleTime;
 
@@ -67,7 +67,7 @@ public class Robot {
     public double startShootTime;
     public double feedHomeTime;
     public double feedHomeDelay = 200;
-    public static int highGoalDelay = 300;
+    public static int highGoalDelay = 250;
     public static int psDelay = 450;
     public static double flapDelay = 250;
     public double flickTime;
@@ -299,9 +299,9 @@ public class Robot {
                     log("Total shoot time: " +  (System.currentTimeMillis() - startShootTime) + " ms");
                     double cycleTime = (System.currentTimeMillis() - lastCycleTime) / 1000;
                     cycleSum += cycleTime;
+                    cycles++;
                     Log.w("cycle-log", "Cycle " + cycles + ": " + cycleTime + "s");
                     lastCycleTime = System.currentTimeMillis();
-                    cycles++;
                 }
                 shootTime = System.currentTimeMillis();
             }
@@ -321,7 +321,7 @@ public class Robot {
             //t265.sendOdometryData(vx, vy);
             t265.updateCamPose();
         }
-        intake.stickUpdate();
+        intake.sticksUpdate();
 
         profile(4);
 
@@ -381,11 +381,11 @@ public class Robot {
 
         // Dashboard Drawings
         drawGoal("black");
-        drawRobot(drivetrain.x, drivetrain.y, drivetrain.theta, "green");
-        if (useT265) {
-            drawRobot(t265.getCamX(), t265.getCamY(), t265.getCamTheta(), t265.confidenceColor());
-        }
-//        drawRobot(this, "black");
+//        drawRobot(drivetrain.x, drivetrain.y, drivetrain.theta, "green");
+//        if (useT265) {
+//            drawRobot(t265.getCamX(), t265.getCamY(), t265.getCamTheta(), t265.confidenceColor());
+//        }
+        drawRobot(this, "black");
         for (Ring ring : ringPos) {
             drawRing(ring);
         }
@@ -495,20 +495,20 @@ public class Robot {
     // Set target point (velocity specification, custom Kp and Kv values)
     public void setTargetPoint(double xTarget, double yTarget, double thetaTarget, double vxTarget, double vyTarget, double wTarget, double xKp, double yKp, double thetaKp, double xKd, double yKd, double thetaKd) {
         // Make Sure thetaTarget is Between 0 and 2pi
-        thetaTarget = thetaTarget % (2 * PI);
+        thetaTarget = thetaTarget % (2*PI);
         if (thetaTarget < 0) {
-            thetaTarget += 2 * PI;
+            thetaTarget += 2*PI;
         }
 
         // Picking the Smaller Distance to Rotate
         double thetaControl;
         if (Math.abs(theta - thetaTarget) > PI) {
-            thetaControl = theta - thetaTarget - 2 * PI;
+            thetaControl = theta - thetaTarget - 2*PI;
         } else {
             thetaControl = theta - thetaTarget;
         }
 
-         // log("target theta: "+thetaTarget);
+         // log("target theta: " + thetaTarget);
 
         drawRobot(xTarget, yTarget, thetaTarget, "blue");
 

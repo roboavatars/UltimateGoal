@@ -11,25 +11,33 @@ import com.qualcomm.robotcore.hardware.Servo;
 //@Disabled
 public class HardwareTest extends LinearOpMode {
 
-    public static double homePos = 0;
-    public static double outPos = 0.34;
-    public static boolean isHome = true;
-    private double flapPos;
+    public static double clampPos = 0;
+    public static double unClampPos = 0.6;
+    public static boolean clamp = true;
+    public static boolean debug = false;
+    private double servoPos;
 
     @Override
     public void runOpMode() {
-        Servo flapServo = hardwareMap.get(Servo.class, "flapServo");
+        Servo wobbleServo = hardwareMap.get(Servo.class, "wobbleServo");
 
         waitForStart();
 
         while(opModeIsActive()) {
-            if (isHome) {
-                flapPos = homePos;
+            if (debug) {
+                if (clamp) {
+                    servoPos = clampPos;
+                } else {
+                    servoPos = unClampPos;
+                }
             } else {
-                flapPos = outPos;
+                if (gamepad1.a) {
+                    servoPos = clampPos;
+                } else if (gamepad1.b) {
+                    servoPos = unClampPos;
+                }
             }
-
-            flapServo.setPosition(flapPos);
+            wobbleServo.setPosition(servoPos);
         }
     }
 }

@@ -111,7 +111,7 @@ public class Intake {
         rightStickPos = position;
     }
 
-    public void stickUpdate() {
+    public void sticksUpdate() {
         lStickServo.setPosition(leftStickPos);
         rStickServo.setPosition(rightStickPos);
     }

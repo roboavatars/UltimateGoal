@@ -27,11 +27,11 @@ public class StackHeightPipeline extends OpenCvPipeline {
 
     // Thresholds
     public static int HEIGHT_MIN = 10;
-    public static int WIDTH_MIN = 20;
+    public static int WIDTH_MIN = 15;
     public static int HEIGHT_MAX = 60;
     public static int WIDTH_MAX = 60;
     public static double ONE_MIN = 1.9;
-    public static double ONE_MAX = 4.0;
+    public static double ONE_MAX = 4.2;
     public static double FOUR_MIN = 0.5;
 
     // Results
@@ -121,6 +121,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
         int zero = Collections.frequency(list, RingCase.Zero);
         int one = Collections.frequency(list, RingCase.One);
         int four = Collections.frequency(list, RingCase.Four);
+        log("zero: " + zero + ", one: " + one + ", four: " + four);
         if (one > zero && one > four) {
             return RingCase.One;
         } else if (four > zero && four > one) {
