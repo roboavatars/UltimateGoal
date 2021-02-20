@@ -59,8 +59,8 @@ public class MecanumDrivetrain {
 
     // Constants
     public static double ticksToInch = 0.00601244110;
-    public static double OdometryTrackWidth = 13.868;
-    public static double OdometryHorizontalOffset = -2.885;
+    public static double OdometryTrackWidth = 13.890;
+    public static double OdometryHorizontalOffset = -2.845;
     private final double OdometryHeadingThreshold = PI/8;
 
     public final static double xKp = 0.6;

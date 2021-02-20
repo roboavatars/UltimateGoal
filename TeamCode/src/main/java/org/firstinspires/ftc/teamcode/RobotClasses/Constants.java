@@ -16,7 +16,7 @@ public class Constants {
     public static double R_OUT_POS = 0.9;
 
     public static double BLOCKER_UP_POS = 0.4;
-    public static double BLOCKER_DOWN_POS = 1;
+    public static double BLOCKER_DOWN_POS = 0.77;
 
     // Shooter
     public static int HIGH_GOAL_VELOCITY = 1850;
@@ -33,8 +33,8 @@ public class Constants {
 
     // Wobble Arm
     public static int WOBBLE_UP_POS = -20;
-    public static int WOBBLE_DOWN_POS = -520;
+    public static int WOBBLE_DOWN_POS = -560;
 
-    public static double CLAMP_WOBBLE_POS = 0;
-    public static double UNCLAMP_WOBBLE_POS = 0.6;
+    public static double CLAMP_WOBBLE_POS = 0.84;
+    public static double UNCLAMP_WOBBLE_POS = 0.3;
 }

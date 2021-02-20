@@ -188,7 +188,6 @@ public class Teleop extends LinearOpMode {
 
         Log.w("cycle-log", "# Cycles: " + robot.cycles);
         Log.w("cycle-log", "Avg cycle Time: " + (robot.cycleSum / robot.cycles) + "s");
-        robot.shooter.feedHome();
         robot.stop();
     }
 }

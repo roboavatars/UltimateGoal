@@ -19,7 +19,7 @@ public class FeedReset extends LinearOpMode {
         magServo.setPosition(Constants.MAG_SHOOT_POS);
         sleep(1000);
         feedServo.setPosition(Constants.FEED_TOP_POS);
-        sleep(1000);
+        sleep(500);
         magServo.setPosition(Constants.MAG_HOME_POS);
     }
 }
