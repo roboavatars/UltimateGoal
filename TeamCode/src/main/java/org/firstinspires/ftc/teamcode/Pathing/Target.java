@@ -34,6 +34,12 @@ public class Target {
         return this;
     }
 
+    public Target thetaW0(double thetaTarget) {
+        this.thetaTarget = thetaTarget;
+        this.wTarget = 0;
+        return this;
+    }
+
     public Target vx(double vxTarget) {
         this.vxTarget = vxTarget;
         return this;
@@ -59,6 +65,12 @@ public class Target {
         return this;
     }
 
+    public Target xyKp(double xyKp) {
+        this.xKp = xyKp;
+        this.yKp = xyKp;
+        return this;
+    }
+
     public Target thetaKp(double thetaKp) {
         this.thetaKp = thetaKp;
         return this;
@@ -71,6 +83,12 @@ public class Target {
 
     public Target yKd(double yKd) {
         this.yKd = yKd;
+        return this;
+    }
+
+    public Target xyKd(double xyKd) {
+        this.xKd = xyKd;
+        this.yKd = xyKd;
         return this;
     }
 

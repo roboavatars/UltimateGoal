@@ -5,7 +5,6 @@ import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -519,32 +518,20 @@ public class Robot {
 
     // Set target point (default Kp and Kv gains)
     public void setTargetPoint(double xTarget, double yTarget, double thetaTarget) {
-        setTargetPoint(xTarget, yTarget, thetaTarget, 0, 0, 0, drivetrain.xKp, drivetrain.yKp, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
-    }
-
-    // Set target point (velocity specification, default Kp and Kv gains)
-    @Deprecated
-    public void setTargetPoint(double xTarget, double yTarget, double thetaTarget, double vxTarget, double vyTarget, double wTarget) {
-        setTargetPoint(xTarget, yTarget, thetaTarget, vxTarget, vyTarget, wTarget, drivetrain.xKp, drivetrain.yKp, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
+        setTargetPoint(xTarget, yTarget, thetaTarget, 0, 0, 0, MecanumDrivetrain.xKp, MecanumDrivetrain.yKp, MecanumDrivetrain.thetaKp, MecanumDrivetrain.xKd, MecanumDrivetrain.yKd, MecanumDrivetrain.thetaKd);
     }
 
     // Set target point (using pose, velocity specification, default Kp and Kv gains)
     public void setTargetPoint(Pose pose) {
-        setTargetPoint(pose.x, pose.y, pose.theta, pose.vx, pose.vy, pose.w, drivetrain.xKp, drivetrain.yKp, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
+        setTargetPoint(pose.x, pose.y, pose.theta, pose.vx, pose.vy, pose.w, MecanumDrivetrain.xKp, MecanumDrivetrain.yKp, MecanumDrivetrain.thetaKp, MecanumDrivetrain.xKd, MecanumDrivetrain.yKd, MecanumDrivetrain.thetaKd);
     }
 
     // Set target point (using pose, custom theta and omega, default Kp and Kv gains)
-    @Deprecated
     public void setTargetPoint(Pose pose, double theta, double w) {
-        setTargetPoint(pose.x, pose.y, theta, pose.vx, pose.vy, w, drivetrain.xKp, drivetrain.yKp, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
+        setTargetPoint(pose.x, pose.y, theta, pose.vx, pose.vy, w, MecanumDrivetrain.xKp, MecanumDrivetrain.yKp, MecanumDrivetrain.thetaKp, MecanumDrivetrain.xKd, MecanumDrivetrain.yKd, MecanumDrivetrain.thetaKd);
     }
 
-    // Set target point (using pose, velocity specification, custom Kp and Kv gains)
-    @Deprecated
-    public void setTargetPoint(Pose pose, double xKp, double yKp, double thetaKp, double xKd, double yKd, double thetaKd) {
-        setTargetPoint(pose.x, pose.y, pose.theta, pose.vx, pose.vy, pose.w, xKp, yKp, thetaKp, xKd, yKd, thetaKd);
-    }
-
+    // Set target point (using target object)
     public void setTargetPoint(Target target) {
         Pose pose = target.getPose();
         setTargetPoint(pose.x, pose.y, pose.theta, pose.vx, pose.vy, pose.w, target.xKp(), target.yKp(), target.thetaKp(), target.xKd(), target.yKd(), target.thetaKd());

@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.OpenCV.StackHeight.StackHeightDetector;
 import org.firstinspires.ftc.teamcode.OpenCV.StackHeight.StackHeightPipeline.RingCase;
+import org.firstinspires.ftc.teamcode.Pathing.Target;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 import org.firstinspires.ftc.teamcode.Pathing.Path;
 import org.firstinspires.ftc.teamcode.Pathing.Pose;
@@ -240,9 +241,9 @@ public class FirstRedAuto extends LinearOpMode {
                 double curTime = Math.min(time.seconds(), intakeWobble2Time);
                 Pose curPose = intakeWobble2Path.getRobotPose(curTime);
                 if (ringCase == RingCase.Four && robot.y > 55 && robot.y < 115) {
-                    robot.setTargetPoint(curPose.x, curPose.y, PI/2, 0.50, 0.25, 2.4);
+                    robot.setTargetPoint(new Target(curPose).thetaW0(PI/2).xKp(0.5).yKp(0.25).thetaKp(2.4));
                 } else {
-                    robot.setTargetPoint(curPose.x, curPose.y, intakeWobble2ThetaSpline.position(curTime), 0.50, 0.25, 1.5);
+                    robot.setTargetPoint(new Target(curPose).thetaW0(intakeWobble2ThetaSpline.position(curTime)).xKp(0.5).yKp(0.25).thetaKp(1.5));
                 }
 
                 if (!reached && robot.isAtPose(124, 36.5, 5*PI/12, 0.4, 0.4, PI/35)) {
@@ -296,7 +297,7 @@ public class FirstRedAuto extends LinearOpMode {
                     robot.setTargetPoint(curPose.x, curPose.y, intakeStackThetaSpline.position(curTime));
                 } else {
                     double input = Math.min(72, 39 + 4 * time.seconds() + 1.5 * Math.sin(12 * time.seconds()));
-                    robot.setTargetPoint(109, input, Math.PI / 2, 0.2, 0.15, 1.2);
+                    robot.setTargetPoint(new Target(109, input, PI/2).xKp(0.2).yKp(0.15).thetaKp(1.2));
                 }
 
                 if (time.seconds() > intakeStackTime + 1.25) {

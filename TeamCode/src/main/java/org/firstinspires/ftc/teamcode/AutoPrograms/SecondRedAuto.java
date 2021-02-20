@@ -13,6 +13,7 @@ import org.firstinspires.ftc.teamcode.OpenCV.StackHeight.StackHeightPipeline.Rin
 import org.firstinspires.ftc.teamcode.Pathing.Path;
 import org.firstinspires.ftc.teamcode.Pathing.Pose;
 import org.firstinspires.ftc.teamcode.Pathing.Spline;
+import org.firstinspires.ftc.teamcode.Pathing.Target;
 import org.firstinspires.ftc.teamcode.Pathing.Waypoint;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
@@ -189,7 +190,7 @@ public class SecondRedAuto extends LinearOpMode {
                 if (time.seconds() < goToStackTime) {
                     double curTime = Math.min(time.seconds(), goToStackTime);
                     Pose curPose = goToStackPath.getRobotPose(curTime);
-                    robot.setTargetPoint(curPose.x, curPose.y, goToStackThetaSpline.position(curTime), 0.3, 0.3, 3.5);
+                    robot.setTargetPoint(new Target(curPose).thetaW0(goToStackThetaSpline.position(curTime)).xyKp(0.3).thetaKp(3.5));
                 } else {
 //                    double input = Math.min(110, 100 + 6 * time.seconds() + 1.5 * Math.sin(8 * time.seconds()));
 //                    robot.setTargetPoint(input, 48, 0, 0.8, 0.6, 6);

@@ -10,6 +10,7 @@ import org.firstinspires.ftc.teamcode.OpenCV.StackHeight.StackHeightDetector;
 import org.firstinspires.ftc.teamcode.OpenCV.StackHeight.StackHeightPipeline.RingCase;
 import org.firstinspires.ftc.teamcode.Pathing.Path;
 import org.firstinspires.ftc.teamcode.Pathing.Pose;
+import org.firstinspires.ftc.teamcode.Pathing.Target;
 import org.firstinspires.ftc.teamcode.Pathing.Waypoint;
 import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
@@ -340,7 +341,7 @@ public class RedAuto extends LinearOpMode {
             else if (!deliverWobble) {
                 double curTime = Math.min(time.seconds(), deliverWobbleTime);
                 Pose curPose = deliverWobblePath.getRobotPose(curTime);
-                robot.setTargetPoint(curPose.x, curPose.y, curPose.theta + PI, curPose.vx, curPose.vy, 0, robot.drivetrain.xKp, robot.drivetrain.yKp, robot.drivetrain.thetaKp, 0, 0, 0);
+                robot.setTargetPoint(new Target(curPose).thetaW0(curPose.theta + PI).xyKd(0).thetaKd(0));
 
                 if (!reachedDeposit && Math.abs(robot.y - wobbleCor[1]) < 7 && Math.abs(PI - robot.theta) < 0.6) {
                     robot.wobbleArm.armDown();
@@ -439,7 +440,7 @@ public class RedAuto extends LinearOpMode {
             // Deliver second wobble goal
             else if (!deliverWobble2) {
                 double curTime = Math.min(time.seconds(), deliverWobble2Time);
-                robot.setTargetPoint(deliverWobble2Path.getRobotPose(curTime), robot.drivetrain.xKp, robot.drivetrain.yKp, robot.drivetrain.thetaKp, 0, 0, 0);
+                robot.setTargetPoint(new Target(deliverWobble2Path.getRobotPose(curTime)).xyKd(0).thetaKd(0));
 
                 if (!reachedDeposit && Math.abs(robot.y - wobble2Cor[1]) < 7 && Math.abs(PI - robot.theta) < 0.6) {
                     robot.wobbleArm.armDown();
