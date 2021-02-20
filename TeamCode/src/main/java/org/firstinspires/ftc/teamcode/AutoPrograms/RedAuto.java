@@ -340,7 +340,7 @@ public class RedAuto extends LinearOpMode {
             else if (!deliverWobble) {
                 double curTime = Math.min(time.seconds(), deliverWobbleTime);
                 Pose curPose = deliverWobblePath.getRobotPose(curTime);
-                robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta() + PI, curPose.getVx(), curPose.getVy(), 0, robot.drivetrain.xKp, robot.drivetrain.yKp, robot.drivetrain.thetaKp, 0, 0, 0);
+                robot.setTargetPoint(curPose.x, curPose.y, curPose.theta + PI, curPose.vx, curPose.vy, 0, robot.drivetrain.xKp, robot.drivetrain.yKp, robot.drivetrain.thetaKp, 0, 0, 0);
 
                 if (!reachedDeposit && Math.abs(robot.y - wobbleCor[1]) < 7 && Math.abs(PI - robot.theta) < 0.6) {
                     robot.wobbleArm.armDown();
@@ -384,7 +384,7 @@ public class RedAuto extends LinearOpMode {
                 } else {
                     Pose curPose = intakeWobble2Path2.getRobotPose(curTime - 0.5);
                     if (robot.y > 41) {
-                        robot.setTargetPoint(curPose, curPose.getTheta() + PI, 0);
+                        robot.setTargetPoint(curPose, curPose.theta + PI, 0);
                     } else {
                         robot.setTargetPoint(curPose, 5*PI/12, 0);
                     }
@@ -496,7 +496,7 @@ public class RedAuto extends LinearOpMode {
                         robot.setTargetPoint(parkPath.getRobotPose(curTime));
                     } else {
                         Pose curPose = parkPath2.getRobotPose(curTime - 0.5);
-                        robot.setTargetPoint(curPose, curPose.getTheta() + PI, 0);
+                        robot.setTargetPoint(curPose, curPose.theta + PI, 0);
                     }
                 }
 

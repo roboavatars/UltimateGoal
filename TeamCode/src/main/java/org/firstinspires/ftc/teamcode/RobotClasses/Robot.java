@@ -5,6 +5,7 @@ import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -12,6 +13,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 import org.firstinspires.ftc.teamcode.Debug.Logger;
 import org.firstinspires.ftc.teamcode.OpenCV.Ring;
 import org.firstinspires.ftc.teamcode.Pathing.Pose;
+import org.firstinspires.ftc.teamcode.Pathing.Target;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -253,7 +255,7 @@ public class Robot {
                     target = new double[] {psShootPos[0], psShootPos[1], thetaPositions[numRings - 1]};
                     lastTarget = numRings - 1;
                 }
-                setTargetPoint(target[0], target[1], target[2], 0, 0, 0, 0.6, 0.6, 6.0, 0.05, 0.05, 0.4);
+                setTargetPoint(target[0], target[1], target[2]);
             }
 
             // Auto feed rings
@@ -521,31 +523,31 @@ public class Robot {
     }
 
     // Set target point (velocity specification, default Kp and Kv gains)
+    @Deprecated
     public void setTargetPoint(double xTarget, double yTarget, double thetaTarget, double vxTarget, double vyTarget, double wTarget) {
         setTargetPoint(xTarget, yTarget, thetaTarget, vxTarget, vyTarget, wTarget, drivetrain.xKp, drivetrain.yKp, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
     }
 
     // Set target point (using pose, velocity specification, default Kp and Kv gains)
     public void setTargetPoint(Pose pose) {
-        setTargetPoint(pose.getX(), pose.getY(), pose.getTheta(), pose.getVx(), pose.getVy(), pose.getW(), drivetrain.xKp, drivetrain.yKp, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
+        setTargetPoint(pose.x, pose.y, pose.theta, pose.vx, pose.vy, pose.w, drivetrain.xKp, drivetrain.yKp, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
     }
 
     // Set target point (using pose, custom theta and omega, default Kp and Kv gains)
+    @Deprecated
     public void setTargetPoint(Pose pose, double theta, double w) {
-        setTargetPoint(pose.getX(), pose.getY(), theta, pose.getVx(), pose.getVy(), w, drivetrain.xKp, drivetrain.yKp, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
-    }
-
-    public void setTargetPoint(Pose pose, double theta, double w, double xyKp) {
-        setTargetPoint(pose.getX(), pose.getY(), theta, pose.getVx(), pose.getVy(), w, xyKp, xyKp, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
-    }
-
-    public void setTargetPoint(Pose pose, double xyKp) {
-        setTargetPoint(pose.getX(), pose.getY(), theta, pose.getVx(), pose.getVy(), w, xyKp, xyKp, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
+        setTargetPoint(pose.x, pose.y, theta, pose.vx, pose.vy, w, drivetrain.xKp, drivetrain.yKp, drivetrain.thetaKp, drivetrain.xKd, drivetrain.yKd, drivetrain.thetaKd);
     }
 
     // Set target point (using pose, velocity specification, custom Kp and Kv gains)
+    @Deprecated
     public void setTargetPoint(Pose pose, double xKp, double yKp, double thetaKp, double xKd, double yKd, double thetaKd) {
-        setTargetPoint(pose.getX(), pose.getY(), pose.getTheta(), pose.getVx(), pose.getVy(), pose.getW(), xKp, yKp, thetaKp, xKd, yKd, thetaKd);
+        setTargetPoint(pose.x, pose.y, pose.theta, pose.vx, pose.vy, pose.w, xKp, yKp, thetaKp, xKd, yKd, thetaKd);
+    }
+
+    public void setTargetPoint(Target target) {
+        Pose pose = target.getPose();
+        setTargetPoint(pose.x, pose.y, pose.theta, pose.vx, pose.vy, pose.w, target.xKp(), target.yKp(), target.thetaKp(), target.xKd(), target.yKd(), target.thetaKd());
     }
 
     // Check if robot is at a certain point/angle (default tolerance)

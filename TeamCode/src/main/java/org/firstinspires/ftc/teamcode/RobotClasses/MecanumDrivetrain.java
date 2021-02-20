@@ -63,12 +63,12 @@ public class MecanumDrivetrain {
     public static double OdometryHorizontalOffset = -2.885;
     private final double OdometryHeadingThreshold = PI/8;
 
-    public final double xKp = 0.6;
-    public final double yKp = 0.6;
-    public final double thetaKp = 6.0;
-    public final double xKd = 0.05;
-    public final double yKd = 0.05;
-    public final double thetaKd = 0.4;
+    public final static double xKp = 0.6;
+    public final static double yKp = 0.6;
+    public final static double thetaKp = 6.0;
+    public final static double xKd = 0.05;
+    public final static double yKd = 0.05;
+    public final static double thetaKd = 0.4;
 
     public boolean zeroStrafeCorrection = false;
 

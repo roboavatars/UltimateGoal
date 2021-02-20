@@ -137,7 +137,7 @@ public class FirstRedAuto extends LinearOpMode {
             if (!startLine) {
                 double curTime = Math.min(time.seconds(), startLineTime);
                 Pose curPose = startLinePath.getRobotPose(curTime);
-                robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta());
+                robot.setTargetPoint(curPose.x, curPose.y, curPose.theta);
 
                 if (time.seconds() > startLineTime - 1.25) {
 //                    robot.shooter.flywheelPS();
@@ -188,9 +188,9 @@ public class FirstRedAuto extends LinearOpMode {
                 double curTime = Math.min(time.seconds(), deliverWobbleTime);
                 Pose curPose = deliverWobblePath.getRobotPose(curTime);
                 if (robot.y < 110) {
-                    robot.setTargetPoint(curPose.getX(), curPose.getY(), PI/4);
+                    robot.setTargetPoint(curPose.x, curPose.y, PI/4);
                 } else {
-                    robot.setTargetPoint(curPose.getX(), curPose.getY(), 13*PI/12);
+                    robot.setTargetPoint(curPose.x, curPose.y, 13*PI/12);
                 }
 
                 if (time.seconds() > deliverWobbleTime + 1) {
@@ -240,9 +240,9 @@ public class FirstRedAuto extends LinearOpMode {
                 double curTime = Math.min(time.seconds(), intakeWobble2Time);
                 Pose curPose = intakeWobble2Path.getRobotPose(curTime);
                 if (ringCase == RingCase.Four && robot.y > 55 && robot.y < 115) {
-                    robot.setTargetPoint(curPose.getX(), curPose.getY(), PI/2, 0.50, 0.25, 2.4);
+                    robot.setTargetPoint(curPose.x, curPose.y, PI/2, 0.50, 0.25, 2.4);
                 } else {
-                    robot.setTargetPoint(curPose.getX(), curPose.getY(), intakeWobble2ThetaSpline.position(curTime), 0.50, 0.25, 1.5);
+                    robot.setTargetPoint(curPose.x, curPose.y, intakeWobble2ThetaSpline.position(curTime), 0.50, 0.25, 1.5);
                 }
 
                 if (!reached && robot.isAtPose(124, 36.5, 5*PI/12, 0.4, 0.4, PI/35)) {
@@ -293,7 +293,7 @@ public class FirstRedAuto extends LinearOpMode {
                 double curTime = Math.min(time.seconds(), intakeStackTime);
                 Pose curPose = intakeStackPath.getRobotPose(curTime);
                 if (ringCase != RingCase.Four || robot.y < 40) {
-                    robot.setTargetPoint(curPose.getX(), curPose.getY(), intakeStackThetaSpline.position(curTime));
+                    robot.setTargetPoint(curPose.x, curPose.y, intakeStackThetaSpline.position(curTime));
                 } else {
                     double input = Math.min(72, 39 + 4 * time.seconds() + 1.5 * Math.sin(12 * time.seconds()));
                     robot.setTargetPoint(109, input, Math.PI / 2, 0.2, 0.15, 1.2);
@@ -332,7 +332,7 @@ public class FirstRedAuto extends LinearOpMode {
             else if (!deliverWobble2) {
                 double curTime = Math.min(time.seconds(), deliverWobble2Time);
                 Pose curPose = deliverWobble2Path.getRobotPose(curTime);
-                robot.setTargetPoint(curPose.getX(), curPose.getY(), curPose.getTheta());
+                robot.setTargetPoint(curPose.x, curPose.y, curPose.theta);
 
                 if (time.seconds() > deliverWobble2Time + 1) {
                     robot.wobbleArm.setArmPosition(-300);
@@ -386,7 +386,7 @@ public class FirstRedAuto extends LinearOpMode {
             else if (!shootHighGoal2) {
                 double curTime = Math.min(time.seconds(), shootHighGoal2Time);
                 Pose curPose = shootHighGoal2Path.getRobotPose(curTime);
-                robot.setTargetPoint(curPose.getX(), curPose.getY(), PI/3);
+                robot.setTargetPoint(curPose.x, curPose.y, PI/3);
 
                 if (robot.isAtPose(80,60,Math.PI/3)) {
                     Waypoint[] parkWaypoints = new Waypoint[] {
@@ -413,7 +413,7 @@ public class FirstRedAuto extends LinearOpMode {
 
                     double curTime = Math.min(time.seconds(), parkTime);
                     Pose curPose = parkPath.getRobotPose(curTime);
-                    robot.setTargetPoint(curPose.getX(), curPose.getY(), ringCase == RingCase.Four ? PI/2 : parkThetaSpline.position(curTime));
+                    robot.setTargetPoint(curPose.x, curPose.y, ringCase == RingCase.Four ? PI/2 : parkThetaSpline.position(curTime));
 
                     if (time.seconds() > parkTime) {
                         robot.intake.sticksOut();

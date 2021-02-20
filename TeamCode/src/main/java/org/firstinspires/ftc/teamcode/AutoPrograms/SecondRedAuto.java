@@ -189,7 +189,7 @@ public class SecondRedAuto extends LinearOpMode {
                 if (time.seconds() < goToStackTime) {
                     double curTime = Math.min(time.seconds(), goToStackTime);
                     Pose curPose = goToStackPath.getRobotPose(curTime);
-                    robot.setTargetPoint(curPose.getX(), curPose.getY(), goToStackThetaSpline.position(curTime), 0.3, 0.3, 3.5);
+                    robot.setTargetPoint(curPose.x, curPose.y, goToStackThetaSpline.position(curTime), 0.3, 0.3, 3.5);
                 } else {
 //                    double input = Math.min(110, 100 + 6 * time.seconds() + 1.5 * Math.sin(8 * time.seconds()));
 //                    robot.setTargetPoint(input, 48, 0, 0.8, 0.6, 6);

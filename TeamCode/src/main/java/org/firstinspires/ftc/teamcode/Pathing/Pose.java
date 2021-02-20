@@ -1,17 +1,15 @@
 package org.firstinspires.ftc.teamcode.Pathing;
 
 public class Pose {
-    private double x;
-    private double y;
-    private double theta;
-    private double vx;
-    private double vy;
-    private double w;
+    public final double x;
+    public final double y;
+    public final double theta;
+    public final double vx;
+    public final double vy;
+    public final double w;
 
     public Pose(double x, double y, double theta) {
-        this.x = x;
-        this.y = y;
-        this.theta = theta;
+        this(x, y, theta, 0, 0, 0);
     }
 
     public Pose(double x, double y, double theta, double vx, double vy, double w) {
@@ -21,29 +19,5 @@ public class Pose {
         this.vx = vx;
         this.vy = vy;
         this.w = w;
-    }
-
-    public double getX() {
-        return x;
-    }
-
-    public double getY() {
-        return y;
-    }
-
-    public double getTheta() {
-        return theta;
-    }
-
-    public double getVx() {
-        return vx;
-    }
-
-    public double getVy() {
-        return vy;
-    }
-
-    public double getW() {
-        return w;
     }
 }
