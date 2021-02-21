@@ -38,9 +38,13 @@ public class Dashboard {
     }
 
     public static void drawRing(Ring ring) {
+        drawRing(ring, "orange");
+    }
+
+    public static void drawRing(Ring ring, String color) {
         double x = ring.getY() - 72;
         double y = 72 - ring.getX();
-        packet.fieldOverlay().setFill("orange").fillCircle(x, y, 2.5);
+        packet.fieldOverlay().setFill(color).fillCircle(x, y, 2.5);
         packet.fieldOverlay().setFill("white").fillCircle(x, y, 1.5);
     }
 

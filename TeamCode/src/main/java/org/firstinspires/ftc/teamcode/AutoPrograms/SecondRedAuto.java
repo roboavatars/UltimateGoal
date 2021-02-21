@@ -22,6 +22,7 @@ import java.util.Arrays;
 
 import static java.lang.Math.PI;
 
+@Deprecated
 @Autonomous
 @Disabled
 public class SecondRedAuto extends LinearOpMode {

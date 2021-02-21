@@ -27,7 +27,7 @@ public class Ring {
         this.relY = relY;
     }
 
-    // Return a sorted list with up to three coordinate-filtered rings
+    // Return a sorted list with up to two coordinate-filtered rings
     public static ArrayList<Ring> getRingCoords(ArrayList<Ring> rings, double minX, double minY, double maxX, double maxY, double robotX, double robotY) {
         // Remove rings out of bounds
         int i = 0;
@@ -42,18 +42,18 @@ public class Ring {
         // Sort rings based on distance
         rings.sort((r1, r2) -> Double.compare(r1.getAbsDist(robotX, robotY), r2.getAbsDist(robotX, robotY)));
 
-        // Return up to three rings
-        if (rings.size() > 3) {
-            rings = new ArrayList<>(rings.subList(0, 3));
+        // Return up to two rings
+        if (rings.size() > 2) {
+            rings = new ArrayList<>(rings.subList(0, 2));
         }
 
-        if (rings.size() == 3) {
-            Ring closest = rings.get(0);
-            // find closet ring after first ring
-            if (rings.get(1).getAbsDist(closest.absX, closest.absY) > rings.get(2).getAbsDist(closest.absX, closest.absY)) {
-                Collections.swap(rings, 1, 2);
-            }
-        }
+//        if (rings.size() == 3) {
+//            Ring closest = rings.get(0);
+//            // Find closet ring after first ring
+//            if (rings.get(1).getAbsDist(closest.absX, closest.absY) > rings.get(2).getAbsDist(closest.absX, closest.absY)) {
+//                Collections.swap(rings, 1, 2);
+//            }
+//        }
 
         return rings;
     }

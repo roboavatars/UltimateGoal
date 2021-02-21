@@ -13,9 +13,9 @@ public class RingLocator extends BaseDetector {
 
     private RingLocatorPipeline pipeline;
     public static double minX = 60;
-    public static double minY = 72;
+    public static double minY = 94;
     public static double maxX = 132;
-    public static double maxY = 144;
+    public static double maxY = 146;
 
     public RingLocator(LinearOpMode op) {
         super(op);
@@ -28,7 +28,7 @@ public class RingLocator extends BaseDetector {
         return pipeline.getRings();
     }
 
-    // Return a sorted list with up to three coordinate-filtered rings
+    // Return a sorted list with up to two coordinate-filtered rings
     public ArrayList<Ring> getRings(double robotX, double robotY, double robotTheta) {
         ArrayList<Ring> rings = pipeline.getRings();
         int i = 0;

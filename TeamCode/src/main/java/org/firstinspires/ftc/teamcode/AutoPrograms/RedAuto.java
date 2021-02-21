@@ -138,7 +138,6 @@ public class RedAuto extends LinearOpMode {
         detector.stop();
 
         RingLocator locator = new RingLocator(this);
-        locator.start();
         ArrayList<Ring> rings = new ArrayList<>();
         robot.ringPos = rings;
 
@@ -237,6 +236,7 @@ public class RedAuto extends LinearOpMode {
                     }
                     goToPowerShotPath = new Path(new ArrayList<>(Arrays.asList(goToPowerShotWaypoints)));
 
+                    locator.start();
                     intakeStack2 = true;
                     time.reset();
                 }
@@ -280,9 +280,9 @@ public class RedAuto extends LinearOpMode {
 //                            rings.add(new Ring(0, 0, 86, 125));
 //                            rings.add(new Ring(0, 0, 98, 120));
 //                            rings.add(new Ring(0, 0, 110, 115));
-//                            rings = Ring.getRingCoords(rings, robot.x, robot.y);
+//                            rings = locator.getRings(robot.x, robot.y, robot.theta);
                             ringTime = 4.5;
-                            Waypoint[] ringWaypoints = new Waypoint[]{
+                            Waypoint[] ringWaypoints = new Waypoint[] {
                                     new Waypoint(robot.x, robot.y, robot.theta, 50, 50, 0, 0),
                                     new Waypoint(62, 130, 0, 30, 30, 0, 1.5),
                                     new Waypoint(109, 130, 0, 30, 20, 0, 3.75),
@@ -344,6 +344,7 @@ public class RedAuto extends LinearOpMode {
                     };
                     deliverWobblePath = new Path(new ArrayList<>(Arrays.asList(deliverWobbleWaypoints)));
 
+                    locator.stop();
                     bounceBack = true;
                     time.reset();
                 }
@@ -531,7 +532,6 @@ public class RedAuto extends LinearOpMode {
             robot.update();
         }
 
-        locator.stop();
         robot.stop();
     }
 }

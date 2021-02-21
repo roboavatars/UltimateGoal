@@ -16,7 +16,7 @@ public class RingProcessor {
 
     // CV Thresholds
     public static double FILTER_MIN = 80;
-    public static double FILTER_MAX = 115;
+    public static double FILTER_MAX = 110;
 
     // Image Processing Mats
     private Mat yCrCb = new Mat();

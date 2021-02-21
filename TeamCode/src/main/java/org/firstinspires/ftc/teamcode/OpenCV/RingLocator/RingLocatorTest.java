@@ -15,6 +15,9 @@ public class RingLocatorTest extends LinearOpMode {
 
     private RingLocator detector;
     private ArrayList<Ring> rings;
+    public static double x = 87;
+    public static double y = 63;
+    public static double theta = PI/2;
 
     @Override
     public void runOpMode() {
@@ -24,11 +27,16 @@ public class RingLocatorTest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            rings = detector.getRings(87, 33, PI/2);
+            rings = detector.getRings(x, y, theta);
 
-            for (Ring ring : rings) {
-                drawRing(ring);
+            for (int i = 0; i < rings.size(); i++) {
+                if (i == 0) {
+                    drawRing(rings.get(i), "green");
+                } else if (i == 1) {
+                    drawRing(rings.get(i), "red");
+                }
             }
+            drawRobot(x, y, theta, "black");
 
             addPacket("Rings", rings);
             sendPacket();
