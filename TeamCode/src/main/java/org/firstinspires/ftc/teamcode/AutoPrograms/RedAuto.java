@@ -21,7 +21,7 @@ import java.util.Arrays;
 import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 
-@Autonomous(name = "0 Red Auto", preselectTeleOp = "Teleop")
+@Autonomous(name = "1 Red Auto", preselectTeleOp = "Teleop")
 public class RedAuto extends LinearOpMode {
 
     @Override
@@ -45,7 +45,6 @@ public class RedAuto extends LinearOpMode {
 
         Robot robot = new Robot(this, 114, 9, PI/2, true);
         robot.logger.startLogging();
-        robot.intake.blockerDown();
 
         StackHeightDetector detector = new StackHeightDetector(this);
         detector.start();
@@ -103,7 +102,7 @@ public class RedAuto extends LinearOpMode {
         double psFinishTime = 0;
         boolean reachedDeposit = false;
         double depositReachTime = 0;
-        boolean sweep = false;
+        boolean sweep = true;
 
         waitForStart();
 
@@ -112,7 +111,7 @@ public class RedAuto extends LinearOpMode {
         Robot.log("Ring case: " + ringCase);
 
         double[][] wobbleDelivery = {{116, 85}, {95, 106}, {116, 133}};
-        double[][] wobble2Delivery = {{113, 75}, {96, 99}, {116, 127}};
+        double[][] wobble2Delivery = {{113, 75}, {92, 99}, {116, 127}};
         double[] wobbleCor;
         double[] wobble2Cor;
         if (ringCase == RingCase.Zero) {
@@ -276,11 +275,44 @@ public class RedAuto extends LinearOpMode {
 
                         rings = locator.getRings(robot.x, robot.y, robot.theta);
                         Robot.log("Detected " + rings.size() + " ring(s): " + rings);
-//                        if (rings.size() == 0) {
-//                            rings.add(new Ring(0, 0, 86, 125));
-//                            rings.add(new Ring(0, 0, 98, 120));
-//                            rings.add(new Ring(0, 0, 110, 115));
-//                            rings = locator.getRings(robot.x, robot.y, robot.theta);
+
+                        for (Ring ring : rings) {
+                            sweep &= ring.getY() >= 132;
+                        }
+                        sweep = true;
+
+                        if (rings.size() == 0) {
+                            rings.add(new Ring(0, 0, 62, 130));
+                            rings.add(new Ring(0, 0, 109, 130));
+                        }
+
+                        if (!sweep) {
+                            ArrayList<Waypoint> ringWaypoints = new ArrayList<>();
+                            ringWaypoints.add(new Waypoint(robot.x, robot.y, robot.theta, 50, 60, 0, 0));
+
+                            double[] ringPos;
+                            ringTime = 0;
+                            if (rings.size() >= 1) {
+                                ringPos = rings.get(0).driveToRing(robot.x, robot.y);
+                                if (ringPos[1] > 135) {
+                                    ringPos[2] = PI/2;
+                                }
+                                ringWaypoints.add(new Waypoint(ringPos[0], ringPos[1], ringPos[2], 20, 30, 0, ringTime + 1.5));
+                                ringTime += 1.5;
+
+                                if (rings.size() == 2) {
+                                    ringPos = rings.get(1).driveToRing(ringPos[0], ringPos[1]);
+                                    if (ringPos[1] > 135) {
+                                        ringPos[2] = PI/2;
+                                    }
+                                    ringWaypoints.add(new Waypoint(ringPos[0], ringPos[1], ringPos[2], 20, 30, 0, ringTime + 1.5));
+                                    ringTime += 1.5;
+                                }
+                            }
+                            ringWaypoints.add(new Waypoint(123, 134, PI, 30, 20, 0, ringTime + 1.5));
+                            ringTime += 1.5;
+                            ringPath = new Path(ringWaypoints);
+                        } else {
                             ringTime = 4.5;
                             Waypoint[] ringWaypoints = new Waypoint[] {
                                     new Waypoint(robot.x, robot.y, robot.theta, 50, 50, 0, 0),
@@ -289,35 +321,7 @@ public class RedAuto extends LinearOpMode {
                                     new Waypoint(123, 134, 0, 30, 5, 0, ringTime),
                             };
                             ringPath = new Path(new ArrayList<>(Arrays.asList(ringWaypoints)));
-                            sweep = true;
-//                        } else {
-//
-//                            ArrayList<Waypoint> ringWaypoints = new ArrayList<>();
-//                            ringWaypoints.add(new Waypoint(robot.x, robot.y, robot.theta, 50, 60, 0, 0));
-//
-//                            double[] ringPos = rings.get(0).driveToRing(robot.x, robot.y);
-//                            if (rings.size() >= 1) {
-//                                if (ringPos[1] > 135) {
-//                                    ringPos[2] = PI / 2;
-//                                }
-//                                ringWaypoints.add(new Waypoint(ringPos[0], ringPos[1], ringPos[2], 30, 30, 0, ringTime += 1.5));
-//                            }
-//                            if (rings.size() >= 2) {
-//                                ringPos = rings.get(1).driveToRing(ringPos[0], ringPos[1]);
-//                                if (ringPos[1] > 135) {
-//                                    ringPos[2] = PI / 2;
-//                                }
-//                                ringWaypoints.add(new Waypoint(ringPos[0], ringPos[1], ringPos[2], 30, 30, 0, ringTime += 1.0));
-//                            }
-//                            if (rings.size() == 3) {
-//                                ringPos = rings.get(2).driveToRing(ringPos[0], ringPos[1]);
-//                                if (ringPos[1] > 135) {
-//                                    ringPos[2] = PI / 2;
-//                                }
-//                                ringWaypoints.add(new Waypoint(ringPos[0], ringPos[1], ringPos[2], 30, 30, 0, ringTime += 1.0));
-//                            }
-//                            ringPath = new Path(ringWaypoints);
-//                        }
+                        }
 
                         shootPowerShots = true;
                         time.reset();
@@ -344,7 +348,6 @@ public class RedAuto extends LinearOpMode {
                     };
                     deliverWobblePath = new Path(new ArrayList<>(Arrays.asList(deliverWobbleWaypoints)));
 
-                    locator.stop();
                     bounceBack = true;
                     time.reset();
                 }
@@ -532,6 +535,7 @@ public class RedAuto extends LinearOpMode {
             robot.update();
         }
 
+        locator.stop();
         robot.stop();
     }
 }

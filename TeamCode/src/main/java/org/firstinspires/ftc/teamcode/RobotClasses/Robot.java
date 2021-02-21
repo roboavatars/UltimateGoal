@@ -89,9 +89,9 @@ public class Robot {
 
     // Powershot Debug Variables
     public final double[] psShootPos = new double[] {87, 63};
-    public static double theta0 = 1.681;
+    public static double theta0 = 1.674;
     public static double theta1 = 1.571;
-    public static double theta2 = 1.481;
+    public static double theta2 = 1.477;
     public static double[] thetaPositions = {theta2, theta1, theta0};
 //    public static double flap0 = 0.43;
 //    public static double flap1 = 0.47;
@@ -261,7 +261,7 @@ public class Robot {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position
                     if (highGoal && isAtPose(target[0], target[1], target[2]) ||
-                            !highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/200)) {
+                            !highGoal && isAtPose(target[0], target[1], target[2], 1, 1, isAuto ? PI/200 : PI/150)) {
                         log("In shoot Velocity: " + shooter.getVelocity());
                         log(vx + " " + vy + " " + w);
 

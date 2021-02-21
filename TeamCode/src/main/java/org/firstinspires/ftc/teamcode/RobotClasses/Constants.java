@@ -7,20 +7,20 @@ public class Constants {
     // Intake
     public static double L_HOME_POS = 1;
     public static double L_HALF_POS = 0.77;
-    public static double L_QUARTER_POS = 0.36;
+    public static double L_QUARTER_POS = 0.39;
     public static double L_OUT_POS = 0.23;
 
     public static double R_HOME_POS = 0.25;
-    public static double R_HALF_POS = 0.60;
+    public static double R_HALF_POS = 0.58;
     public static double R_QUARTER_POS = 0.75;
-    public static double R_OUT_POS = 0.9;
+    public static double R_OUT_POS = 0.90;
 
     public static double BLOCKER_UP_POS = 0.4;
     public static double BLOCKER_DOWN_POS = 0.77;
 
     // Shooter
     public static int HIGH_GOAL_VELOCITY = 1850;
-    public static int POWERSHOT_VELOCITY = 1520;
+    public static int POWERSHOT_VELOCITY = 1560;
 
     public static double FLAP_HOME_POS = 0.5;
 
@@ -33,7 +33,7 @@ public class Constants {
 
     // Wobble Arm
     public static int WOBBLE_UP_POS = -20;
-    public static int WOBBLE_DOWN_POS = -560;
+    public static int WOBBLE_DOWN_POS = -600;
 
     public static double CLAMP_WOBBLE_POS = 0.84;
     public static double UNCLAMP_WOBBLE_POS = 0.3;

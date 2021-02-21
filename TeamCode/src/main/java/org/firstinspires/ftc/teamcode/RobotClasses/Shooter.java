@@ -25,7 +25,7 @@ public class Shooter {
 
     public boolean magHome = true;
     public boolean feedHome = false;
-    public boolean sensorBroken = false;
+    public boolean sensorBroken = true;
 
     public static double zeroDist = 4.65;
     public static double oneDist = 4.0;

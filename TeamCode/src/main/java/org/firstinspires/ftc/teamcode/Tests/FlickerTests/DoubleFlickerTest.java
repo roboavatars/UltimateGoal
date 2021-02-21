@@ -49,6 +49,7 @@ public class DoubleFlickerTest extends LinearOpMode {
         robot = new Robot(this, 87, 63, PI/2, false);
 
         intake.sticksHalf();
+        intake.sticksUpdate();
 
         waitForStart();
 

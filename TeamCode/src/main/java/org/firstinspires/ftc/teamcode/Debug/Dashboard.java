@@ -33,6 +33,10 @@ public class Dashboard {
         packet.fieldOverlay().setFill(color).fillPolygon(xcoords, ycoords);
     }
 
+    public static void drawPoint(double x, double y, String color) {
+        packet.fieldOverlay().setFill(color).fillCircle(y - 72, 72 - x, 0.5);
+    }
+
     public static void drawLine(double x1, double y1, double x2, double y2, String color) {
         packet.fieldOverlay().setStroke(color).strokeLine(y1 - 72, 72 - x1, y2 - 72, 72 - x2);
     }
