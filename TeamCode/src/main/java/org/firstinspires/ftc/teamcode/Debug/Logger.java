@@ -69,12 +69,12 @@ public class Logger {
      * Adds data to string
      */
     @SuppressLint("SimpleDateFormat")
-    public void logData(double timeSinceSt, double x, double y, double theta, double velocityX, double velocityY, double velocityTheta,
-                        double accelX, double accelY, double accelTheta, int numRings, boolean magHome, boolean feedHome,
+    public void logData(double timeSinceSt, double x, double y, double theta, double vx, double vy, double w,
+                        double ax, double ay, double alpha, int numRings, boolean magHome, boolean feedHome,
                         int lastTarget, int numCycles, double avgCycleTime) {
         SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss.SSS");
-        data += df.format(new Date())+","+timeSinceSt+","+x+","+y+","+theta+","+velocityX+","+velocityY+","+velocityTheta+","+
-                accelX+","+accelY+","+accelTheta+","+numRings+","+magHome+","+feedHome+","+lastTarget+","+numCycles+","+avgCycleTime+"\n";
+        data += df.format(new Date()) + "," + timeSinceSt + "," + x + "," + y + "," + theta + "," + vx + "," + vy + "," + w + "," +
+                ax + "," + ay + "," + alpha + "," + numRings + "," + magHome + "," + feedHome + "," + lastTarget + "," + numCycles + "," + avgCycleTime + "\n";
     }
 
     /**

@@ -76,6 +76,7 @@ public class Teleop extends LinearOpMode {
             // Rev up flywheel for high goal
             if (gamepad2.y || (!robot.shooter.sensorBroken && robot.numRings == 2)) {
                 robot.shooter.flywheelHG();
+                robot.intake.sticksFourth();
             }
 
             // Auto raise sticks after 3 rings
