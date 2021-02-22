@@ -62,6 +62,7 @@ public class Teleop extends LinearOpMode {
                 robot.highGoalShoot();
             } else if (gamepad1.right_bumper) {
                 robot.powerShotShoot();
+                robot.intake.sticksFourth();
             } else if (gamepad1.dpad_left) {
                 robot.highGoalShoot(2);
             } else if (gamepad1.dpad_right) {
