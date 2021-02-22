@@ -218,7 +218,7 @@ public class Robot {
             }
 
             // Move to shooting position
-            if (!isAtPose(target[0], target[1], target[2], 1, 1, PI/35)) {
+            if (!isAtPose(target[0], target[1], target[2], 1, 1, PI/35)/* || Math.abs(vx) + Math.abs(vy) > 0.5 || Math.abs(w) > 0.05*/) {
                 setTargetPoint(target[0], target[1], target[2]);
                 log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") Moving to shoot position: " + Arrays.toString(target));
             }
@@ -262,11 +262,13 @@ public class Robot {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position
                     if ((highGoal && isAtPose(target[0], target[1], target[2]) ||
-                            !highGoal && isAtPose(target[0], target[1], target[2], 1, 1, isAuto ? PI/200 : PI/150))
+                            !highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/150))
                             && Math.abs(vx) + Math.abs(vy) < 1 && Math.abs(w) < 0.1) {
                         log("In shoot Velocity: " + shooter.getVelocity());
                         log("Drivetrain Velocities: " + round(vx) + " " + round(vy) + " " + round(w));
-                        if (!highGoal) log("theta: "+theta);
+                        if (!highGoal) {
+                            log("theta: " + theta);
+                        }
 
                         if (shooter.feedHome) {
                             shooter.feedTop();

@@ -145,7 +145,7 @@ public class RedAuto extends LinearOpMode {
 
         ElapsedTime time = new ElapsedTime();
 
-        while (opModeIsActive()) {
+        while (opModeIsActive() || robot.startTime < 30) {
 
             // Go to starting stack
             if (!goToStack) {
@@ -280,7 +280,6 @@ public class RedAuto extends LinearOpMode {
                         for (Ring ring : rings) {
                             sweep &= ring.getY() >= 132;
                         }
-                        //sweep = true;
 
                         if (rings.size() == 0) {
                             rings.add(new Ring(0, 0, 62, 130));
@@ -530,13 +529,16 @@ public class RedAuto extends LinearOpMode {
 
             else {
                 robot.drivetrain.setControls(0, 0, 0);
+                break;
             }
 
             addPacket("Ring Case", ringCase);
             robot.update();
         }
 
-        locator.stop();
+        try {
+            locator.stop();
+        } catch (Exception ignore) {}
         robot.stop();
     }
 }

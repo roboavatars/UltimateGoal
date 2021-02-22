@@ -32,7 +32,9 @@ public class Logger {
             File robotDataLog = new File(getLogName(true));
             fileWriter = new FileWriter(robotDataLog);
             fileWriter.write("Timestamp,SinceStart,X,Y,Theta,VelocityX,VelocityY,VelocityTheta,AccelX,AccelY,AccelTheta,NumRings,MagHome,FeedHome,LastTarget\n");
-        } catch (Exception e) {e.printStackTrace();}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -82,7 +84,9 @@ public class Logger {
             fileWriter.write(data);
             fileWriter.close();
         }
-        catch (Exception e) {e.printStackTrace();}
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -94,7 +98,7 @@ public class Logger {
         try {
             bufferedReader = new BufferedReader(new FileReader(getLogName(false)));
             List<String> lines = bufferedReader.lines().collect(Collectors.toList());
-            String[] data = lines.get(lines.size()-2).split(",");
+            String[] data = lines.get(lines.size() - 2).split(",");
             robotPos = new double[] {Double.parseDouble(data[2]), Double.parseDouble(data[3]), Double.parseDouble(data[4])};
 
             bufferedReader.close();
