@@ -157,13 +157,6 @@ public class Teleop extends LinearOpMode {
                 robot.thetaOffset = 0;
             }
 
-            if (gamepad1.dpad_up) {
-                robot.shooter.setFlapPosition(robot.shooter.getFlapPosition() + 0.001);
-            }
-            if (gamepad1.dpad_down) {
-                robot.shooter.setFlapPosition(robot.shooter.getFlapPosition() - 0.001);
-            }
-
             // Drivetrain controls
             if (robotCentric) {
                 robot.drivetrain.setControls(-gamepad1.left_stick_y * xySpeed, -gamepad1.left_stick_x * xySpeed, -gamepad1.right_stick_x * thSpeed);

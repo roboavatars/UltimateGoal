@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 @SuppressWarnings("FieldCanBeLocal")
 public class Intake {
 
-    private DcMotorEx intakeMotor;
+    public DcMotorEx intakeMotor;
     private Servo lStickServo;
     private Servo rStickServo;
     private Servo blockerServo;
@@ -28,8 +28,6 @@ public class Intake {
         lStickServo = op.hardwareMap.get(Servo.class, "leftStick");
         rStickServo = op.hardwareMap.get(Servo.class, "rightStick");
         blockerServo = op.hardwareMap.get(Servo.class, "blocker");
-
-        blockerUp();
 
         this.isAuto = isAuto;
         op.telemetry.addData("Status", "Intake initialized");
@@ -78,10 +76,8 @@ public class Intake {
     }
 
     public void sticksHome() {
-        if (!isAuto) {
-            leftStickPos = Constants.L_HOME_POS;
-            rightStickPos = Constants.R_HOME_POS;
-        }
+        leftStickPos = Constants.L_HOME_POS;
+        rightStickPos = Constants.R_HOME_POS;
     }
 
     public void sticksHalf() {

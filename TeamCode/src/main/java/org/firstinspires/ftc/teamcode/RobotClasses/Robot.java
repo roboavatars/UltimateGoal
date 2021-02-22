@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Debug.Logger;
 import org.firstinspires.ftc.teamcode.OpenCV.Ring;
 import org.firstinspires.ftc.teamcode.Pathing.Pose;
@@ -217,7 +218,7 @@ public class Robot {
             }
 
             // Move to shooting position
-            if (!isAtPose(target[0], target[1], target[2], isAuto ? 0.5 : 1, isAuto ? 0.5 : 1, PI/35)) {
+            if (!isAtPose(target[0], target[1], target[2], 1, 1, PI/35)) {
                 setTargetPoint(target[0], target[1], target[2]);
                 log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") Moving to shoot position: " + Arrays.toString(target));
             }
@@ -260,10 +261,12 @@ public class Robot {
             if (System.currentTimeMillis() - shootTime > shootDelay) {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position
-                    if (highGoal && isAtPose(target[0], target[1], target[2]) ||
-                            !highGoal && isAtPose(target[0], target[1], target[2], 1, 1, isAuto ? PI/200 : PI/150)) {
+                    if ((highGoal && isAtPose(target[0], target[1], target[2]) ||
+                            !highGoal && isAtPose(target[0], target[1], target[2], 1, 1, isAuto ? PI/200 : PI/150))
+                            && Math.abs(vx) + Math.abs(vy) < 1 && Math.abs(w) < 0.1) {
                         log("In shoot Velocity: " + shooter.getVelocity());
-                        log(vx + " " + vy + " " + w);
+                        log("Drivetrain Velocities: " + round(vx) + " " + round(vy) + " " + round(w));
+                        if (!highGoal) log("theta: "+theta);
 
                         if (shooter.feedHome) {
                             shooter.feedTop();
@@ -377,7 +380,7 @@ public class Robot {
         addPacket("6 shoot", shoot  + " " + preShoot + " " + highGoal);
         addPacket("7 Time", (System.currentTimeMillis() - startTime) / 1000);
         addPacket("8 Update Frequency (Hz)", 1 / timeDiff);
-        // addPacket("diff", timeDiff);
+        addPacket("Cycle Time", (System.currentTimeMillis() - lastCycleTime) / 1000);
 
         // Dashboard Drawings
         drawGoal("black");

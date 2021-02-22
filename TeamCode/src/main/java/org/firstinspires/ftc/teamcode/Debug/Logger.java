@@ -11,6 +11,8 @@ import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @SuppressLint("SdCardPath")
 public class Logger {
@@ -87,25 +89,17 @@ public class Logger {
      * Reads position from last written file
      */
     public static double[] readPos() {
-        String curLine; int lineNum = 0;
-        double[] robotPos = new double[3];
+        double[] robotPos = new double[] {0, 0, 0};
 
         try {
             bufferedReader = new BufferedReader(new FileReader(getLogName(false)));
-            while ((curLine = bufferedReader.readLine()) != null) {
-                if (lineNum != 0) {
-                    String[] data = curLine.split(","); //Robot.log(Arrays.toString(data));
-                    robotPos[0] = Double.parseDouble(data[2]);
-                    robotPos[1] = Double.parseDouble(data[3]);
-                    robotPos[2] = Double.parseDouble(data[4]);
-                    //Robot.log(Arrays.toString(robotPos));
-                }
-                lineNum++;
-            }
+            List<String> lines = bufferedReader.lines().collect(Collectors.toList());
+            String[] data = lines.get(lines.size()-2).split(",");
+            robotPos = new double[] {Double.parseDouble(data[2]), Double.parseDouble(data[3]), Double.parseDouble(data[4])};
+
             bufferedReader.close();
             Robot.log("Starting At " + Arrays.toString(robotPos));
         } catch (Exception ex) {
-            robotPos[0] = 0; robotPos[1] = 0; robotPos[2] = 0;
             Robot.log("read error, using default values :-(");
             ex.printStackTrace();
         }
