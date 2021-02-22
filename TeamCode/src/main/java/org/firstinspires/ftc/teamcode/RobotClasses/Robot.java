@@ -362,7 +362,7 @@ public class Robot {
 
         // Log Data
         if (loopCounter % loggerUpdatePeriod == 0) {
-            logger.logData(System.currentTimeMillis() - startTime, x, y, theta, vx, vy, w, ax, ay, a, numRings, shooter.magHome, shooter.feedHome, lastTarget);
+            logger.logData(System.currentTimeMillis() - startTime, x, y, theta, vx, vy, w, ax, ay, a, numRings, shooter.magHome, shooter.feedHome, lastTarget, cycles, (cycles/cycleSum));
         }
 
         profile(6);

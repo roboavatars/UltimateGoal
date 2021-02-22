@@ -17,7 +17,6 @@ public class IntakeTest extends LinearOpMode {
     public void runOpMode() {
 
         Robot robot = new Robot(this, 108, 42, PI/2, true);
-        robot.logger.startLogging();
         robot.intake.sticksHome();
         robot.intake.blockerDown();
 
@@ -33,7 +32,5 @@ public class IntakeTest extends LinearOpMode {
             robot.update();
         }
 
-        robot.shooter.feedHome();
-        robot.stop();
     }
 }

@@ -19,19 +19,19 @@ public class Logger {
 
     private static final String basePath = "/sdcard/FIRST/robotLogs/RobotData";
     private static FileWriter fileWriter;
-    private static BufferedReader bufferedReader;
     private String data = "";
 
     /**
      * Creates a new file and writes first row
      * This method must be used before logging
      */
-    public void startLogging() {
+    public void startLogging(boolean isAuto) {
         try {
             data = "";
             File robotDataLog = new File(getLogName(true));
             fileWriter = new FileWriter(robotDataLog);
-            fileWriter.write("Timestamp,SinceStart,X,Y,Theta,VelocityX,VelocityY,VelocityTheta,AccelX,AccelY,AccelTheta,NumRings,MagHome,FeedHome,LastTarget\n");
+            fileWriter.write("# " + (isAuto ? "Auto" : "Teleop") + "\n");
+            fileWriter.write("Timestamp,SinceStart,X,Y,Theta,VelocityX,VelocityY,VelocityTheta,AccelX,AccelY,AccelTheta,NumRings,MagHome,FeedHome,LastTarget,Cycles,AvgCycle\n");
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -70,10 +70,11 @@ public class Logger {
      */
     @SuppressLint("SimpleDateFormat")
     public void logData(double timeSinceSt, double x, double y, double theta, double velocityX, double velocityY, double velocityTheta,
-                        double accelX, double accelY, double accelTheta, int numRings, boolean magHome, boolean feedHome, int lastTarget) {
+                        double accelX, double accelY, double accelTheta, int numRings, boolean magHome, boolean feedHome,
+                        int lastTarget, int numCycles, double avgCycleTime) {
         SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss.SSS");
         data += df.format(new Date())+","+timeSinceSt+","+x+","+y+","+theta+","+velocityX+","+velocityY+","+velocityTheta+","+
-                accelX+","+accelY+","+accelTheta+","+numRings+","+magHome+","+feedHome+","+lastTarget+"\n";
+                accelX+","+accelY+","+accelTheta+","+numRings+","+magHome+","+feedHome+","+lastTarget+","+numCycles+","+avgCycleTime+"\n";
     }
 
     /**
@@ -96,18 +97,17 @@ public class Logger {
         double[] robotPos = new double[] {0, 0, 0};
 
         try {
-            bufferedReader = new BufferedReader(new FileReader(getLogName(false)));
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(getLogName(false)));
             List<String> lines = bufferedReader.lines().collect(Collectors.toList());
             String[] data = lines.get(lines.size() - 2).split(",");
             robotPos = new double[] {Double.parseDouble(data[2]), Double.parseDouble(data[3]), Double.parseDouble(data[4])};
 
             bufferedReader.close();
             Robot.log("Starting At " + Arrays.toString(robotPos));
-        } catch (Exception ex) {
+        } catch (Exception e) {
             Robot.log("read error, using default values :-(");
-            ex.printStackTrace();
+            e.printStackTrace();
         }
-
         return robotPos;
     }
 }

@@ -42,7 +42,7 @@ public class Teleop extends LinearOpMode {
             robot = new Robot(this, startX, startY, startTheta, false);
         }
 
-        robot.logger.startLogging();
+        robot.logger.startLogging(false);
         robot.intake.sticksOut();
 
         waitForStart();

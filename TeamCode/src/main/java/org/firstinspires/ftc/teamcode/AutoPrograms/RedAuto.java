@@ -44,7 +44,7 @@ public class RedAuto extends LinearOpMode {
         */
 
         Robot robot = new Robot(this, 114, 9, PI/2, true);
-        robot.logger.startLogging();
+        robot.logger.startLogging(true);
 
         StackHeightDetector detector = new StackHeightDetector(this);
         detector.start();
@@ -78,7 +78,7 @@ public class RedAuto extends LinearOpMode {
         double goToHighShootTime = 0.75;
         double shootHighGoal2Time = 1.5;
         double deliverWobble2Time = 2.0;
-        double parkTime = 1.75;
+        double parkTime = 1.5;
 
         // Paths
         Waypoint[] goToStackWaypoints = new Waypoint[] {
