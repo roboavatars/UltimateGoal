@@ -252,7 +252,7 @@ public class Robot {
                     lastTarget = 3;
                 } else if (numRings == 3 || System.currentTimeMillis() - flickTime > flapDelay) {
                     target = new double[] {psShootPos[0], psShootPos[1], thetaPositions[numRings - 1]};
-                    lastTarget = numRings - 1;
+                    lastTarget = 3 - numRings;
                 }
                 setTargetPoint(target[0], target[1], target[2]);
             }
