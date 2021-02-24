@@ -25,10 +25,10 @@ public class Shooter {
 
     public boolean magHome = true;
     public boolean feedHome = false;
-    public boolean sensorBroken = true;
+    public boolean sensorBroken = false;
 
-    public static double zeroDist = 4.65;
-    public static double oneDist = 4.0;
+    public static double zeroDist = 4.4;
+    public static double oneDist = 3.9;
     public static double twoDist = 3.3;
     public static double threeDist = 2.5;
 
@@ -124,9 +124,7 @@ public class Shooter {
 
     public double getDistance() {
         double distance = ringSensor.getDistance(DistanceUnit.INCH);
-        if (distance > 6) {
-            sensorBroken = true;
-        }
+        sensorBroken = distance > 6;
         return distance;
     }
 

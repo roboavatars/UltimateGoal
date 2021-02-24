@@ -1,12 +1,13 @@
 package org.firstinspires.ftc.teamcode.AutoPrograms;
 
+import android.util.Log;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
+import org.firstinspires.ftc.teamcode.OpenCV.CV;
 import org.firstinspires.ftc.teamcode.OpenCV.Ring;
-import org.firstinspires.ftc.teamcode.OpenCV.RingLocator.RingLocator;
-import org.firstinspires.ftc.teamcode.OpenCV.StackHeight.StackHeightDetector;
 import org.firstinspires.ftc.teamcode.OpenCV.StackHeight.StackHeightPipeline.RingCase;
 import org.firstinspires.ftc.teamcode.Pathing.Path;
 import org.firstinspires.ftc.teamcode.Pathing.Pose;
@@ -46,7 +47,7 @@ public class RedAuto extends LinearOpMode {
         Robot robot = new Robot(this, 114, 9, PI/2, true);
         robot.logger.startLogging(true);
 
-        StackHeightDetector detector = new StackHeightDetector(this);
+        CV detector = new CV(this, CV.Pipeline.StackHeight);
         detector.start();
 
         // Segments
@@ -103,15 +104,16 @@ public class RedAuto extends LinearOpMode {
         boolean reachedDeposit = false;
         double depositReachTime = 0;
         boolean sweep = true;
+        ArrayList<Ring> rings;
 
         waitForStart();
 
         // Wobble coordinates based on ring case
-        RingCase ringCase = detector.getModeResult();
+        RingCase ringCase = detector.getStackPipe().getModeResult();
         Robot.log("Ring case: " + ringCase);
 
-        double[][] wobbleDelivery = {{120, 85}, {93, 106}, {120, 133}};
-        double[][] wobble2Delivery = {{117, 75}, {92, 99}, {116, 127}};
+        double[][] wobbleDelivery = {{120, 85}, {93, 106}, {121, 134}};
+        double[][] wobble2Delivery = {{117, 75}, {92, 99}, {118, 124}};
         double[] wobbleCor;
         double[] wobble2Cor;
         if (ringCase == RingCase.Zero) {
@@ -133,11 +135,7 @@ public class RedAuto extends LinearOpMode {
             wobble2Cor = wobble2Delivery[2];
         }
 
-        detector.stop();
-
-        RingLocator locator = new RingLocator(this);
-        ArrayList<Ring> rings = new ArrayList<>();
-        robot.ringPos = rings;
+        detector.setPipeline(CV.Pipeline.RingLocator);
 
         robot.intake.blockerDown();
         robot.intake.sticksHalf();
@@ -145,7 +143,11 @@ public class RedAuto extends LinearOpMode {
 
         ElapsedTime time = new ElapsedTime();
 
-        while (opModeIsActive() || robot.startTime < 30) {
+        robot.update();
+
+        while (opModeIsActive() && System.currentTimeMillis() - robot.startTime < 30000) {
+            rings = detector.getRingPipe().getRings(robot.x, robot.y, robot.theta);
+            robot.ringPos = rings;
 
             // Go to starting stack
             if (!goToStack) {
@@ -200,7 +202,7 @@ public class RedAuto extends LinearOpMode {
                         time.reset();
                     }
                     double input = Math.min(60, 42 + 6 * time.seconds() + 1.5 * Math.sin(8.5 * time.seconds()));
-                    robot.setTargetPoint(109, input, PI/2);
+                    robot.setTargetPoint(108, input, PI/2);
 
                     if (time.seconds() > intakeStack2Time) {
                         robot.shooter.flywheelPS();
@@ -232,8 +234,6 @@ public class RedAuto extends LinearOpMode {
                         };
                     }
                     goToPowerShotPath = new Path(new ArrayList<>(Arrays.asList(goToPowerShotWaypoints)));
-
-                    locator.start();
                     intakeStack2 = true;
                     time.reset();
                 }
@@ -274,11 +274,10 @@ public class RedAuto extends LinearOpMode {
                         robot.intake.on();
                         robot.intake.sticksHome();
 
-                        rings = locator.getRings(robot.x, robot.y, robot.theta);
                         Robot.log("Detected " + rings.size() + " ring(s): " + rings);
 
                         for (Ring ring : rings) {
-                            sweep &= ring.getY() >= 132;
+                            sweep &= ring.getY() >= 138;
                         }
 
                         if (rings.size() == 0) {
@@ -385,7 +384,7 @@ public class RedAuto extends LinearOpMode {
                     Waypoint[] intakeWobble2Waypoints2 = new Waypoint[] {
                             new Waypoint(robot.x - 12, robot.y, 3*PI/4, -5, -50, 0, 0),
                             new Waypoint(99, 39, 5*PI/12, -10, 0, 0, 2.5),
-                            new Waypoint(97, 31, 5*PI/12, -0.1, 50, 0, intakeWobble2Time),
+                            new Waypoint(97, 31, 5*PI/12, 0.05, 50, 0, intakeWobble2Time),
                     };
                     intakeWobble2Path2 = new Path(new ArrayList<>(Arrays.asList(intakeWobble2Waypoints2)));
 
@@ -407,11 +406,14 @@ public class RedAuto extends LinearOpMode {
                         robot.setTargetPoint(curPose, 5*PI/12, 0);
                     }
                 }
+                crashLog("intake 2 spline");
 
                 if (time.seconds() > intakeWobble2Time + 0.5) {
                     robot.wobbleArm.setArmPosition(-250);
+                    crashLog("wobble down");
                 } else if (time.seconds() > intakeWobble2Time) {
                     robot.wobbleArm.clamp();
+                    crashLog("wobble clamp");
                 }
 
                 if (time.seconds() > intakeWobble2Time + 1.0) {
@@ -425,18 +427,23 @@ public class RedAuto extends LinearOpMode {
 
                     intakeWobble2 = true;
                     time.reset();
+
+                    crashLog("end of intake 2");
                 }
             }
 
             // Go to high goal shoot position
             else if (!goToHighShoot) {
                 robot.setTargetPoint(goToHighShootPath.getRobotPose(Math.min(time.seconds(), goToHighShootTime)));
+                crashLog("high shoot spline");
 
                 if (time.seconds() > goToHighShootTime) {
                     robot.highGoalShoot(ringCase == RingCase.One ? 4 : 3);
 
                     goToHighShoot = true;
                     time.reset();
+
+                    crashLog("end of high shoot");
                 }
             }
 
@@ -463,8 +470,7 @@ public class RedAuto extends LinearOpMode {
                     robot.wobbleArm.armDown();
                 }
 
-                if (!reachedDeposit && robot.isAtPose(wobble2Cor[0], wobble2Cor[1], PI)
-                        && robot.wobbleArm.getPosition() < -400) {
+                if (!reachedDeposit && robot.isAtPose(wobble2Cor[0], wobble2Cor[1], PI) && robot.wobbleArm.getPosition() < -400) {
                     reachedDeposit = true;
                     robot.wobbleArm.unClamp();
                     depositReachTime = curTime;
@@ -493,7 +499,7 @@ public class RedAuto extends LinearOpMode {
                         } else {
                             parkWaypoints2 = new Waypoint[] {
                                     new Waypoint(robot.x - 10, robot.y, robot.theta, -40, -40, 0, 0),
-                                    new Waypoint(104, 86, PI/2, -30, -40, 0, parkTime),
+                                    new Waypoint(112, 86, PI/2, -30, -40, 0, parkTime),
                             };
                         }
                     }
@@ -509,18 +515,25 @@ public class RedAuto extends LinearOpMode {
                 double curTime = Math.min(time.seconds(), parkTime + 0.5);
                 if (ringCase == RingCase.Zero) {
                     robot.setTargetPoint(parkPath2.getRobotPose(curTime));
-                } else {
+                } else if (ringCase == RingCase.One) {
                     if (curTime < 0.5) {
                         robot.setTargetPoint(parkPath.getRobotPose(curTime));
                     } else {
                         Pose curPose = parkPath2.getRobotPose(curTime - 0.5);
                         robot.setTargetPoint(curPose, curPose.theta + PI, 0);
                     }
+                } else {
+                    if (curTime < 0.5) {
+                        robot.setTargetPoint(parkPath.getRobotPose(curTime));
+                    } else if (curTime < 1) {
+                        Pose curPose = parkPath2.getRobotPose(curTime - 0.5);
+                        robot.setTargetPoint(curPose, 7*PI/6, 0);
+                    } else {
+                        robot.intake.sticksOut();
+                    }
                 }
 
                 if (time.seconds() > parkTime) {
-                    robot.intake.sticksOut();
-
                     Robot.log("Auto finished in " + ((System.currentTimeMillis() - robot.startTime) / 1000) + " seconds");
 
                     park = true;
@@ -529,16 +542,22 @@ public class RedAuto extends LinearOpMode {
 
             else {
                 robot.drivetrain.setControls(0, 0, 0);
-                break;
+                if (System.currentTimeMillis() - robot.startTime >= 32000 || (Math.pow(robot.vx, 2) + Math.pow(robot.vy, 2) < 1 && Math.abs(robot.w) < 0.5)) {
+                    break;
+                }
             }
 
             addPacket("Ring Case", ringCase);
             robot.update();
         }
 
-        try {
-            locator.stop();
-        } catch (Exception ignore) {}
         robot.stop();
+        try {
+            detector.stop();
+        } catch (Exception ignore) {}
+    }
+
+    public void crashLog(String message) {
+        Log.w("crash", message);
     }
 }

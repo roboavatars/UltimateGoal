@@ -28,21 +28,13 @@ public class RingLocator extends BaseDetector {
         return pipeline.getRings();
     }
 
+    // Return rings
+    public ArrayList<Ring> getRings() {
+        return new ArrayList<>(pipeline.getRings());
+    }
+
     // Return a sorted list with up to two coordinate-filtered rings
     public ArrayList<Ring> getRings(double robotX, double robotY, double robotTheta) {
-        ArrayList<Ring> rings = pipeline.getRings();
-        int i = 0;
-        while (i < rings.size()) {
-            try {
-                rings.get(i).calcAbsCoords(robotX, robotY, robotTheta);
-                i++;
-            } catch (NullPointerException e) {
-                rings.remove(i);
-            }
-        }
-
-        rings = Ring.getRingCoords(rings, robotX, robotY);
-
-        return new ArrayList<>(rings);
+        return new ArrayList<>(pipeline.getRings(robotX, robotY, robotTheta));
     }
 }

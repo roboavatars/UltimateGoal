@@ -42,7 +42,6 @@ public class StackHeightPipeline extends OpenCvPipeline {
 
     // Image Processing Mats
     private RingProcessor processor;
-    private Mat[] processorOut = new Mat[3];
     private Mat processed = new Mat();
 
     public StackHeightPipeline() {
@@ -53,6 +52,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
     @Override
     public Mat processFrame(Mat input) {
         // Process Image
+        processor.saveMatToDisk("raw.jpg", input);
         input = new Mat(input, new Rect(65, 45, 90, 90));
         processed = processor.processFrame(input)[0];
 
@@ -104,6 +104,8 @@ public class StackHeightPipeline extends OpenCvPipeline {
 
         results[cycles % 5] = ringCase;
         cycles++;
+
+        processor.saveMatToDisk("rect.jpg", input);
 
         return input;
     }

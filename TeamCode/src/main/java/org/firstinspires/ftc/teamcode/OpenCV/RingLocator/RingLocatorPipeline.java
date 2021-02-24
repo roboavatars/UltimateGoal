@@ -139,6 +139,24 @@ public class RingLocatorPipeline extends OpenCvPipeline {
         return new ArrayList<>(prevRings);
     }
 
+    // Return a sorted list with up to two coordinate-filtered rings
+    public ArrayList<Ring> getRings(double robotX, double robotY, double robotTheta) {
+        ArrayList<Ring> rings = getRings();
+        int i = 0;
+        while (i < rings.size()) {
+            try {
+                rings.get(i).calcAbsCoords(robotX, robotY, robotTheta);
+                i++;
+            } catch (NullPointerException e) {
+                rings.remove(i);
+            }
+        }
+
+        rings = Ring.getRingCoords(rings, robotX, robotY);
+
+        return new ArrayList<>(rings);
+    }
+
     public void log(String message) {
         Log.w("ring-locator-pipe", message);
     }

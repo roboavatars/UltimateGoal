@@ -9,7 +9,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.Debug.Logger;
 import org.firstinspires.ftc.teamcode.OpenCV.Ring;
 import org.firstinspires.ftc.teamcode.Pathing.Pose;
@@ -139,7 +138,7 @@ public class Robot {
         if (battery.getVoltage() < 12.4) {
             startVoltTooLow = true;
         }
-        drawGoal("black");
+        drawGoals("black");
         drawRobot(this, "black");
         sendPacket();
     }
@@ -263,7 +262,7 @@ public class Robot {
                     // Shoot ring only if robot at position
                     if ((highGoal && isAtPose(target[0], target[1], target[2]) ||
                             !highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/150))
-                            && Math.abs(vx) + Math.abs(vy) < 1 && Math.abs(w) < 0.1) {
+                            && Math.abs(vx) + Math.abs(vy) < 1.5 && Math.abs(w) < 0.1) {
                         log("In shoot Velocity: " + shooter.getVelocity());
                         log("Drivetrain Velocities: " + round(vx) + " " + round(vy) + " " + round(w));
                         if (!highGoal) {
@@ -369,7 +368,7 @@ public class Robot {
 
         // Dashboard Telemetry
         if (startVoltTooLow) {
-            addPacket("0", "Starting Battery Voltage < 12.5!!!!");
+            addPacket("0", "Starting Battery Voltage < 12.4!!!!");
         }
         if (shooter.sensorBroken) {
             addPacket("00", "Distance Sensor Broken!!!!");
@@ -382,10 +381,13 @@ public class Robot {
         addPacket("6 shoot", shoot  + " " + preShoot + " " + highGoal);
         addPacket("7 Time", (System.currentTimeMillis() - startTime) / 1000);
         addPacket("8 Update Frequency (Hz)", 1 / timeDiff);
-        addPacket("Cycle Time", (System.currentTimeMillis() - lastCycleTime) / 1000);
+        if (!isAuto) {
+            addPacket("Cycle Time", (System.currentTimeMillis() - lastCycleTime) / 1000);
+            addPacket("Cycles", cycles);
+        }
 
         // Dashboard Drawings
-        drawGoal("black");
+        drawGoals("black");
 //        drawRobot(drivetrain.x, drivetrain.y, drivetrain.theta, "green");
 //        if (useT265) {
 //            drawRobot(t265.getCamX(), t265.getCamY(), t265.getCamTheta(), t265.confidenceColor());
@@ -394,6 +396,7 @@ public class Robot {
         for (Ring ring : ringPos) {
             drawRing(ring);
         }
+        log("rings: " + ringPos);
         sendPacket();
 
         profile(7);

@@ -27,9 +27,13 @@ public class Dashboard {
         packet.fieldOverlay().setFill(color).fillPolygon(xcoords, ycoords);
     }
 
-    public static void drawGoal(String color) {
+    public static void drawGoals(String color) {
         double[] xcoords = {72, 72, 78, 78};
         double[] ycoords = {-24, -48, -48, -24};
+        packet.fieldOverlay().setFill(color).fillPolygon(xcoords, ycoords);
+
+        xcoords = new double[] {72, 72, 78, 78};
+        ycoords = new double[] {24, 48, 48, 24};
         packet.fieldOverlay().setFill(color).fillPolygon(xcoords, ycoords);
     }
 
