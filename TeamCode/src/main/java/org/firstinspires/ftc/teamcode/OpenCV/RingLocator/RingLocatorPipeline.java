@@ -38,7 +38,6 @@ public class RingLocatorPipeline extends OpenCvPipeline {
 
     // Image Processing Mats
     private RingProcessor processor;
-    private Mat[] processorOut = new Mat[3];
     private Mat processed = new Mat();
 
     // Ellipse Variables
@@ -104,10 +103,11 @@ public class RingLocatorPipeline extends OpenCvPipeline {
                         }
                     }
                 } else {
-                    Imgproc.ellipse(input, ellipse, new Scalar(255, 0, 0), 1);
+                    // Imgproc.ellipse(input, ellipse, new Scalar(255, 0, 0), 1);
                 }
             }
         }
+        processor.saveMatToDisk("ellipse.jpg", input);
 
         // Return (0, 0) If No Rings Detected
         if (rings.size() == 0) {

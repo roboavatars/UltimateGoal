@@ -89,6 +89,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
                 }
             }
         }
+        processor.saveMatToDisk("rect.jpg", input);
 
         log("Total: " + contours.size() + " Passed threshold: " + i);
 
@@ -104,8 +105,6 @@ public class StackHeightPipeline extends OpenCvPipeline {
 
         results[cycles % 5] = ringCase;
         cycles++;
-
-        processor.saveMatToDisk("rect.jpg", input);
 
         return input;
     }
