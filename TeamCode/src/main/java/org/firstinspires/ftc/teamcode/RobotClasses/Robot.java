@@ -260,9 +260,9 @@ public class Robot {
             if (System.currentTimeMillis() - shootTime > shootDelay) {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position
-                    if ((highGoal && isAtPose(target[0], target[1], target[2]) ||
-                            !highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/150))
-                            && Math.abs(vx) + Math.abs(vy) < 1.5 && Math.abs(w) < 0.1) {
+                    if ((highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/75)) ||
+                            (!highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/150)
+                            && Math.abs(vx) + Math.abs(vy) < 1.5 && Math.abs(w) < 0.1) ){
                         log("In shoot Velocity: " + shooter.getVelocity());
                         log("Drivetrain Velocities: " + round(vx) + " " + round(vy) + " " + round(w));
                         if (!highGoal) {
