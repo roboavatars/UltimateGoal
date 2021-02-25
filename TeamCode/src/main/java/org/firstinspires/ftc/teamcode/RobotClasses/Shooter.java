@@ -50,6 +50,7 @@ public class Shooter {
         magServo = op.hardwareMap.get(Servo.class, "magServo");
         feedServo = op.hardwareMap.get(Servo.class, "feedServo");
         ringSensor = op.hardwareMap.get(DistanceSensor.class, "ringSensor");
+        sensorBroken = true;
 
         feedTop();
         magHome();
@@ -124,7 +125,7 @@ public class Shooter {
 
     public double getDistance() {
         double distance = ringSensor.getDistance(DistanceUnit.INCH);
-        sensorBroken = distance > 6;
+//        sensorBroken = distance > 6;
         return distance;
     }
 
