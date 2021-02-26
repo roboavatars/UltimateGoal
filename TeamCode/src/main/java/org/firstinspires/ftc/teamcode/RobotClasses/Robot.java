@@ -59,7 +59,7 @@ public class Robot {
     public int lastTarget = -1;
 
     public int cycles = 0;
-    public double cycleSum;
+    public double cycleTotal;
     public double lastCycleTime;
 
     // Time and Delay Variables
@@ -262,7 +262,7 @@ public class Robot {
                     // Shoot ring only if robot at position
                     if ((highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/75)) ||
                             (!highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/150)
-                            && Math.abs(vx) + Math.abs(vy) < 1.5 && Math.abs(w) < 0.1) ){
+                            && Math.abs(vx) + Math.abs(vy) < 1.5 && Math.abs(w) < 0.1)) {
                         log("In shoot Velocity: " + shooter.getVelocity());
                         log("Drivetrain Velocities: " + round(vx) + " " + round(vy) + " " + round(w));
                         if (!highGoal) {
@@ -302,7 +302,7 @@ public class Robot {
                     log("Shoot done");
                     log("Total shoot time: " +  (System.currentTimeMillis() - startShootTime) + " ms");
                     double cycleTime = (System.currentTimeMillis() - lastCycleTime) / 1000;
-                    cycleSum += cycleTime;
+                    cycleTotal += cycleTime;
                     cycles++;
                     Log.w("cycle-log", "Cycle " + cycles + ": " + cycleTime + "s");
                     lastCycleTime = System.currentTimeMillis();
@@ -361,7 +361,7 @@ public class Robot {
 
         // Log Data
         if (loopCounter % loggerUpdatePeriod == 0) {
-            logger.logData(System.currentTimeMillis() - startTime, x, y, theta, vx, vy, w, ax, ay, a, numRings, shooter.magHome, shooter.feedHome, lastTarget, cycles, cycleSum / cycles);
+            logger.logData(System.currentTimeMillis() - startTime, x, y, theta, vx, vy, w, ax, ay, a, numRings, shooter.magHome, shooter.feedHome, lastTarget, cycles, cycleTotal / cycles);
         }
 
         profile(6);
@@ -383,6 +383,7 @@ public class Robot {
         addPacket("8 Update Frequency (Hz)", 1 / timeDiff);
         if (!isAuto) {
             addPacket("Cycle Time", (System.currentTimeMillis() - lastCycleTime) / 1000);
+            addPacket("Average Cycle Time", cycleTotal / cycles);
             addPacket("Cycles", cycles);
         }
 

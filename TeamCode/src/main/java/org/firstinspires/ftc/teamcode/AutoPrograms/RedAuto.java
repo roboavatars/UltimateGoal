@@ -186,7 +186,7 @@ public class RedAuto extends LinearOpMode {
                 if (time.seconds() > intakeStackTime) {
                     if (ringCase == RingCase.Four) {
                         robot.shootYOverride = robot.y;
-                        robot.highGoalShoot(1);
+                        robot.highGoalShoot();
                     }
 
                     intakeStack = true;
@@ -358,18 +358,18 @@ public class RedAuto extends LinearOpMode {
                 Pose curPose = deliverWobblePath.getRobotPose(curTime);
                 robot.setTargetPoint(new Target(curPose).thetaW0(curPose.theta + PI).xyKd(0).thetaKd(0));
 
-                if (!reachedDeposit && Math.abs(robot.y - wobbleCor[1]) < 7 && Math.abs(PI - robot.theta) < 0.6) {
+                if (time.seconds() > 2 || (!reachedDeposit && Math.abs(robot.y - wobbleCor[1]) < 7 && Math.abs(PI - robot.theta) < 0.6)) {
                     robot.wobbleArm.armDown();
                 }
 
-                if (!reachedDeposit && robot.isAtPose(wobbleCor[0], wobbleCor[1], PI) && robot.wobbleArm.getPosition() < -400) {
+                if (time.seconds() > 2.5 || (!reachedDeposit && robot.isAtPose(wobbleCor[0], wobbleCor[1], PI) && robot.wobbleArm.getPosition() < -400)) {
                     reachedDeposit = true;
                     depositReachTime = curTime;
                     robot.wobbleArm.unClamp();
                     robot.intake.reverse();
                 }
 
-                if (reachedDeposit && time.seconds() > depositReachTime + 0.5) {
+                if (time.seconds() > 3 || (reachedDeposit && time.seconds() > depositReachTime + 0.5)) {
                     reachedDeposit = false;
                     depositReachTime = 0;
 
@@ -466,17 +466,17 @@ public class RedAuto extends LinearOpMode {
                 double curTime = Math.min(time.seconds(), deliverWobble2Time);
                 robot.setTargetPoint(new Target(deliverWobble2Path.getRobotPose(curTime)).xyKd(0).thetaKd(0));
 
-                if (!reachedDeposit && Math.abs(robot.y - wobble2Cor[1]) < 7 && Math.abs(PI - robot.theta) < 0.6) {
+                if (time.seconds() > 2.5 || (!reachedDeposit && Math.abs(robot.y - wobble2Cor[1]) < 7 && Math.abs(PI - robot.theta) < 0.6)) {
                     robot.wobbleArm.armDown();
                 }
 
-                if (!reachedDeposit && robot.isAtPose(wobble2Cor[0], wobble2Cor[1], PI) && robot.wobbleArm.getPosition() < -400) {
+                if (time.seconds() > 2.5 || (!reachedDeposit && robot.isAtPose(wobble2Cor[0], wobble2Cor[1], PI) && robot.wobbleArm.getPosition() < -400)) {
                     reachedDeposit = true;
                     robot.wobbleArm.unClamp();
                     depositReachTime = curTime;
                 }
 
-                if (reachedDeposit && time.seconds() > depositReachTime + 0.5) {
+                if (time.seconds() > 3 || (reachedDeposit && time.seconds() > depositReachTime + 0.5)) {
 
                     Waypoint[] parkWaypoints2;
                     if (ringCase == RingCase.Zero) {

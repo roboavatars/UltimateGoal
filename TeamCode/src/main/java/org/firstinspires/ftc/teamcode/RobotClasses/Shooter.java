@@ -25,7 +25,7 @@ public class Shooter {
 
     public boolean magHome = true;
     public boolean feedHome = false;
-    public boolean sensorBroken = false;
+    public boolean sensorBroken = true;
 
     public static double zeroDist = 4.4;
     public static double oneDist = 3.9;
@@ -50,7 +50,6 @@ public class Shooter {
         magServo = op.hardwareMap.get(Servo.class, "magServo");
         feedServo = op.hardwareMap.get(Servo.class, "feedServo");
         ringSensor = op.hardwareMap.get(DistanceSensor.class, "ringSensor");
-        sensorBroken = true;
 
         feedTop();
         magHome();
