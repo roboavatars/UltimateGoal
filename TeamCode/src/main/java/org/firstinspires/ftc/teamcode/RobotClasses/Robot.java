@@ -89,7 +89,7 @@ public class Robot {
 
     // Powershot Debug Variables
     public final double[] psShootPos = new double[] {87, 63};
-    public static double theta0 = 1.674;
+    public static double theta0 = 1.669;
     public static double theta1 = 1.571;
     public static double theta2 = 1.477;
     public static double[] thetaPositions = {theta2, theta1, theta0};
@@ -217,7 +217,7 @@ public class Robot {
             }
 
             // Move to shooting position
-            if (!isAtPose(target[0], target[1], target[2], 1, 1, PI/35)/* || Math.abs(vx) + Math.abs(vy) > 0.5 || Math.abs(w) > 0.05*/) {
+            if (!isAtPose(target[0], target[1], target[2], 1, 1, PI/35) || Math.abs(vx) + Math.abs(vy) > 1.5 || Math.abs(w) > 0.1) {
                 setTargetPoint(target[0], target[1], target[2]);
                 log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") Moving to shoot position: " + Arrays.toString(target));
             }
@@ -397,7 +397,7 @@ public class Robot {
         for (Ring ring : ringPos) {
             drawRing(ring);
         }
-        log("rings: " + ringPos);
+//        log("rings: " + ringPos);
         sendPacket();
 
         profile(7);

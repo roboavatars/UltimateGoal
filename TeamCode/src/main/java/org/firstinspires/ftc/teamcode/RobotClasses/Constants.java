@@ -13,7 +13,7 @@ public class Constants {
     public static double R_HOME_POS = 0.25;
     public static double R_HALF_POS = 0.58;
     public static double R_QUARTER_POS = 0.75;
-    public static double R_OUT_POS = 0.90;
+    public static double R_OUT_POS = 0.85;
 
     public static double BLOCKER_UP_POS = 0.4;
     public static double BLOCKER_DOWN_POS = 0.82;

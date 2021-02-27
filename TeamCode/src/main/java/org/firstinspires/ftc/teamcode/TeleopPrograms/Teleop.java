@@ -120,7 +120,7 @@ public class Teleop extends LinearOpMode {
             robot.wobbleArm.setPower(-0.4 * gamepad2.left_stick_y);
 
             // Wobble clamp/unclamp
-            if (gamepad2.a && !clampToggle) {
+            if (gamepad2.dpad_down && !clampToggle) {
                 clampToggle = true;
                 if (clamped) {
                     robot.wobbleArm.unClamp();
@@ -128,14 +128,14 @@ public class Teleop extends LinearOpMode {
                     robot.wobbleArm.clamp();
                 }
                 clamped = !clamped;
-            } else if (!gamepad2.a && clampToggle) {
+            } else if (!gamepad2.dpad_down && clampToggle) {
                 clampToggle = false;
             }
 
             // Slow align mode
-            if (gamepad1.right_stick_button) {
-                xySpeed = 0.3;
-                thSpeed = 0.09;
+            if (gamepad2.left_trigger > 0) {
+                xySpeed = 0.22;
+                thSpeed = 0.17;
             } else {
                 xySpeed = 1;
                 thSpeed = 1;
@@ -160,10 +160,14 @@ public class Teleop extends LinearOpMode {
             }
 
             // Drivetrain controls
-            if (robotCentric) {
-                robot.drivetrain.setControls(-gamepad1.left_stick_y * xySpeed, -gamepad1.left_stick_x * xySpeed, -gamepad1.right_stick_x * thSpeed);
+            if (gamepad2.a) {
+                robot.setTargetPoint(87, 63, Math.PI/2);
             } else {
-                robot.drivetrain.setGlobalControls(gamepad1.left_stick_y * xySpeed, gamepad1.left_stick_x * xySpeed, -gamepad1.right_stick_x * thSpeed);
+                if (robotCentric) {
+                    robot.drivetrain.setControls(-gamepad1.left_stick_y * xySpeed, -gamepad1.left_stick_x * xySpeed, -gamepad1.right_stick_x * thSpeed);
+                } else {
+                    robot.drivetrain.setGlobalControls(gamepad1.left_stick_y * xySpeed, gamepad1.left_stick_x * xySpeed, -gamepad1.right_stick_x * thSpeed);
+                }
             }
 
             // Update robot

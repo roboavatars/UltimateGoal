@@ -15,7 +15,7 @@ public class RingLocator extends BaseDetector {
     public static double minX = 60;
     public static double minY = 94;
     public static double maxX = 132;
-    public static double maxY = 146;
+    public static double maxY = 142;
 
     public RingLocator(LinearOpMode op) {
         super(op);
