@@ -7,13 +7,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Debug.Logger;
+import org.firstinspires.ftc.teamcode.RobotClasses.MecanumDrivetrain;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import java.util.Arrays;
 
-@TeleOp(name = "Teleop")
+@TeleOp(name = "Strafe Teleop")
 @Config
-public class Teleop extends LinearOpMode {
+public class StrafeTeleop extends LinearOpMode {
     public int startX = 90;
     public int startY = 9;
     public double startTheta = Math.PI/2;
@@ -163,12 +164,14 @@ public class Teleop extends LinearOpMode {
             // Drivetrain controls
             if (gamepad2.a) {
                 robot.setTargetPoint(87, 63, Math.PI/2);
-            } else {
+            } else if (gamepad2.left_trigger > 0 || gamepad2.left_bumper) {
                 if (robotCentric) {
                     robot.drivetrain.setControls(-gamepad1.left_stick_y * xySpeed, -gamepad1.left_stick_x * xySpeed, -gamepad1.right_stick_x * thSpeed);
                 } else {
                     robot.drivetrain.setGlobalControls(gamepad1.left_stick_y * xySpeed, gamepad1.left_stick_x * xySpeed, -gamepad1.right_stick_x * thSpeed);
                 }
+            } else {
+                robot.drivetrain.setGlobalControls(MecanumDrivetrain.yKp * (70 - robot.y) + MecanumDrivetrain.yKd * (-robot.vy), gamepad1.left_stick_y * xySpeed, MecanumDrivetrain.thetaKp * (-robot.shootTargets(3)[2]) + MecanumDrivetrain.thetaKd * (-robot.w));
             }
 
             // Update robot
