@@ -9,6 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.Intake;
 import org.firstinspires.ftc.teamcode.RobotClasses.Shooter;
+import org.firstinspires.ftc.teamcode.RobotClasses.WobbleArm;
 
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
@@ -33,13 +34,15 @@ public class BottomFlickerTest extends LinearOpMode {
 
     private Shooter shooter;
     private Intake intake;
-
+    public WobbleArm intake2;
     @Override
     public void runOpMode() {
 
         Servo servo = hardwareMap.get(Servo.class, "feedServo");
         shooter = new Shooter(this);
         intake = new Intake(this, false);
+        intake2 = new WobbleArm(this, false);
+
 
         waitForStart();
 
@@ -58,10 +61,13 @@ public class BottomFlickerTest extends LinearOpMode {
                 // Intake on/off/rev
                 if (gamepad1.right_trigger > 0) {
                     intake.on();
+                    intake2.setPower(gamepad1.right_trigger);
                 } else if (gamepad1.left_trigger > 0) {
                     intake.reverse();
+                    intake2.setPower(-(gamepad1.left_trigger));
                 } else {
                     intake.off();
+                    intake2.setPower(0);
                 }
 
                 // Toggle mag for shoot/home position
