@@ -25,7 +25,6 @@ android {
 dependencies {
     boolean useAar = false
     if (!useAar) {
-//        implementation 'com.acmerobotics.dashboard:dashboard:0.3.10'
         implementation 'com.acmerobotics.dashboard:dashboard:0.4.0'
     } else {
         implementation(name: 'FtcDashboard-debug2', ext: 'aar')
@@ -33,12 +32,4 @@ dependencies {
     }
 }
 
-repositories {
-    maven { url = "https://dl.bintray.com/first-tech-challenge/ftcsdk/" }
-
-    flatDir {
-        dirs '../libs'
-    }
-}
-
-apply from: 'build.release.gradle'
+apply from: '../build.dependencies.gradle'

@@ -13,31 +13,22 @@
 
 // Include common definitions from above.
 apply from: '../build.common.gradle'
-
-android {
-    buildToolsVersion '30.0.3'
-}
+apply from: '../build.dependencies.gradle'
 
 repositories {
-    jcenter()
-
-    maven {
-        url "https://maven.0x778.tk"
-    }
-    maven {
-        url "https://dl.bintray.com/first-tech-challenge/ftcsdk/"
-    }
+    maven { url = "https://maven.0x778.tk" }
 }
 
 dependencies {
+    implementation project(':FtcRobotController')
     annotationProcessor files('lib/OpModeAnnotationProcessor.jar')
+
     implementation group: 'org.ejml', name: 'ejml-all', version: '0.39'
     implementation 'org.openftc:easyopencv:1.4.4'
     implementation 'com.spartronics4915.lib:ftc265:2.1.8'
 
     boolean useAar = false
     if (!useAar) {
-//        implementation 'com.acmerobotics.dashboard:dashboard:0.3.10'
         implementation 'com.acmerobotics.dashboard:dashboard:0.4.0'
     } else {
         implementation(name: 'FtcDashboard-debug2', ext: 'aar')
