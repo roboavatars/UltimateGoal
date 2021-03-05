@@ -40,6 +40,8 @@ public class DoubleFlickerTest extends LinearOpMode {
     private Shooter shooter;
     private Intake intake;
     private Robot robot;
+    private long meme = 0;
+    private boolean iliterallyhavenoideawhatimdoing = true;
 
     @Override
     public void runOpMode() {
@@ -48,8 +50,8 @@ public class DoubleFlickerTest extends LinearOpMode {
         intake = new Intake(this, false);
         robot = new Robot(this, 87, 63, PI/2, false);
 
-        intake.sticksHalf();
-        intake.sticksUpdate();
+        //intake.sticksHalf();
+        //intake.sticksUpdate();
 
         waitForStart();
 
@@ -71,65 +73,45 @@ public class DoubleFlickerTest extends LinearOpMode {
                 }
             } else {
                 // Intake on/off/rev
+                if(gamepad1.a){
+                    intake.blockerDown();
+                }
+                else{
+                    intake.blockerUp();
+                }
                 if (gamepad1.right_trigger > 0) {
                     intake.on();
+                    robot.wobbleArm.setPower(-gamepad1.right_trigger);
                 } else if (gamepad1.left_trigger > 0) {
                     intake.reverse();
+                    robot.wobbleArm.setPower(gamepad1.left_trigger);
                 } else {
                     intake.off();
+                    robot.wobbleArm.setPower(0);
                 }
+                telemetry.clearAll();
+                telemetry.addData("delaytime", meme);
+                telemetry.addData("elapsedtime", System.currentTimeMillis());
+                /*if ((System.currentTimeMillis()-meme) >= 500){
+                    meme = System.currentTimeMillis();
 
-                // Toggle flywheel/mag for shoot/home position
-                if (gamepad1.x && !shootToggle) {
-                    shootToggle = true;
-                    if (shooter.magHome) {
-                        shooter.magShoot();
-                        shooter.flywheelPS();
-                    } else {
-                        shooter.magHome();
-                        shooter.flywheelOff();
-                    }
-                } else if (!gamepad1.x && shootToggle) {
-                    shootToggle = false;
-                }
+                    if (iliterallyhavenoideawhatimdoing){
+                        intake.blockerDown();
 
-                // Reset flicker
-                if (gamepad1.a) {
-                    if (delay == 4) {
-                        delay = 0;
-                    }
-                }
+                        telemetry.addData("front", 0);
+                        iliterallyhavenoideawhatimdoing = false;
 
-                // Flicker flicks after period milliseconds
-                if (delay == 0 || (delay != 4 && System.currentTimeMillis() - shootTime > period)) {
-                    shootTime = System.currentTimeMillis();
-                    if (delay == 0) {
-                        if (robot.isAtPose(x, y, thetaLeft)) {
-                            position = topPos;
-                            delay++;
-                        } else {
-                            robot.setTargetPoint(x, y, thetaLeft);
-                        }
-                    } else if (delay == 1) {
-                        if (robot.isAtPose(x, y, thetaMid)) {
-                            position = bottomPos;
-                            delay++;
-                        } else {
-                            robot.setTargetPoint(x, y, thetaMid);
-                        }
-                    } else if (delay == 2) {
-                        if (robot.isAtPose(x, y, thetaRight)) {
-                            position = topPos;
-                            delay++;
-                        } else {
-                            robot.setTargetPoint(x, y, thetaRight);
-                        }
-                    } else if (delay == 3) {
-                        position = homePos;
-                        delay++;
                     }
-                    servo.setPosition(position);
-                }
+                    else{
+                        intake.blockerUp();
+                        iliterallyhavenoideawhatimdoing = true;
+                        telemetry.clearAll();
+                        telemetry.addData("front", 0);
+                    }
+                    telemetry.update();
+                }*/
+
+
             }
 
             addPacket("delay", delay);

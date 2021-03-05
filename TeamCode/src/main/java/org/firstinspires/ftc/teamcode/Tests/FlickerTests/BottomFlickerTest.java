@@ -61,10 +61,10 @@ public class BottomFlickerTest extends LinearOpMode {
                 // Intake on/off/rev
                 if (gamepad1.right_trigger > 0) {
                     intake.on();
-                    intake2.setPower(gamepad1.right_trigger);
+                    intake2.setPower(1);
                 } else if (gamepad1.left_trigger > 0) {
                     intake.reverse();
-                    intake2.setPower(-(gamepad1.left_trigger));
+                    intake2.setPower(-(1));
                 } else {
                     intake.off();
                     intake2.setPower(0);
