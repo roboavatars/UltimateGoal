@@ -15,8 +15,8 @@ public class Constants {
     public static double R_QUARTER_POS = 0.75;
     public static double R_OUT_POS = 0.85;
 
-    public static double BLOCKER_UP_POS = 0.4;
-    public static double BLOCKER_DOWN_POS = 0.82;
+    public static double BLOCKER_UP_POS = 0.51;
+    public static double BLOCKER_DOWN_POS = 0.2;
 
     // Shooter
     public static int HIGH_GOAL_VELOCITY = 1850;

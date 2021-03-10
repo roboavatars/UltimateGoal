@@ -84,7 +84,7 @@ public class DoubleFlickerTest extends LinearOpMode {
                     robot.wobbleArm.setPower(-gamepad1.right_trigger);
                 } else if (gamepad1.left_trigger > 0) {
                     intake.reverse();
-                    robot.wobbleArm.setPower(gamepad1.left_trigger);
+                    robot.wobbleArm.setPower(0.4);
                 } else {
                     intake.off();
                     robot.wobbleArm.setPower(0);
