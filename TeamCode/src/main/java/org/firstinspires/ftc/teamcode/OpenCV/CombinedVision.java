@@ -5,21 +5,21 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.teamcode.OpenCV.RingLocator.RingLocatorPipeline;
 import org.firstinspires.ftc.teamcode.OpenCV.StackHeight.StackHeightPipeline;
 
-public class CV extends BaseDetector {
+public class CombinedVision extends BaseDetector {
 
     private StackHeightPipeline stackHeightPipeline;
     private RingLocatorPipeline ringLocatorPipeline;
 
     public enum Pipeline {StackHeight, RingLocator}
 
-    public CV(LinearOpMode op) {
+    public CombinedVision(LinearOpMode op) {
         super(op);
 
         stackHeightPipeline = new StackHeightPipeline();
         ringLocatorPipeline = new RingLocatorPipeline();
     }
 
-    public CV(LinearOpMode op, Pipeline pipeline) {
+    public CombinedVision(LinearOpMode op, Pipeline pipeline) {
         super(op);
 
         stackHeightPipeline = new StackHeightPipeline();

@@ -55,7 +55,7 @@ public class Robot {
     public boolean shoot = false;
     public boolean highGoal = false;
     public boolean preShoot = false;
-    private boolean waitFeed = false;
+//    private boolean waitFeed = false;
     public int lastTarget = -1;
 
     public int cycles = 0;
@@ -66,8 +66,8 @@ public class Robot {
     public double shootTime;
     public double shootDelay;
     public double startShootTime;
-    public double feedHomeTime;
-    public double feedHomeDelay = 200;
+//    public double feedHomeTime;
+//    public double feedHomeDelay = 200;
     public static int highGoalDelay = 250;
     public static int psDelay = 450;
     public static double flapDelay = 250;
@@ -259,7 +259,7 @@ public class Robot {
             // Auto feed rings
             if (System.currentTimeMillis() - shootTime > shootDelay) {
                 if (numRings > 0) {
-                    // Shoot ring only if robot at position
+                    // Shoot ring only if robot at position and velocity low enough
                     if ((highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/75)) ||
                             (!highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/150)
                             && Math.abs(vx) + Math.abs(vy) < 1.5 && Math.abs(w) < 0.1)) {
@@ -294,9 +294,6 @@ public class Robot {
                 } else {
                     shooter.flywheelOff();
                     shooter.magHome();
-//                    shooter.feedHome();
-//                    waitFeed = true;
-//                    feedHomeTime = System.currentTimeMillis();
                     shoot = false;
 
                     log("Shoot done");
@@ -312,10 +309,10 @@ public class Robot {
         }
 
         // Wait for feed to go home before mag down
-        if (waitFeed && System.currentTimeMillis() - feedHomeTime > feedHomeDelay) {
+        /*if (waitFeed && System.currentTimeMillis() - feedHomeTime > feedHomeDelay) {
             shooter.magHome();
             waitFeed = false;
-        }
+        }*/
 
         profile(3);
 
@@ -349,12 +346,10 @@ public class Robot {
         a = (w - prevW) / timeDiff;
 
         // Remember Previous Motion Info
-        prevX = x;
-        prevY = y;
+        prevX = x; prevY = y;
         prevTheta = theta;
         prevTime = curTime;
-        prevVx = vx;
-        prevVy = vy;
+        prevVx = vx; prevVy = vy;
         prevW = w;
 
         profile(5);
@@ -389,10 +384,10 @@ public class Robot {
 
         // Dashboard Drawings
         drawGoals("black");
-//        drawRobot(drivetrain.x, drivetrain.y, drivetrain.theta, "green");
-//        if (useT265) {
-//            drawRobot(t265.getCamX(), t265.getCamY(), t265.getCamTheta(), t265.confidenceColor());
-//        }
+        /*drawRobot(drivetrain.x, drivetrain.y, drivetrain.theta, "green");
+        if (useT265) {
+            drawRobot(t265.getCamX(), t265.getCamY(), t265.getCamTheta(), t265.confidenceColor());
+        }*/
         drawRobot(this, "black");
         for (Ring ring : ringPos) {
             drawRing(ring);
@@ -451,13 +446,7 @@ public class Robot {
         shootYOverride = 0;
         shooter.flywheelOff();
         intake.sticksOut();
-//        if (shooter.feedHome) {
-            shooter.magHome();
-//        } else {
-//            shooter.feedHome();
-//            waitFeed = true;
-//            feedHomeTime = System.currentTimeMillis();
-//        }
+        shooter.magHome();
         log("Shoot cancelled");
     }
 

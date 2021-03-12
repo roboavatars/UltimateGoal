@@ -40,8 +40,6 @@ public class DoubleFlickerTest extends LinearOpMode {
     private Shooter shooter;
     private Intake intake;
     private Robot robot;
-    private long meme = 0;
-    private boolean iliterallyhavenoideawhatimdoing = true;
 
     @Override
     public void runOpMode() {
@@ -56,7 +54,7 @@ public class DoubleFlickerTest extends LinearOpMode {
         waitForStart();
 
         while(opModeIsActive()) {
-            robot.drivetrain.setControls(-gamepad1.left_stick_y , -gamepad1.left_stick_x , -w.right_stick_x );
+            robot.drivetrain.setControls(-gamepad1.left_stick_y , -gamepad1.left_stick_x , -gamepad1.right_stick_x);
             if (debug) {
                 if (pos == 0) {
                     position = bottomPos;
@@ -93,29 +91,7 @@ public class DoubleFlickerTest extends LinearOpMode {
                     intake.off();
                     robot.wobbleArm.setPower(0);
                 }
-                telemetry.clearAll();
-                telemetry.addData("delaytime", meme);
                 telemetry.addData("elapsedtime", System.currentTimeMillis());
-                /*if ((System.currentTimeMillis()-meme) >= 500){
-                    meme = System.currentTimeMillis();
-
-                    if (iliterallyhavenoideawhatimdoing){
-                        intake.blockerDown();
-
-                        telemetry.addData("front", 0);
-                        iliterallyhavenoideawhatimdoing = false;
-
-                    }
-                    else{
-                        intake.blockerUp();
-                        iliterallyhavenoideawhatimdoing = true;
-                        telemetry.clearAll();
-                        telemetry.addData("front", 0);
-                    }
-                    telemetry.update();
-                }*/
-
-
             }
 
             addPacket("delay", delay);

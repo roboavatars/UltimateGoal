@@ -20,9 +20,8 @@ public class MecanumDrivetrain {
     private DcMotorEx motorBackRight;
     private DcMotorEx motorBackLeft;
 
-    // IMU and Rev Hub
-//    private LynxEmbeddedIMU imu;
-//    private LynxModule module;
+    // Rev Hub
+    // LynxModule module;
 
     // OpMode
     private LinearOpMode opMode;
@@ -31,24 +30,18 @@ public class MecanumDrivetrain {
     public double x;
     public double y;
     public double theta;
-    private double lastx = 0;
-    private double lasty = 0;
     private double deltaheading = 0;
-
-    // IMU related variables for storing states
-//    private Orientation angles;
-//    private double lastheading = 0;
 
     // Odometry
     public double pod1 = 0;
     public double pod2 = 0;
     public double pod3 = 0;
-    public double deltapod1;
-    public double deltapod2;
-    public double deltapod3;
     private double lastpod1 = 0;
     private double lastpod2 = 0;
     private double lastpod3 = 0;
+    private double deltapod1;
+    private double deltapod2;
+    private double deltapod3;
 
     // Motor Caching
     private double lastFRPower = 0;
@@ -77,7 +70,7 @@ public class MecanumDrivetrain {
         this.opMode = opMode;
         HardwareMap hardwareMap = opMode.hardwareMap;
 
-//        module = hardwareMap.get(LynxModule.class, "Control Hub");
+        // module = hardwareMap.get(LynxModule.class, "Control Hub");
 
         motorFrontRight = hardwareMap.get(DcMotorEx.class, "motorFrontRight");
         motorFrontLeft = hardwareMap.get(DcMotorEx.class, "motorFrontLeft");
@@ -97,17 +90,12 @@ public class MecanumDrivetrain {
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
 
-//        imu = new LynxEmbeddedIMU(new BetterI2cDeviceSyncImplOnSimple(
-//                new LynxI2cDeviceSynchV2(hardwareMap.appContext, module, 0), true
-//        ));
-//        imu.initialize(new BNO055IMU.Parameters());
-
         x = initialX;
         y = initialY;
         theta = initialTheta;
-//        lastheading = initialTheta;
     }
 
+    // reset odometry
     public void resetOdo(double newX, double newY, double newTheta) {
         x = newX;
         y = newY;
@@ -179,19 +167,6 @@ public class MecanumDrivetrain {
         setControls(xdot, ydot, w);
     }
 
-    // odometry bulk read
-//    public LynxGetBulkInputDataResponse revBulkData() {
-//        LynxGetBulkInputDataResponse response;
-//        try {
-//            LynxGetBulkInputDataCommand command = new LynxGetBulkInputDataCommand(module);
-//            response = command.sendReceive();
-//        } catch (Exception e) {
-//            opMode.telemetry.addData("Exception", "bulk read exception");
-//            response = null;
-//        }
-//        return response;
-//    }
-
     // update position from odometry
     public void updatePose() {
         try {
@@ -208,9 +183,6 @@ public class MecanumDrivetrain {
                 if (deltapod2 == 0) Log.w("pod-delta-log", "pod2 delta 0");
                 if (deltapod3 == 0) Log.w("pod-delta-log", "pod3 delta 0");
             }
-
-            lastx = x;
-            lasty = y;
 
             deltaheading = (deltapod2 - deltapod1) / OdometryTrackWidth;
 
@@ -240,30 +212,16 @@ public class MecanumDrivetrain {
         }
     }
 
-    // imu stuff (old)
-    /*public double getHeadingImu() {
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
-        deltaheading = angles.firstAngle - lastheading;
-
-        if (deltaheading < -Math.PI)
-            deltaheading += 2 * Math.PI;
-        else if (deltaheading >= Math.PI)
-            deltaheading -= 2 * Math.PI;
-
-        theta += deltaheading;
-        lastheading = angles.firstAngle;
-
-        return theta;
-    }
-    public void resetHeadingIMU() {
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
-        lastheading = angles.firstAngle;
-        theta = 0;
-    }
-    private static class BetterI2cDeviceSyncImplOnSimple extends I2cDeviceSynchImplOnSimple {
-        private BetterI2cDeviceSyncImplOnSimple(I2cDeviceSynchSimple simple, boolean isSimpleOwned) {
-            super(simple, isSimpleOwned);
+    // odometry bulk read (old)
+    /*public LynxGetBulkInputDataResponse revBulkData() {
+        LynxGetBulkInputDataResponse response;
+        try {
+            LynxGetBulkInputDataCommand command = new LynxGetBulkInputDataCommand(module);
+            response = command.sendReceive();
+        } catch (Exception e) {
+            opMode.telemetry.addData("Exception", "bulk read exception");
+            response = null;
         }
-        @Override public void setReadWindow(ReadWindow window) { *//*intentionally do nothing*//*}
+        return response;
     }*/
 }

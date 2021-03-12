@@ -5,7 +5,6 @@ import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Transform2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.spartronics4915.lib.T265Camera;
 
 import java.io.File;
@@ -36,16 +35,9 @@ public class T265 {
     public double confidence = 0;
     private String mapPath = System.getProperty("java.io.tmpdir") + "/map.bin";
 //    private String mapPath = "/data/user/0/com.qualcomm.ftcrobotcontroller/cache/map.bin";
-
-    // OpMode Stuff
-    private LinearOpMode op;
-    private HardwareMap hardwareMap;
-
     public boolean isEmpty = false;
 
     public T265(LinearOpMode op, double startX, double startY, double startTheta) {
-        this.op = op;
-        this.hardwareMap = op.hardwareMap;
 
         File file = new File(mapPath);
         if (!file.exists() || file.length() == 0) {
@@ -53,9 +45,9 @@ public class T265 {
         }
 
         if (!isEmpty) {
-            t265Cam = new T265Camera(new Transform2d(), ODOMETRY_COVARIANCE, mapPath, hardwareMap.appContext);
+            t265Cam = new T265Camera(new Transform2d(), ODOMETRY_COVARIANCE, mapPath, op.hardwareMap.appContext);
         } else {
-            t265Cam = new T265Camera(new Transform2d(), ODOMETRY_COVARIANCE, hardwareMap.appContext);
+            t265Cam = new T265Camera(new Transform2d(), ODOMETRY_COVARIANCE, op.hardwareMap.appContext);
         }
         setCameraPose(startX, startY, startTheta);
     }
