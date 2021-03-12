@@ -16,26 +16,26 @@ public class WobbleArm {
 
     public WobbleArm(LinearOpMode op, boolean isAuto) {
         wobbleServo = op.hardwareMap.get(Servo.class, "wobbleServo");
-        wobbleMotor = op.hardwareMap.get(DcMotorEx.class, "wobbleMotor");
+//        wobbleMotor = op.hardwareMap.get(DcMotorEx.class, "wobbleMotor");
 
         clamp();
         this.isAuto = isAuto;
-        if (isAuto) {
-            up();
-            wobbleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-            wobbleMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
-        } else {
-            wobbleMotor.setPower(0);
-        }
+//        if (isAuto) {
+//            up();
+//            wobbleMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//            wobbleMotor.setMode(DcMotor.RunMode.RUN_TO_POSITION);
+//        } else {
+//            wobbleMotor.setPower(0);
+//        }
 
         op.telemetry.addData("Status", "Wobble Arm initialized");
     }
 
     public void setPower(double power) {
-        if (power != lastWobblePow) {
-            wobbleMotor.setPower(power);
-            lastWobblePow = power;
-        }
+//        if (power != lastWobblePow) {
+//            wobbleMotor.setPower(power);
+//            lastWobblePow = power;
+//        }
     }
 
     public void up() {
@@ -45,7 +45,7 @@ public class WobbleArm {
 
     public void armUp() {
         setPosition(Constants.WOBBLE_UP_POS);
-        wobbleMotor.setPower(0.4);
+        setPower(0.4);
     }
 
     public void down() {
@@ -55,16 +55,16 @@ public class WobbleArm {
 
     public void armDown() {
         setPosition(Constants.WOBBLE_DOWN_POS);
-        wobbleMotor.setPower(0.4);
+        setPower(0.4);
     }
 
     private void setPosition(int position) {
-        wobbleMotor.setTargetPosition(position);
+//        wobbleMotor.setTargetPosition(position);
     }
 
     public void setArmPosition(int position) {
         setPosition(position);
-        wobbleMotor.setPower(0.4);
+        setPower(0.4);
     }
 
     public int getPosition() {

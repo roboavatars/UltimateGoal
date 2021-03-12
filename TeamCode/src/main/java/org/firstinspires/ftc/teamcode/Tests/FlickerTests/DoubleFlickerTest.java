@@ -31,21 +31,15 @@ public class DoubleFlickerTest extends LinearOpMode {
     private int delay = 4;
     public static int period = 250;
 
-    private double x = 87;
-    private double y = 63;
     public static double thetaLeft = 1.627;
     public static double thetaMid = 1.571;
     public static double thetaRight = 1.504;
 
-    private Shooter shooter;
-    private Intake intake;
     private Robot robot;
 
     @Override
     public void runOpMode() {
         Servo servo = hardwareMap.get(Servo.class, "feedServo");
-        shooter = new Shooter(this);
-        intake = new Intake(this, false);
         robot = new Robot(this, 87, 63, PI/2, false);
 
         //intake.sticksHalf();
@@ -54,7 +48,7 @@ public class DoubleFlickerTest extends LinearOpMode {
         waitForStart();
 
         while(opModeIsActive()) {
-            robot.drivetrain.setControls(-gamepad1.left_stick_y , -gamepad1.left_stick_x , -gamepad1.right_stick_x);
+
             if (debug) {
                 if (pos == 0) {
                     position = bottomPos;
@@ -66,33 +60,30 @@ public class DoubleFlickerTest extends LinearOpMode {
                 servo.setPosition(position);
 
                 if (magUp) {
-                    shooter.magShoot();
+                    robot.shooter.magShoot();
                 } else {
-                    shooter.magHome();
+                    robot.shooter.magHome();
                 }
             } else {
-                // Intake on/off/rev
-                if(gamepad2.a){
-                    intake.blockerDown();
-                }
-                else{
-                    intake.blockerUp();
-                }
-                if (gamepad2.right_trigger > 0) {
-                    intake.on();
-                    robot.wobbleArm.setPower(-gamepad2.right_trigger);
-                } else if (gamepad2.left_trigger > 0) {
-                    intake.reverse();
-                    if (gamepad2.a){
-                        robot.wobbleArm.setPower(1);
-                    }
-                    else{robot.wobbleArm.setPower(0.7);}
+                if (gamepad2.a) {
+                    robot.intake.blockerDown();
                 } else {
-                    intake.off();
-                    robot.wobbleArm.setPower(0);
+                    robot.intake.blockerUp();
                 }
-                telemetry.addData("elapsedtime", System.currentTimeMillis());
+
+                if (gamepad2.right_trigger > 0) {
+                    robot.intake.on();
+                    robot.intake.motor2Power(-gamepad2.right_trigger);
+                } else if (gamepad2.left_trigger > 0) {
+                    robot.intake.reverse();
+                    robot.intake.motor2Power(gamepad2.a ? 1 : 0.7);
+                } else {
+                    robot.intake.off();
+                    robot.intake.motor2Power(0);
+                }
             }
+
+            robot.drivetrain.setControls(-gamepad1.left_stick_y , -gamepad1.left_stick_x , -gamepad1.right_stick_x);
 
             addPacket("delay", delay);
             robot.update();

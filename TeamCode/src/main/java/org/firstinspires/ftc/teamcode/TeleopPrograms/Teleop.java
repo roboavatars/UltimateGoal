@@ -33,6 +33,8 @@ public class Teleop extends LinearOpMode {
     public boolean isStickAuto = true;
     public boolean clampToggle = false;
     public boolean clamped = true;
+    public boolean aimLockToggle = false;
+    public boolean aimLock = true;
 
     @Override
     public void runOpMode() {
@@ -52,24 +54,23 @@ public class Teleop extends LinearOpMode {
 
         while (opModeIsActive()) {
             // Intake on/off/rev
-            if (gamepad1.right_trigger > 0) {
+            if (gamepad2.right_trigger > 0) {
                 robot.intake.on();
-            } else if (gamepad1.left_trigger > 0) {
+                robot.intake.motor2Power(-gamepad2.right_trigger);
+            } else if (gamepad2.left_trigger > 0) {
                 robot.intake.reverse();
+                robot.intake.motor2Power(gamepad2.a ? 1 : 0.7);
             } else {
                 robot.intake.off();
+                robot.intake.motor2Power(0);
             }
 
-            // High goal, powershot, two ring, one ring shoot
+            // High goal and powershot shoot
             if (gamepad1.left_bumper) {
                 robot.highGoalShoot();
             } else if (gamepad1.right_bumper) {
                 robot.powerShotShoot();
                 robot.intake.sticksFourth();
-            } else if (gamepad1.dpad_left) {
-                robot.highGoalShoot(2);
-            } else if (gamepad1.dpad_right) {
-                robot.highGoalShoot(1);
             }
 
             // Stop shoot sequence
@@ -102,22 +103,26 @@ public class Teleop extends LinearOpMode {
             }
 
             // Stick Retraction/Auto Toggle
-//            if (gamepad2.x && !stickToggle) {
-//                stickToggle = true;
-//                isStickAuto = !isStickAuto;
-//            } else if (!gamepad2.x && stickToggle) {
-//                stickToggle = false;
-//            }
-//
-//            // Auto Mode Sticks
-//            if (isStickAuto && robot.numRings == 0) {
-//                robot.intake.autoSticks(robot.x, robot.y, robot.theta, 6);
-//            } else if (!isStickAuto) {
-//                robot.intake.sticksHome();
-//            }
+            /*if (gamepad2.x && !stickToggle) {
+                stickToggle = true;
+                isStickAuto = !isStickAuto;
+            } else if (!gamepad2.x && stickToggle) {
+                stickToggle = false;
+            }
+
+            // Auto Mode Sticks
+            if (isStickAuto && robot.numRings == 0) {
+                robot.intake.autoSticks(robot.x, robot.y, robot.theta, 6);
+            } else if (!isStickAuto) {
+                robot.intake.sticksHome();
+            }*/
 
             // Ring blocker
-            robot.intake.setBlocker(gamepad2.right_trigger);
+            if (gamepad2.a) {
+                robot.intake.blockerDown();
+            } else {
+                robot.intake.blockerUp();
+            }
 
             // Wobble motor controls
             robot.wobbleArm.setPower(-0.4 * gamepad2.left_stick_y);
@@ -162,10 +167,18 @@ public class Teleop extends LinearOpMode {
                 robot.thetaOffset = 0;
             }
 
+            // Enter aimlock/strafe mode
+            if (gamepad2.left_bumper && !aimLockToggle) {
+                aimLockToggle = true;
+                aimLock = !aimLock;
+            } else if (!gamepad2.x && aimLockToggle) {
+                aimLockToggle = false;
+            }
+
             // Drivetrain controls
             if (gamepad2.a) {
                 robot.setTargetPoint(87, 63, Math.PI/2);
-            } else if (gamepad2.left_trigger > 0 || gamepad2.left_bumper) {
+            } else if (!aimLock || gamepad2.left_trigger > 0) {
                 if (robotCentric) {
                     robot.drivetrain.setControls(-gamepad1.left_stick_y * xySpeed, -gamepad1.left_stick_x * xySpeed, -gamepad1.right_stick_x * thSpeed);
                 } else {
