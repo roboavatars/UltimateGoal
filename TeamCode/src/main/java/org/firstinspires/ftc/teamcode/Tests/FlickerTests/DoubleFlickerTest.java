@@ -56,6 +56,7 @@ public class DoubleFlickerTest extends LinearOpMode {
         waitForStart();
 
         while(opModeIsActive()) {
+            robot.drivetrain.setControls(-gamepad1.left_stick_y , -gamepad1.left_stick_x , -w.right_stick_x );
             if (debug) {
                 if (pos == 0) {
                     position = bottomPos;
@@ -73,18 +74,21 @@ public class DoubleFlickerTest extends LinearOpMode {
                 }
             } else {
                 // Intake on/off/rev
-                if(gamepad1.a){
+                if(gamepad2.a){
                     intake.blockerDown();
                 }
                 else{
                     intake.blockerUp();
                 }
-                if (gamepad1.right_trigger > 0) {
+                if (gamepad2.right_trigger > 0) {
                     intake.on();
-                    robot.wobbleArm.setPower(-gamepad1.right_trigger);
-                } else if (gamepad1.left_trigger > 0) {
+                    robot.wobbleArm.setPower(-gamepad2.right_trigger);
+                } else if (gamepad2.left_trigger > 0) {
                     intake.reverse();
-                    robot.wobbleArm.setPower(0.4);
+                    if (gamepad2.a){
+                        robot.wobbleArm.setPower(1);
+                    }
+                    else{robot.wobbleArm.setPower(0.7);}
                 } else {
                     intake.off();
                     robot.wobbleArm.setPower(0);
