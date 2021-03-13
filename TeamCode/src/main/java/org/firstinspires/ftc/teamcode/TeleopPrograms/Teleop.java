@@ -171,7 +171,7 @@ public class Teleop extends LinearOpMode {
             if (gamepad2.left_bumper && !aimLockToggle) {
                 aimLockToggle = true;
                 aimLock = !aimLock;
-            } else if (!gamepad2.x && aimLockToggle) {
+            } else if (!gamepad2.left_bumper && aimLockToggle) {
                 aimLockToggle = false;
             }
 
