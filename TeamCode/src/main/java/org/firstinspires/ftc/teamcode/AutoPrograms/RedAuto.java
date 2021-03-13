@@ -4,7 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.OpenCV.CombinedVision;
+import org.firstinspires.ftc.teamcode.OpenCV.Vision;
 import org.firstinspires.ftc.teamcode.OpenCV.Ring;
 import org.firstinspires.ftc.teamcode.OpenCV.StackHeight.StackHeightPipeline.RingCase;
 import org.firstinspires.ftc.teamcode.Pathing.Path;
@@ -45,7 +45,7 @@ public class RedAuto extends LinearOpMode {
         Robot robot = new Robot(this, 114, 9, PI/2, true);
         robot.logger.startLogging(true);
 
-        CombinedVision detector = new CombinedVision(this, CombinedVision.Pipeline.StackHeight);
+        Vision detector = new Vision(this, Vision.Pipeline.StackHeight);
         detector.start();
 
         // Segments
@@ -133,7 +133,7 @@ public class RedAuto extends LinearOpMode {
             wobble2Cor = wobble2Delivery[2];
         }
 
-        detector.setPipeline(CombinedVision.Pipeline.RingLocator);
+        detector.setPipeline(Vision.Pipeline.RingLocator);
 
         robot.intake.blockerDown();
         robot.intake.sticksHalf();

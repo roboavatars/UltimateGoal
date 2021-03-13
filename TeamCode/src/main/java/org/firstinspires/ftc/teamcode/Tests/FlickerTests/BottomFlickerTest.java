@@ -43,7 +43,6 @@ public class BottomFlickerTest extends LinearOpMode {
         intake = new Intake(this, false);
         intake2 = new WobbleArm(this, false);
 
-
         waitForStart();
 
         while(opModeIsActive()) {
@@ -64,7 +63,7 @@ public class BottomFlickerTest extends LinearOpMode {
                     intake2.setPower(1);
                 } else if (gamepad1.left_trigger > 0) {
                     intake.reverse();
-                    intake2.setPower(-(1));
+                    intake2.setPower(-1);
                 } else {
                     intake.off();
                     intake2.setPower(0);
