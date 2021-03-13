@@ -185,7 +185,7 @@ public class Teleop extends LinearOpMode {
                     robot.drivetrain.setGlobalControls(gamepad1.left_stick_y * xySpeed, gamepad1.left_stick_x * xySpeed, -gamepad1.right_stick_x * thSpeed);
                 }
             } else if (!robot.preShoot && !robot.shoot) {
-                robot.drivetrain.setGlobalControls(MecanumDrivetrain.yKp * (63 - robot.y) + MecanumDrivetrain.yKd * (-robot.vy), gamepad1.left_stick_y * xySpeed, MecanumDrivetrain.thetaKp * (robot.shootTargets(3)[2] - robot.theta) + MecanumDrivetrain.thetaKd * (-robot.w));
+                robot.drivetrain.setGlobalControls(gamepad1.left_stick_x * xySpeed, MecanumDrivetrain.yKp * (63 - robot.y) + MecanumDrivetrain.yKd * (-robot.vy), MecanumDrivetrain.thetaKp * (robot.shootTargets(3)[2] - robot.theta) + MecanumDrivetrain.thetaKd * (-robot.w));
             }
 
             // Update robot
