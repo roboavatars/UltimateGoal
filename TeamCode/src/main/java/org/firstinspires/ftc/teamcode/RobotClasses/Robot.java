@@ -112,7 +112,7 @@ public class Robot {
 
         intake = new Intake(op, isAuto);
         shooter = new Shooter(op);
-        wobbleArm = new WobbleArm(op, isAuto);
+        wobbleArm = new WobbleArm(op);
         logger = new Logger();
         try {
             t265 = new T265(op, x, y, theta);

@@ -34,14 +34,13 @@ public class BottomFlickerTest extends LinearOpMode {
 
     private Shooter shooter;
     private Intake intake;
-    public WobbleArm intake2;
+
     @Override
     public void runOpMode() {
 
         Servo servo = hardwareMap.get(Servo.class, "feedServo");
         shooter = new Shooter(this);
         intake = new Intake(this, false);
-        intake2 = new WobbleArm(this, false);
 
         waitForStart();
 
@@ -60,13 +59,13 @@ public class BottomFlickerTest extends LinearOpMode {
                 // Intake on/off/rev
                 if (gamepad1.right_trigger > 0) {
                     intake.on();
-                    intake2.setPower(1);
+                    intake.motor2Power(1);
                 } else if (gamepad1.left_trigger > 0) {
                     intake.reverse();
-                    intake2.setPower(-1);
+                    intake.motor2Power(-1);
                 } else {
                     intake.off();
-                    intake2.setPower(0);
+                    intake.motor2Power(0);
                 }
 
                 // Toggle mag for shoot/home position

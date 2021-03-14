@@ -31,10 +31,10 @@ public class Teleop extends LinearOpMode {
     public boolean stickToggle = false;
     public boolean sticksOut = true;
     public boolean isStickAuto = true;
-    public boolean clampToggle = false;
-    public boolean clamped = true;
+    public boolean downToggle = false;
+    public boolean armDown = true;
     public boolean aimLockToggle = false;
-    public boolean aimLock = true;
+    public boolean aimLock = false;
 
     @Override
     public void runOpMode() {
@@ -54,10 +54,10 @@ public class Teleop extends LinearOpMode {
 
         while (opModeIsActive()) {
             // Intake on/off/rev
-            if (gamepad2.right_trigger > 0) {
+            if (gamepad1.left_trigger > 0) {
                 robot.intake.on();
-                robot.intake.motor2Power(-gamepad2.right_trigger);
-            } else if (gamepad2.left_trigger > 0) {
+                robot.intake.motor2Power(1);
+            } else if (gamepad1.right_trigger > 0) {
                 robot.intake.reverse();
                 robot.intake.motor2Power(gamepad2.a ? 1 : 0.7);
             } else {
@@ -119,25 +119,22 @@ public class Teleop extends LinearOpMode {
 
             // Ring blocker
             if (gamepad2.a) {
-                robot.intake.blockerDown();
-            } else {
                 robot.intake.blockerUp();
+            } else {
+                robot.intake.blockerDown();
             }
 
-            // Wobble motor controls
-            robot.wobbleArm.setPower(-0.4 * gamepad2.left_stick_y);
-
-            // Wobble clamp/unclamp
-            if (gamepad2.dpad_down && !clampToggle) {
-                clampToggle = true;
-                if (clamped) {
-                    robot.wobbleArm.unClamp();
+            // Wobble arm up/down
+            if (gamepad2.dpad_down && !downToggle) {
+                downToggle = true;
+                if (armDown) {
+                    robot.wobbleArm.armUp();
                 } else {
-                    robot.wobbleArm.clamp();
+                    robot.wobbleArm.armDown();
                 }
-                clamped = !clamped;
-            } else if (!gamepad2.dpad_down && clampToggle) {
-                clampToggle = false;
+                armDown = !armDown;
+            } else if (!gamepad2.dpad_down && downToggle) {
+                downToggle = false;
             }
 
             // Slow align mode
@@ -176,9 +173,7 @@ public class Teleop extends LinearOpMode {
             }
 
             // Drivetrain controls
-            if (gamepad2.a) {
-                robot.setTargetPoint(87, 63, Math.PI/2);
-            } else if (!aimLock || gamepad2.left_trigger > 0) {
+            if (!aimLock || gamepad2.left_trigger > 0) {
                 if (robotCentric) {
                     robot.drivetrain.setControls(-gamepad1.left_stick_y * xySpeed, -gamepad1.left_stick_x * xySpeed, -gamepad1.right_stick_x * thSpeed);
                 } else {
