@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Debug.Logger;
-import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.MecanumDrivetrain;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
@@ -25,38 +24,33 @@ public class Teleop extends LinearOpMode {
     public static boolean robotCentric = true;
     public static boolean useAutoPos = true;
 
-    public double xySpeed = 1;
-    public double thSpeed = 1;
+    public double xyGain = 1;
+    public double wGain = 1;
 
     // Toggles
-    public boolean stickToggle = false;
-    public boolean sticksOut = true;
-    public boolean isStickAuto = true;
-    public boolean downToggle = false;
-    public boolean armDown = false;
     public boolean aimLockToggle = false;
     public boolean aimLock = false;
 
     /*
     Gamepad 1:
-    Left trigger- intake on
-    Right trigger- intake reverse
-    Left bumper- high goal shoot
-    Right bumper- powershot shoot
-    X- reset odo
-    .
-    .
-    .
+    Left Trigger - Intake On
+    Right Trigger - Intake Reverse
+    Left Bumper - High Goal Shoot
+    Right Bumper - Powershot Shoot
+    X - Odometry Reset
+    Joysticks - Drivetrain Controls
 
     Gamepad 2:
-    B- cancel shoot
-    Y- pre-rev flywheel for high goal
-    X- toggle sticks
-    A- blocker up
-    Left bumper- aimlock toggle
-    .
-    .
-    .
+    B - Cancel Shoot
+    Y - Pre-Rev Flywheel for High Goal
+    A - Blocker Up
+    Left Trigger - Left Stick
+    Right Trigger - Right Stick
+    Right Bumper - Slow Mode
+    Dpad Left - Decrease Theta Offset
+    Dpad Right - Increase Theta Offset
+    Dpad Up - Reset Theta Offset
+    Left Bumper - Aimlock Toggle
      */
 
     @Override
@@ -72,11 +66,12 @@ public class Teleop extends LinearOpMode {
 
         robot.logger.startLogging(false);
         robot.intake.sticksCollect();
+        robot.wobbleArm.armUp();
 
         waitForStart();
 
         while (opModeIsActive()) {
-            // Intake on/off/rev
+            // Intake On / Rev / Off
             if (gamepad1.left_trigger > 0) {
                 robot.intake.on();
             } else if (gamepad1.right_trigger > 0) {
@@ -85,94 +80,66 @@ public class Teleop extends LinearOpMode {
                 robot.intake.off();
             }
 
-            // High goal and powershot shoot
+            // High Goal / Powershot Shoot
             if (gamepad1.left_bumper) {
                 robot.highGoalShoot();
             } else if (gamepad1.right_bumper) {
                 robot.powerShotShoot();
             }
 
-            // Stop shoot sequence
+            // Stop Shoot Sequence
             if (gamepad2.b) {
                 robot.cancelShoot();
             }
 
-            // Rev up flywheel for high goal
+            // Rev Up Flywheel for High Goal
             if (gamepad2.y || (!robot.shooter.sensorBroken && robot.numRings == 2)) {
                 robot.shooter.flywheelHG();
             }
 
-            // Auto raise sticks after 3 rings
-            if (!robot.shooter.sensorBroken && robot.numRings == 3) {
-                robot.intake.sticksCollect();
+            // Auto Move Back Sticks After 3 Rings
+            if (!robot.shooter.sensorBroken && robot.numRings == 3 && !robot.preShoot && !robot.shoot && !robot.postShoot) {
+                robot.intake.sticksOut();
             }
 
-            // Stick Retraction/Extension Toggle
-            if (gamepad2.x && !stickToggle) {
-                stickToggle = true;
-                if (sticksOut) {
-                    robot.intake.sticksCollect();
-                } else {
-                    robot.intake.sticksOut();
-                }
-                sticksOut = !sticksOut;
-            } else if (!gamepad2.x && stickToggle) {
-                stickToggle = false;
-            }
-
-            // Ring blocker
+            // Ring Blocker
             if (gamepad2.a) {
                 robot.intake.blockerUp();
             } else {
                 robot.intake.blockerDown();
             }
 
-            // Wobble arm up/down
-            if (gamepad2.dpad_down && !downToggle) {
-                downToggle = true;
-                if (armDown) {
-                    robot.wobbleArm.armUp();
-                } else {
-                    robot.wobbleArm.armDown();
-                }
-                armDown = !armDown;
-            } else if (!gamepad2.dpad_down && downToggle) {
-                downToggle = false;
-            }
-
-            if (!robot.preShoot && !robot.shoot) {
+            // Individual Stick Control
+            if (!robot.preShoot && !robot.shoot && !robot.postShoot) {
                 robot.intake.stickLeft(gamepad2.left_trigger);
                 robot.intake.stickRight(1 - gamepad2.right_trigger);
             }
 
-            // Slow align mode
+            // Slow Mode
             if (gamepad2.right_bumper) {
-                xySpeed = 0.22;
-                thSpeed = 0.17;
+                xyGain = 0.22;
+                wGain = 0.17;
             } else {
-                xySpeed = 1;
-                thSpeed = 1;
+                xyGain = 1;
+                wGain = 1;
             }
 
-            // Reset odo for powershot
+            // Reset Odometry
             if (gamepad1.x) {
                 robot.resetOdo(111, 63, Math.PI/2);
                 robot.thetaOffset = 0;
             }
 
-            // Change shooting theta offset to compensate for odo drift
+            // Change Shooting Theta Offset to Compensate for Odometry Drift
             if (gamepad2.dpad_left) {
                 robot.thetaOffset -= 0.01;
             } else if (gamepad2.dpad_right) {
                 robot.thetaOffset += 0.01;
-            }
-
-            // Reset theta offset
-            if (gamepad2.dpad_up) {
+            } else if (gamepad2.dpad_up) {
                 robot.thetaOffset = 0;
             }
 
-            // Enter aimlock/strafe mode
+            // Enter Aimlock/Strafe Mode
             if (gamepad2.left_bumper && !aimLockToggle) {
                 aimLockToggle = true;
                 aimLock = !aimLock;
@@ -180,18 +147,18 @@ public class Teleop extends LinearOpMode {
                 aimLockToggle = false;
             }
 
-            // Drivetrain controls
+            // Drivetrain Controls
             if (!aimLock || gamepad2.right_bumper) {
                 if (robotCentric) {
-                    robot.drivetrain.setControls(-gamepad1.left_stick_y * xySpeed, -gamepad1.left_stick_x * xySpeed, -gamepad1.right_stick_x * thSpeed);
+                    robot.drivetrain.setControls(-gamepad1.left_stick_y * xyGain, -gamepad1.left_stick_x * xyGain, -gamepad1.right_stick_x * wGain);
                 } else {
-                    robot.drivetrain.setGlobalControls(gamepad1.left_stick_y * xySpeed, gamepad1.left_stick_x * xySpeed, -gamepad1.right_stick_x * thSpeed);
+                    robot.drivetrain.setGlobalControls(gamepad1.left_stick_y * xyGain, gamepad1.left_stick_x * xyGain, -gamepad1.right_stick_x * wGain);
                 }
             } else if (!robot.preShoot && !robot.shoot) {
-                robot.drivetrain.setGlobalControls(gamepad1.left_stick_x * xySpeed, MecanumDrivetrain.yKp * (63 - robot.y) + MecanumDrivetrain.yKd * (-robot.vy), MecanumDrivetrain.thetaKp * (robot.shootTargets(3)[2] - robot.theta) + MecanumDrivetrain.thetaKd * (-robot.w));
+                robot.drivetrain.setGlobalControls(gamepad1.left_stick_x * xyGain, MecanumDrivetrain.yKp * (63 - robot.y) + MecanumDrivetrain.yKd * (-robot.vy), MecanumDrivetrain.thetaKp * (robot.shootTargets(3)[2] - robot.theta) + MecanumDrivetrain.thetaKd * (-robot.w));
             }
 
-            // Update robot
+            // Update Robot
             robot.update();
 
             // Telemetry
