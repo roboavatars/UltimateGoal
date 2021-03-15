@@ -30,8 +30,8 @@ public class StackHeightPipeline extends OpenCvPipeline {
     public static int WIDTH_MIN = 15;
     public static int HEIGHT_MAX = 60;
     public static int WIDTH_MAX = 60;
-    public static double ONE_MIN = 1.9;
-    public static double ONE_MAX = 4.2;
+    public static double ONE_MIN = 2.3;
+    public static double ONE_MAX = 2.8;
     public static double FOUR_MIN = 0.5;
 
     // Results
@@ -53,7 +53,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
     public Mat processFrame(Mat input) {
         // Process Image
         processor.saveMatToDisk("raw.jpg", input);
-        input = new Mat(input, new Rect(65, 45, 90, 90));
+        input = new Mat(input, new Rect(140, 30, 90, 90));
         processed = processor.processFrame(input)[0];
 
         // Find Contours

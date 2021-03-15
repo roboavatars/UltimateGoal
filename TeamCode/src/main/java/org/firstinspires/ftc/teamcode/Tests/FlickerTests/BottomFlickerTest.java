@@ -59,13 +59,10 @@ public class BottomFlickerTest extends LinearOpMode {
                 // Intake on/off/rev
                 if (gamepad1.right_trigger > 0) {
                     intake.on();
-                    intake.motor2Power(1);
                 } else if (gamepad1.left_trigger > 0) {
                     intake.reverse();
-                    intake.motor2Power(-1);
                 } else {
                     intake.off();
-                    intake.motor2Power(0);
                 }
 
                 // Toggle mag for shoot/home position

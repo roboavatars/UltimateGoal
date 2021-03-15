@@ -18,7 +18,6 @@ public class Intake {
     private double rightStickPos;
 
     private double lastIntakePow = 0;
-    private double lastIntakePow2 = 0;
     private double lastBlocker = 0;
 
     public boolean on = false;
@@ -27,7 +26,7 @@ public class Intake {
 
     public Intake(LinearOpMode op, boolean isAuto) {
         intakeMotor = op.hardwareMap.get(DcMotorEx.class, "intake");
-        intakeMotor2 = op.hardwareMap.get(DcMotorEx.class, "wobbleMotor");
+        intakeMotor2 = op.hardwareMap.get(DcMotorEx.class, "intake2");
 
         lStickServo = op.hardwareMap.get(Servo.class, "leftStick");
         rStickServo = op.hardwareMap.get(Servo.class, "rightStick");
@@ -52,7 +51,7 @@ public class Intake {
     public void setPower(double power) {
         if (power != lastIntakePow) {
             intakeMotor.setPower(power);
-            motor2Power(power);
+            intakeMotor2.setPower(power);
 
             on = power != 0;
             if (power > 0) {
@@ -63,13 +62,6 @@ public class Intake {
                 reverse = true;
             }
             lastIntakePow = power;
-        }
-    }
-
-    public void motor2Power(double power) {
-        if (power != lastIntakePow2) {
-            intakeMotor2.setPower(power);
-            lastIntakePow2 = power;
         }
     }
 

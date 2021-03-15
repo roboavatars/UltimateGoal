@@ -7,7 +7,6 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 
 @TeleOp(name = "Stack Height Pipeline Test")
 public class StackPipelineTest extends LinearOpMode {
-
     private StackHeightDetector detector;
 
     @Override
@@ -20,7 +19,7 @@ public class StackPipelineTest extends LinearOpMode {
         while (opModeIsActive()) {
             addPacket("Frame Count", detector.getFrameCount());
             addPacket("FPS", detector.getFPS());
-            addPacket("Raw Result", detector.getRawResult()[2]);
+            addPacket("W/H Ratio", detector.getRawResult()[2]);
             addPacket("Result", detector.getResult());
             addPacket("Mode Result", detector.getModeResult());
             sendPacket();

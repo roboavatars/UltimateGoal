@@ -107,13 +107,6 @@ public class Regression extends LinearOpMode {
             telemetry.addData("Shooter Velocity", robot.shooter.getVelocity());
             telemetry.addData("vel", v);
             telemetry.update();
-
-            /*
-            0- 114.32136, 62.49184, 1.9383
-            1- 114.56906, 62.28271, 1.82575
-            2- 114.50752, 62.77721, 1.77424
-             */
-
         }
     }
 }
