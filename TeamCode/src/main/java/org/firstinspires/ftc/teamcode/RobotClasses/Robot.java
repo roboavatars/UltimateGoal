@@ -52,9 +52,10 @@ public class Robot {
     private boolean firstLoop = true;
     private int loopCounter = 0;
     public int numRings = 0;
-    public boolean shoot = false;
     public boolean highGoal = false;
     public boolean preShoot = false;
+    public boolean shoot = false;
+    public boolean postShoot = false;
     public int lastTarget = -1;
 
     public int cycles = 0;
@@ -273,6 +274,9 @@ public class Robot {
                             log("Feed ring 2");
                         } else if (numRings == 1) {
                             log("Feed ring 3");
+                            if (!isAuto) {
+                                intake.sticksHome();
+                            }
                         }
 
                         numRings--;
@@ -284,6 +288,7 @@ public class Robot {
                     shooter.flywheelOff();
                     shooter.magHome();
                     shoot = false;
+                    postShoot = true;
 
                     log("Shoot done");
                     log("Total shoot time: " +  (System.currentTimeMillis() - startShootTime) + " ms");
@@ -295,6 +300,11 @@ public class Robot {
                 }
                 shootTime = System.currentTimeMillis();
             }
+        }
+
+        if (postShoot && System.currentTimeMillis() - shootTime > 1000) {
+            intake.sticksCollect();
+            postShoot = false;
         }
 
         profile(3);
@@ -424,11 +434,12 @@ public class Robot {
     public void cancelShoot() {
         preShoot = false;
         shoot = false;
+        postShoot = false;
         numRings = 0;
         numRingsPreset = 0;
         shootYOverride = 0;
         shooter.flywheelOff();
-        intake.sticksOut();
+        intake.sticksCollect();
         shooter.magHome();
         log("Shoot cancelled");
     }

@@ -71,7 +71,7 @@ public class Teleop extends LinearOpMode {
         }
 
         robot.logger.startLogging(false);
-        robot.intake.sticksOut();
+        robot.intake.sticksCollect();
 
         waitForStart();
 
