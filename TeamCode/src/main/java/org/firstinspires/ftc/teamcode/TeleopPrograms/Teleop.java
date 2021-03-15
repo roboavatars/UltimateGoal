@@ -44,6 +44,9 @@ public class Teleop extends LinearOpMode {
     Left bumper- high goal shoot
     Right bumper- powershot shoot
     X- reset odo
+    .
+    .
+    .
 
     Gamepad 2:
     B- cancel shoot
@@ -51,6 +54,9 @@ public class Teleop extends LinearOpMode {
     X- toggle sticks
     A- blocker up
     Left bumper- aimlock toggle
+    .
+    .
+    .
      */
 
     @Override

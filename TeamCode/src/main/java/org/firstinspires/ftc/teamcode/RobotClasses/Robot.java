@@ -90,10 +90,6 @@ public class Robot {
     public static double theta1 = 1.8157;
     public static double theta2 = 1.7392;
     public static double[] thetaPositions = {theta2, theta1, theta0};
-//    public static double flap0 = 0.43;
-//    public static double flap1 = 0.47;
-//    public static double flap2 = 0.50;
-//    public static double[] flapPositions = {flap2, flap1, flap0};
 
     public ArrayList<Ring> ringPos = new ArrayList<>();
 
@@ -196,10 +192,6 @@ public class Robot {
             } else {
                 shooter.flywheelPS();
                 vThresh = Constants.POWERSHOT_VELOCITY - 40;
-
-                if (!isAuto) {
-                    intake.sticksOut();
-                }
                 target = new double[] {psShootPos[0], psShootPos[1], thetaPositions[2]};
             }
 
@@ -208,7 +200,7 @@ public class Robot {
                 intake.off();
                 shooter.magShoot();
                 if (!isAuto && numRingsPreset == 3) {
-                    intake.sticksCollect();
+                    intake.sticksOut();
                 }
                 log("Mag up");
             }

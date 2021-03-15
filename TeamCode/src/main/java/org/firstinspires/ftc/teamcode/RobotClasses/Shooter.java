@@ -31,8 +31,6 @@ public class Shooter {
     public static double twoDist = 3.3;
     public static double threeDist = 2.5;
 
-//    private ArrayList<Integer> caching = new ArrayList(Arrays.asList(new Integer[] {-1, -1, -1, -1, -1, -1}, new Integer[0]));
-//    private int cacheIndex = 0;
     private int numRings = 3;
 
     public Shooter(LinearOpMode op) {
@@ -126,25 +124,6 @@ public class Shooter {
         if (tempRings != 3 || numRings >= 2) {
             numRings = tempRings;
         }
-
-//        cacheIndex = (cacheIndex + 1) % caching.size();
-//        caching.set(cacheIndex, numRings);
-//
-//        int zero = Collections.frequency(caching, 0);
-//        int one = Collections.frequency(caching, 1);
-//        int two = Collections.frequency(caching, 2);
-//        int three = Collections.frequency(caching, 2);
-//        int max = Math.max(Math.max(Math.max(zero, one), two), three);
-//
-//        if (zero == max) {
-//            numRings = 0;
-//        } else if (one == max) {
-//            numRings = 1;
-//        } else if (two == max) {
-//            numRings = 2;
-//        } else if (three == max) {
-//            numRings = 3;
-//        }
 
         return numRings;
     }
