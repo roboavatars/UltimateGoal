@@ -28,29 +28,37 @@ public class Teleop extends LinearOpMode {
     public double wGain = 1;
 
     // Toggles
+    public boolean stickToggle = false;
+    public boolean sticksOut = true;
+    public boolean downToggle = false;
+    public boolean armDown = false;
+    public boolean clampToggle = false;
+    public boolean clamped = false;
     public boolean aimLockToggle = false;
     public boolean aimLock = false;
 
     /*
     Gamepad 1:
-    Left Trigger - Intake On
-    Right Trigger - Intake Reverse
-    Left Bumper - High Goal Shoot
-    Right Bumper - Powershot Shoot
-    X - Odometry Reset
-    Joysticks - Drivetrain Controls
+    Left stick X/Left stick Y/Right stick X- drivetrain controls
+    X- reset odo
+    Left bumper- high goal shoot
+    Right bumper- powershot shoot
+    Left trigger- intake on
+    Right trigger- intake reverse
 
     Gamepad 2:
-    B - Cancel Shoot
-    Y - Pre-Rev Flywheel for High Goal
-    A - Blocker Up
-    Left Trigger - Left Stick
-    Right Trigger - Right Stick
-    Right Bumper - Slow Mode
-    Dpad Left - Decrease Theta Offset
-    Dpad Right - Increase Theta Offset
-    Dpad Up - Reset Theta Offset
-    Left Bumper - Aimlock Toggle
+    A- blocker up
+    B- cancel shoot
+    X- toggle sticks (collect/out)
+    Y- pre-rev flywheel for high goal
+    Dpad up- reset theta offset
+    Dpad left- decrease theta offset
+    Dpad down- wobble arm up/dpwn
+    Dpad right- increase theta offset
+    Left bumper- aimlock toggle
+    Right bumper- slow mode
+    Left trigger- sweep sticks
+    Right trigger- wobble clamp/unclamp
      */
 
     @Override
@@ -93,13 +101,31 @@ public class Teleop extends LinearOpMode {
             }
 
             // Rev Up Flywheel for High Goal
-            if (gamepad2.y || (!robot.shooter.sensorBroken && robot.numRings == 2)) {
+            if (gamepad2.y /*|| (!robot.shooter.sensorBroken && robot.numRings == 2)*/) {
                 robot.shooter.flywheelHG();
             }
 
             // Auto Move Back Sticks After 3 Rings
-            if (!robot.shooter.sensorBroken && robot.numRings == 3 && !robot.preShoot && !robot.shoot && !robot.postShoot) {
+            /*if (!robot.shooter.sensorBroken && robot.numRings == 3 && !robot.preShoot && !robot.shoot && !robot.postShoot) {
                 robot.intake.sticksOut();
+            }*/
+
+            // Stick Retraction/Extension Toggle
+            if (gamepad2.x && !stickToggle) {
+                stickToggle = true;
+                if (sticksOut) {
+                    robot.intake.sticksCollect();
+                } else {
+                    robot.intake.sticksOut();
+                }
+                sticksOut = !sticksOut;
+            } else if (!gamepad2.x && stickToggle) {
+                stickToggle = false;
+            }
+
+            // Sweep sticks
+            if (gamepad2.left_trigger > 0) {
+                robot.sweepSticks();
             }
 
             // Ring Blocker
@@ -109,10 +135,30 @@ public class Teleop extends LinearOpMode {
                 robot.intake.blockerDown();
             }
 
-            // Individual Stick Control
-            if (!robot.preShoot && !robot.shoot && !robot.postShoot) {
-                robot.intake.stickLeft(gamepad2.left_trigger);
-                robot.intake.stickRight(1 - gamepad2.right_trigger);
+            // Wobble arm up/down
+            if (gamepad2.dpad_down && !downToggle) {
+                downToggle = true;
+                if (armDown) {
+                    robot.wobbleArm.armUp();
+                } else {
+                    robot.wobbleArm.armDown();
+                }
+                armDown = !armDown;
+            } else if (!gamepad2.dpad_down && downToggle) {
+                downToggle = false;
+            }
+
+            // Wobble clamp/unclamp
+            if (gamepad2.right_trigger > 0 && !clampToggle) {
+                clampToggle = true;
+                if (clamped) {
+                    robot.wobbleArm.unClamp();
+                } else {
+                    robot.wobbleArm.clamp();
+                }
+                clamped = !clamped;
+            } else if (gamepad2.right_trigger == 0 && clampToggle) {
+                clampToggle = false;
             }
 
             // Slow Mode

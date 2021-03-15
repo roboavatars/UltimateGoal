@@ -78,6 +78,11 @@ public class Intake {
         stickRight(Constants.R_HOME_POS);
     }
 
+    public void sticksSweep() {
+        stickLeft(Constants.L_SWEEP_POS);
+        stickRight(Constants.R_SWEEP_POS);
+    }
+
     public void sticksCollect() {
         stickLeft(Constants.L_COLLECT_POS);
         stickRight(Constants.R_COLLECT_POS);

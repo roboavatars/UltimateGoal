@@ -55,7 +55,7 @@ public class Robot {
     public boolean highGoal = false;
     public boolean preShoot = false;
     public boolean shoot = false;
-    public boolean postShoot = false;
+    public boolean sweepRings = false;
     public int lastTarget = -1;
 
     public int cycles = 0;
@@ -266,17 +266,12 @@ public class Robot {
                         }
 
                         if (numRings == 3) {
-                            if (!isAuto) {
-                                intake.sticksOut();
-                            }
                             log("Feed ring 1");
                         } else if (numRings == 2) {
                             log("Feed ring 2");
                         } else if (numRings == 1) {
                             log("Feed ring 3");
-                            if (!isAuto) {
-                                intake.sticksHome();
-                            }
+
                         }
 
                         numRings--;
@@ -288,7 +283,10 @@ public class Robot {
                     shooter.flywheelOff();
                     shooter.magHome();
                     shoot = false;
-                    postShoot = true;
+
+                    if (!isAuto) {
+                        sweepSticks();
+                    }
 
                     log("Shoot done");
                     log("Total shoot time: " +  (System.currentTimeMillis() - startShootTime) + " ms");
@@ -302,9 +300,9 @@ public class Robot {
             }
         }
 
-        if (postShoot && System.currentTimeMillis() - shootTime > 1000) {
+        if (sweepRings && System.currentTimeMillis() - shootTime > 1500) {
             intake.sticksCollect();
-            postShoot = false;
+            sweepRings = false;
         }
 
         profile(3);
@@ -434,7 +432,7 @@ public class Robot {
     public void cancelShoot() {
         preShoot = false;
         shoot = false;
-        postShoot = false;
+        sweepRings = false;
         numRings = 0;
         numRingsPreset = 0;
         shootYOverride = 0;
@@ -442,6 +440,14 @@ public class Robot {
         intake.sticksCollect();
         shooter.magHome();
         log("Shoot cancelled");
+    }
+
+    public void sweepSticks() {
+        if (!preShoot && !shoot && !sweepRings) {
+            intake.sticksSweep();
+            sweepRings = true;
+            shootTime = System.currentTimeMillis();
+        }
     }
 
     // Calculate robot pose for auto aim

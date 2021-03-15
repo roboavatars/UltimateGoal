@@ -6,10 +6,12 @@ import com.acmerobotics.dashboard.config.Config;
 public class Constants {
     // Intake
     public static double L_HOME_POS = 1;
+    public static double L_SWEEP_POS = 0.75;
     public static double L_COLLECT_POS = 0.5;
     public static double L_OUT_POS = 0;
 
     public static double R_HOME_POS = 0;
+    public static double R_SWEEP_POS = 0.75;
     public static double R_COLLECT_POS = 0.5;
     public static double R_OUT_POS = 1;
 
