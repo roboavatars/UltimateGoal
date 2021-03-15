@@ -30,11 +30,12 @@ public class RingLocatorPipeline extends OpenCvPipeline {
     public static double ANGLE_MAX = 110;
 
     // Camera Constants
-    public static double CAM_HEIGHT = 8;
-    public static double CAM_FRONT = 7; // y distance between camera and robot center
-    public static double CAM_PHI = Math.toRadians(12.8);
-    public static double CAM_VFOV = Math.toRadians(45);
-    public static double CAM_HFOV = Math.toRadians(58);
+    public static double CAM_HEIGHT = 19;
+    public static double CAM_FRONT = 3.25;
+    public static double CAM_LEFT = 7.75;
+    public static double CAM_PHI = Math.toRadians(28);
+    public static double CAM_VFOV = Math.toRadians(40);
+    public static double CAM_HFOV = Math.toRadians(55);
 
     // Image Processing Mats
     private RingProcessor processor;
@@ -90,7 +91,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
                     Imgproc.ellipse(input, ellipse, new Scalar(0, 255, 0), 1);
 
                     // Calculate Center of Ring if Y is in Valid Domain
-                    if (0 < yPix && yPix < 0.7296) {
+                    if (0 < yPix && yPix < 1) {
                         double[] xy = map2Dto3D(xPix, yPix);
                         Ring curRing = new Ring(xy[0], xy[1]);
 
@@ -131,7 +132,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
         double num = (Math.cos(-CAM_PHI - vfov)) / (2 * Math.sin(vfov)) + yPix * Math.sin(CAM_PHI);
         double den = (Math.sin(-CAM_PHI - vfov)) / (2 * Math.sin(vfov)) + yPix * Math.cos(CAM_PHI);
         double y = -CAM_HEIGHT * num / den;
-        return new double[] {Math.tan(hfov) * xPix * Math.hypot(CAM_HEIGHT, y), y};
+        return new double[] {Math.tan(hfov) * xPix * Math.hypot(CAM_HEIGHT, y) - CAM_LEFT, y + CAM_FRONT};
     }
 
     // Return rings

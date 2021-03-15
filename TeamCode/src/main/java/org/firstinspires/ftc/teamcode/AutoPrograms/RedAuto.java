@@ -132,7 +132,6 @@ public class RedAuto extends LinearOpMode {
 
         robot.wobbleArm.armDown();
         robot.intake.blockerDown();
-        robot.intake.sticksHalf();
 
         sleep(500);
 

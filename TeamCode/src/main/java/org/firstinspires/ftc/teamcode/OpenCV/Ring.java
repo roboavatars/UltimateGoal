@@ -65,7 +65,7 @@ public class Ring {
     // Calculate ring absolute coordinates using relative coordinates and robot position
     public void calcAbsCoords(double robotX, double robotY, double robotTheta) {
         absX = robotX + relX * Math.sin(robotTheta) + relY * Math.cos(robotTheta);
-        absY = robotY + RingLocatorPipeline.CAM_FRONT - relX * Math.cos(robotTheta) + relY * Math.sin(robotTheta);
+        absY = robotY - relX * Math.cos(robotTheta) + relY * Math.sin(robotTheta);
     }
 
     @SuppressLint("DefaultLocale")

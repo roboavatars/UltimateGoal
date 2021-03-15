@@ -33,6 +33,8 @@ public class RingLocatorTest extends LinearOpMode {
                 if (i == 0) {
                     drawRing(rings.get(i), "green");
                 } else if (i == 1) {
+                    drawRing(rings.get(i), "yellow");
+                } else if (i == 2) {
                     drawRing(rings.get(i), "red");
                 }
             }

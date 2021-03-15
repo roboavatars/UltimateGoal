@@ -33,7 +33,7 @@ public class Teleop extends LinearOpMode {
     public boolean sticksOut = true;
     public boolean isStickAuto = true;
     public boolean downToggle = false;
-    public boolean armDown = true;
+    public boolean armDown = false;
     public boolean aimLockToggle = false;
     public boolean aimLock = false;
 
@@ -135,16 +135,8 @@ public class Teleop extends LinearOpMode {
             }
 
             if (!robot.preShoot && !robot.shoot) {
-                if (gamepad2.left_trigger > 0) {
-                    robot.intake.stickLeft(Constants.L_OUT_POS);
-                } else {
-                    robot.intake.stickLeft(Constants.L_HOME_POS);
-                }
-                if (gamepad2.right_trigger > 0) {
-                    robot.intake.stickRight(Constants.R_OUT_POS);
-                } else {
-                    robot.intake.stickRight(Constants.R_HOME_POS);
-                }
+                robot.intake.stickLeft(gamepad2.left_trigger);
+                robot.intake.stickRight(1 - gamepad2.right_trigger);
             }
 
             // Slow align mode

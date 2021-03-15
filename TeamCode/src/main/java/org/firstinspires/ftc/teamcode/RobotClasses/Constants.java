@@ -9,9 +9,9 @@ public class Constants {
     public static double L_COLLECT_POS = 0.5;
     public static double L_OUT_POS = 0;
 
-    public static double R_HOME_POS = 1;
+    public static double R_HOME_POS = 0;
     public static double R_COLLECT_POS = 0.5;
-    public static double R_OUT_POS = 0;
+    public static double R_OUT_POS = 1;
 
     public static double BLOCKER_HOME_POS = 0.7;
     public static double BLOCKER_UP_POS = 0.5;
@@ -28,8 +28,6 @@ public class Constants {
     public static double FEED_HOME_POS = 0;
     public static double FEED_MID_POS = 0.2;
     public static double FEED_TOP_POS = 0.9;
-
-    public static double FLAP_HOME_POS = 0.5;
 
     // Wobble
     public static double WOBBLE_UP_POS = 0.8;

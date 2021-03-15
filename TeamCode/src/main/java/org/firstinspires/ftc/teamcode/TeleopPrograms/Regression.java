@@ -86,17 +86,6 @@ public class Regression extends LinearOpMode {
                 robot.drivetrain.setGlobalControls(gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x);
             }
 
-            if (gamepad1.dpad_up) {
-                v += 5;
-                robot.intake.setBlocker(robot.intake.getBlockerPos() + 0.001);
-                blocker += 0.001;
-            }
-            if (gamepad1.dpad_down) {
-                v -= 5;
-                robot.intake.setBlocker(robot.intake.getBlockerPos() - 0.001);
-                blocker -= 0.001;
-            }
-
             robot.update();
 
             Robot.log(Robot.round(robot.x) + ", " + Robot.round(robot.y) + ", " + Robot.round(robot.theta));
