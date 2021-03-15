@@ -56,13 +56,10 @@ public class Teleop extends LinearOpMode {
             // Intake on/off/rev
             if (gamepad1.left_trigger > 0) {
                 robot.intake.on();
-                robot.intake.motor2Power(1);
             } else if (gamepad1.right_trigger > 0) {
                 robot.intake.reverse();
-                robot.intake.motor2Power(gamepad2.a ? 1 : 0.7);
             } else {
                 robot.intake.off();
-                robot.intake.motor2Power(0);
             }
 
             // High goal and powershot shoot
@@ -119,7 +116,8 @@ public class Teleop extends LinearOpMode {
 
             // Ring blocker
             if (gamepad2.a) {
-                robot.intake.blockerUp();
+//                robot.intake.blockerUp();
+                robot.intake.setBlocker(0.31);
             } else {
                 robot.intake.blockerDown();
             }
@@ -148,7 +146,7 @@ public class Teleop extends LinearOpMode {
 
             // Reset odo for powershot
             if (gamepad1.x) {
-                robot.resetOdo(87, 63, Math.PI/2);
+                robot.resetOdo(111, 63, Math.PI/2);
                 robot.thetaOffset = 0;
             }
 

@@ -52,6 +52,7 @@ public class Intake {
     public void setPower(double power) {
         if (power != lastIntakePow) {
             intakeMotor.setPower(power);
+            motor2Power(power);
 
             on = power != 0;
             if (power > 0) {
@@ -124,17 +125,21 @@ public class Intake {
         rStickServo.setPosition(rightStickPos);
     }
 
+    public double getBlockerPos() {
+        return blockerServo.getPosition();
+    }
+
     public void blockerUp() {
-        blockerServo.setPosition(Constants.BLOCKER_UP_POS);
+        setBlocker(Constants.BLOCKER_UP_POS);
     }
 
     public void blockerDown() {
-        blockerServo.setPosition(Constants.BLOCKER_DOWN_POS);
+        setBlocker(Constants.BLOCKER_DOWN_POS);
     }
 
     public void setBlocker(double position) {
         if (position != lastBlocker) {
-            blockerServo.setPosition(position * (Constants.BLOCKER_DOWN_POS - Constants.BLOCKER_UP_POS) + Constants.BLOCKER_UP_POS);
+            blockerServo.setPosition(position);
             lastBlocker = position;
         }
     }

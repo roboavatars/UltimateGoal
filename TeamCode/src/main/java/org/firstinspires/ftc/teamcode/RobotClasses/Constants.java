@@ -32,6 +32,6 @@ public class Constants {
     public static double FEED_TOP_POS = 0.9;
 
     // Wobble Arm
-    public static double WOBBLE_UP_POS = 0.5;
-    public static double WOBBLE_DOWN_POS = 1.0;
+    public static double WOBBLE_UP_POS = 0.8;
+    public static double WOBBLE_DOWN_POS = 0.23;
 }

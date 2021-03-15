@@ -11,15 +11,15 @@ import com.qualcomm.robotcore.hardware.Servo;
 //@Disabled
 public class HardwareTest extends LinearOpMode {
 
-    public static double clampPos = 0.25;
-    public static double unClampPos = 0.85;
+    public static double clampPos = 0.23;
+    public static double unClampPos = 0.8;
     public static boolean clamp = true;
-    public static boolean debug = true;
+    public static boolean debug = false;
     private double servoPos;
 
     @Override
     public void runOpMode() {
-        Servo wobbleServo = hardwareMap.get(Servo.class, "rightStick");
+        Servo wobbleServo = hardwareMap.get(Servo.class, "wobbleServo");
 
         waitForStart();
 

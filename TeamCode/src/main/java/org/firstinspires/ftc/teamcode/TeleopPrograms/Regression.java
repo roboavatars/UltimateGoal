@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.TeleopPrograms;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -9,12 +8,14 @@ import static java.lang.Math.PI;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 @TeleOp
-@Disabled
 public class Regression extends LinearOpMode {
 
-    public int startX = 90;
-    public int startY = 9;
+    public int startX = 111;
+    public int startY = 63;
     public double startTheta = PI/2;
+
+    public int v = 1560;
+    public double blocker = 0.31;
 
     private final double xyTol = 1;
     private final double thetaTol = PI/35;
@@ -33,6 +34,14 @@ public class Regression extends LinearOpMode {
 
         while (opModeIsActive()) {
 
+            if (gamepad1.left_trigger > 0) {
+                robot.intake.on();
+            } else if (gamepad1.right_trigger > 0) {
+                robot.intake.reverse();
+            } else {
+                robot.intake.off();
+            }
+
             if (gamepad1.left_bumper && !flywheelToggle) {
                 flywheelToggle = true;
                 if (flywheelOn) {
@@ -40,7 +49,7 @@ public class Regression extends LinearOpMode {
                     robot.shooter.flywheelOff();
                 } else {
                     robot.shooter.magShoot();
-                    robot.shooter.flywheelPS();
+                    robot.shooter.setVelocity(v);
                 }
                 flywheelOn = !flywheelOn;
             } else if (!gamepad1.left_bumper && flywheelToggle) {
@@ -48,9 +57,19 @@ public class Regression extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
-                robot.shooter.feedTop();
-            } else {
                 robot.shooter.feedHome();
+            } else {
+                robot.shooter.feedTop();
+            }
+
+            if (gamepad2.a) {
+                robot.intake.setBlocker(blocker);
+            } else {
+                robot.intake.blockerDown();
+            }
+
+            if (gamepad1.x) {
+                robot.resetOdo(111, 63, Math.PI/2);
             }
 
 //            if (gamepad1.right_trigger > 0) {
@@ -68,21 +87,32 @@ public class Regression extends LinearOpMode {
             }
 
             if (gamepad1.dpad_up) {
-                robot.shooter.setFlapPosition(robot.shooter.getFlapPosition() + 0.001);
+                v += 5;
+                robot.intake.setBlocker(robot.intake.getBlockerPos() + 0.001);
+                blocker += 0.001;
             }
             if (gamepad1.dpad_down) {
-                robot.shooter.setFlapPosition(robot.shooter.getFlapPosition() - 0.001);
+                v -= 5;
+                robot.intake.setBlocker(robot.intake.getBlockerPos() - 0.001);
+                blocker -= 0.001;
             }
 
             robot.update();
 
+            Robot.log(Robot.round(robot.x) + ", " + Robot.round(robot.y) + ", " + Robot.round(robot.theta));
+
             telemetry.addData("Robot X", robot.x);
             telemetry.addData("Robot Y", robot.y);
             telemetry.addData("Robot Theta", robot.theta);
-            telemetry.addData("numRings", robot.numRings);
             telemetry.addData("Shooter Velocity", robot.shooter.getVelocity());
-            telemetry.addData("Flap Angle", robot.shooter.getFlapPosition());
+            telemetry.addData("vel", v);
             telemetry.update();
+
+            /*
+            0- 114.32136, 62.49184, 1.9383
+            1- 114.56906, 62.28271, 1.82575
+            2- 114.50752, 62.77721, 1.77424
+             */
 
         }
     }

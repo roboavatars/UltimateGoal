@@ -88,10 +88,10 @@ public class Robot {
     public double thetaOffset = 0;
 
     // Powershot Debug Variables
-    public final double[] psShootPos = new double[] {87, 63};
-    public static double theta0 = 1.669;
-    public static double theta1 = 1.571;
-    public static double theta2 = 1.477;
+    public final double[] psShootPos = new double[] {111, 63};
+    public static double theta0 = 1.9283;
+    public static double theta1 = 1.8157;
+    public static double theta2 = 1.7392;
     public static double[] thetaPositions = {theta2, theta1, theta0};
 //    public static double flap0 = 0.43;
 //    public static double flap1 = 0.47;
@@ -554,7 +554,7 @@ public class Robot {
     }
 
     @SuppressLint("DefaultLocale")
-    public double round(double num) {
+    public static double round(double num) {
         return Double.parseDouble(String.format("%.5f", num));
     }
 }
