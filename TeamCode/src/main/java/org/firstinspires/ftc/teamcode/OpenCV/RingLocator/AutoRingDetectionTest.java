@@ -40,7 +40,7 @@ public class AutoRingDetectionTest extends LinearOpMode {
         robot = new Robot(this, 87, 63, PI/2, false);
         robot.intake.blockerDown();
         robot.intake.sticksHome();
-        robot.intake.sticksUpdate();
+        robot.intake.updateSticks();
         locator = new RingLocator(this);
         locator.start();
 

@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Debug.Logger;
+import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.MecanumDrivetrain;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
@@ -35,6 +36,22 @@ public class Teleop extends LinearOpMode {
     public boolean armDown = true;
     public boolean aimLockToggle = false;
     public boolean aimLock = false;
+
+    /*
+    Gamepad 1:
+    Left trigger- intake on
+    Right trigger- intake reverse
+    Left bumper- high goal shoot
+    Right bumper- powershot shoot
+    X- reset odo
+
+    Gamepad 2:
+    B- cancel shoot
+    Y- pre-rev flywheel for high goal
+    X- toggle sticks
+    A- blocker up
+    Left bumper- aimlock toggle
+     */
 
     @Override
     public void runOpMode() {
@@ -67,7 +84,6 @@ public class Teleop extends LinearOpMode {
                 robot.highGoalShoot();
             } else if (gamepad1.right_bumper) {
                 robot.powerShotShoot();
-                robot.intake.sticksFourth();
             }
 
             // Stop shoot sequence
@@ -78,19 +94,18 @@ public class Teleop extends LinearOpMode {
             // Rev up flywheel for high goal
             if (gamepad2.y || (!robot.shooter.sensorBroken && robot.numRings == 2)) {
                 robot.shooter.flywheelHG();
-                robot.intake.sticksFourth();
             }
 
             // Auto raise sticks after 3 rings
             if (!robot.shooter.sensorBroken && robot.numRings == 3) {
-                robot.intake.sticksFourth();
+                robot.intake.sticksCollect();
             }
 
             // Stick Retraction/Extension Toggle
             if (gamepad2.x && !stickToggle) {
                 stickToggle = true;
                 if (sticksOut) {
-                    robot.intake.sticksHome();
+                    robot.intake.sticksCollect();
                 } else {
                     robot.intake.sticksOut();
                 }
@@ -99,25 +114,9 @@ public class Teleop extends LinearOpMode {
                 stickToggle = false;
             }
 
-            // Stick Retraction/Auto Toggle
-            /*if (gamepad2.x && !stickToggle) {
-                stickToggle = true;
-                isStickAuto = !isStickAuto;
-            } else if (!gamepad2.x && stickToggle) {
-                stickToggle = false;
-            }
-
-            // Auto Mode Sticks
-            if (isStickAuto && robot.numRings == 0) {
-                robot.intake.autoSticks(robot.x, robot.y, robot.theta, 6);
-            } else if (!isStickAuto) {
-                robot.intake.sticksHome();
-            }*/
-
             // Ring blocker
             if (gamepad2.a) {
-//                robot.intake.blockerUp();
-                robot.intake.setBlocker(0.31);
+                robot.intake.blockerUp();
             } else {
                 robot.intake.blockerDown();
             }
@@ -135,8 +134,21 @@ public class Teleop extends LinearOpMode {
                 downToggle = false;
             }
 
+            if (!robot.preShoot && !robot.shoot) {
+                if (gamepad2.left_trigger > 0) {
+                    robot.intake.stickLeft(Constants.L_OUT_POS);
+                } else {
+                    robot.intake.stickLeft(Constants.L_HOME_POS);
+                }
+                if (gamepad2.right_trigger > 0) {
+                    robot.intake.stickRight(Constants.R_OUT_POS);
+                } else {
+                    robot.intake.stickRight(Constants.R_HOME_POS);
+                }
+            }
+
             // Slow align mode
-            if (gamepad2.left_trigger > 0) {
+            if (gamepad2.right_bumper) {
                 xySpeed = 0.22;
                 thSpeed = 0.17;
             } else {
@@ -171,7 +183,7 @@ public class Teleop extends LinearOpMode {
             }
 
             // Drivetrain controls
-            if (!aimLock || gamepad2.left_trigger > 0) {
+            if (!aimLock || gamepad2.right_bumper) {
                 if (robotCentric) {
                     robot.drivetrain.setControls(-gamepad1.left_stick_y * xySpeed, -gamepad1.left_stick_x * xySpeed, -gamepad1.right_stick_x * thSpeed);
                 } else {

@@ -55,7 +55,6 @@ public class Robot {
     public boolean shoot = false;
     public boolean highGoal = false;
     public boolean preShoot = false;
-//    private boolean waitFeed = false;
     public int lastTarget = -1;
 
     public int cycles = 0;
@@ -66,8 +65,6 @@ public class Robot {
     public double shootTime;
     public double shootDelay;
     public double startShootTime;
-//    public double feedHomeTime;
-//    public double feedHomeDelay = 200;
     public static int highGoalDelay = 250;
     public static int psDelay = 450;
     public static double flapDelay = 250;
@@ -211,7 +208,7 @@ public class Robot {
                 intake.off();
                 shooter.magShoot();
                 if (!isAuto && numRingsPreset == 3) {
-                    intake.sticksFourth();
+                    intake.sticksCollect();
                 }
                 log("Mag up");
             }
@@ -308,12 +305,6 @@ public class Robot {
             }
         }
 
-        // Wait for feed to go home before mag down
-        /*if (waitFeed && System.currentTimeMillis() - feedHomeTime > feedHomeDelay) {
-            shooter.magHome();
-            waitFeed = false;
-        }*/
-
         profile(3);
 
         // Update Position
@@ -322,7 +313,7 @@ public class Robot {
             //t265.sendOdometryData(vx, vy);
             t265.updateCamPose();
         }
-        intake.sticksUpdate();
+        intake.updateSticks();
 
         profile(4);
 

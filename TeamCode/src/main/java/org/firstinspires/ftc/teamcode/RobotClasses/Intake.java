@@ -12,7 +12,6 @@ public class Intake {
     private Servo lStickServo;
     private Servo rStickServo;
     private Servo blockerServo;
-    private boolean isAuto;
 
     private double leftStickPos;
     private double rightStickPos;
@@ -32,7 +31,16 @@ public class Intake {
         rStickServo = op.hardwareMap.get(Servo.class, "rightStick");
         blockerServo = op.hardwareMap.get(Servo.class, "blocker");
 
-        this.isAuto = isAuto;
+        if (!isAuto) {
+            sticksHome();
+        } else {
+            stickLeft(Constants.L_HOME_POS);
+            stickRight(Constants.R_OUT_POS);
+        }
+        updateSticks();
+
+        blockerHome();
+
         op.telemetry.addData("Status", "Intake initialized");
     }
 
@@ -66,27 +74,33 @@ public class Intake {
     }
 
     public void sticksHome() {
-        leftStickPos = Constants.L_HOME_POS;
-        rightStickPos = Constants.R_HOME_POS;
+        stickLeft(Constants.L_HOME_POS);
+        stickRight(Constants.R_HOME_POS);
     }
 
-    public void sticksHalf() {
-        leftStickPos = Constants.L_HALF_POS;
-        rightStickPos = Constants.R_HALF_POS;
-    }
-
-    public void leftHalf() {
-        leftStickPos = Constants.L_HALF_POS;
-    }
-
-    public void sticksFourth() {
-        leftStickPos = Constants.L_QUARTER_POS;
-        rightStickPos = Constants.R_QUARTER_POS;
+    public void sticksCollect() {
+        stickLeft(Constants.L_COLLECT_POS);
+        stickRight(Constants.R_COLLECT_POS);
     }
 
     public void sticksOut() {
-        leftStickPos = Constants.L_OUT_POS;
-        rightStickPos = Constants.R_OUT_POS;
+        stickLeft(Constants.L_OUT_POS);
+        stickRight(Constants.R_OUT_POS);
+    }
+
+    public void autoSticks(double x, double y, double theta, double buffer) {
+        double[] leftPos = new double[] {x - 33 * Math.sin(theta) + 7 * Math.cos(theta), y + 33 * Math.cos(theta) + 7 * Math.sin(theta)};
+        double[] rightPos = new double[] {x + 27 * Math.sin(theta) + 7 * Math.cos(theta), y - 27 * Math.cos(theta) + 7 * Math.sin(theta)};
+        if (48 + buffer <= leftPos[0] && leftPos[0] <= 144 - buffer && 0 + buffer <= leftPos[1] && leftPos[1] <= 144 - buffer) {
+            stickLeft(Constants.L_OUT_POS);
+        } else {
+            stickLeft(Constants.L_COLLECT_POS);
+        }
+        if (48 + buffer <= rightPos[0] && rightPos[0] <= 144 - buffer && 0 + buffer <= rightPos[1] && rightPos[1] <= 144 - buffer) {
+            stickRight(Constants.R_OUT_POS);
+        } else {
+            stickRight(Constants.R_COLLECT_POS);
+        }
     }
 
     public void stickLeft(double position) {
@@ -97,28 +111,13 @@ public class Intake {
         rightStickPos = position;
     }
 
-    public void autoSticks(double x, double y, double theta, double buffer) {
-        double[] leftPos = new double[] {x - 33 * Math.sin(theta) + 7 * Math.cos(theta), y + 33 * Math.cos(theta) + 7 * Math.sin(theta)};
-        double[] rightPos = new double[] {x + 27 * Math.sin(theta) + 7 * Math.cos(theta), y - 27 * Math.cos(theta) + 7 * Math.sin(theta)};
-        if (48 + buffer <= leftPos[0] && leftPos[0] <= 144 - buffer && 0 + buffer <= leftPos[1] && leftPos[1] <= 144 - buffer) {
-            stickLeft(Constants.L_OUT_POS);
-        } else {
-            stickLeft(Constants.L_HALF_POS);
-        }
-        if (48 + buffer <= rightPos[0] && rightPos[0] <= 144 - buffer && 0 + buffer <= rightPos[1] && rightPos[1] <= 144 - buffer) {
-            stickRight(Constants.R_OUT_POS);
-        } else {
-            stickRight(Constants.R_HALF_POS);
-        }
-    }
-
-    public void sticksUpdate() {
+    public void updateSticks() {
         lStickServo.setPosition(leftStickPos);
         rStickServo.setPosition(rightStickPos);
     }
 
-    public double getBlockerPos() {
-        return blockerServo.getPosition();
+    public void blockerHome() {
+        setBlocker(Constants.BLOCKER_HOME_POS);
     }
 
     public void blockerUp() {
@@ -127,6 +126,10 @@ public class Intake {
 
     public void blockerDown() {
         setBlocker(Constants.BLOCKER_DOWN_POS);
+    }
+
+    public void knockStack() {
+        setBlocker(Constants.BLOCKER_KNOCK_POS);
     }
 
     public void setBlocker(double position) {

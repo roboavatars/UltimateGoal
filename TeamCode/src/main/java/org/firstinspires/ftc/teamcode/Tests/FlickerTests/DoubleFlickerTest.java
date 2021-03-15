@@ -42,9 +42,6 @@ public class DoubleFlickerTest extends LinearOpMode {
         Servo servo = hardwareMap.get(Servo.class, "feedServo");
         robot = new Robot(this, 87, 63, PI/2, false);
 
-        //intake.sticksHalf();
-        //intake.sticksUpdate();
-
         waitForStart();
 
         while(opModeIsActive()) {
