@@ -38,15 +38,16 @@ public class Teleop extends LinearOpMode {
     public boolean aimLock = false;
 
     /*
-    Gamepad 1:
-    Left stick X/Left stick Y/Right stick X- drivetrain controls
+    Controller Button Mappings:
+    Gamepad 1
+    Left stick/Right stick- drivetrain controls
     X- reset odo
     Left bumper- high goal shoot
     Right bumper- powershot shoot
     Left trigger- intake on
     Right trigger- intake reverse
 
-    Gamepad 2:
+    Gamepad 2
     A- blocker up
     B- cancel shoot
     X- toggle sticks (collect/out)
