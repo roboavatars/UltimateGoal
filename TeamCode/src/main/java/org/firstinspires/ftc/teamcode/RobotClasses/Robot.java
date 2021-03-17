@@ -271,7 +271,6 @@ public class Robot {
                             log("Feed ring 2");
                         } else if (numRings == 1) {
                             log("Feed ring 3");
-
                         }
 
                         numRings--;
@@ -300,7 +299,7 @@ public class Robot {
             }
         }
 
-        if (sweepRings && System.currentTimeMillis() - shootTime > 1500) {
+        if (sweepRings && System.currentTimeMillis() - shootTime > 1000) {
             intake.sticksCollect();
             sweepRings = false;
         }
@@ -501,7 +500,7 @@ public class Robot {
         // Picking the Smaller Distance to Rotate
         double thetaControl;
         if (Math.abs(theta - thetaTarget) > PI) {
-            thetaControl = theta - thetaTarget - 2*PI;
+            thetaControl = Math.abs(theta - thetaTarget) / (theta - thetaTarget) * (Math.abs(theta - thetaTarget) - 2*PI);
         } else {
             thetaControl = theta - thetaTarget;
         }

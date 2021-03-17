@@ -9,10 +9,10 @@ import com.qualcomm.robotcore.hardware.Servo;
 @Config
 public class HardwareTest extends LinearOpMode {
 
-    public static double leftHome = 0.55;
+    public static double leftHome = 1;
+    public static double leftOut = 0;
     public static double rightHome = 0;
-    public static double leftOut = 0.55;
-    public static double rightOut = 0;
+    public static double rightOut = 1;
     public static boolean home = true;
     public static boolean debug = false;
 

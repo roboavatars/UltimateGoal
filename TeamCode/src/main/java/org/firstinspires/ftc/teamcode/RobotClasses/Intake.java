@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.RobotClasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @SuppressWarnings("FieldCanBeLocal")
@@ -31,13 +32,16 @@ public class Intake {
         rStickServo = op.hardwareMap.get(Servo.class, "rightStick");
         blockerServo = op.hardwareMap.get(Servo.class, "blocker");
 
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        intakeMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
+
         if (!isAuto) {
-            sticksHome();
+            sticksCollect();
+            updateSticks();
         } else {
-            stickLeft(Constants.L_HOME_POS);
             stickRight(Constants.R_OUT_POS);
+            updateRight();
         }
-        updateSticks();
 
         blockerHome();
 
@@ -45,11 +49,11 @@ public class Intake {
     }
 
     public void on() {
-        setPower(1);
+        setPower(0.8);
     }
 
     public void reverse() {
-        setPower(-1);
+        setPower(-0.8);
     }
 
     public void off() {
@@ -62,13 +66,8 @@ public class Intake {
             intakeMotor2.setPower(power);
 
             on = power != 0;
-            if (power > 0) {
-                forward = true;
-                reverse = false;
-            } else if (power < 0) {
-                forward = false;
-                reverse = true;
-            }
+            forward = power > 0;
+            reverse = power < 0;
             lastIntakePow = power;
         }
     }
@@ -116,9 +115,17 @@ public class Intake {
         rightStickPos = position;
     }
 
-    public void updateSticks() {
+    public void updateLeft() {
         lStickServo.setPosition(leftStickPos);
+    }
+
+    public void updateRight() {
         rStickServo.setPosition(rightStickPos);
+    }
+
+    public void updateSticks() {
+        updateLeft();
+        updateRight();
     }
 
     public void blockerHome() {

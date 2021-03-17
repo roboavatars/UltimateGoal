@@ -22,21 +22,22 @@ public class PDTest extends LinearOpMode {
     private static double targetTheta = PI/2;
     public static double xKp = 0.6;
     public static double yKp = 0.6;
-    public static double thetaKp = 6;
+    public static double thetaKp = 4.5;
     public static double xKd = 0.05;
     public static double yKd = 0.05;
-    public static double thetaKd = 0.4;
+    public static double thetaKd = 0.3;
 
     @Override
     public void runOpMode() {
         robot = new Robot(this, 87, 63, PI/2, false);
+        robot.intake.sticksOut();
+        robot.intake.updateSticks();
 
         waitForStart();
 
         while(opModeIsActive()) {
-
             if (gamepad1.x) {
-                robot.resetOdo(87, 63, Math.PI / 2);
+                robot.resetOdo(87, 63, PI/2);
             }
 
             if (gamepad1.dpad_left) {
