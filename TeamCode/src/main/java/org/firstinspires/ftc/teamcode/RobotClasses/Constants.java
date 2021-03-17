@@ -17,7 +17,7 @@ public class Constants {
 
     public static double BLOCKER_HOME_POS = 0.7;
     public static double BLOCKER_UP_POS = 0.5;
-    public static double BLOCKER_KNOCK_POS = 0.31;
+    public static double BLOCKER_KNOCK_POS = 0.28;
     public static double BLOCKER_DOWN_POS = 0.23;
 
     // Shooter

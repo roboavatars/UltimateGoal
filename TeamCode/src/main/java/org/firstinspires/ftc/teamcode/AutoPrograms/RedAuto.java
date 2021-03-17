@@ -65,7 +65,7 @@ public class RedAuto extends LinearOpMode {
         // Segment Times
         double goToStackTime = 0.75;
         double shootHighGoal1Time = 1.5;
-        double intakeStackTime = 1.5;
+        double intakeStackTime = 2.0;
         double shoot1RingTime = 0.75;
         double intakeStack2Time = 1.0;
         double shootPowerShotsTime = 3.0;
@@ -80,7 +80,7 @@ public class RedAuto extends LinearOpMode {
         // Paths
         Waypoint[] goToStackWaypoints = new Waypoint[] {
                 new Waypoint(114, 9, PI/2, 40, 50, 0, 0),
-                new Waypoint(110, 33, PI/2, 40, 30, 0, goToStackTime),
+                new Waypoint(110, 36, PI/2, 40, 30, 0, goToStackTime),
         };
         Path goToStackPath = new Path(new ArrayList<>(Arrays.asList(goToStackWaypoints)));
         Path intakeStack2Path = null;
@@ -130,14 +130,11 @@ public class RedAuto extends LinearOpMode {
         } else {
             wobbleCor = wobbleDelivery[2];
             wobble2Cor = wobble2Delivery[2];
-            intakeStack2Time = 2.5;
+            intakeStack2Time = 2.0;
         }
 
         detector.setPipeline(Vision.Pipeline.RingLocator);
-
-        sleep(500);
-
-        robot.intake.knockStack();
+        robot.intake.stickLeft(Constants.L_OUT_POS);
 
         ElapsedTime time = new ElapsedTime();
 
@@ -150,10 +147,12 @@ public class RedAuto extends LinearOpMode {
             if (!goToStack) {
                 robot.setTargetPoint(goToStackPath.getRobotPose(Math.min(time.seconds(), goToStackTime)), PI/2, 0);
 
-                if (time.seconds() > 0.25) {
-                    robot.wobbleArm.armUp();
-                } else if (time.seconds() > 0.15) {
-                    robot.wobbleArm.clamp();
+                if (time.seconds() > 0.5) {
+                    if (ringCase == RingCase.Four) {
+                        robot.intake.knockStack();
+                    } else {
+                        robot.intake.blockerDown();
+                    }
                 }
 
                 if (ringCase != RingCase.Zero) {
@@ -163,10 +162,9 @@ public class RedAuto extends LinearOpMode {
                 }
 
                 if (time.seconds() > goToStackTime) {
-                    robot.intake.stickLeft(Constants.L_OUT_POS);
 
                     if (ringCase != RingCase.Zero) {
-                        robot.shootYOverride = 33;
+                        robot.shootYOverride = 36;
                         robot.thetaOffset = 0.03;
                         Constants.HIGH_GOAL_VELOCITY = 1760;
                         robot.highGoalShoot(ringCase == RingCase.Four ? 3 : 1);
@@ -182,9 +180,7 @@ public class RedAuto extends LinearOpMode {
             // Time block to shoot into high goal
             else if (!shootHighGoal) {
                 if (!robot.preShoot && !robot.shoot && robot.numRings == 0) {
-                    robot.intake.on();
                     if (ringCase == RingCase.Four) {
-                        robot.intake.knockStack();
                         robot.shooter.flywheelHG();
                     }
 
@@ -206,7 +202,6 @@ public class RedAuto extends LinearOpMode {
                     if (ringCase == RingCase.Four) {
                         robot.shootYOverride = robot.y;
                         robot.highGoalShoot(1);
-                        robot.intake.blockerDown();
                     }
 
                     if (ringCase == RingCase.One) {
