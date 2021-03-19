@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.RobotClasses;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -10,7 +9,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
-@SuppressWarnings("FieldCanBeLocal") @Config
+@SuppressWarnings("FieldCanBeLocal")
 public class Shooter {
 
     public DcMotorEx shooterMotor1;
@@ -25,11 +24,6 @@ public class Shooter {
     public boolean magHome = true;
     public boolean feedHome = false;
     public boolean sensorBroken = true;
-
-    public static double zeroDist = 4.4;
-    public static double oneDist = 3.9;
-    public static double twoDist = 3.3;
-    public static double threeDist = 2.5;
 
     private int numRings = 3;
 
@@ -111,11 +105,11 @@ public class Shooter {
     public int getNumRings() {
         double dist = getDistance();
         int tempRings;
-        if (dist > zeroDist) {
+        if (dist > Constants.zeroDist) {
             tempRings = 0;
-        } else if (dist > oneDist) {
+        } else if (dist > Constants.oneDist) {
             tempRings = 1;
-        } else if (dist > twoDist) {
+        } else if (dist > Constants.twoDist) {
             tempRings = 2;
         } else {
             tempRings = 3;

@@ -1,20 +1,17 @@
 package org.firstinspires.ftc.teamcode.Tests.FlickerTests;
 
-import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
-import org.firstinspires.ftc.teamcode.RobotClasses.Intake;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
-import org.firstinspires.ftc.teamcode.RobotClasses.Shooter;
 
 import static java.lang.Math.PI;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 
 @TeleOp
-@Config
+//@Config
 //@Disabled
 public class DoubleFlickerTest extends LinearOpMode {
     public static double bottomPos = Constants.FEED_MID_POS;

@@ -19,7 +19,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.Math.PI;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawGoals;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawLine;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRing;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
 @Config
 @SuppressWarnings("FieldCanBeLocal")
@@ -87,9 +92,9 @@ public class Robot {
 
     // Powershot Debug Variables
     public final double[] psShootPos = new double[] {111, 63};
-    public static double theta0 = 1.9283;
-    public static double theta1 = 1.8157;
-    public static double theta2 = 1.7392;
+    public static double theta0 = 1.9353;
+    public static double theta1 = 1.8207;
+    public static double theta2 = 1.7432;
     public static double[] thetaPositions = {theta2, theta1, theta0};
 
     public ArrayList<Ring> ringPos = new ArrayList<>();

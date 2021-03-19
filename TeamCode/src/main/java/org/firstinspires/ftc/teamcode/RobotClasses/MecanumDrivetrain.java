@@ -51,8 +51,10 @@ public class MecanumDrivetrain {
     private final double motorUpdateTolerance = 0.05;
 
     // Constants
-    public static double ticksToInch = 0.00601244110;
-    public static double OdometryTrackWidth = 13.890;
+    public static double ticksToInch1 = 0.00590434968;
+    public static double ticksToInch2 = 0.00584627889;
+    public static double ticksToInch3 = 0.00584158611;
+    public static double OdometryTrackWidth = 13.59;
     public static double OdometryHorizontalOffset = -2.845;
     private final double OdometryHeadingThreshold = PI/8;
 
@@ -170,9 +172,9 @@ public class MecanumDrivetrain {
     // update position from odometry
     public void updatePose() {
         try {
-            pod1 = motorFrontRight.getCurrentPosition() * -ticksToInch;
-            pod2 = motorBackRight.getCurrentPosition() * ticksToInch;
-            pod3 = motorBackLeft.getCurrentPosition() * ticksToInch;
+            pod1 = motorFrontRight.getCurrentPosition() * -ticksToInch1;
+            pod2 = motorBackRight.getCurrentPosition() * ticksToInch2;
+            pod3 = motorBackLeft.getCurrentPosition() * ticksToInch3;
 
             deltapod1 = pod1 - lastpod1;
             deltapod2 = pod2 - lastpod2;

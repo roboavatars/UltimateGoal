@@ -33,6 +33,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
     public static double ONE_MIN = 2.3;
     public static double ONE_MAX = 2.8;
     public static double FOUR_MIN = 0.5;
+    public static double FOUR_AREA = 1000;
 
     // Results
     private double[] result = new double[3];
@@ -73,6 +74,8 @@ public class StackHeightPipeline extends OpenCvPipeline {
                 Imgproc.rectangle(input, boundingRect.boundingRect(), new Scalar(0, 255, 0), 4);
                 i++;
 
+                log("Area: "+boundingRect.size.area());
+
                 double width = boundingRect.size.width;
                 double height = boundingRect.size.height;
                 double wh_ratio = width/height;
@@ -82,10 +85,10 @@ public class StackHeightPipeline extends OpenCvPipeline {
 
                 // Checking WH ratio because heights were inconsistent in testing images
                 // This works better at a higher camera angle but comparing the height would be better for a lower camera angle.
-                if (ONE_MIN <= wh_ratio && wh_ratio <= ONE_MAX) {
-                    ringCase = RingCase.One;
-                } else if (FOUR_MIN <= wh_ratio && wh_ratio <= ONE_MIN) {
+                if (FOUR_MIN <= wh_ratio && wh_ratio <= ONE_MIN && boundingRect.size.area() >= FOUR_AREA) {
                     ringCase = RingCase.Four;
+                } else if (ONE_MIN <= wh_ratio && wh_ratio <= ONE_MAX) {
+                    ringCase = RingCase.One;
                 }
             }
         }

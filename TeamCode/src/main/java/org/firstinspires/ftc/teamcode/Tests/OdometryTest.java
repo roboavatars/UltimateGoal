@@ -2,9 +2,12 @@ package org.firstinspires.ftc.teamcode.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+
 import org.firstinspires.ftc.teamcode.RobotClasses.MecanumDrivetrain;
 
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
 @TeleOp(name = "Odometry Test")
 public class OdometryTest extends LinearOpMode {
@@ -19,6 +22,10 @@ public class OdometryTest extends LinearOpMode {
 
         while(opModeIsActive()) {
             dt.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
+
+            if (gamepad1.x) {
+                dt.resetOdo(90, 9, Math.PI/2);
+            }
 
             dt.updatePose();
             x = dt.x;

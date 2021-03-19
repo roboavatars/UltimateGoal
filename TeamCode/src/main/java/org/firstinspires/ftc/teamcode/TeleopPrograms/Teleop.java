@@ -44,8 +44,8 @@ public class Teleop extends LinearOpMode {
     X- reset odo
     Left bumper- high goal shoot
     Right bumper- powershot shoot
-    Left trigger- intake on
-    Right trigger- intake reverse
+    Left trigger- intake reverse
+    Right trigger- intake on
 
     Gamepad 2
     A- blocker up
@@ -81,9 +81,9 @@ public class Teleop extends LinearOpMode {
 
         while (opModeIsActive()) {
             // Intake On / Rev / Off
-            if (gamepad1.left_trigger > 0) {
+            if (gamepad1.right_trigger > 0) {
                 robot.intake.on();
-            } else if (gamepad1.right_trigger > 0) {
+            } else if (gamepad1.left_trigger > 0) {
                 robot.intake.reverse();
             } else {
                 robot.intake.off();
@@ -131,7 +131,7 @@ public class Teleop extends LinearOpMode {
 
             // Ring Blocker
             if (gamepad2.a) {
-                robot.intake.knockStack();
+                robot.intake.blockerUp();
             } else {
                 robot.intake.blockerDown();
             }
