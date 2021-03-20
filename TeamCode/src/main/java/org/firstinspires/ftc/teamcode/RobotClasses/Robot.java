@@ -19,12 +19,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.Math.PI;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawGoals;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawLine;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRing;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 
 @Config
 @SuppressWarnings("FieldCanBeLocal")
@@ -255,8 +250,8 @@ public class Robot {
             if (System.currentTimeMillis() - shootTime > shootDelay) {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position and velocity low enough
-                    if ((highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/75)) ||
-                            (!highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/150)
+                    if ((highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/60)) ||
+                            (!highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/120)
                             && Math.abs(vx) + Math.abs(vy) < 1.5 && Math.abs(w) < 0.1)) {
                         log("In shoot Velocity: " + shooter.getVelocity());
                         log("Drivetrain Velocities: " + round(vx) + " " + round(vy) + " " + round(w));

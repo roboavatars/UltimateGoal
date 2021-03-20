@@ -5,9 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RobotClasses.MecanumDrivetrain;
 
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 
 @TeleOp(name = "Odometry Test")
 public class OdometryTest extends LinearOpMode {

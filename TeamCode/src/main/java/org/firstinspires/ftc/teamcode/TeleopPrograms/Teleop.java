@@ -40,26 +40,27 @@ public class Teleop extends LinearOpMode {
     /*
     Controller Button Mappings:
     Gamepad 1
-    Left stick/Right stick- drivetrain controls
-    X- reset odo
-    Left bumper- high goal shoot
-    Right bumper- powershot shoot
-    Left trigger- intake reverse
-    Right trigger- intake on
+    Left stick/Right Stick - Drivetrain Controls
+    X - Reset Odo
+    Left Bumper - High Goal Shoot
+    Right Bumper - Powershot Shoot
+    Left Trigger - Intake Reverse
+    Right Trigger - Intake On
 
     Gamepad 2
-    A- blocker up
-    B- cancel shoot
-    X- toggle sticks (collect/out)
-    Y- pre-rev flywheel for high goal
-    Dpad up- reset theta offset
-    Dpad left- decrease theta offset
-    Dpad down- wobble arm up/dpwn
-    Dpad right- increase theta offset
-    Left bumper- aimlock toggle
-    Right bumper- slow mode
-    Left trigger- sweep sticks
-    Right trigger- wobble clamp/unclamp
+    A - Blocker Up
+    B - Cancel Shoot
+    X - Toggle Sticks (Collect/Out)
+    Y - Pre-Rev Flywheel for High Goal
+    Dpad Up - Reset Theta Offset
+    Dpad Left - Decrease Theta Offset
+    Dpad Down - Wobble Arm Up/Down
+    Dpad Right - Increase Theta Offset
+    Left Bumper - Aimlock Toggle
+    Right Bumper - Slow Mode
+    Left Trigger - Sweep Sticks
+    Right Trigger - Wobble Clamp/Unclamp
+    Right Stick Button - Mag Up
      */
 
     @Override
@@ -126,7 +127,9 @@ public class Teleop extends LinearOpMode {
 
             // Sweep sticks
             if (gamepad2.left_trigger > 0) {
-                robot.sweepSticks();
+                robot.intake.sticksSweep();
+            } else {
+                robot.intake.sticksCollect();
             }
 
             // Ring Blocker
@@ -192,6 +195,11 @@ public class Teleop extends LinearOpMode {
                 aimLock = !aimLock;
             } else if (!gamepad2.left_bumper && aimLockToggle) {
                 aimLockToggle = false;
+            }
+
+            // Mag Up
+            if (gamepad2.left_stick_button) {
+                robot.shooter.magShoot();
             }
 
             // Drivetrain Controls

@@ -19,7 +19,6 @@ public class Shooter {
     private DistanceSensor ringSensor;
 
     private double lastVelocity = 0;
-    private double lastFlap = 0;
 
     public boolean magHome = true;
     public boolean feedHome = false;
@@ -105,11 +104,11 @@ public class Shooter {
     public int getNumRings() {
         double dist = getDistance();
         int tempRings;
-        if (dist > Constants.zeroDist) {
+        if (dist > Constants.ZERO_DIST) {
             tempRings = 0;
-        } else if (dist > Constants.oneDist) {
+        } else if (dist > Constants.ONE_DIST) {
             tempRings = 1;
-        } else if (dist > Constants.twoDist) {
+        } else if (dist > Constants.TWO_DIST) {
             tempRings = 2;
         } else {
             tempRings = 3;

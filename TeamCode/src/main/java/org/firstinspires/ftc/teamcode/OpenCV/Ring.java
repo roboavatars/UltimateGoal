@@ -14,6 +14,7 @@ public class Ring {
     private final double relY;
     private double absX;
     private double absY;
+    private static double DIST_THRESH = 1.5;
 
     public Ring(double relX, double relY, double absX, double absY) {
         this.relX = relX;
@@ -39,6 +40,25 @@ public class Ring {
                 i++;
             }
         }
+
+        // Remove rings that are too close to each other
+        i = 0;
+        while (i < rings.size()) {
+            double xi = rings.get(i).getX();
+            double yi = rings.get(i).getY();
+            int j = i + 1;
+
+            while (j < rings.size()) {
+                Ring ring = rings.get(j);
+                if (Math.abs(xi - ring.getX()) < DIST_THRESH && Math.abs(yi - ring.getY()) < DIST_THRESH) {
+                    rings.remove(j);
+                } else {
+                    j++;
+                }
+            }
+            i++;
+        }
+
         // Sort rings based on distance
         rings.sort((r1, r2) -> Double.compare(r1.getAbsDist(robotX, robotY), r2.getAbsDist(robotX, robotY)));
 

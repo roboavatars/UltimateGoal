@@ -16,7 +16,7 @@ public class IntakeTest extends LinearOpMode {
     public void runOpMode() {
         Robot robot = new Robot(this, 108, 42, PI/2, false);
         robot.intake.sticksCollect();
-        robot.intake.setBlocker(0.23);
+        robot.intake.setBlocker(0.5);
         ElapsedTime time = new ElapsedTime();
 
         waitForStart();
@@ -24,17 +24,18 @@ public class IntakeTest extends LinearOpMode {
         time.reset();
 
         while (opModeIsActive()) {
-            double input = Math.min(60, 42 + 4 * time.seconds() + 3.5 * Math.sin(6 * time.seconds()));
-            robot.setTargetPoint(108, input, PI/2);
-
-            if (time.seconds() > 5) {
+            if (time.seconds() > 5.5) {
                 break;
-            } else if (time.seconds() > 2.5) {
-                robot.intake.reverse();
-                robot.intake.setBlocker(0.41);
-            } else if (time.seconds() > 0.75) {
-                robot.intake.on();
+            } else if (time.seconds() > 5) {
+                robot.intake.setPower(-0.4);
+            } else if (time.seconds() > 4.5) {
                 robot.intake.blockerDown();
+            } else if (time.seconds() > 2.5) {
+                robot.intake.on();
+                robot.intake.setBlocker(0.95 - 0.175 * time.seconds());
+                robot.drivetrain.stop();
+            } else {
+                robot.setTargetPoint(108, 42 + time.seconds(), PI/2);
             }
 
             robot.update();

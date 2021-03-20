@@ -140,10 +140,6 @@ public class Intake {
         setBlocker(Constants.BLOCKER_DOWN_POS);
     }
 
-    public void knockStack() {
-        setBlocker(Constants.BLOCKER_KNOCK_POS);
-    }
-
     public void setBlocker(double position) {
         if (position != lastBlocker) {
             blockerServo.setPosition(position);

@@ -53,7 +53,7 @@ public class MecanumDrivetrain {
     // Constants
     public static double ticksToInch1 = 0.00590434968;
     public static double ticksToInch2 = 0.00584627889;
-    public static double ticksToInch3 = 0.00584158611;
+    public static double ticksToInch3 = 0.00586162319;
     public static double OdometryTrackWidth = 13.59;
     public static double OdometryHorizontalOffset = -2.845;
     private final double OdometryHeadingThreshold = PI/8;
@@ -167,6 +167,11 @@ public class MecanumDrivetrain {
         double xdot = xvelocity * Math.cos(-theta) - yvelocity * Math.sin(-theta);
         double ydot = yvelocity * Math.cos(-theta) + xvelocity * Math.sin(-theta);
         setControls(xdot, ydot, w);
+    }
+
+    // stop drivetrain
+    public void stop() {
+        setGlobalControls(0, 0, 0);
     }
 
     // update position from odometry

@@ -74,12 +74,10 @@ public class StackHeightPipeline extends OpenCvPipeline {
                 Imgproc.rectangle(input, boundingRect.boundingRect(), new Scalar(0, 255, 0), 4);
                 i++;
 
-                log("Area: "+boundingRect.size.area());
-
                 double width = boundingRect.size.width;
                 double height = boundingRect.size.height;
                 double wh_ratio = width/height;
-                log("Loop(" + i + "): " + width + " " + height + " " + wh_ratio);
+                log("Loop(" + i + "): " + width + " " + height + " " + wh_ratio + " " + boundingRect.size.area());
 
                 result = new double[] {width, height, wh_ratio};
 
