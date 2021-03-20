@@ -5,14 +5,13 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 
 import com.acmerobotics.dashboard.config.Config;
 
 import static java.lang.Math.PI;
 
-@Config
 @TeleOp(name = "PD Controller Test")
+@Config
 @Disabled
 public class PDTest extends LinearOpMode {
 
@@ -20,12 +19,12 @@ public class PDTest extends LinearOpMode {
     private static double targetX = 96;
     private static double targetY = 72;
     private static double targetTheta = PI/2;
-    public static double xKp = 0.6;
-    public static double yKp = 0.6;
-    public static double thetaKp = 4.5;
-    public static double xKd = 0.05;
-    public static double yKd = 0.05;
-    public static double thetaKd = 0.3;
+    public static double xKp = 0.5;
+    public static double yKp = 0.5;
+    public static double thetaKp = 4.0;
+    public static double xKd = 0.047;
+    public static double yKd = 0.047;
+    public static double thetaKd = 0.15;
 
     @Override
     public void runOpMode() {

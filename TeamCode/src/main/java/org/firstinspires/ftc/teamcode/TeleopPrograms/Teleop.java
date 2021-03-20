@@ -97,6 +97,9 @@ public class Teleop extends LinearOpMode {
                 robot.powerShotShoot();
             }
 
+            // Override Shoots in Case it is Taking Too Long
+            robot.shootOverride = gamepad2.right_stick_button;
+
             // Stop Shoot Sequence
             if (gamepad2.b) {
                 robot.cancelShoot();
@@ -125,10 +128,10 @@ public class Teleop extends LinearOpMode {
                 stickToggle = false;
             }
 
-            // Sweep sticks
-            if (gamepad2.left_trigger > 0) {
+            // Stick Sweep
+            if (!sticksOut && gamepad2.left_trigger > 0) {
                 robot.intake.sticksSweep();
-            } else {
+            } else if (!sticksOut && !robot.preShoot && !robot.shoot) {
                 robot.intake.sticksCollect();
             }
 
@@ -139,7 +142,7 @@ public class Teleop extends LinearOpMode {
                 robot.intake.blockerDown();
             }
 
-            // Wobble arm up/down
+            // Wobble Arm Up / Down
             if (gamepad2.dpad_down && !downToggle) {
                 downToggle = true;
                 if (armDown) {
@@ -152,7 +155,7 @@ public class Teleop extends LinearOpMode {
                 downToggle = false;
             }
 
-            // Wobble clamp/unclamp
+            // Wobble Clamp / Unclamp
             if (gamepad2.right_trigger > 0 && !clampToggle) {
                 clampToggle = true;
                 if (clamped) {
@@ -189,7 +192,7 @@ public class Teleop extends LinearOpMode {
                 robot.thetaOffset = 0;
             }
 
-            // Enter Aimlock/Strafe Mode
+            // Enter Aimlock / Strafe Mode
             if (gamepad2.left_bumper && !aimLockToggle) {
                 aimLockToggle = true;
                 aimLock = !aimLock;

@@ -16,14 +16,14 @@ public class Constants {
     public static double R_OUT_POS = 1;
 
     public static double BLOCKER_HOME_POS = 0.7;
-    public static double BLOCKER_UP_POS = 0.5;
+    public static double BLOCKER_UP_POS = 0.55;
     public static double BLOCKER_DOWN_POS = 0.23;
 
     // Shooter
-    public static int HIGH_GOAL_VELOCITY = 1850;
+    public static int HIGH_GOAL_VELOCITY = 1900;
     public static int POWERSHOT_VELOCITY = 1550;
 
-    public static double MAG_HOME_POS = 0.08;
+    public static double MAG_HOME_POS = 0.085;
     public static double MAG_SHOOT_POS = 0.27;
 
     public static double FEED_HOME_POS = 0;

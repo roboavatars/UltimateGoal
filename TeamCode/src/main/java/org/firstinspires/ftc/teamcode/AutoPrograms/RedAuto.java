@@ -107,7 +107,7 @@ public class RedAuto extends LinearOpMode {
         Robot.log("Ring case: " + ringCase);
 
         double[][] wobbleDelivery = {{127, 94}, {97, 118}, {121, 134}};
-        double[][] wobble2Delivery = {{119, 82}, {92, 106}, {114, 128}};
+        double[][] wobble2Delivery = {{119, 79}, {92, 106}, {114, 128}};
         double[] wobbleCor;
         double[] wobble2Cor;
         if (ringCase == RingCase.Zero) {
@@ -263,7 +263,7 @@ public class RedAuto extends LinearOpMode {
                         psFinish = true;
                         psFinishTime = time.seconds();
                         robot.drivetrain.stop();
-                    } else if (time.seconds() > psFinishTime + (ringCase != RingCase.Four ? 1 : 0.25)) {
+                    } else if (time.seconds() > psFinishTime + (ringCase != RingCase.Four ? 2 : 0.5)) {
                         robot.intake.on();
 
                         Robot.log("Detected " + rings.size() + " ring(s): " + rings);
@@ -319,7 +319,7 @@ public class RedAuto extends LinearOpMode {
 
             // Collect bounce backed rings
             else if (!bounceBack) {
-                if (time.seconds() > 3.75) {
+                if (time.seconds() > 4.25) {
                     robot.setTargetPoint(ringPath.getRobotPose(Math.min(time.seconds(), ringTime)), PI/2, 0);
                 } else if (!sweep || time.seconds() < 1.5) {
                     robot.setTargetPoint(ringPath.getRobotPose(Math.min(time.seconds(), ringTime)));
@@ -356,6 +356,7 @@ public class RedAuto extends LinearOpMode {
                 if ((!reachedDeposit && robot.isAtPose(wobbleCor[0], wobbleCor[1], PI/2)) || time.seconds() > 2.25) {
                     reachedDeposit = true;
                     depositReachTime = curTime;
+                    robot.intake.reverse();
                     robot.wobbleArm.armDown();
                     robot.wobbleArm.unClamp();
                 }
@@ -370,7 +371,7 @@ public class RedAuto extends LinearOpMode {
                     Waypoint[] intakeWobble2Waypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, robot.theta, -30, -50, 0, 0),
                             new Waypoint(82, 24, PI/2, -0.1, 30, 0, 2.5),
-                            new Waypoint(90, 24, PI/2, -0.1, -0.1, 0, intakeWobble2Time),
+                            new Waypoint(89.5, 24, PI/2, -0.1, -0.1, 0, intakeWobble2Time),
                     };
                     intakeWobble2Path = new Path(new ArrayList<>(Arrays.asList(intakeWobble2Waypoints)));
 

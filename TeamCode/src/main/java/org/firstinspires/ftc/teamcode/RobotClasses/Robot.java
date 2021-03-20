@@ -54,8 +54,8 @@ public class Robot {
     public int numRings = 0;
     public boolean highGoal = false;
     public boolean preShoot = false;
+    public boolean shootOverride = false;
     public boolean shoot = false;
-    public boolean sweepRings = false;
     public int lastTarget = -1;
 
     public int cycles = 0;
@@ -200,7 +200,7 @@ public class Robot {
             if (shooter.magHome) {
                 intake.off();
                 shooter.magShoot();
-                if (!isAuto && numRingsPreset == 3) {
+                if (!isAuto) {
                     intake.sticksOut();
                 }
                 log("Mag up");
@@ -250,7 +250,7 @@ public class Robot {
             if (System.currentTimeMillis() - shootTime > shootDelay) {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position and velocity low enough
-                    if ((highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/60)) ||
+                    if ((highGoal && shootOverride) || (highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/60)) ||
                             (!highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/120)
                             && Math.abs(vx) + Math.abs(vy) < 1.5 && Math.abs(w) < 0.1)) {
                         log("In shoot Velocity: " + shooter.getVelocity());
@@ -283,10 +283,6 @@ public class Robot {
                     shooter.magHome();
                     shoot = false;
 
-                    if (!isAuto) {
-                        sweepSticks();
-                    }
-
                     log("Shoot done");
                     log("Total shoot time: " +  (System.currentTimeMillis() - startShootTime) + " ms");
                     double cycleTime = (System.currentTimeMillis() - lastCycleTime) / 1000;
@@ -297,11 +293,6 @@ public class Robot {
                 }
                 shootTime = System.currentTimeMillis();
             }
-        }
-
-        if (sweepRings && System.currentTimeMillis() - shootTime > 1000) {
-            intake.sticksCollect();
-            sweepRings = false;
         }
 
         profile(3);
@@ -431,7 +422,6 @@ public class Robot {
     public void cancelShoot() {
         preShoot = false;
         shoot = false;
-        sweepRings = false;
         numRings = 0;
         numRingsPreset = 0;
         shootYOverride = 0;
@@ -439,14 +429,6 @@ public class Robot {
         intake.sticksCollect();
         shooter.magHome();
         log("Shoot cancelled");
-    }
-
-    public void sweepSticks() {
-        if (!preShoot && !shoot && !sweepRings) {
-            intake.sticksSweep();
-            sweepRings = true;
-            shootTime = System.currentTimeMillis();
-        }
     }
 
     // Calculate robot pose for auto aim
@@ -470,7 +452,7 @@ public class Robot {
         double dy = targetY - shooterY;
 
         // Uses Angle Bisector for High Goal for more consistency
-        if (targetNum == 3) {
+        if (targetNum == 3 && (x < 72 || x > 132)) {
             double d = 8;
             double a = Math.sqrt(Math.pow(dx + d/2, 2) + Math.pow(dy, 2));
             double b = Math.sqrt(Math.pow(dx - d/2, 2) + Math.pow(dy, 2));
