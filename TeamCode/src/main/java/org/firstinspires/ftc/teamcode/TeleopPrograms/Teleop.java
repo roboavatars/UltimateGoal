@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Debug.Logger;
-import org.firstinspires.ftc.teamcode.RobotClasses.MecanumDrivetrain;
+import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import java.util.Arrays;
@@ -129,8 +129,13 @@ public class Teleop extends LinearOpMode {
             }
 
             // Stick Sweep
-            if (!sticksOut && gamepad2.left_trigger > 0) {
-                robot.intake.sticksSweep();
+            if (!sticksOut && (gamepad2.left_trigger > 0 || gamepad2.right_trigger > 0)) {
+                if (gamepad2.left_trigger > 0) {
+                    robot.intake.stickLeft(Constants.L_SWEEP_POS);
+                }
+                if (gamepad2.right_trigger > 0) {
+                    robot.intake.stickRight(Constants.R_SWEEP_POS);
+                }
             } else if (!sticksOut && !robot.preShoot && !robot.shoot) {
                 robot.intake.sticksCollect();
             }
@@ -143,20 +148,20 @@ public class Teleop extends LinearOpMode {
             }
 
             // Wobble Arm Up / Down
-            if (gamepad2.dpad_down && !downToggle) {
-                downToggle = true;
-                if (armDown) {
-                    robot.wobbleArm.armUp();
-                } else {
-                    robot.wobbleArm.armDown();
-                }
-                armDown = !armDown;
-            } else if (!gamepad2.dpad_down && downToggle) {
-                downToggle = false;
-            }
+//            if (gamepad2.dpad_down && !downToggle) {
+//                downToggle = true;
+//                if (armDown) {
+//                    robot.wobbleArm.armUp();
+//                } else {
+//                    robot.wobbleArm.armDown();
+//                }
+//                armDown = !armDown;
+//            } else if (!gamepad2.dpad_down && downToggle) {
+//                downToggle = false;
+//            }
 
             // Wobble Clamp / Unclamp
-            if (gamepad2.right_trigger > 0 && !clampToggle) {
+            if (gamepad2.dpad_down && !clampToggle) {
                 clampToggle = true;
                 if (clamped) {
                     robot.wobbleArm.unClamp();
@@ -164,7 +169,7 @@ public class Teleop extends LinearOpMode {
                     robot.wobbleArm.clamp();
                 }
                 clamped = !clamped;
-            } else if (gamepad2.right_trigger == 0 && clampToggle) {
+            } else if (!gamepad2.dpad_down && clampToggle) {
                 clampToggle = false;
             }
 
@@ -206,15 +211,15 @@ public class Teleop extends LinearOpMode {
             }
 
             // Drivetrain Controls
-            if (!aimLock || gamepad2.right_bumper) {
+//            if (!aimLock || gamepad2.right_bumper) {
                 if (robotCentric) {
                     robot.drivetrain.setControls(-gamepad1.left_stick_y * xyGain, -gamepad1.left_stick_x * xyGain, -gamepad1.right_stick_x * wGain);
                 } else {
                     robot.drivetrain.setGlobalControls(gamepad1.left_stick_y * xyGain, gamepad1.left_stick_x * xyGain, -gamepad1.right_stick_x * wGain);
                 }
-            } else if (!robot.preShoot && !robot.shoot) {
-                robot.drivetrain.setGlobalControls(gamepad1.left_stick_x * xyGain, MecanumDrivetrain.yKp * (63 - robot.y) + MecanumDrivetrain.yKd * (-robot.vy), MecanumDrivetrain.thetaKp * (robot.shootTargets(3)[2] - robot.theta) + MecanumDrivetrain.thetaKd * (-robot.w));
-            }
+//            } else if (!robot.preShoot && !robot.shoot) {
+//                robot.drivetrain.setGlobalControls(gamepad1.left_stick_x * xyGain, MecanumDrivetrain.yKp * (63 - robot.y) + MecanumDrivetrain.yKd * (-robot.vy), MecanumDrivetrain.thetaKp * (robot.shootTargets(3)[2] - robot.theta) + MecanumDrivetrain.thetaKd * (-robot.w));
+//            }
 
             // Update Robot
             robot.update();

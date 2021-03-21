@@ -19,7 +19,12 @@ import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.Math.PI;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawGoals;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawLine;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRing;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
 @Config
 @SuppressWarnings("FieldCanBeLocal")
@@ -357,6 +362,7 @@ public class Robot {
         addPacket("6 shoot", shoot  + " " + preShoot + " " + highGoal);
         addPacket("7 Time", (System.currentTimeMillis() - startTime) / 1000);
         addPacket("8 Update Frequency (Hz)", 1 / timeDiff);
+        addPacket("zeros", drivetrain.zero1 + ", " + drivetrain.zero2 + ", " + drivetrain.zero3);
         if (!isAuto) {
             addPacket("Cycle Time", (System.currentTimeMillis() - lastCycleTime) / 1000);
             addPacket("Average Cycle Time", cycleTotal / cycles);

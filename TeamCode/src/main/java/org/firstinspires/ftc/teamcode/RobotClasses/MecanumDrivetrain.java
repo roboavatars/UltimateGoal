@@ -51,10 +51,10 @@ public class MecanumDrivetrain {
     private final double motorUpdateTolerance = 0.05;
 
     // Constants
-    public static double ticksToInch1 = 0.00590434968;
-    public static double ticksToInch2 = 0.00584627889;
-    public static double ticksToInch3 = 0.00586162319;
-    public static double OdometryTrackWidth = 13.59;
+    public static double ticksToInch1 = 0.00588046031;
+    public static double ticksToInch2 = 0.00582564639;
+    public static double ticksToInch3 = 0.00583427502;
+    public static double OdometryTrackWidth = 13.565;
     public static double OdometryHorizontalOffset = -2.845;
     private final double OdometryHeadingThreshold = PI/8;
 
@@ -66,6 +66,8 @@ public class MecanumDrivetrain {
     public final static double thetaKd = 0.15;
 
     public boolean zeroStrafeCorrection = false;
+
+    public int zero1, zero2, zero3;
 
     // Constructor
     public MecanumDrivetrain(LinearOpMode opMode, double initialX, double initialY, double initialTheta) {
@@ -186,9 +188,18 @@ public class MecanumDrivetrain {
             deltapod3 = pod3 - lastpod3;
 
             if (!(deltapod1 == 0 && deltapod2 == 0 && deltapod3 == 0)) {
-                if (deltapod1 == 0) Log.w("pod-delta-log", "pod1 delta 0");
-                if (deltapod2 == 0) Log.w("pod-delta-log", "pod2 delta 0");
-                if (deltapod3 == 0) Log.w("pod-delta-log", "pod3 delta 0");
+                if (deltapod1 == 0) {
+                    Log.w("pod-delta-log", "pod1 delta 0");
+                    zero1++;
+                }
+                if (deltapod2 == 0) {
+                    Log.w("pod-delta-log", "pod2 delta 0");
+                    zero2++;
+                }
+                if (deltapod3 == 0) {
+                    Log.w("pod-delta-log", "pod3 delta 0");
+                    zero3++;
+                }
             }
 
             deltaheading = (deltapod2 - deltapod1) / OdometryTrackWidth;

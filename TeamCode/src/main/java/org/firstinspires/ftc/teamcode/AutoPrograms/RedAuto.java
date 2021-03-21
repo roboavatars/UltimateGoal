@@ -18,7 +18,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import static java.lang.Math.PI;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 
 @Autonomous(name = "1 Red Auto", preselectTeleOp = "Teleop")
 public class RedAuto extends LinearOpMode {
@@ -72,7 +72,7 @@ public class RedAuto extends LinearOpMode {
         double deliverWobbleTime = 1.75;
         double ringTime = 0;
         double intakeWobble2Time = 3.5;
-        double goToHighShootTime = 1.0;
+        double goToHighShootTime = 1.25;
         double shootHighGoal2Time = 1.5;
         double deliverWobble2Time = 1.5;
         double parkTime = 1.5;
@@ -107,7 +107,7 @@ public class RedAuto extends LinearOpMode {
         Robot.log("Ring case: " + ringCase);
 
         double[][] wobbleDelivery = {{127, 94}, {97, 118}, {121, 134}};
-        double[][] wobble2Delivery = {{119, 79}, {92, 106}, {114, 128}};
+        double[][] wobble2Delivery = {{119, 79}, {92, 109}, {114, 128}};
         double[] wobbleCor;
         double[] wobble2Cor;
         if (ringCase == RingCase.Zero) {
@@ -199,12 +199,12 @@ public class RedAuto extends LinearOpMode {
                         robot.intake.setPower(-0.2);
                     } else if (time.seconds() > intakeStackTime - 1) {
                         robot.intake.blockerDown();
-                    } else if (robot.isAtPose(109, 37, PI/2, 0.5, 0.5, PI/35)) {
+                    } else if (robot.isAtPose(109, 37.5, PI/2, 0.5, 0.5, PI/35)) {
                         robot.intake.on();
                         robot.intake.setBlocker(0.48 - 0.175 * time.seconds());
                         robot.drivetrain.stop();
                     } else {
-                        robot.setTargetPoint(109, 37, PI/2);
+                        robot.setTargetPoint(109, 37.5, PI/2);
                     }
                 }
 
@@ -410,11 +410,16 @@ public class RedAuto extends LinearOpMode {
 
             // Go to high goal shoot position
             else if (!goToHighShoot) {
-                robot.setTargetPoint(goToHighShootPath.getRobotPose(Math.min(time.seconds(), goToHighShootTime)));
 
-                if (time.seconds() > 0.7) {
+                if (time.seconds() < 0.5) {
+                    robot.setTargetPoint(robot.x, robot.y + 1, PI/2);
+                } else {
+                    robot.setTargetPoint(goToHighShootPath.getRobotPose(Math.min(time.seconds(), goToHighShootTime)));
+                }
+
+                if (time.seconds() > 0.5) {
                     robot.wobbleArm.armUp();
-                } else if (time.seconds() > 0.2) {
+                } else if (time.seconds() > 0.25) {
                     robot.wobbleArm.clamp();
                 }
 
