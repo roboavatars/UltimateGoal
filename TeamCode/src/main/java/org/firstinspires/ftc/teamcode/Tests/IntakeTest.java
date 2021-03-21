@@ -15,7 +15,6 @@ public class IntakeTest extends LinearOpMode {
     @Override
     public void runOpMode() {
         Robot robot = new Robot(this, 108, 42, PI/2, false);
-        robot.intake.sticksCollect();
         robot.intake.setBlocker(0.5);
         ElapsedTime time = new ElapsedTime();
 

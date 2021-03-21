@@ -92,7 +92,7 @@ public class Robot {
 
     // Powershot Debug Variables
     public final double[] psShootPos = new double[] {111, 63};
-    public static double theta0 = 1.9353;
+    public static double theta0 = 1.9153;
     public static double theta1 = 1.8207;
     public static double theta2 = 1.7432;
     public static double[] thetaPositions = {theta2, theta1, theta0};
@@ -186,9 +186,9 @@ public class Robot {
             int vThresh;
             if (highGoal) {
                 shooter.flywheelHG();
-                vThresh = Constants.HIGH_GOAL_VELOCITY - 50;
+                vThresh = Constants.HIGH_GOAL_VELOCITY - 40;
 
-                double shootY = 63;
+                double shootY = 61;
                 if (isAuto) {
                     if (shootYOverride != 0) {
                         shootY = shootYOverride;
@@ -206,7 +206,7 @@ public class Robot {
                 intake.off();
                 shooter.magShoot();
                 if (!isAuto) {
-                    intake.sticksOut();
+                    intake.sticksShoot();
                 }
                 log("Mag up");
             }
@@ -256,7 +256,7 @@ public class Robot {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position and velocity low enough
                     if ((highGoal && shootOverride) || (highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/60)) ||
-                            (!highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/120)
+                            (!highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/150)
                             && Math.abs(vx) + Math.abs(vy) < 1.5 && Math.abs(w) < 0.1)) {
                         log("In shoot Velocity: " + shooter.getVelocity());
                         log("Drivetrain Velocities: " + round(vx) + " " + round(vy) + " " + round(w));
@@ -287,6 +287,10 @@ public class Robot {
                     shooter.flywheelOff();
                     shooter.magHome();
                     shoot = false;
+
+                    if (!isAuto) {
+                        intake.sticksOut();
+                    }
 
                     log("Shoot done");
                     log("Total shoot time: " +  (System.currentTimeMillis() - startShootTime) + " ms");
@@ -432,7 +436,7 @@ public class Robot {
         numRingsPreset = 0;
         shootYOverride = 0;
         shooter.flywheelOff();
-        intake.sticksCollect();
+        intake.sticksOut();
         shooter.magHome();
         log("Shoot cancelled");
     }
@@ -458,7 +462,7 @@ public class Robot {
         double dy = targetY - shooterY;
 
         // Uses Angle Bisector for High Goal for more consistency
-        if (targetNum == 3 && (x < 72 || x > 132)) {
+        if (targetNum == 3 && (x < 48 || x > 132)) {
             double d = 8;
             double a = Math.sqrt(Math.pow(dx + d/2, 2) + Math.pow(dy, 2));
             double b = Math.sqrt(Math.pow(dx - d/2, 2) + Math.pow(dy, 2));

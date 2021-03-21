@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Debug.Logger;
-import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import java.util.Arrays;
@@ -75,7 +74,7 @@ public class Teleop extends LinearOpMode {
         }
 
         robot.logger.startLogging(false);
-        robot.intake.sticksCollect();
+        robot.intake.sticksOut();
         robot.wobbleArm.armUp();
 
         waitForStart();
@@ -108,6 +107,7 @@ public class Teleop extends LinearOpMode {
             // Rev Up Flywheel for High Goal
             if (gamepad2.y /*|| (!robot.shooter.sensorBroken && robot.numRings == 2)*/) {
                 robot.shooter.flywheelHG();
+                robot.intake.sticksShoot();
             }
 
             // Auto Move Back Sticks After 3 Rings
@@ -119,25 +119,13 @@ public class Teleop extends LinearOpMode {
             if (gamepad2.x && !stickToggle) {
                 stickToggle = true;
                 if (sticksOut) {
-                    robot.intake.sticksCollect();
+                    robot.intake.sticksHalf();
                 } else {
                     robot.intake.sticksOut();
                 }
                 sticksOut = !sticksOut;
             } else if (!gamepad2.x && stickToggle) {
                 stickToggle = false;
-            }
-
-            // Stick Sweep
-            if (!sticksOut && (gamepad2.left_trigger > 0 || gamepad2.right_trigger > 0)) {
-                if (gamepad2.left_trigger > 0) {
-                    robot.intake.stickLeft(Constants.L_SWEEP_POS);
-                }
-                if (gamepad2.right_trigger > 0) {
-                    robot.intake.stickRight(Constants.R_SWEEP_POS);
-                }
-            } else if (!sticksOut && !robot.preShoot && !robot.shoot) {
-                robot.intake.sticksCollect();
             }
 
             // Ring Blocker
@@ -147,18 +135,24 @@ public class Teleop extends LinearOpMode {
                 robot.intake.blockerDown();
             }
 
+            if (gamepad2.left_bumper) {
+                robot.intake.stackPos();
+            } else {
+                robot.intake.linePos();
+            }
+
             // Wobble Arm Up / Down
-//            if (gamepad2.dpad_down && !downToggle) {
-//                downToggle = true;
-//                if (armDown) {
-//                    robot.wobbleArm.armUp();
-//                } else {
-//                    robot.wobbleArm.armDown();
-//                }
-//                armDown = !armDown;
-//            } else if (!gamepad2.dpad_down && downToggle) {
-//                downToggle = false;
-//            }
+            if (gamepad2.left_trigger > 0 && !downToggle) {
+                downToggle = true;
+                if (armDown) {
+                    robot.wobbleArm.armUp();
+                } else {
+                    robot.wobbleArm.armDown();
+                }
+                armDown = !armDown;
+            } else if (gamepad2.left_trigger == 0 && downToggle) {
+                downToggle = false;
+            }
 
             // Wobble Clamp / Unclamp
             if (gamepad2.dpad_down && !clampToggle) {
@@ -198,16 +192,18 @@ public class Teleop extends LinearOpMode {
             }
 
             // Enter Aimlock / Strafe Mode
-            if (gamepad2.left_bumper && !aimLockToggle) {
-                aimLockToggle = true;
-                aimLock = !aimLock;
-            } else if (!gamepad2.left_bumper && aimLockToggle) {
-                aimLockToggle = false;
-            }
+//            if (gamepad2.left_bumper && !aimLockToggle) {
+//                aimLockToggle = true;
+//                aimLock = !aimLock;
+//            } else if (!gamepad2.left_bumper && aimLockToggle) {
+//                aimLockToggle = false;
+//            }
 
             // Mag Up
             if (gamepad2.left_stick_button) {
                 robot.shooter.magShoot();
+            } else if (!robot.preShoot && !robot.shoot) {
+                robot.shooter.magHome();
             }
 
             // Drivetrain Controls

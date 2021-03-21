@@ -5,15 +5,18 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 public class Constants {
     // Intake
-    public static double L_HOME_POS = 1;
-    public static double L_SWEEP_POS = 0.8;
-    public static double L_COLLECT_POS = 0.5;
-    public static double L_OUT_POS = 0;
+    public static double L_HOME_POS = 0.15;
+    public static double L_HALF_POS = 0.35;
+    public static double L_SHOOT_POS = 0.6;
+    public static double L_OUT_POS = 1;
 
-    public static double R_HOME_POS = 0;
-    public static double R_SWEEP_POS = 0.2;
-    public static double R_COLLECT_POS = 0.5;
-    public static double R_OUT_POS = 1;
+    public static double R_HOME_POS = 0.6;
+    public static double R_HALF_POS = 0.25;
+    public static double R_SHOOT_POS = 0.1;
+    public static double R_OUT_POS = 0;
+
+    public static double LINE_POS = 0.87;
+    public static double STACK_POS = 1;
 
     public static double BLOCKER_HOME_POS = 0.7;
     public static double BLOCKER_UP_POS = 0.55;

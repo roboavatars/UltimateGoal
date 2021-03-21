@@ -13,6 +13,7 @@ public class Intake {
     private Servo lStickServo;
     private Servo rStickServo;
     private Servo blockerServo;
+    private Servo standoffServo;
 
     private double leftStickPos;
     private double rightStickPos;
@@ -32,18 +33,20 @@ public class Intake {
         rStickServo = op.hardwareMap.get(Servo.class, "rightStick");
         blockerServo = op.hardwareMap.get(Servo.class, "blocker");
 
+        standoffServo = op.hardwareMap.get(Servo.class, "standoff");
+
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         if (!isAuto) {
-            sticksCollect();
-            updateSticks();
+            sticksOut();
         } else {
-            stickRight(Constants.R_OUT_POS);
-            updateRight();
+            sticksHome();
         }
+        updateSticks();
 
-        blockerHome();
+        blockerDown();
+        linePos();
 
         op.telemetry.addData("Status", "Intake initialized");
     }
@@ -72,19 +75,27 @@ public class Intake {
         }
     }
 
+    public void linePos() {
+        standoffServo.setPosition(Constants.LINE_POS);
+    }
+
+    public void stackPos() {
+        standoffServo.setPosition(Constants.STACK_POS);
+    }
+
     public void sticksHome() {
         stickLeft(Constants.L_HOME_POS);
         stickRight(Constants.R_HOME_POS);
     }
 
-    public void sticksSweep() {
-        stickLeft(Constants.L_SWEEP_POS);
-        stickRight(Constants.R_SWEEP_POS);
+    public void sticksHalf() {
+        stickLeft(Constants.L_HALF_POS);
+        stickRight(Constants.R_HALF_POS);
     }
 
-    public void sticksCollect() {
-        stickLeft(Constants.L_COLLECT_POS);
-        stickRight(Constants.R_COLLECT_POS);
+    public void sticksShoot() {
+        stickLeft(Constants.L_SHOOT_POS);
+        stickRight(Constants.R_SHOOT_POS);
     }
 
     public void sticksOut() {
@@ -98,12 +109,12 @@ public class Intake {
         if (48 + buffer <= leftPos[0] && leftPos[0] <= 144 - buffer && 0 + buffer <= leftPos[1] && leftPos[1] <= 144 - buffer) {
             stickLeft(Constants.L_OUT_POS);
         } else {
-            stickLeft(Constants.L_COLLECT_POS);
+            stickLeft(Constants.L_HALF_POS);
         }
         if (48 + buffer <= rightPos[0] && rightPos[0] <= 144 - buffer && 0 + buffer <= rightPos[1] && rightPos[1] <= 144 - buffer) {
             stickRight(Constants.R_OUT_POS);
         } else {
-            stickRight(Constants.R_COLLECT_POS);
+            stickRight(Constants.R_HALF_POS);
         }
     }
 
