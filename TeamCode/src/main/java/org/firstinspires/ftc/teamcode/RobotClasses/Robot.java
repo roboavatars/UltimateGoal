@@ -70,6 +70,7 @@ public class Robot {
     // Time and Delay Variables
     public double shootTime;
     public double shootDelay;
+    public static double timeBackup = 1000;
     public double startShootTime;
     public static int highGoalDelay = 250;
     public static int psDelay = 450;
@@ -228,6 +229,7 @@ public class Robot {
                 numRings = numRingsPreset;
                 shootYOverride = 0;
                 shootTime = System.currentTimeMillis();
+                flickTime = System.currentTimeMillis();
                 preShoot = false;
                 log("Ready to shoot " + (highGoal ? "high goal" : "powershot") + ", velocity: " + shooter.getVelocity());
                 log("Pre shoot time: " +  (System.currentTimeMillis() - startShootTime) + " ms");
@@ -255,13 +257,14 @@ public class Robot {
             if (System.currentTimeMillis() - shootTime > shootDelay) {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position and velocity low enough
-                    if ((highGoal && shootOverride) || (highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/60)) ||
-                            (!highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/150)
+                    if (System.currentTimeMillis() - flickTime > timeBackup || (highGoal && shootOverride) ||
+                            (highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/60)) ||
+                            (!highGoal && isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/180)
                             && Math.abs(vx) + Math.abs(vy) < 1.5 && Math.abs(w) < 0.1)) {
                         log("In shoot Velocity: " + shooter.getVelocity());
                         log("Drivetrain Velocities: " + round(vx) + " " + round(vy) + " " + round(w));
                         if (!highGoal) {
-                            log("theta: " + theta);
+                            log("PS pos: " + round(x) + ", " + round(y) + ", " + round(theta));
                         }
 
                         if (shooter.feedHome) {
@@ -271,6 +274,9 @@ public class Robot {
                         }
 
                         if (numRings == 3) {
+                            if (!isAuto) {
+                                intake.sticksOut();
+                            }
                             log("Feed ring 1");
                         } else if (numRings == 2) {
                             log("Feed ring 2");
@@ -287,10 +293,6 @@ public class Robot {
                     shooter.flywheelOff();
                     shooter.magHome();
                     shoot = false;
-
-                    if (!isAuto) {
-                        intake.sticksOut();
-                    }
 
                     log("Shoot done");
                     log("Total shoot time: " +  (System.currentTimeMillis() - startShootTime) + " ms");
@@ -356,7 +358,7 @@ public class Robot {
             addPacket("0", "Starting Battery Voltage < 12.4!!!!");
         }
         if (shooter.sensorBroken) {
-            addPacket("00", "Distance Sensor Broken!!!!");
+            addPacket("0", "Distance Sensor Broken!!!!");
         }
         addPacket("1 X", round(x));
         addPacket("2 Y", round(y));
@@ -365,11 +367,11 @@ public class Robot {
         addPacket("5 numRings", numRings);
         addPacket("6 shoot", shoot  + " " + preShoot + " " + highGoal);
         addPacket("7 Time", (System.currentTimeMillis() - startTime) / 1000);
-        addPacket("8 Update Frequency (Hz)", 1 / timeDiff);
+        addPacket("8 Update Frequency (Hz)", round(1 / timeDiff));
         addPacket("zeros", drivetrain.zero1 + ", " + drivetrain.zero2 + ", " + drivetrain.zero3);
         if (!isAuto) {
             addPacket("Cycle Time", (System.currentTimeMillis() - lastCycleTime) / 1000);
-            addPacket("Average Cycle Time", cycleTotal / cycles);
+            addPacket("Average Cycle Time", round(cycleTotal / cycles));
             addPacket("Cycles", cycles);
         }
 
@@ -475,10 +477,10 @@ public class Robot {
         // Calculate Robot Angle
         double d = Math.sqrt(Math.pow(targetX - shooterX, 2) + Math.pow(targetY - shooterY, 2));
         double alignRobotAngle = Math.atan2(dy, dx) + 0.0013 * d - 0.2300 - thetaOffset;
-        double alignRobotX = shooterX - 6.5 * Math.sin(alignRobotAngle);
-        double alignRobotY = shooterY + 6.5 * Math.cos(alignRobotAngle);
+//        double alignRobotX = shooterX - 6.5 * Math.sin(alignRobotAngle);
+//        double alignRobotY = shooterY + 6.5 * Math.cos(alignRobotAngle);
 
-        return new double[] {alignRobotX, alignRobotY, alignRobotAngle};
+        return new double[] {shootX, shootY, alignRobotAngle};
     }
 
     // Set target point (velocity specification, custom Kp and Kv values)

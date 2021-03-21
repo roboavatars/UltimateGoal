@@ -23,7 +23,7 @@ public class Constants {
     public static double BLOCKER_DOWN_POS = 0.23;
 
     // Shooter
-    public static int HIGH_GOAL_VELOCITY = 1900;
+    public static int HIGH_GOAL_VELOCITY = 1950;
     public static int POWERSHOT_VELOCITY = 1550;
 
     public static double MAG_HOME_POS = 0.085;
