@@ -14,14 +14,12 @@ import static java.lang.Math.PI;
 @SuppressWarnings("FieldCanBeLocal") @Config
 public class MecanumDrivetrain {
 
-    // Motors
+    // Electronics
     private DcMotorEx motorFrontRight;
     private DcMotorEx motorFrontLeft;
     private DcMotorEx motorBackRight;
     private DcMotorEx motorBackLeft;
-
-    // Rev Hub
-    // LynxModule module;
+    // private LynxModule module;
 
     // OpMode
     private LinearOpMode opMode;
@@ -50,7 +48,7 @@ public class MecanumDrivetrain {
     private double lastBLPower = 0;
     private final double motorUpdateTolerance = 0.05;
 
-    // Constants
+    // Odometry constants
     public static double ticksToInch1 = 0.00588046031;
     public static double ticksToInch2 = 0.00582564639;
     public static double ticksToInch3 = 0.00583427502;
@@ -58,6 +56,7 @@ public class MecanumDrivetrain {
     public static double OdometryHorizontalOffset = -2.845;
     private final double OdometryHeadingThreshold = PI/8;
 
+    // PD controller constants
     public final static double xKp = 0.5;
     public final static double yKp = 0.5;
     public final static double thetaKp = 4.0;
@@ -65,9 +64,10 @@ public class MecanumDrivetrain {
     public final static double yKd = 0.047;
     public final static double thetaKd = 0.15;
 
-    public boolean zeroStrafeCorrection = false;
-
+    // Odometry delta 0 counters
     public int zero1, zero2, zero3;
+
+    public boolean zeroStrafeCorrection = false;
 
     // Constructor
     public MecanumDrivetrain(LinearOpMode opMode, double initialX, double initialY, double initialTheta) {

@@ -507,7 +507,7 @@ public class RedAuto extends LinearOpMode {
 
             else {
                 robot.drivetrain.stop();
-                if (Math.abs(robot.vx) + Math.abs(robot.vy) < 1 && Math.abs(robot.w) < 0.5) {
+                if (robot.notMoving()) {
                     break;
                 }
             }

@@ -59,7 +59,7 @@ public class Robot {
     public int numRings = 0;
     public boolean highGoal = false;
     public boolean preShoot = false;
-    public boolean shootOverride = false;
+    public boolean preShootOverride = false;
     public boolean shoot = false;
     public int lastTarget = -1;
 
@@ -69,13 +69,14 @@ public class Robot {
 
     // Time and Delay Variables
     public double shootTime;
-    public double shootDelay;
-    public static double timeBackup = 1000;
     public double startShootTime;
+    public double flickTime;
+    public double shootDelay;
+    public static double preShootTimeBackup = 4000;
+    public static double flickTimeBackup = 1000;
     public static int highGoalDelay = 250;
     public static int psDelay = 450;
     public static double flapDelay = 250;
-    public double flickTime;
 
     // Motion Variables
     public double x, y, theta, vx, vy, w;
@@ -105,11 +106,13 @@ public class Robot {
 
     // Constructor
     public Robot(LinearOpMode op, double x, double y, double theta, boolean isAuto) {
-        drivetrain = new MecanumDrivetrain(op, x, y, theta);
         this.x = x;
         this.y = y;
         this.theta = theta;
+        this.op = op;
+        this.isAuto = isAuto;
 
+        drivetrain = new MecanumDrivetrain(op, x, y, theta);
         intake = new Intake(op, isAuto);
         shooter = new Shooter(op);
         wobbleArm = new WobbleArm(op);
@@ -129,9 +132,6 @@ public class Robot {
         for (LynxModule hub : allHubs) {
             hub.setBulkCachingMode(LynxModule.BulkCachingMode.MANUAL);
         }
-
-        this.op = op;
-        this.isAuto = isAuto;
 
         battery = op.hardwareMap.voltageSensor.iterator().next();
         log("Battery Voltage: " + battery.getVoltage() + "v");
@@ -173,9 +173,9 @@ public class Robot {
             firstLoop = false;
         }
 
-        if (!isAuto && !preShoot && !shoot && !shooter.sensorBroken && loopCounter % sensorUpdatePeriod == 0) {
+        /*if (!isAuto && !preShoot && !shoot && !shooter.sensorBroken && loopCounter % sensorUpdatePeriod == 0) {
             numRings = shooter.getNumRings();
-        }
+        }*/
 
         profile(1);
 
@@ -213,13 +213,13 @@ public class Robot {
             }
 
             // Move to shooting position
-            if (!isAtPose(target[0], target[1], target[2], 1, 1, PI/35) || Math.abs(vx) + Math.abs(vy) > 1.5 || Math.abs(w) > 0.1) {
+            if (!isAtPose(target[0], target[1], target[2], 1, 1, PI/35) || !notMoving() || !preShootOverride) {
                 setTargetPoint(target[0], target[1], target[2]);
                 log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") Moving to shoot position: " + Arrays.toString(target));
             }
 
             // Start auto-feed when mag is up, velocity is high enough, and robot is at position
-            else if (!shooter.magHome && shooter.getVelocity() > vThresh) {
+            else if (!shooter.magHome && (shooter.getVelocity() > vThresh || preShootOverride)) {
                 if (highGoal) {
                     shootDelay = highGoalDelay;
                 } else {
@@ -233,6 +233,11 @@ public class Robot {
                 preShoot = false;
                 log("Ready to shoot " + (highGoal ? "high goal" : "powershot") + ", velocity: " + shooter.getVelocity());
                 log("Pre shoot time: " +  (System.currentTimeMillis() - startShootTime) + " ms");
+            }
+
+            // If robot does not converge or mag gets stuck
+            else if (System.currentTimeMillis() - startShootTime > preShootTimeBackup) {
+                cancelShoot();
             }
         }
 
@@ -257,10 +262,10 @@ public class Robot {
             if (System.currentTimeMillis() - shootTime > shootDelay) {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position and velocity low enough
-                    if (System.currentTimeMillis() - flickTime > timeBackup || (highGoal && shootOverride) ||
-                            (highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/60)) ||
-                            (!highGoal && isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/180)
-                            && Math.abs(vx) + Math.abs(vy) < 1.5 && Math.abs(w) < 0.1)) {
+                    if ((highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/60))
+                            || (!highGoal && isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/180) && notMoving())
+                            || System.currentTimeMillis() - flickTime > flickTimeBackup) {
+
                         log("In shoot Velocity: " + shooter.getVelocity());
                         log("Drivetrain Velocities: " + round(vx) + " " + round(vy) + " " + round(w));
                         if (!highGoal) {
@@ -278,11 +283,8 @@ public class Robot {
                                 intake.sticksOut();
                             }
                             log("Feed ring 1");
-                        } else if (numRings == 2) {
-                            log("Feed ring 2");
-                        } else if (numRings == 1) {
-                            log("Feed ring 3");
-                        }
+                        } else if (numRings == 2) { log("Feed ring 2"); }
+                        else if (numRings == 1) { log("Feed ring 3"); }
 
                         numRings--;
                         flickTime = System.currentTimeMillis();
@@ -311,7 +313,7 @@ public class Robot {
         // Update Position
         drivetrain.updatePose();
         if (odoCovariance != 1) {
-            //t265.sendOdometryData(vx, vy);
+            // t265.sendOdometryData(vx, vy);
             t265.updateCamPose();
         }
         intake.updateSticks();
@@ -385,7 +387,6 @@ public class Robot {
         for (Ring ring : ringPos) {
             drawRing(ring);
         }
-//        log("rings: " + ringPos);
         sendPacket();
 
         profile(7);
@@ -435,7 +436,6 @@ public class Robot {
         preShoot = false;
         shoot = false;
         numRings = 0;
-        numRingsPreset = 0;
         shootYOverride = 0;
         shooter.flywheelOff();
         intake.sticksOut();
@@ -535,6 +535,14 @@ public class Robot {
     // Check if robot is at a certain point/angle (custom tolerance)
     public boolean isAtPose(double targetX, double targetY, double targetTheta, double xTolerance, double yTolerance, double thetaTolerance) {
         return (Math.abs(x - targetX) < xTolerance && Math.abs(y - targetY) < yTolerance && Math.abs(theta - targetTheta) < thetaTolerance);
+    }
+
+    public boolean notMoving() {
+        return notMoving(1.5, 0.1);
+    }
+
+    public boolean notMoving(double xyThreshold, double thetaThreshold) {
+        return (Math.abs(vx) + Math.abs(vy) < xyThreshold && Math.abs(w) < thetaThreshold);
     }
 
     // Logging

@@ -49,17 +49,17 @@ public class Teleop extends LinearOpMode {
     Gamepad 2
     A - Blocker Up
     B - Cancel Shoot
-    X - Toggle Sticks (Collect/Out)
+    X - Toggle Sticks (Up/Out)
     Y - Pre-Rev Flywheel for High Goal
     Dpad Up - Reset Theta Offset
     Dpad Left - Decrease Theta Offset
     Dpad Down - Wobble Arm Up/Down
     Dpad Right - Increase Theta Offset
-    Left Bumper - Aimlock Toggle
+    Left Bumper -  Wobble Clamp/Unclamp
     Right Bumper - Slow Mode
-    Left Trigger - Sweep Sticks
-    Right Trigger - Wobble Clamp/Unclamp
-    Right Stick Button - Mag Up
+    Left Trigger - Shoot Override
+    Left Stick Button - Mag Up
+    Right Stick Button - Aimlock Toggle
      */
 
     @Override
@@ -97,7 +97,7 @@ public class Teleop extends LinearOpMode {
             }
 
             // Override Shoots in Case it is Taking Too Long
-            robot.shootOverride = gamepad2.right_stick_button;
+            robot.preShootOverride = gamepad2.left_trigger > 0;
 
             // Stop Shoot Sequence
             if (gamepad2.b) {
@@ -135,14 +135,8 @@ public class Teleop extends LinearOpMode {
                 robot.intake.blockerDown();
             }
 
-            if (gamepad2.left_bumper) {
-                robot.intake.stackPos();
-            } else {
-                robot.intake.linePos();
-            }
-
             // Wobble Arm Up / Down
-            if (gamepad2.left_trigger > 0 && !downToggle) {
+            if (gamepad2.left_bumper && !downToggle) {
                 downToggle = true;
                 if (armDown) {
                     robot.wobbleArm.armUp();
@@ -150,7 +144,7 @@ public class Teleop extends LinearOpMode {
                     robot.wobbleArm.armDown();
                 }
                 armDown = !armDown;
-            } else if (gamepad2.left_trigger == 0 && downToggle) {
+            } else if (!gamepad2.left_bumper && downToggle) {
                 downToggle = false;
             }
 
@@ -192,12 +186,12 @@ public class Teleop extends LinearOpMode {
             }
 
             // Enter Aimlock / Strafe Mode
-//            if (gamepad2.left_bumper && !aimLockToggle) {
-//                aimLockToggle = true;
-//                aimLock = !aimLock;
-//            } else if (!gamepad2.left_bumper && aimLockToggle) {
-//                aimLockToggle = false;
-//            }
+            /*if (gamepad2.right_stick_button && !aimLockToggle) {
+                aimLockToggle = true;
+                aimLock = !aimLock;
+            } else if (!gamepad2.right_stick_button && aimLockToggle) {
+                aimLockToggle = false;
+            }*/
 
             // Mag Up
             if (gamepad2.left_stick_button) {

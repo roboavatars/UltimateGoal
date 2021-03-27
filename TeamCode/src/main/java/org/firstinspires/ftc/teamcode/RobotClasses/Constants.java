@@ -15,9 +15,6 @@ public class Constants {
     public static double R_SHOOT_POS = 0.1;
     public static double R_OUT_POS = 0;
 
-    public static double LINE_POS = 0.87;
-    public static double STACK_POS = 1;
-
     public static double BLOCKER_HOME_POS = 0.7;
     public static double BLOCKER_UP_POS = 0.55;
     public static double BLOCKER_DOWN_POS = 0.23;
