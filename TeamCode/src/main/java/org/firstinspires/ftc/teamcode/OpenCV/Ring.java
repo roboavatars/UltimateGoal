@@ -2,16 +2,24 @@ package org.firstinspires.ftc.teamcode.OpenCV;
 
 import android.annotation.SuppressLint;
 
+import org.firstinspires.ftc.teamcode.RobotClasses.Shooter;
+
 import java.util.ArrayList;
 import java.util.Comparator;
 
 import static org.firstinspires.ftc.teamcode.OpenCV.RingLocator.RingLocator.*;
 
 public class Ring {
-    private final double relX;
-    private final double relY;
+    private double relX;
+    private double relY;
     private double absX;
     private double absY;
+    private double vx;
+    private double vy;
+    private double startX;
+    private double startY;
+    private double startTime;
+
     private static double DIST_THRESH = 1.5;
 
     public Ring(double relX, double relY, double absX, double absY) {
@@ -24,6 +32,16 @@ public class Ring {
     public Ring(double relX, double relY) {
         this.relX = relX;
         this.relY = relY;
+    }
+
+    public Ring(double startX, double startY, double theta, double vx, double vy, double omega, double startTime) {
+        this.startX = startX + Shooter.SHOOTER_DX * Math.sin(theta);
+        this.startY = startY - Shooter.SHOOTER_DX * Math.cos(theta);
+        this.absX = this.startX;
+        this.absY = this.startY;
+        this.vx = vx - Shooter.SHOOTER_DX * omega * Math.sin(theta);
+        this.vy = vy + Shooter.SHOOTER_DX * omega * Math.cos(theta);
+        this.startTime = startTime;
     }
 
     // Return a sorted list with up to three coordinate-filtered rings
@@ -96,7 +114,11 @@ public class Ring {
 
     @SuppressLint("DefaultLocale")
     public String toString() {
-        return "R(" + String.format("%.3f", relX) + ", " + String.format("%.3f", relY) + "), A(" + String.format("%.3f", absX) + ", " + String.format("%.3f", absY) + ")";
+        if (startTime == 0) {
+            return "R(" + String.format("%.3f", relX) + ", " + String.format("%.3f", relY) + "), A(" + String.format("%.3f", absX) + ", " + String.format("%.3f", absY) + ")";
+        } else {
+            return "A(" + String.format("%.3f", absX) + ", " + String.format("%.3f", absY) + "), V(" + String.format("%.3f", vx) + ", " + String.format("%.3f", vy) + "), S(" + String.format("%.3f", startTime) + ")";
+        }
     }
 
     public Ring clone() {
@@ -105,10 +127,6 @@ public class Ring {
 
     public double[] driveToRing(double robotX, double robotY) {
         return new double[] {absX, absY, Math.atan2(absY - robotY, absX - robotX)};
-    }
-
-    public double[] getRelCoords() {
-        return new double[] {relX, relY};
     }
 
     public double[] getAbsCoords() {
@@ -137,5 +155,11 @@ public class Ring {
 
     public double getY() {
         return absY;
+    }
+
+    public void updatePose(double curTime) {
+        double dt = (curTime - startTime) / 1000;
+        absX = startX + vx * dt;
+        absY = startY + vy * dt;
     }
 }

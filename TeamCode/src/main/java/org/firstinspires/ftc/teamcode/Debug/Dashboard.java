@@ -27,14 +27,23 @@ public class Dashboard {
         packet.fieldOverlay().setFill(color).fillPolygon(xcoords, ycoords);
     }
 
-    public static void drawGoals(String color) {
-        double[] xcoords = {72, 72, 78, 78};
-        double[] ycoords = {-24, -48, -48, -24};
-        packet.fieldOverlay().setFill(color).fillPolygon(xcoords, ycoords);
+    public static void drawField() {
+        // Clear Left Side
+        drawRect(0, 0, 48, 144, "white");
 
-        xcoords = new double[] {72, 72, 78, 78};
-        ycoords = new double[] {24, 48, 48, 24};
-        packet.fieldOverlay().setFill(color).fillPolygon(xcoords, ycoords);
+        // New Perimeter
+        drawLine(48, 0, 48, 144, "black");
+        drawLine(48, 144, 144, 144, "black");
+        drawLine(144, 0, 144, 144, "black");
+        drawLine(48, 0, 144, 0, "black");
+
+        // Tower Goal
+        drawRect(96, 144, 120, 150, "black");
+
+        // Red Powershots
+        drawRect(76, 144, 77, 147.5, "red");
+        drawRect(83.5, 144, 84.5, 147.5, "red");
+        drawRect(91, 144, 92, 147.5, "red");
     }
 
     public static void drawPoint(double x, double y, String color) {
@@ -43,6 +52,12 @@ public class Dashboard {
 
     public static void drawLine(double x1, double y1, double x2, double y2, String color) {
         packet.fieldOverlay().setStroke(color).strokeLine(y1 - 72, 72 - x1, y2 - 72, 72 - x2);
+    }
+
+    public static void drawRect(double x1, double y1, double x2, double y2, String color) {
+        double[] xcoords = {y1 - 72, y2 - 72, y1 - 72, y2 - 72};
+        double[] ycoords = {72 - x1, 72 - x1, 72 - x2, 72 - x2};
+        packet.fieldOverlay().setFill(color).fillPolygon(xcoords, ycoords);
     }
 
     public static void drawRing(Ring ring) {

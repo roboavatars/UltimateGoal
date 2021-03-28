@@ -18,12 +18,13 @@ public class Shooter {
     public Servo feedServo;
     private DistanceSensor ringSensor;
 
-    private double lastVelocity = 0;
-
     public boolean magHome = true;
     public boolean feedHome = false;
     public boolean sensorBroken = true;
 
+    public static final double SHOOTER_DX = 6.5;
+
+    private double lastVelocity = 0;
     private int numRings = 3;
 
     public Shooter(LinearOpMode op) {

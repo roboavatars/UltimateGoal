@@ -20,7 +20,7 @@ import java.util.List;
 
 import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawGoals;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawField;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawLine;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRing;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
@@ -68,6 +68,7 @@ public class Robot {
     public double lastCycleTime;
 
     // Time and Delay Variables
+    public double curTime;
     public double shootTime;
     public double startShootTime;
     public double flickTime;
@@ -99,6 +100,8 @@ public class Robot {
     public static double theta2 = 1.7432;
     public static double[] thetaPositions = {theta2, theta1, theta0};
 
+    // Ring State Variables
+    public ArrayList<Ring> shotRings = new ArrayList<>();
     public ArrayList<Ring> ringPos = new ArrayList<>();
 
     // OpMode Stuff
@@ -138,7 +141,8 @@ public class Robot {
         if (battery.getVoltage() < 12.4) {
             startVoltTooLow = true;
         }
-        drawGoals("black");
+
+        drawField();
         drawRobot(this, "black");
         sendPacket();
     }
@@ -162,14 +166,15 @@ public class Robot {
     public void update() {
         loopCounter++;
         profiler.reset();
+        curTime = System.currentTimeMillis();
 
         // Powershot Debug
         thetaPositions = new double[] {theta2, theta1, theta0};
 
         // Track time after start
         if (firstLoop) {
-            startTime = System.currentTimeMillis();
-            lastCycleTime = System.currentTimeMillis();
+            startTime = curTime;
+            lastCycleTime = curTime;
             firstLoop = false;
         }
 
@@ -228,15 +233,15 @@ public class Robot {
                 shoot = true;
                 numRings = numRingsPreset;
                 shootYOverride = 0;
-                shootTime = System.currentTimeMillis();
-                flickTime = System.currentTimeMillis();
+                shootTime = curTime;
+                flickTime = curTime;
                 preShoot = false;
                 log("Ready to shoot " + (highGoal ? "high goal" : "powershot") + ", velocity: " + shooter.getVelocity());
-                log("Pre shoot time: " +  (System.currentTimeMillis() - startShootTime) + " ms");
+                log("Pre shoot time: " +  (curTime - startShootTime) + " ms");
             }
 
             // If robot does not converge or mag gets stuck
-            else if (System.currentTimeMillis() - startShootTime > preShootTimeBackup) {
+            else if (curTime - startShootTime > preShootTimeBackup) {
                 cancelShoot();
             }
         }
@@ -251,7 +256,7 @@ public class Robot {
                 if (highGoal) {
                     target = shootTargets(3);
                     lastTarget = 3;
-                } else if (numRings == 3 || System.currentTimeMillis() - flickTime > flapDelay) {
+                } else if (numRings == 3 || curTime - flickTime > flapDelay) {
                     target = new double[] {psShootPos[0], psShootPos[1], thetaPositions[numRings - 1]};
                     lastTarget = 3 - numRings;
                 }
@@ -259,12 +264,12 @@ public class Robot {
             }
 
             // Auto feed rings
-            if (System.currentTimeMillis() - shootTime > shootDelay) {
+            if (curTime - shootTime > shootDelay) {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position and velocity low enough
                     if ((highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/60))
                             || (!highGoal && isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/180) && notMoving())
-                            || System.currentTimeMillis() - flickTime > flickTimeBackup) {
+                            || curTime - flickTime > flickTimeBackup) {
 
                         log("In shoot Velocity: " + shooter.getVelocity());
                         log("Drivetrain Velocities: " + round(vx) + " " + round(vy) + " " + round(w));
@@ -278,6 +283,8 @@ public class Robot {
                             shooter.feedHome();
                         }
 
+                        shotRings.add(new Ring(x, y, theta + thetaOffset, vx, vy, w, curTime));
+
                         if (numRings == 3) {
                             if (!isAuto) {
                                 intake.sticksOut();
@@ -287,7 +294,7 @@ public class Robot {
                         else if (numRings == 1) { log("Feed ring 3"); }
 
                         numRings--;
-                        flickTime = System.currentTimeMillis();
+                        flickTime = curTime;
                     } else {
                         log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") Moving to shoot position: " + Arrays.toString(target));
                     }
@@ -297,14 +304,14 @@ public class Robot {
                     shoot = false;
 
                     log("Shoot done");
-                    log("Total shoot time: " +  (System.currentTimeMillis() - startShootTime) + " ms");
-                    double cycleTime = (System.currentTimeMillis() - lastCycleTime) / 1000;
+                    log("Total shoot time: " +  (curTime - startShootTime) + " ms");
+                    double cycleTime = (curTime - lastCycleTime) / 1000;
                     cycleTotal += cycleTime;
                     cycles++;
                     Log.w("cycle-log", "Cycle " + cycles + ": " + cycleTime + "s");
-                    lastCycleTime = System.currentTimeMillis();
+                    lastCycleTime = curTime;
                 }
-                shootTime = System.currentTimeMillis();
+                shootTime = curTime;
             }
         }
 
@@ -321,8 +328,7 @@ public class Robot {
         profile(4);
 
         // Calculate Motion Info
-        double curTime = System.currentTimeMillis() / 1000.0;
-        double timeDiff = curTime - prevTime;
+        double timeDiff = curTime / 1000 - prevTime;
         if (useT265) {
             x = odoCovariance * drivetrain.x + (1 - odoCovariance) * t265.getCamX();
             y = odoCovariance * drivetrain.y + (1 - odoCovariance) * t265.getCamY();
@@ -342,7 +348,7 @@ public class Robot {
         // Remember Previous Motion Info
         prevX = x; prevY = y;
         prevTheta = theta;
-        prevTime = curTime;
+        prevTime = curTime / 1000;
         prevVx = vx; prevVy = vy;
         prevW = w;
 
@@ -350,7 +356,7 @@ public class Robot {
 
         // Log Data
         if (loopCounter % loggerUpdatePeriod == 0) {
-            logger.logData(System.currentTimeMillis() - startTime, x, y, theta, vx, vy, w, ax, ay, a, numRings, shooter.magHome, shooter.feedHome, lastTarget, cycles, cycleTotal / cycles);
+            logger.logData(curTime - startTime, x, y, theta, vx, vy, w, ax, ay, a, numRings, shooter.magHome, shooter.feedHome, lastTarget, cycles, cycleTotal / cycles);
         }
 
         profile(6);
@@ -368,24 +374,36 @@ public class Robot {
         addPacket("4 Shooter Velocity", shooter.getVelocity());
         addPacket("5 numRings", numRings);
         addPacket("6 shoot", shoot  + " " + preShoot + " " + highGoal);
-        addPacket("7 Time", (System.currentTimeMillis() - startTime) / 1000);
+        addPacket("7 Run Time", (curTime - startTime) / 1000);
         addPacket("8 Update Frequency (Hz)", round(1 / timeDiff));
         addPacket("9 Pod Zeroes", drivetrain.zero1 + ", " + drivetrain.zero2 + ", " + drivetrain.zero3);
         if (!isAuto) {
-            addPacket("Cycle Time", (System.currentTimeMillis() - lastCycleTime) / 1000);
+            addPacket("Cycle Time", (curTime - lastCycleTime) / 1000);
             addPacket("Average Cycle Time", round(cycleTotal / cycles));
             addPacket("Cycles", cycles);
         }
 
         // Dashboard Drawings
-        drawGoals("black");
+        drawField();
+        drawRobot(this, "black");
 //        drawRobot(drivetrain.x, drivetrain.y, drivetrain.theta, "green");
 //        if (useT265) {
 //            drawRobot(t265.getCamX(), t265.getCamY(), t265.getCamTheta(), t265.confidenceColor());
 //        }
-        drawRobot(this, "black");
         for (Ring ring : ringPos) {
             drawRing(ring);
+        }
+        int shotRingCount = 0;
+        while (shotRingCount < shotRings.size()) {
+            Ring ring = shotRings.get(shotRingCount);
+            ring.updatePose(curTime);
+            double[] ringCoords = ring.getAbsCoords();
+            if (48 < ringCoords[0] && ringCoords[0] < 144 && 0 < ringCoords[1] && ringCoords[1] < 144) {
+                shotRingCount++;
+                drawRing(ring);
+            } else {
+                shotRings.remove(shotRingCount);
+            }
         }
         sendPacket();
 
@@ -411,7 +429,7 @@ public class Robot {
             if (shootYOverride != 0) {
                 log("Shooting at y = " + shootYOverride);
             }
-            startShootTime = System.currentTimeMillis();
+            startShootTime = curTime;
             log("High goal shoot initiated");
         }
     }
@@ -426,7 +444,7 @@ public class Robot {
             preShoot = true;
             highGoal = false;
             numRingsPreset = 3;
-            startShootTime = System.currentTimeMillis();
+            startShootTime = curTime;
             log("Powershot shoot initiated");
         }
     }
@@ -458,8 +476,8 @@ public class Robot {
         double targetX = shootXCor[targetNum];
         double targetY = shootYCor;
 
-        double shooterX = shootX + 6.5 * Math.sin(shootTheta);
-        double shooterY = shootY - 6.5 * Math.cos(shootTheta);
+        double shooterX = shootX + Shooter.SHOOTER_DX * Math.sin(shootTheta);
+        double shooterY = shootY - Shooter.SHOOTER_DX * Math.cos(shootTheta);
         double dx = targetX - shooterX;
         double dy = targetY - shooterY;
 
