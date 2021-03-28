@@ -140,7 +140,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
         return new ArrayList<>(prevRings);
     }
 
-    // Return a sorted list with up to two coordinate-filtered rings
+    // Return a sorted list with up to three coordinate-filtered rings
     public ArrayList<Ring> getRings(double robotX, double robotY, double robotTheta) {
         ArrayList<Ring> rings = getRings();
         int i = 0;

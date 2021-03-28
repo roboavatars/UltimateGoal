@@ -173,9 +173,9 @@ public class Robot {
             firstLoop = false;
         }
 
-        /*if (!isAuto && !preShoot && !shoot && !shooter.sensorBroken && loopCounter % sensorUpdatePeriod == 0) {
-            numRings = shooter.getNumRings();
-        }*/
+//        if (!isAuto && !preShoot && !shoot && !shooter.sensorBroken && loopCounter % sensorUpdatePeriod == 0) {
+//            numRings = shooter.getNumRings();
+//        }
 
         profile(1);
 
@@ -370,7 +370,7 @@ public class Robot {
         addPacket("6 shoot", shoot  + " " + preShoot + " " + highGoal);
         addPacket("7 Time", (System.currentTimeMillis() - startTime) / 1000);
         addPacket("8 Update Frequency (Hz)", round(1 / timeDiff));
-        addPacket("zeros", drivetrain.zero1 + ", " + drivetrain.zero2 + ", " + drivetrain.zero3);
+        addPacket("9 Pod Zeroes", drivetrain.zero1 + ", " + drivetrain.zero2 + ", " + drivetrain.zero3);
         if (!isAuto) {
             addPacket("Cycle Time", (System.currentTimeMillis() - lastCycleTime) / 1000);
             addPacket("Average Cycle Time", round(cycleTotal / cycles));
@@ -379,10 +379,10 @@ public class Robot {
 
         // Dashboard Drawings
         drawGoals("black");
-        /*drawRobot(drivetrain.x, drivetrain.y, drivetrain.theta, "green");
-        if (useT265) {
-            drawRobot(t265.getCamX(), t265.getCamY(), t265.getCamTheta(), t265.confidenceColor());
-        }*/
+//        drawRobot(drivetrain.x, drivetrain.y, drivetrain.theta, "green");
+//        if (useT265) {
+//            drawRobot(t265.getCamX(), t265.getCamY(), t265.getCamTheta(), t265.confidenceColor());
+//        }
         drawRobot(this, "black");
         for (Ring ring : ringPos) {
             drawRing(ring);
