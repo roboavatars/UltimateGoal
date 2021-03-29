@@ -9,8 +9,6 @@ import com.spartronics4915.lib.T265Camera;
 
 import java.io.File;
 
-import static java.lang.Math.PI;
-
 @SuppressWarnings("FieldCanBeLocal")
 public class T265 {
 
@@ -33,7 +31,7 @@ public class T265 {
 //    private String mapPath = System.getProperty("java.io.tmpdir") + "/map.bin";
     private String mapPath = "/data/user/0/com.qualcomm.ftcrobotcontroller/cache/map.bin";
     public boolean isEmpty = false;
-    private boolean exportingMap = false;
+    private boolean exportingMap = true;
 
     public T265(LinearOpMode op, double startX, double startY, double startTheta) {
 
@@ -64,8 +62,7 @@ public class T265 {
     }
 
     public void exportMap() {
-        if (!exportingMap) {
-            exportingMap = true;
+        if (exportingMap) {
             t265Cam.exportRelocalizationMap(mapPath);
             exportingMap = false;
         }

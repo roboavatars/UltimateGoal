@@ -1,19 +1,18 @@
 package org.firstinspires.ftc.teamcode.Tests.T265Tests;
 
-import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RobotClasses.MecanumDrivetrain;
 import org.firstinspires.ftc.teamcode.RobotClasses.T265;
 
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawField;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
-@TeleOp(name = "T265 Auto")
+@TeleOp(name = "0 T265 Auto")
 @Config
 //@Disabled
 public class T265Auto extends LinearOpMode {
@@ -24,6 +23,7 @@ public class T265Auto extends LinearOpMode {
     private double x;
     private double y;
     private double theta;
+    private double prevTime;
 
     @Override
     public void runOpMode() {
@@ -33,17 +33,10 @@ public class T265Auto extends LinearOpMode {
         waitForStart();
         t265.startCam();
 
-        double counter = 0;
+        int counter = 0;
 
         while(opModeIsActive()) {
             counter++;
-
-            if (counter >= 170000) {
-                t265.stopCam();
-            }
-            if (counter >= 220000) {
-                break;
-            }
 
             dt.setControls(-0.8 * gamepad1.left_stick_y, -0.8 * gamepad1.left_stick_x, -gamepad1.right_stick_x);
 
@@ -55,18 +48,26 @@ public class T265Auto extends LinearOpMode {
                 t265.exportMap();
             }
 
+            if (gamepad1.b) {
+                t265.stopCam();
+            }
+
             t265.updateCamPose();
             x = t265.getCamX();
             y = t265.getCamY();
             theta = t265.getCamTheta();
+
+            double curTime = (double) System.currentTimeMillis() / 1000;
+            double timeDiff = curTime - prevTime;
+            prevTime = curTime;
 
             drawField();
             drawRobot(x, y, theta, t265.confidenceColor());
             addPacket("X", x);
             addPacket("Y", y);
             addPacket("Theta", theta);
-            addPacket("counter", counter);
             addPacket("isEmpty", t265.isEmpty);
+            addPacket("Update Frequency (Hz)", 1 / timeDiff);
             sendPacket();
 
             telemetry.addData("X: ", x);
