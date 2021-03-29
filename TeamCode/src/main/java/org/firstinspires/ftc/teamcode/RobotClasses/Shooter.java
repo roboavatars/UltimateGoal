@@ -23,6 +23,8 @@ public class Shooter {
     public boolean sensorBroken = true;
 
     public static final double SHOOTER_DX = 6.5;
+    public static final double RING_SPEED = 150;
+    public static final double INITIAL_ANGLE = 0.08;
 
     private double lastVelocity = 0;
     private int numRings = 3;

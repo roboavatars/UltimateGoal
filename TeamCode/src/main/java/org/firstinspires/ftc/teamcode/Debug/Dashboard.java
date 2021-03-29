@@ -55,7 +55,7 @@ public class Dashboard {
     }
 
     public static void drawRect(double x1, double y1, double x2, double y2, String color) {
-        double[] xcoords = {y1 - 72, y2 - 72, y1 - 72, y2 - 72};
+        double[] xcoords = {y1 - 72, y2 - 72, y2 - 72, y1 - 72};
         double[] ycoords = {72 - x1, 72 - x1, 72 - x2, 72 - x2};
         packet.fieldOverlay().setFill(color).fillPolygon(xcoords, ycoords);
     }

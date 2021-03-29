@@ -20,22 +20,20 @@ public class T265 {
     // Constants
     public static double ODOMETRY_COVARIANCE = 1;
     private final double INCH_TO_METER = 0.0254;
-    private double xOffset = 7.75;
-    private double yOffset = -7;
+    private double xOffset = -5;
+    private double yOffset = 3;
 
     // Position Variables
-    private double startX;
-    private double startY;
-    private double startTheta;
     private double x;
     private double y;
     private double theta;
 
     // Other
     public double confidence = 0;
-    private String mapPath = System.getProperty("java.io.tmpdir") + "/map.bin";
-//    private String mapPath = "/data/user/0/com.qualcomm.ftcrobotcontroller/cache/map.bin";
+//    private String mapPath = System.getProperty("java.io.tmpdir") + "/map.bin";
+    private String mapPath = "/data/user/0/com.qualcomm.ftcrobotcontroller/cache/map.bin";
     public boolean isEmpty = false;
+    private boolean exportingMap = false;
 
     public T265(LinearOpMode op, double startX, double startY, double startTheta) {
 
@@ -43,6 +41,8 @@ public class T265 {
         if (!file.exists() || file.length() == 0) {
             isEmpty = true;
         }
+
+        Robot.log("isEmpty: " + isEmpty);
 
         if (!isEmpty) {
             t265Cam = new T265Camera(new Transform2d(), ODOMETRY_COVARIANCE, mapPath, op.hardwareMap.appContext);
@@ -63,16 +63,27 @@ public class T265 {
         });
     }
 
+    public void exportMap() {
+        if (!exportingMap) {
+            exportingMap = true;
+            t265Cam.exportRelocalizationMap(mapPath);
+            exportingMap = false;
+        }
+    }
+
     public void stopCam() {
-        t265Cam.exportRelocalizationMap(mapPath);
+//        exportMap();
         t265Cam.stop();
     }
 
     public void setCameraPose(double x, double y, double theta) {
-        double xPrime = yOffset * Math.cos(theta) + xOffset * Math.sin(theta);
-        double yPrime = yOffset * Math.sin(theta) - xOffset * Math.cos(theta);
+//        double xPrime = yOffset * Math.cos(theta) + xOffset * Math.sin(theta);
+//        double yPrime = yOffset * Math.sin(theta) - xOffset * Math.cos(theta);
+//
+//        t265Cam.setPose(new Pose2d((y - yPrime) * INCH_TO_METER, (xPrime - x) * INCH_TO_METER, new Rotation2d(theta - PI/2)));
+        t265Cam.setPose(new Pose2d(x * INCH_TO_METER, y * INCH_TO_METER, new Rotation2d(theta)));
 
-        t265Cam.setPose(new Pose2d((x + xPrime) * INCH_TO_METER, (y + yPrime) * INCH_TO_METER, new Rotation2d(theta - PI/2)));
+        Robot.log("inside t265 reset: " + x + ", " + y + ", " + theta);
     }
 
     public void sendOdometryData(double vx, double vy) {
@@ -93,24 +104,26 @@ public class T265 {
     }
 
     public double getCamX() {
-        double xPrime = yOffset * Math.cos(theta + PI/2) + xOffset * Math.sin(theta + PI/2);
-        return x - xPrime;
+//        double yPrime = yOffset * Math.sin(theta) - xOffset * Math.cos(theta);
+//        return -y - yPrime;
+        return x;
     }
 
     public double getCamY() {
-        double yPrime = yOffset * Math.sin(theta + PI/2) - xOffset * Math.cos(theta + PI/2);
-        return y - yPrime;
+//        double xPrime = yOffset * Math.cos(theta) + xOffset * Math.sin(theta);
+//        return x + xPrime;
+        return y;
     }
 
     public double getCamTheta() {
-        return theta + PI/2;
+        return theta;
     }
 
     public String confidenceColor() {
         if (confidence == 1) {
-            return "yellow";
-        } else if (confidence == 2) {
             return "orange";
+        } else if (confidence == 2) {
+            return "yellow";
         } else if (confidence == 3) {
             return "green";
         } else {

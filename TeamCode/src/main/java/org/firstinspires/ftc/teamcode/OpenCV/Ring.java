@@ -39,8 +39,8 @@ public class Ring {
         this.startY = startY - Shooter.SHOOTER_DX * Math.cos(theta);
         this.absX = this.startX;
         this.absY = this.startY;
-        this.vx = vx - Shooter.SHOOTER_DX * omega * Math.sin(theta);
-        this.vy = vy + Shooter.SHOOTER_DX * omega * Math.cos(theta);
+        this.vx = vx - Shooter.SHOOTER_DX * omega * Math.sin(theta) + Shooter.RING_SPEED * Math.cos(theta + Shooter.INITIAL_ANGLE);
+        this.vy = vy + Shooter.SHOOTER_DX * omega * Math.cos(theta) + Shooter.RING_SPEED * Math.sin(theta + Shooter.INITIAL_ANGLE);
         this.startTime = startTime;
     }
 
