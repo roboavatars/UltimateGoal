@@ -26,9 +26,8 @@ public class Constants {
     public static double MAG_HOME_POS = 0.085;
     public static double MAG_SHOOT_POS = 0.27;
 
-    public static double FEED_HOME_POS = 0;
-    public static double FEED_MID_POS = 0.2;
-    public static double FEED_TOP_POS = 0.9;
+    public static double FEED_HOME_POS = 0.95;
+    public static double FEED_TOP_POS = 0.25;
 
     public static double ZERO_DIST = 4.4;
     public static double ONE_DIST = 3.9;
@@ -36,8 +35,8 @@ public class Constants {
     public static double THREE_DIST = 2.5;
 
     // Wobble
-    public static double WOBBLE_UP_POS = 0.8;
-    public static double WOBBLE_DOWN_POS = 0.28;
+    public static double WOBBLE_UP_POS = 0.5;
+    public static double WOBBLE_DOWN_POS = 0.95;
 
     public static double WOBBLE_CLAMP_POS = 0.55;
     public static double WOBBLE_UNCLAMP_POS = 0;

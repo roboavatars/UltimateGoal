@@ -7,7 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
 @TeleOp @Config
 public class ShooterTest extends LinearOpMode {
@@ -15,10 +16,10 @@ public class ShooterTest extends LinearOpMode {
     private DcMotorEx shooter1;
     private DcMotorEx shooter2;
 
-    public static double p = 55;
+    public static double p = 52;
     public static double i = 0;
     public static double d = 0;
-    public static double f = 16;
+    public static double f = 13.5;
     public static int velocity = 875;
     public static boolean on = false;
 
@@ -28,8 +29,8 @@ public class ShooterTest extends LinearOpMode {
         shooter2 = hardwareMap.get(DcMotorEx.class, "shooter2");
         shooter1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooter2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooter1.setDirection(DcMotorSimple.Direction.FORWARD);
-        shooter2.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooter1.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooter2.setDirection(DcMotorSimple.Direction.FORWARD);
 
         waitForStart();
 

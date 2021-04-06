@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.Tests.FlickerTests;
+package org.firstinspires.ftc.teamcode.Tests;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
@@ -10,13 +10,12 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import static java.lang.Math.PI;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 
 @TeleOp
 @Config
 @Disabled
 public class DoubleFlickerTest extends LinearOpMode {
-    public static double bottomPos = Constants.FEED_MID_POS;
     public static double homePos = Constants.FEED_HOME_POS;
     public static double topPos = Constants.FEED_TOP_POS;
     public static int pos = 1;
@@ -46,9 +45,7 @@ public class DoubleFlickerTest extends LinearOpMode {
         while(opModeIsActive()) {
 
             if (debug) {
-                if (pos == 0) {
-                    position = bottomPos;
-                } else if (pos == 1) {
+                if (pos == 1) {
                     position = homePos;
                 } else if (pos == 2) {
                     position = topPos;

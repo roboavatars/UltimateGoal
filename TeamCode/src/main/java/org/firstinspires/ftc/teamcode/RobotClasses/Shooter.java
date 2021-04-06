@@ -36,8 +36,8 @@ public class Shooter {
         shooterMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooterMotor1.setVelocityPIDFCoefficients(52, 0, 0, 13.5);
         shooterMotor2.setVelocityPIDFCoefficients(52, 0, 0, 13.5);
-        shooterMotor1.setDirection(DcMotorSimple.Direction.FORWARD);
-        shooterMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooterMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
+        shooterMotor2.setDirection(DcMotorSimple.Direction.FORWARD);
 
         magServo = op.hardwareMap.get(Servo.class, "magServo");
         feedServo = op.hardwareMap.get(Servo.class, "feedServo");
@@ -86,11 +86,6 @@ public class Shooter {
     public void feedHome() {
         feedServo.setPosition(Constants.FEED_HOME_POS);
         feedHome = true;
-    }
-
-    public void feedMid() {
-        feedServo.setPosition(Constants.FEED_MID_POS);
-        feedHome = false;
     }
 
     public void feedTop() {
