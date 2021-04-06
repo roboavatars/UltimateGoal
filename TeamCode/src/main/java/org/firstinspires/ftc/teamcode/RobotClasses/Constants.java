@@ -36,7 +36,7 @@ public class Constants {
 
     // Wobble
     public static double WOBBLE_UP_POS = 0.7;
-    public static double WOBBLE_DOWN_POS = 0.15;
+    public static double WOBBLE_DOWN_POS = 0.2;
 
     public static double WOBBLE_CLAMP_POS = 0.55;
     public static double WOBBLE_UNCLAMP_POS = 0;

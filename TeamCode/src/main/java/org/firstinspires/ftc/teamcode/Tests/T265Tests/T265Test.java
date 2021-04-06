@@ -12,10 +12,10 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawField;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
-@TeleOp(name = "0 T265 Auto")
+@TeleOp(name = "0 T265 Test")
 @Config
 //@Disabled
-public class T265Auto extends LinearOpMode {
+public class T265Test extends LinearOpMode {
 
     public static double startX = 111;
     public static double startY = 63;
@@ -33,12 +33,9 @@ public class T265Auto extends LinearOpMode {
         waitForStart();
         t265.startCam();
 
-        int counter = 0;
-
         while(opModeIsActive()) {
-            counter++;
 
-            dt.setControls(-0.8 * gamepad1.left_stick_y, -0.8 * gamepad1.left_stick_x, -gamepad1.right_stick_x);
+            dt.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
 
             if (gamepad1.x) {
                 t265.setCameraPose(startX, startY, startTheta);
@@ -53,9 +50,9 @@ public class T265Auto extends LinearOpMode {
             }
 
             t265.updateCamPose();
-            x = t265.getCamX();
-            y = t265.getCamY();
-            theta = t265.getCamTheta();
+            x = t265.getX();
+            y = t265.getY();
+            theta = t265.getTheta();
 
             double curTime = (double) System.currentTimeMillis() / 1000;
             double timeDiff = curTime - prevTime;

@@ -16,10 +16,10 @@ public class T265 {
     private T265Camera t265Cam;
 
     // Constants
-    public static double ODOMETRY_COVARIANCE = 1;
+    public final double ODOMETRY_COVARIANCE = 0.1;
     private final double INCH_TO_METER = 0.0254;
-    private double xOffset = -5;
-    private double yOffset = 3;
+    private final double xOffset = -9;
+    private final double yOffset = 2;
 
     // Position Variables
     private double x;
@@ -28,8 +28,8 @@ public class T265 {
 
     // Other
     public double confidence = 0;
-//    private String mapPath = System.getProperty("java.io.tmpdir") + "/map.bin";
-    private String mapPath = "/data/user/0/com.qualcomm.ftcrobotcontroller/cache/map.bin";
+//    private final String mapPath = System.getProperty("java.io.tmpdir") + "/map.bin";
+    private final String mapPath = "/data/user/0/com.qualcomm.ftcrobotcontroller/cache/map.bin";
     public boolean isEmpty = false;
     private boolean exportingMap = true;
 
@@ -51,14 +51,7 @@ public class T265 {
     }
 
     public void startCam() {
-        t265Cam.start((state) -> {
-            Translation2d translation = new Translation2d(state.pose.getTranslation().getX() / INCH_TO_METER, state.pose.getTranslation().getY() / INCH_TO_METER);
-            Rotation2d rotation = state.pose.getRotation();
-
-            x = translation.getX();
-            y = translation.getY();
-            theta = rotation.getRadians();
-        });
+        t265Cam.start();
     }
 
     public void exportMap() {
@@ -74,45 +67,49 @@ public class T265 {
     }
 
     public void setCameraPose(double x, double y, double theta) {
-//        double xPrime = yOffset * Math.cos(theta) + xOffset * Math.sin(theta);
-//        double yPrime = yOffset * Math.sin(theta) - xOffset * Math.cos(theta);
-//
-//        t265Cam.setPose(new Pose2d((y - yPrime) * INCH_TO_METER, (xPrime - x) * INCH_TO_METER, new Rotation2d(theta - PI/2)));
-        t265Cam.setPose(new Pose2d(x * INCH_TO_METER, y * INCH_TO_METER, new Rotation2d(theta)));
+        y -= xOffset * Math.cos(theta) - yOffset * Math.sin(theta);
+        x -= -xOffset * Math.sin(theta) - yOffset * Math.cos(theta);
 
-        Robot.log("inside t265 reset: " + x + ", " + y + ", " + theta);
+        t265Cam.setPose(new Pose2d(y * INCH_TO_METER, -x * INCH_TO_METER, new Rotation2d(theta)));
     }
 
     public void sendOdometryData(double vx, double vy) {
-        t265Cam.sendOdometry(vx, vy);
+        t265Cam.sendOdometry(vy, -vx);
     }
 
     public void updateCamPose() {
-        T265Camera.CameraUpdate temp = t265Cam.getLastReceivedCameraUpdate();
-        if (temp.confidence == T265Camera.PoseConfidence.Low) {
+        T265Camera.CameraUpdate state = t265Cam.getLastReceivedCameraUpdate();
+
+        Translation2d translation = new Translation2d(state.pose.getTranslation().getX() / INCH_TO_METER, state.pose.getTranslation().getY() / INCH_TO_METER);
+        Rotation2d rotation = state.pose.getRotation();
+
+        y = translation.getX();
+        x = -translation.getY();
+        theta = rotation.getRadians();
+
+        y += xOffset * Math.cos(theta) - yOffset * Math.sin(theta);
+        x += -xOffset * Math.sin(theta) - yOffset * Math.cos(theta);
+
+        if (state.confidence == T265Camera.PoseConfidence.Low) {
             confidence = 1;
-        } else if (temp.confidence == T265Camera.PoseConfidence.Medium) {
+        } else if (state.confidence == T265Camera.PoseConfidence.Medium) {
             confidence = 2;
-        } else if (temp.confidence == T265Camera.PoseConfidence.High) {
+        } else if (state.confidence == T265Camera.PoseConfidence.High) {
             confidence = 3;
         } else {
             confidence = 0;
         }
     }
 
-    public double getCamX() {
-//        double yPrime = yOffset * Math.sin(theta) - xOffset * Math.cos(theta);
-//        return -y - yPrime;
+    public double getX() {
         return x;
     }
 
-    public double getCamY() {
-//        double xPrime = yOffset * Math.cos(theta) + xOffset * Math.sin(theta);
-//        return x + xPrime;
+    public double getY() {
         return y;
     }
 
-    public double getCamTheta() {
+    public double getTheta() {
         return theta;
     }
 

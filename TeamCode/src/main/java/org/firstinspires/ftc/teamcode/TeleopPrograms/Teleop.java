@@ -11,7 +11,7 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import java.util.Arrays;
 
-@TeleOp(name = "Teleop")
+@TeleOp(name = "2 Teleop")
 @Config
 public class Teleop extends LinearOpMode {
 

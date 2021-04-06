@@ -44,7 +44,7 @@ public class Robot {
     private boolean startVoltTooLow = false;
 
     // Class Constants
-    private final int loggerUpdatePeriod = 2;
+    private final int loggerUpdatePeriod = 3;
     private final int sensorUpdatePeriod = 15;
     private final double xyTolerance = 1;
     private final double thetaTolerance = PI/35;
@@ -218,13 +218,15 @@ public class Robot {
             }
 
             // Move to shooting position
-            if (!isAtPose(target[0], target[1], target[2], 1, 1, PI/35) || !notMoving() || !preShootOverride) {
+            if (!isAtPose(target[0], target[1], target[2], 1, 1, PI/35) && !notMoving()) {
                 setTargetPoint(target[0], target[1], target[2]);
-                log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") Moving to shoot position: " + Arrays.toString(target));
+                log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") (" + round(vx) + ", " + round(vy) + ", " + round(w) +
+                        ") Moving to shoot position: [" + round(target[0]) + ", " + round(target[1]) + ", " + round(target[2]) + "]");
             }
 
             // Start auto-feed when mag is up, velocity is high enough, and robot is at position
-            else if (!shooter.magHome && (shooter.getVelocity() > vThresh || preShootOverride)) {
+            if ((isAtPose(target[0], target[1], target[2], 1, 1, PI/35) && notMoving()
+                   && shooter.getVelocity() > vThresh) || preShootOverride) {
                 if (highGoal) {
                     shootDelay = highGoalDelay;
                 } else {
@@ -241,7 +243,7 @@ public class Robot {
             }
 
             // If robot does not converge or mag gets stuck
-            else if (curTime - startShootTime > preShootTimeBackup) {
+            if (curTime - startShootTime > preShootTimeBackup) {
                 cancelShoot();
             }
         }
@@ -272,7 +274,6 @@ public class Robot {
                             || curTime - flickTime > flickTimeBackup) {
 
                         log("In shoot Velocity: " + shooter.getVelocity());
-                        log("Drivetrain Velocities: " + round(vx) + " " + round(vy) + " " + round(w));
                         if (!highGoal) {
                             log("PS pos: " + round(x) + ", " + round(y) + ", " + round(theta));
                         }
@@ -330,9 +331,9 @@ public class Robot {
         // Calculate Motion Info
         double timeDiff = curTime / 1000 - prevTime;
         if (useT265) {
-            x = odoCovariance * drivetrain.x + (1 - odoCovariance) * t265.getCamX();
-            y = odoCovariance * drivetrain.y + (1 - odoCovariance) * t265.getCamY();
-            theta = odoCovariance * drivetrain.theta + (1 - odoCovariance) * t265.getCamTheta();
+            x = odoCovariance * drivetrain.x + (1 - odoCovariance) * t265.getX();
+            y = odoCovariance * drivetrain.y + (1 - odoCovariance) * t265.getY();
+            theta = odoCovariance * drivetrain.theta + (1 - odoCovariance) * t265.getTheta();
         } else {
             x = drivetrain.x;
             y = drivetrain.y;
@@ -388,7 +389,7 @@ public class Robot {
         drawRobot(this, "black");
 //        drawRobot(drivetrain.x, drivetrain.y, drivetrain.theta, "green");
 //        if (useT265) {
-//            drawRobot(t265.getCamX(), t265.getCamY(), t265.getCamTheta(), t265.confidenceColor());
+//            drawRobot(t265.getX(), t265.getY(), t265.getTheta(), t265.confidenceColor());
 //        }
         for (Ring ring : ringPos) {
             drawRing(ring);
