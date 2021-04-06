@@ -20,13 +20,8 @@ public class HardwareTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-//        Servo leftStick = hardwareMap.get(Servo.class, "leftStick");
-//        Servo rightStick = hardwareMap.get(Servo.class, "rightStick");
-
-        Servo servo = hardwareMap.get(Servo.class, "feedServo");
-        Servo magServo = hardwareMap.get(Servo.class, "magServo");
-
-        magServo.setPosition(Constants.MAG_SHOOT_POS);
+        Servo leftStick = hardwareMap.get(Servo.class, "wobbleServo");
+        Servo rightStick = hardwareMap.get(Servo.class, "clampServo");
 
         waitForStart();
 
@@ -34,19 +29,13 @@ public class HardwareTest extends LinearOpMode {
 
             if (debug) {
                 if (home) {
-//                    leftStick.setPosition(leftHome);
-//                    rightStick.setPosition(rightHome);
-
-                    servo.setPosition(leftHome);
+                    leftStick.setPosition(leftHome);
+                    rightStick.setPosition(rightHome);
                 } else {
-//                    leftStick.setPosition(leftOut);
-//                    rightStick.setPosition(rightOut);
-
-                    servo.setPosition(leftOut);
+                    leftStick.setPosition(leftOut);
+                    rightStick.setPosition(rightOut);
                 }
-            }
-
-//            else {
+//            } else {
 //                if (gamepad1.dpad_left) {
 //                    leftStick.setPosition(leftHome);
 //                    rightStick.setPosition(rightHome);
@@ -54,21 +43,7 @@ public class HardwareTest extends LinearOpMode {
 //                    leftStick.setPosition(leftOut);
 //                    rightStick.setPosition(rightOut);
 //                }
-//            }
-
-//            if (gamepad1.x) {
-//                magServo.setPosition(Constants.MAG_SHOOT_POS);
-//            } else {
-//                magServo.setPosition(Constants.MAG_HOME_POS);
-//            }
-//
-//            if (gamepad1.right_trigger > 0) {
-//                intake.on();
-//            } else if (gamepad1.left_trigger > 0) {
-//                intake.reverse();
-//            } else {
-//                intake.off();
-//            }
+            }
         }
     }
 }
