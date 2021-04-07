@@ -49,20 +49,20 @@ public class MecanumDrivetrain {
     private final double motorUpdateTolerance = 0.05;
 
     // Odometry constants
-    public static double ticksToInch1 = 0.00588046031;
-    public static double ticksToInch2 = 0.00582564639;
-    public static double ticksToInch3 = 0.00583427502;
+    public static double ticksToInch1 = 0.00586744033;
+    public static double ticksToInch2 = 0.00581575827;
+    public static double ticksToInch3 = 0.00584042611;
     public static double OdometryTrackWidth = 13.565;
     public static double OdometryHorizontalOffset = -2.845;
     private final double OdometryHeadingThreshold = PI/8;
 
     // PD controller constants
-    public final static double xKp = 0.5;
-    public final static double yKp = 0.5;
-    public final static double thetaKp = 4.0;
-    public final static double xKd = 0.047;
-    public final static double yKd = 0.047;
-    public final static double thetaKd = 0.15;
+    public final static double xKp = 0.7;
+    public final static double yKp = 0.6;
+    public final static double thetaKp = 5.0;
+    public final static double xKd = 0.05;
+    public final static double yKd = 0.05;
+    public final static double thetaKd = 0.2;
 
     // Odometry delta 0 counters
     public int zero1, zero2, zero3;

@@ -40,7 +40,7 @@ public class LocalizationTest extends LinearOpMode {
             // Update Time Variables
             curTime = (double) System.currentTimeMillis() / 1000;
             timeDiff = curTime - prevTime;
-            runTime = curTime - startTime;
+            runTime = curTime - startTime / 1000;
             prevTime = curTime;
 
             // Update Drivetrain Kinematics Variables
@@ -55,7 +55,7 @@ public class LocalizationTest extends LinearOpMode {
             odoTheta = dt.theta;
 
             // Update T265 Kinematics Variables
-            t265.sendOdometryData(odoVx, odoVy, odoTheta, odoW);
+//            t265.sendOdometryData(odoVx, odoVy, odoTheta, odoW);
             t265.updateCamPose();
 
             camX = t265.getX();

@@ -16,10 +16,10 @@ public class ShooterTest extends LinearOpMode {
     private DcMotorEx shooter1;
     private DcMotorEx shooter2;
 
-    public static double p = 52;
+    public static double p = 54;
     public static double i = 0;
     public static double d = 0;
-    public static double f = 13.5;
+    public static double f = 14;
     public static int velocity = 875;
     public static boolean on = false;
 

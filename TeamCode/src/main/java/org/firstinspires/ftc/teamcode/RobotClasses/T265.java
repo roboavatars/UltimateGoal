@@ -68,7 +68,7 @@ public class T265 {
     }
 
     public void setCameraPose(double x, double y, double theta) {
-        x -= xOffset * Math.sin(theta) - yOffset * Math.cos(theta);
+        x -= -xOffset * Math.sin(theta) - yOffset * Math.cos(theta);
         y -= xOffset * Math.cos(theta) - yOffset * Math.sin(theta);
 
         t265Cam.setPose(new Pose2d(y * INCH_TO_METER, -x * INCH_TO_METER, new Rotation2d(theta)));

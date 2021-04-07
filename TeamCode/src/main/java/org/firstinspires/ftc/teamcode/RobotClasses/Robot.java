@@ -44,7 +44,7 @@ public class Robot {
     private boolean startVoltTooLow = false;
 
     // Class Constants
-    private final int loggerUpdatePeriod = 3;
+    private final int loggerUpdatePeriod = 5;
     private final int sensorUpdatePeriod = 15;
     private final double xyTolerance = 1;
     private final double thetaTolerance = PI/35;
