@@ -30,11 +30,11 @@ public class RingLocatorPipeline extends OpenCvPipeline {
     public static double ANGLE_MAX = 110;
 
     // Camera Constants
-    public static double CAM_HEIGHT = 19;
-    public static double CAM_FRONT = 3.25;
-    public static double CAM_LEFT = 7.75;
-    public static double CAM_PHI = Math.toRadians(28);
-    public static double CAM_VFOV = Math.toRadians(40);
+    public static double CAM_HEIGHT = 17;
+    public static double CAM_FRONT = 3;
+    public static double CAM_LEFT = 8.5;
+    public static double CAM_PHI = Math.toRadians(12.3);
+    public static double CAM_VFOV = Math.toRadians(55);
     public static double CAM_HFOV = Math.toRadians(55);
 
     // Image Processing Mats
@@ -79,7 +79,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
                 height = ellipse.size.height;
                 angle = ellipse.angle;
                 xPix = ellipse.center.x / 160 - 1; // x ∈ [-1, 1]
-                yPix = 1 - ellipse.center.y / 180; // y ∈ (0, 1)
+                yPix = 1 - ellipse.center.y / 240; // y ∈ (0, 1)
 
 //                log("x: " + xPix);
 //                log("y: " + yPix);
@@ -88,10 +88,11 @@ public class RingLocatorPipeline extends OpenCvPipeline {
 
                 // Analyze Valid Contours
                 if (HEIGHT_MIN < height && height < HEIGHT_MAX && WIDTH_MIN < width && width < WIDTH_MAX && ANGLE_MIN < angle && angle < ANGLE_MAX) {
-                    Imgproc.ellipse(input, ellipse, new Scalar(0, 255, 0), 1);
 
                     // Calculate Center of Ring if Y is in Valid Domain
-                    if (0 < yPix && yPix < 1) {
+                    if (0 < yPix && yPix < 0.71) {
+                        Imgproc.ellipse(input, ellipse, new Scalar(0, 255, 0), 1);
+
                         double[] xy = map2Dto3D(xPix, yPix);
                         Ring curRing = new Ring(xy[0], xy[1]);
 
@@ -104,7 +105,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
                         }
                     }
                 } else {
-                    // Imgproc.ellipse(input, ellipse, new Scalar(255, 0, 0), 1);
+//                     Imgproc.ellipse(input, ellipse, new Scalar(255, 0, 0), 1);
                 }
             }
         }

@@ -37,7 +37,7 @@ public class AutoRingDetectionTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        robot = new Robot(this, 87, 63, PI/2, false);
+        robot = new Robot(this, 111, 63, PI/2, false);
         robot.intake.blockerDown();
         robot.intake.sticksHome();
         robot.intake.updateSticks();
@@ -54,11 +54,12 @@ public class AutoRingDetectionTest extends LinearOpMode {
             theta = robot.theta;
 
             rings = locator.getRings(x, y, theta);
-            addPacket("Rings", rings);
             for (int i = 0; i < rings.size(); i++) {
                 if (i == 0) {
                     drawRing(rings.get(i), "green");
                 } else if (i == 1) {
+                    drawRing(rings.get(i), "yellow");
+                } else if (i == 2) {
                     drawRing(rings.get(i), "red");
                 }
             }

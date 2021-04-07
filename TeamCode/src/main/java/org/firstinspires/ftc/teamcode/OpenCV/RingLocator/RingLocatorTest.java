@@ -4,6 +4,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.OpenCV.Ring;
+import org.firstinspires.ftc.teamcode.RobotClasses.MecanumDrivetrain;
 
 import java.util.ArrayList;
 
@@ -14,20 +15,22 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
 public class RingLocatorTest extends LinearOpMode {
 
     private RingLocator detector;
+    private MecanumDrivetrain dt;
     private ArrayList<Ring> rings;
-    public static double x = 87;
-    public static double y = 63;
-    public static double theta = PI/2;
 
     @Override
     public void runOpMode() {
+        dt = new MecanumDrivetrain(this, 111, 63, PI/2);
         detector = new RingLocator(this);
         detector.start();
 
         waitForStart();
 
         while (opModeIsActive()) {
-            rings = detector.getRings(x, y, theta);
+            dt.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
+            dt.updatePose();
+
+            rings = detector.getRings(dt.x, dt.y, dt.theta);
 
             for (int i = 0; i < rings.size(); i++) {
                 if (i == 0) {
@@ -38,7 +41,8 @@ public class RingLocatorTest extends LinearOpMode {
                     drawRing(rings.get(i), "red");
                 }
             }
-            drawRobot(x, y, theta, "black");
+            drawRobot(dt.x, dt.y, dt.theta, "black");
+            drawField();
 
             addPacket("Rings", rings);
             sendPacket();

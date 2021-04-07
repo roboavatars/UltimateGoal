@@ -570,7 +570,7 @@ public class Robot {
     }
 
     private void profile(int num) {
-        //Log.w("profiler", num + ": " + profiler.milliseconds());
+        Log.w("profiler", num + ": " + profiler.milliseconds());
     }
 
     @SuppressLint("DefaultLocale")
