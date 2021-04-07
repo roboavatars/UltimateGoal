@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.OpenCV.Ring;
 import org.firstinspires.ftc.teamcode.Pathing.Path;
-import org.firstinspires.ftc.teamcode.Pathing.Pose;
+import org.firstinspires.ftc.teamcode.Pathing.Target;
 import org.firstinspires.ftc.teamcode.Pathing.Waypoint;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
@@ -24,28 +24,24 @@ public class AutoRingDetectionTest extends LinearOpMode {
     private ArrayList<Ring> rings;
     private ArrayList<Waypoint> ringWaypoints;
     private double[] ringPos;
-    private Pose finalPose;
+    private double[] ringIntakeTheta = new double[3];
     private double ringTime = 0;
     private Path ringPath;
 
     private double intakePower = 0;
     private boolean start = false;
+    private double startTime, driveTime;
 
-    private double x;
-    private double y;
-    private double theta;
+    private double x, y, theta;
 
     @Override
     public void runOpMode() {
         robot = new Robot(this, 111, 63, PI/2, false);
         robot.intake.blockerDown();
-        robot.intake.sticksHome();
-        robot.intake.updateSticks();
         locator = new RingLocator(this);
         locator.start();
 
         waitForStart();
-
         ElapsedTime timer = new ElapsedTime();
 
         while (opModeIsActive()) {
@@ -53,6 +49,7 @@ public class AutoRingDetectionTest extends LinearOpMode {
             y = robot.y;
             theta = robot.theta;
 
+            // Get Ring Positions
             rings = locator.getRings(x, y, theta);
             for (int i = 0; i < rings.size(); i++) {
                 if (i == 0) {
@@ -65,65 +62,97 @@ public class AutoRingDetectionTest extends LinearOpMode {
             }
 
             if (start) {
+                // Follow Path
                 double curTime = Math.min(timer.seconds(), ringTime);
-                Pose curPose = ringPath.getRobotPose(curTime);
-                robot.setTargetPoint(curPose);
-                intakePower = 1;
+                if (curTime < 0.75) {
+                    robot.setTargetPoint(ringPath.getRobotPose(curTime));
+                } else if (rings.size() >= 1 && curTime < 1.5) {
+                    robot.setTargetPoint(new Target(ringPath.getRobotPose(curTime)).thetaW0(ringIntakeTheta[0]));
+                } else if (rings.size() >= 2 && curTime < 3.0) {
+                    robot.setTargetPoint(new Target(ringPath.getRobotPose(curTime)).thetaW0(ringIntakeTheta[1]));
+                } else if (rings.size() == 3 && curTime < 4.5) {
+                    robot.setTargetPoint(new Target(ringPath.getRobotPose(curTime)).thetaW0(ringIntakeTheta[2]));
+                }
 
-                if (curTime > ringTime && robot.isAtPose(finalPose.x, finalPose.y, finalPose.theta)) {
+                intakePower = 1;
+                driveTime = (double) System.currentTimeMillis() / 1000 - startTime;
+
+                // Stop Following if Done
+                if (curTime >= ringTime && robot.isAtPose(126, 134, PI/2)) {
                     start = false;
                     intakePower = 0;
                 }
             } else {
+                // Intake Controls
                 if (gamepad1.right_trigger > 0) {
                     intakePower = 1;
                 } else if (gamepad1.left_trigger > 0) {
                     intakePower = -1;
-                } else if (!start) {
+                } else {
                     intakePower = 0;
                 }
 
-                if (gamepad1.left_trigger != 0) {
-                    robot.resetOdo(87, 63, PI/2);
+                // Reset Odo
+                if (gamepad1.x) {
+                    robot.resetOdo(111, 63, PI/2);
                 }
 
-//                if (robot.numRings == 0) {
-//                    robot.intake.autoSticks(x, y, theta, 6);
-//                }
+                // Auto Sticks
+                robot.intake.autoSticks(x, y, theta, 6);
 
+                // Start Path Following
                 if (gamepad1.b) {
                     start = true;
+                    startTime = (double) System.currentTimeMillis() / 1000;
                     timer.reset();
                 }
 
+                // Generate Path
                 ringWaypoints = new ArrayList<>();
                 ringWaypoints.add(new Waypoint(x, y, theta, 50, 60, 0, 0));
 
                 ringTime = 0;
                 if (rings.size() >= 1) {
                     ringPos = rings.get(0).driveToRing(x, y);
-                    if (ringPos[1] > 135) {
-                        ringPos[2] = PI/2;
-                    }
-                    ringWaypoints.add(new Waypoint(ringPos[0], ringPos[1], ringPos[2], 20, 30, 0, ringTime + 1.5));
                     ringTime += 1.5;
-                }
-                if (rings.size() == 2) {
-                    ringPos = rings.get(1).driveToRing(ringPos[0], ringPos[1]);
-                    if (ringPos[1] > 135) {
-                        ringPos[2] = PI/2;
+                    if (ringPos[1] > 132) {
+                        ringPos[2] = 0;
+                        ringIntakeTheta[0] = ringPos[0] - x < 0 ? 3*PI/4 : PI/4;
+                    } else {
+                        ringIntakeTheta[0] = ringPos[2];
                     }
-                    ringWaypoints.add(new Waypoint(ringPos[0], ringPos[1], ringPos[2], 20, 30, 0, ringTime + 1.5));
-                    ringTime += 1.5;
+                    ringWaypoints.add(new Waypoint(ringPos[0], Math.min(132, ringPos[1]), ringPos[2], 30, 10, 0, ringTime));
+
+                    if (rings.size() >= 2) {
+                        ringPos = rings.get(1).driveToRing(ringPos[0], ringPos[1]);
+                        ringTime += 1.5;
+                        if (ringPos[1] > 132) {
+                            ringPos[2] = 0;
+                            ringIntakeTheta[1] = ringPos[0] - rings.get(0).getX() < 0 ? 3*PI/4 : PI/4;
+                        } else {
+                            ringIntakeTheta[1] = ringPos[2];
+                        }
+                        ringWaypoints.add(new Waypoint(ringPos[0], Math.min(132, ringPos[1]), ringPos[2], 30, 10, 0, ringTime));
+
+                        if (rings.size() >= 3) {
+                            ringPos = rings.get(2).driveToRing(ringPos[0], ringPos[1]);
+                            ringTime += 1.5;
+                            if (ringPos[1] > 132 && rings.get(2).getY() > 132) {
+                                ringPos[2] = 0;
+                                ringIntakeTheta[2] = ringPos[0] - rings.get(1).getX() < 0 ? 3*PI/4 : PI/4;
+                            } else {
+                                ringIntakeTheta[2] = ringPos[2];
+                            }
+                            ringWaypoints.add(new Waypoint(ringPos[0], Math.min(132, ringPos[1]), ringPos[2], 30, 10, 0, ringTime));
+                        }
+                    }
                 }
-                ringWaypoints.add(new Waypoint(123, 134, PI, 30, 20, 0, ringTime + 1.5));
-                ringTime += 1.5;
 
                 ringPath = new Path(ringWaypoints);
-                finalPose = ringPath.getRobotPose(ringTime);
             }
 
-            for (double i = 0; i < ringTime; i += ringTime / 40) {
+            // Draw Path
+            for (double i = (start ? driveTime : 0); i < ringTime; i += ringTime / 50) {
                 try {
                     drawPoint(ringPath.getRobotPose(i).x, ringPath.getRobotPose(i).y, "blue");
                 } catch (ArrayIndexOutOfBoundsException ignore) {}
@@ -134,5 +163,6 @@ public class AutoRingDetectionTest extends LinearOpMode {
         }
 
         locator.stop();
+        robot.stop();
     }
 }

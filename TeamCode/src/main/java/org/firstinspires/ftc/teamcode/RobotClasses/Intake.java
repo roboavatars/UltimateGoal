@@ -92,7 +92,7 @@ public class Intake {
     }
 
     public void autoSticks(double x, double y, double theta, double buffer) {
-        double[] leftPos = new double[] {x - 33 * Math.sin(theta) + 7 * Math.cos(theta), y + 33 * Math.cos(theta) + 7 * Math.sin(theta)};
+        double[] leftPos = new double[] {x - 27 * Math.sin(theta) + 7 * Math.cos(theta), y + 27 * Math.cos(theta) + 7 * Math.sin(theta)};
         double[] rightPos = new double[] {x + 27 * Math.sin(theta) + 7 * Math.cos(theta), y - 27 * Math.cos(theta) + 7 * Math.sin(theta)};
         if (48 + buffer <= leftPos[0] && leftPos[0] <= 144 - buffer && 0 + buffer <= leftPos[1] && leftPos[1] <= 144 - buffer) {
             stickLeft(Constants.L_OUT_POS);

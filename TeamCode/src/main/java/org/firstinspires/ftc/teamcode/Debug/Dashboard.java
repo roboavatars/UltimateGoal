@@ -31,11 +31,8 @@ public class Dashboard {
         // Clear Left Side
         drawRect(0, 0, 48, 144, "white");
 
-        // New Perimeter
-        drawLine(48, 0, 48, 144, "black");
-        drawLine(48, 144, 144, 144, "black");
-        drawLine(144, 0, 144, 144, "black");
-        drawLine(48, 0, 144, 0, "black");
+        // Perimeter
+        outlineRect(48, 0, 144, 144, "black");
 
         // Tower Goal
         drawRect(96, 144, 120, 150, "black");
@@ -52,6 +49,12 @@ public class Dashboard {
 
     public static void drawLine(double x1, double y1, double x2, double y2, String color) {
         packet.fieldOverlay().setStroke(color).strokeLine(y1 - 72, 72 - x1, y2 - 72, 72 - x2);
+    }
+
+    public static void outlineRect(double x1, double y1, double x2, double y2, String color) {
+        double[] xcoords = {y1 - 72, y2 - 72, y2 - 72, y1 - 72};
+        double[] ycoords = {72 - x1, 72 - x1, 72 - x2, 72 - x2};
+        packet.fieldOverlay().setStroke(color).strokePolygon(xcoords, ycoords);
     }
 
     public static void drawRect(double x1, double y1, double x2, double y2, String color) {
