@@ -15,9 +15,8 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawField;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
-@TeleOp(name="Basic T265 Test")
+@TeleOp(name = "Basic T265 Test")
 public class DefaultT265Test extends LinearOpMode {
-
     private static T265Camera slamra = null;
 
     public static double startX = 111;
@@ -39,7 +38,7 @@ public class DefaultT265Test extends LinearOpMode {
 
         while(opModeIsActive()) {
 
-            dt.setControls(-0.8 * gamepad1.left_stick_y, -0.8 * gamepad1.left_stick_x, -gamepad1.right_stick_x);
+            dt.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
 
             T265Camera.CameraUpdate up = slamra.getLastReceivedCameraUpdate();
             if (up == null) continue;

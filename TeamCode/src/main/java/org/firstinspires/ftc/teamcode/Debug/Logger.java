@@ -11,6 +11,7 @@ import java.io.FileWriter;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -19,7 +20,7 @@ public class Logger {
 
     private static final String basePath = "/sdcard/FIRST/robotLogs/RobotData";
     private static FileWriter fileWriter;
-    private String data = "";
+    private LinkedList<String> data;
 
     /**
      * Creates a new file and writes first row
@@ -27,7 +28,7 @@ public class Logger {
      */
     public void startLogging(boolean isAuto) {
         try {
-            data = "";
+            data = new LinkedList<>();
             File robotDataLog = new File(getLogName(true));
             fileWriter = new FileWriter(robotDataLog);
             fileWriter.write("# " + (isAuto ? "Auto" : "Teleop") + "\n");
@@ -66,26 +67,26 @@ public class Logger {
     }
 
     /**
-     * Adds data to string
+     * Adds data to LinkedList
      */
     @SuppressLint("SimpleDateFormat")
-    public void logData(double timeSinceSt, double x, double y, double theta, double vx, double vy, double w,
-                        double ax, double ay, double alpha, int numRings, boolean magHome, boolean feedHome,
-                        int lastTarget, int numCycles, double avgCycleTime) {
+    public void logData(double timeSinceSt, double x, double y, double theta, double vx, double vy, double w, double ax, double ay, double alpha,
+                        int numRings, boolean magHome, boolean feedHome, int lastTarget, int numCycles, double avgCycleTime) {
         SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss.SSS");
-        data += df.format(new Date()) + "," + timeSinceSt + "," + x + "," + y + "," + theta + "," + vx + "," + vy + "," + w + "," +
-                ax + "," + ay + "," + alpha + "," + numRings + "," + magHome + "," + feedHome + "," + lastTarget + "," + numCycles + "," + avgCycleTime + "\n";
+        data.add(df.format(new Date()) + "," + timeSinceSt + "," + x + "," + y + "," + theta + "," + vx + "," + vy + "," + w + "," +
+                ax + "," + ay + "," + alpha + "," + numRings + "," + magHome + "," + feedHome + "," + lastTarget + "," + numCycles + "," + avgCycleTime + "\n");
     }
 
     /**
-     * Writes string to file, closes file
+     * Writes data to file, closes file
      */
     public void stopLogging() {
         try {
-            fileWriter.write(data);
+            for (String line : data) {
+                fileWriter.write(line);
+            }
             fileWriter.close();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

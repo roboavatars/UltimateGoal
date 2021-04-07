@@ -12,12 +12,13 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawField;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
-@TeleOp(name = "Localization Test")
+@TeleOp(name = "Combined Localization Test")
 public class LocalizationTest extends LinearOpMode {
-    private double dtX, dtY, dtTheta;
+    private double odoX, odoY, odoTheta;
+    private double odoVx, odoVy, odoW;
     private double camX, camY, camTheta;
     private double x, y, theta;
-    private double prevTime;
+    private double startTime, runTime, curTime, prevTime, timeDiff;
 
     private double startX = 111;
     private double startY = 63;
@@ -30,48 +31,75 @@ public class LocalizationTest extends LinearOpMode {
 
         waitForStart();
         t265.startCam();
+        startTime = System.currentTimeMillis();
 
         while(opModeIsActive()) {
+            // Driving
             dt.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
 
-            dt.updatePose();
-            t265.updateCamPose();
+            // Update Time Variables
+            curTime = (double) System.currentTimeMillis() / 1000;
+            timeDiff = curTime - prevTime;
+            runTime = curTime - startTime;
+            prevTime = curTime;
 
-            dtX = dt.x;
-            dtY = dt.y;
-            dtTheta = dt.theta;
+            // Update Drivetrain Kinematics Variables
+            dt.updatePose();
+
+            odoVx = (dt.x - odoX) / timeDiff;
+            odoVy = (dt.y - odoY) / timeDiff;
+            odoW = (dt.theta - odoTheta) / timeDiff;
+
+            odoX = dt.x;
+            odoY = dt.y;
+            odoTheta = dt.theta;
+
+            // Update T265 Kinematics Variables
+            t265.sendOdometryData(odoVx, odoVy, odoTheta, odoW);
+            t265.updateCamPose();
 
             camX = t265.getX();
             camY = t265.getY();
             camTheta = t265.getTheta();
 
+            // Update Robot Kinematics Variables
             if (t265.confidence <= 1) {
-                x = dtX;
-                y = dtY;
-                theta = dtTheta;
+                x = covariance(odoX, camX, 0);
+                y = covariance(odoY, camY, 0);
+                theta = covariance(odoTheta, camTheta, 0);
             } else if (t265.confidence == 2) {
-                x = (dtX + camX) / 2;
-                y = (dtY + camY) / 2;
-                theta = (dtTheta + camTheta) / 2;
+                x = covariance(odoX, camX, 60);
+                y = covariance(odoY, camY, 60);
+                theta = covariance(odoTheta, camTheta, 60);
             } else if (t265.confidence == 3) {
-                x = camX;
-                y = camY;
-                theta = camTheta;
+                x = covariance(odoX, camX, runTime);
+                y = covariance(odoY, camY, runTime);
+                theta = covariance(odoTheta, camTheta, runTime);
             }
 
-            double curTime = (double) System.currentTimeMillis() / 1000;
-            double timeDiff = curTime - prevTime;
-            prevTime = curTime;
-
+            // Dashboard
             drawField();
-            drawRobot(dtX, dtY, dtTheta, "green");
-            drawRobot(camX, camY, camTheta, "red");
+            drawRobot(odoX, odoY, odoTheta, "blue");
+            drawRobot(camX, camY, camTheta, t265.confidenceColor());
             drawRobot(x, y, theta, "black");
             addPacket("X", x);
             addPacket("Y", y);
             addPacket("Theta", theta);
+            addPacket("Run Time", runTime);
             addPacket("Update Frequency (Hz)", 1 / timeDiff);
             sendPacket();
+        }
+
+        t265.stopCam();
+    }
+
+    private double covariance(double odo, double t265, double time) {
+        if (time <= 5) {
+            return odo;
+        } else if (time >= 120) {
+            return t265;
+        } else {
+            return odo * (1 - time / 120) + t265 * time / 120;
         }
     }
 }
