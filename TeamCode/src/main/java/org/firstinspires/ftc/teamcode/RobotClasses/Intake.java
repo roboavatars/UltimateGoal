@@ -48,11 +48,12 @@ public class Intake {
     }
 
     public void on() {
+
         setPower(1);
     }
 
     public void reverse() {
-        setPower(-1);
+        setPower(-0.5);
     }
 
     public void off() {
