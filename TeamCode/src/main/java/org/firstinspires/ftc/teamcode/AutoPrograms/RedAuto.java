@@ -265,7 +265,7 @@ public class RedAuto extends LinearOpMode {
                             ArrayList<Waypoint> ringWaypoints = new ArrayList<>();
                             ringWaypoints.add(new Waypoint(robot.x, robot.y, robot.theta, 50, 60, 0, 0));
 
-                            double[] ringPos;
+                            double[] ringPos = new double[3];
                             ringTime = 0;
                             if (rings.size() >= 1) {
                                 ringPos = rings.get(0).driveToRing(robot.x, robot.y);
@@ -276,31 +276,31 @@ public class RedAuto extends LinearOpMode {
                                 } else {
                                     ringIntakeTheta[0] = ringPos[2];
                                 }
-                                ringWaypoints.add(new Waypoint(ringPos[0], Math.min(132, ringPos[1]), ringPos[2], 30, 10, 0, ringTime));
+                                ringWaypoints.add(new Waypoint(ringPos[0], Math.min(132, ringPos[1]), ringIntakeTheta[0], 30, 10, 0, ringTime));
+                            }
 
-                                if (rings.size() >= 2) {
-                                    ringPos = rings.get(1).driveToRing(ringPos[0], ringPos[1]);
-                                    ringTime += 1.5;
-                                    if (ringPos[1] > 132) {
-                                        ringPos[2] = 0;
-                                        ringIntakeTheta[1] = ringPos[0] - rings.get(0).getX() < 0 ? 3*PI/4 : PI/4;
-                                    } else {
-                                        ringIntakeTheta[1] = ringPos[2];
-                                    }
-                                    ringWaypoints.add(new Waypoint(ringPos[0], Math.min(132, ringPos[1]), ringPos[2], 30, 10, 0, ringTime));
-
-                                    if (rings.size() >= 3) {
-                                        ringPos = rings.get(2).driveToRing(ringPos[0], ringPos[1]);
-                                        ringTime += 1.5;
-                                        if (ringPos[1] > 132 && rings.get(2).getY() > 132) {
-                                            ringPos[2] = 0;
-                                            ringIntakeTheta[2] = ringPos[0] - rings.get(1).getX() < 0 ? 3*PI/4 : PI/4;
-                                        } else {
-                                            ringIntakeTheta[2] = ringPos[2];
-                                        }
-                                        ringWaypoints.add(new Waypoint(ringPos[0], Math.min(132, ringPos[1]), ringPos[2], 30, 10, 0, ringTime));
-                                    }
+                            if (rings.size() >= 2) {
+                                ringPos = rings.get(1).driveToRing(ringPos[0], Math.min(132, ringPos[1]));
+                                ringTime += 1.5;
+                                if (ringPos[1] > 132) {
+                                    ringPos[2] = 0;
+                                    ringIntakeTheta[1] = ringPos[0] - rings.get(0).getX() < 0 ? 3*PI/4 : PI/4;
+                                } else {
+                                    ringIntakeTheta[1] = ringPos[2];
                                 }
+                                ringWaypoints.add(new Waypoint(ringPos[0], Math.min(132, ringPos[1]), ringIntakeTheta[1], 30, 10, 0, ringTime));
+                            }
+
+                            if (rings.size() >= 3) {
+                                ringPos = rings.get(2).driveToRing(ringPos[0], Math.min(132, ringPos[1]));
+                                ringTime += 1.5;
+                                if (ringPos[1] > 132 && rings.get(2).getY() > 132) {
+                                    ringPos[2] = 0;
+                                    ringIntakeTheta[2] = ringPos[0] - rings.get(1).getX() < 0 ? 3*PI/4 : PI/4;
+                                } else {
+                                    ringIntakeTheta[2] = ringPos[2];
+                                }
+                                ringWaypoints.add(new Waypoint(ringPos[0], Math.min(132, ringPos[1]), ringIntakeTheta[2], 30, 10, 0, ringTime));
                             }
                             ringPath = new Path(new ArrayList<>(ringWaypoints));
                         } else {

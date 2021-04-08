@@ -48,7 +48,6 @@ public class Intake {
     }
 
     public void on() {
-
         setPower(1);
     }
 

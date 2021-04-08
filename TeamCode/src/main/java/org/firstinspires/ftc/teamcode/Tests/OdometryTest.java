@@ -2,10 +2,14 @@ package org.firstinspires.ftc.teamcode.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.MecanumDrivetrain;
 
+import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawField;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
@@ -16,15 +20,17 @@ public class OdometryTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        MecanumDrivetrain dt = new MecanumDrivetrain(this, 90, 9, Math.PI/2);
+        MecanumDrivetrain dt = new MecanumDrivetrain(this, 111, 63, PI/2);
+        Servo magServo = hardwareMap.get(Servo.class, "magServo");
 
         waitForStart();
+        magServo.setPosition(Constants.MAG_HOME_POS);
 
         while(opModeIsActive()) {
             dt.setControls(-gamepad1.left_stick_y * 0.8, -gamepad1.left_stick_x * 0.8, -gamepad1.right_stick_x * 0.8);
 
             if (gamepad1.x) {
-                dt.resetOdo(90, 9, Math.PI/2);
+                dt.resetOdo(111, 63, PI/2);
             }
 
             dt.updatePose();
@@ -36,6 +42,7 @@ public class OdometryTest extends LinearOpMode {
             double timeDiff = curTime - prevTime;
             prevTime = curTime;
 
+            drawField();
             drawRobot(x, y, theta, "green");
             addPacket("X", x);
             addPacket("Y", y);

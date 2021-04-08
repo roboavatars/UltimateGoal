@@ -13,7 +13,6 @@ import static java.lang.Math.PI;
 @Config
 @Disabled
 public class PDTest extends LinearOpMode {
-
     private Robot robot;
     private static double targetX = 96;
     private static double targetY = 72;
