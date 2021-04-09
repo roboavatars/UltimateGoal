@@ -27,7 +27,7 @@ public class OdometryTest extends LinearOpMode {
         magServo.setPosition(Constants.MAG_HOME_POS);
 
         while(opModeIsActive()) {
-            dt.setControls(-gamepad1.left_stick_y * 0.8, -gamepad1.left_stick_x * 0.8, -gamepad1.right_stick_x * 0.8);
+            dt.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
 
             if (gamepad1.x) {
                 dt.resetOdo(111, 63, PI/2);
