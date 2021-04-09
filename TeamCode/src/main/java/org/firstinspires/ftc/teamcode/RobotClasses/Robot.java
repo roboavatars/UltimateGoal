@@ -49,8 +49,8 @@ public class Robot {
     private final double xyTolerance = 1;
     private final double thetaTolerance = PI/35;
 
-    private double odoCovariance = 1;
-    private boolean useT265 = false;
+    private double odoCovariance = 0;
+    private boolean useT265 = true;
 
     // State Variables
     private final boolean isAuto;
@@ -243,9 +243,9 @@ public class Robot {
             }
 
             // If robot does not converge or mag gets stuck
-            if (curTime - startShootTime > preShootTimeBackup) {
-                cancelShoot();
-            }
+//            if (curTime - startShootTime > preShootTimeBackup) {
+//                cancelShoot();
+//            }
         }
 
         profile(2);
@@ -271,7 +271,7 @@ public class Robot {
                     // Shoot ring only if robot at position and velocity low enough
                     if ((highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/60))
                             || (!highGoal && isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/180) && notMoving())
-                            || curTime - flickTime > flickTimeBackup) {
+                            /*|| curTime - flickTime > flickTimeBackup*/) {
 
                         log("In shoot Velocity: " + shooter.getVelocity());
                         if (!highGoal) {
@@ -321,7 +321,7 @@ public class Robot {
         // Update Position
         drivetrain.updatePose();
         if (odoCovariance != 1) {
-            // t265.sendOdometryData(vx, vy);
+//             t265.sendOdometryData(vx, vy, theta w);
             t265.updateCamPose();
         }
         intake.updateSticks();
@@ -570,7 +570,7 @@ public class Robot {
     }
 
     private void profile(int num) {
-        Log.w("profiler", num + ": " + profiler.milliseconds());
+//        Log.w("profiler", num + ": " + profiler.milliseconds());
     }
 
     @SuppressLint("DefaultLocale")

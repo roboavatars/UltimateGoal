@@ -20,17 +20,15 @@ public class OdometryTest extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        MecanumDrivetrain dt = new MecanumDrivetrain(this, 111, 63, PI/2);
-        Servo magServo = hardwareMap.get(Servo.class, "magServo");
+        MecanumDrivetrain dt = new MecanumDrivetrain(this, 90, 9, PI/2);
 
         waitForStart();
-        magServo.setPosition(Constants.MAG_HOME_POS);
 
         while(opModeIsActive()) {
             dt.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
 
             if (gamepad1.x) {
-                dt.resetOdo(111, 63, PI/2);
+                dt.resetOdo(90, 9, PI/2);
             }
 
             dt.updatePose();

@@ -11,17 +11,19 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import java.util.Arrays;
 
+import static java.lang.Math.PI;
+
 @TeleOp(name = "2 Teleop")
 @Config
 public class Teleop extends LinearOpMode {
 
-    public int startX = 90;
-    public int startY = 9;
-    public double startTheta = Math.PI/2;
+    public int startX = 111;
+    public int startY = 63;
+    public double startTheta = PI/2;
 
     private Robot robot;
     public static boolean robotCentric = true;
-    public static boolean useAutoPos = true;
+    public static boolean useAutoPos = false;
 
     public double xyGain = 1;
     public double wGain = 1;
@@ -172,7 +174,7 @@ public class Teleop extends LinearOpMode {
 
             // Reset Odometry
             if (gamepad1.x) {
-                robot.resetOdo(111, 63, Math.PI/2);
+                robot.resetOdo(111, 63, PI/2);
                 robot.thetaOffset = 0;
             }
 

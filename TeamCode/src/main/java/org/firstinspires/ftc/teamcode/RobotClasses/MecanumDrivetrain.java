@@ -49,8 +49,10 @@ public class MecanumDrivetrain {
     private final double motorUpdateTolerance = 0.05;
 
     // Odometry constants
-    public static double ticksToInch = 0.00599227948;
-    public static double OdometryTrackWidth = 13.595;
+    public static double ticksToInch1 = 0.00600112521;
+    public static double ticksToInch2 = 0.00599737615;
+    public static double ticksToInch3 = 0.00600487896;
+    public static double OdometryTrackWidth = 13.5975;
     public static double OdometryHorizontalOffset = -2.875;
     private final double OdometryHeadingThreshold = PI/8;
 
@@ -177,9 +179,9 @@ public class MecanumDrivetrain {
     // update position from odometry
     public void updatePose() {
         try {
-            pod1 = motorFrontRight.getCurrentPosition() * -ticksToInch;
-            pod2 = motorBackRight.getCurrentPosition() * ticksToInch;
-            pod3 = motorFrontLeft.getCurrentPosition() * ticksToInch;
+            pod1 = motorFrontRight.getCurrentPosition() * -ticksToInch1;
+            pod2 = motorBackRight.getCurrentPosition() * ticksToInch2;
+            pod3 = motorFrontLeft.getCurrentPosition() * ticksToInch3;
 
             deltapod1 = pod1 - lastpod1;
             deltapod2 = pod2 - lastpod2;
@@ -202,23 +204,23 @@ public class MecanumDrivetrain {
 
             deltaheading = (deltapod2 - deltapod1) / OdometryTrackWidth;
 
-            double localx = (deltapod1 + deltapod2) / 2;
-            double localy = deltapod3 - deltaheading * OdometryHorizontalOffset;
+            double localX = (deltapod1 + deltapod2) / 2;
+            double localY = deltapod3 - deltaheading * OdometryHorizontalOffset;
 
             if (deltaheading < OdometryHeadingThreshold) {
-                x += localx * Math.cos(theta) - localy * Math.sin(theta);
-                y += localy * Math.cos(theta) + localx * Math.sin(theta);
+                x += localX * Math.cos(theta) - localY * Math.sin(theta);
+                y += localY * Math.cos(theta) + localX * Math.sin(theta);
 
             } else {
-                x += (localx * Math.sin(theta + deltaheading) + localy * Math.cos(theta + deltaheading)
-                        - localx * Math.sin(theta) - localy * Math.cos(theta)) / deltaheading;
-                y += (localy * Math.sin(theta + deltaheading) - localx * Math.cos(theta + deltaheading)
-                        - localy * Math.sin(theta) + localx * Math.cos(theta)) / deltaheading;
+                x += (localX * Math.sin(theta + deltaheading) + localY * Math.cos(theta + deltaheading)
+                        - localX * Math.sin(theta) - localY * Math.cos(theta)) / deltaheading;
+                y += (localY * Math.sin(theta + deltaheading) - localX * Math.cos(theta + deltaheading)
+                        - localY * Math.sin(theta) + localX * Math.cos(theta)) / deltaheading;
             }
 
             theta += deltaheading;
-            theta = theta % (PI * 2);
-            if (theta < 0) theta += PI * 2;
+            theta = theta % (2*PI);
+            if (theta < 0) theta += 2*PI;
 
             lastpod1 = pod1;
             lastpod2 = pod2;
@@ -227,17 +229,4 @@ public class MecanumDrivetrain {
             e.printStackTrace();
         }
     }
-
-    // odometry bulk read (old)
-    /*public LynxGetBulkInputDataResponse revBulkData() {
-        LynxGetBulkInputDataResponse response;
-        try {
-            LynxGetBulkInputDataCommand command = new LynxGetBulkInputDataCommand(module);
-            response = command.sendReceive();
-        } catch (Exception e) {
-            opMode.telemetry.addData("Exception", "bulk read exception");
-            response = null;
-        }
-        return response;
-    }*/
 }

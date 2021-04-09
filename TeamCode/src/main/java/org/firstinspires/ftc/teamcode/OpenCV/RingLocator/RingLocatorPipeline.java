@@ -30,12 +30,12 @@ public class RingLocatorPipeline extends OpenCvPipeline {
     public static double ANGLE_MAX = 110;
 
     // Camera Constants
-    public static double CAM_HEIGHT = 17;
+    public static double CAM_HEIGHT = 19.7;
     public static double CAM_FRONT = 3;
     public static double CAM_LEFT = 8.5;
-    public static double CAM_PHI = Math.toRadians(12.3);
-    public static double CAM_VFOV = Math.toRadians(55);
-    public static double CAM_HFOV = Math.toRadians(55);
+    public static double CAM_PHI = Math.toRadians(47.4);
+    public static double CAM_VFOV = Math.toRadians(67.6);
+    public static double CAM_HFOV = Math.toRadians(55.6);
 
     // Image Processing Mats
     private RingProcessor processor;
@@ -90,7 +90,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
                 if (HEIGHT_MIN < height && height < HEIGHT_MAX && WIDTH_MIN < width && width < WIDTH_MAX && ANGLE_MIN < angle && angle < ANGLE_MAX) {
 
                     // Calculate Center of Ring if Y is in Valid Domain
-                    if (0 < yPix && yPix < 0.71) {
+                    if (0 < yPix && yPix < 1) {
                         Imgproc.ellipse(input, ellipse, new Scalar(0, 255, 0), 1);
 
                         double[] xy = map2Dto3D(xPix, yPix);
