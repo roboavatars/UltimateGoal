@@ -187,24 +187,14 @@ public class Robot {
         // Pre-shoot tasks: Turn on flywheel, move robot to shooting position, mag up, start auto-feed once ready
         if (preShoot) {
 
-            // Set flywheel velocity and shooting position based on what we want to shoot
-            double[] target;
+            // Set flywheel velocity based on what we want to shoot
             int vThresh;
             if (highGoal) {
                 shooter.flywheelHG();
                 vThresh = Constants.HIGH_GOAL_VELOCITY - 40;
-
-                double shootY = 61;
-                if (isAuto) {
-                    if (shootYOverride != 0) {
-                        shootY = shootYOverride;
-                    }
-                }
-                target = shootTargets(x, shootY, PI/2, 3);
             } else {
                 shooter.flywheelPS();
                 vThresh = Constants.POWERSHOT_VELOCITY - 40;
-                target = new double[] {psShootPos[0], psShootPos[1], thetaPositions[2]};
             }
 
             // Turn off intake and put mag up
@@ -219,7 +209,7 @@ public class Robot {
 
             // Move to shooting position
             if (!isAtPose(target[0], target[1], target[2], 1, 1, PI/35) && !notMoving()) {
-                setTargetPoint(target[0], target[1], target[2]);
+                setTargetPoint(new Target(target[0], target[1], target[2]).xyKp(0.5).thetaKp(4).xyKd(0.04).thetaKd(0.15));
                 log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") (" + round(vx) + ", " + round(vy) + ", " + round(w) +
                         ") Moving to shoot position: [" + round(target[0]) + ", " + round(target[1]) + ", " + round(target[2]) + "]");
             }
@@ -243,9 +233,9 @@ public class Robot {
             }
 
             // If robot does not converge or mag gets stuck
-//            if (curTime - startShootTime > preShootTimeBackup) {
-//                cancelShoot();
-//            }
+            /*if (curTime - startShootTime > preShootTimeBackup) {
+                cancelShoot();
+            }*/
         }
 
         profile(2);
@@ -262,7 +252,7 @@ public class Robot {
                     target = new double[] {psShootPos[0], psShootPos[1], thetaPositions[numRings - 1]};
                     lastTarget = 3 - numRings;
                 }
-                setTargetPoint(target[0], target[1], target[2]);
+                setTargetPoint(new Target(target[0], target[1], target[2]).xyKp(0.5).thetaKp(4).xyKd(0.04).thetaKd(0.15));
             }
 
             // Auto feed rings
@@ -271,7 +261,7 @@ public class Robot {
                     // Shoot ring only if robot at position and velocity low enough
                     if ((highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/60))
                             || (!highGoal && isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/180) && notMoving())
-                            /*|| curTime - flickTime > flickTimeBackup*/) {
+                            || curTime - flickTime > flickTimeBackup) {
 
                         log("In shoot Velocity: " + shooter.getVelocity());
                         if (!highGoal) {
@@ -321,7 +311,7 @@ public class Robot {
         // Update Position
         drivetrain.updatePose();
         if (odoCovariance != 1) {
-//             t265.sendOdometryData(vx, vy, theta w);
+            // t265.sendOdometryData(vx, vy);
             t265.updateCamPose();
         }
         intake.updateSticks();
@@ -366,9 +356,9 @@ public class Robot {
         if (startVoltTooLow) {
             addPacket("0", "Starting Battery Voltage < 12.4!!!!");
         }
-        if (shooter.sensorBroken) {
+        /*if (shooter.sensorBroken) {
             addPacket("0", "Distance Sensor Broken!!!!");
-        }
+        }*/
         addPacket("1 X", round(x));
         addPacket("2 Y", round(y));
         addPacket("3 Theta", round(theta));
@@ -427,10 +417,16 @@ public class Robot {
             if (numRings != 3) {
                 log("Shooting with " + numRings + " rings");
             }
-            if (shootYOverride != 0) {
-                log("Shooting at y = " + shootYOverride);
-            }
             startShootTime = curTime;
+
+            double shootY = 61;
+            if (isAuto) {
+                if (shootYOverride != 0) {
+                    shootY = shootYOverride;
+                    log("Shooting at y = " + shootYOverride);
+                }
+            }
+            target = shootTargets(x, shootY, PI/2, 3);
             log("High goal shoot initiated");
         }
     }
@@ -446,6 +442,7 @@ public class Robot {
             highGoal = false;
             numRingsPreset = 3;
             startShootTime = curTime;
+            target = new double[] {psShootPos[0], psShootPos[1], thetaPositions[2]};
             log("Powershot shoot initiated");
         }
     }
@@ -483,7 +480,7 @@ public class Robot {
         double dy = targetY - shooterY;
 
         // Uses Angle Bisector for High Goal for more consistency
-        if (targetNum == 3 && (x < 48 || x > 132)) {
+        if (targetNum == 3) {
             double d = 8;
             double a = Math.sqrt(Math.pow(dx + d/2, 2) + Math.pow(dy, 2));
             double b = Math.sqrt(Math.pow(dx - d/2, 2) + Math.pow(dy, 2));
