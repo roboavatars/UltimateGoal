@@ -25,6 +25,12 @@ public class StackHeightPipeline extends OpenCvPipeline {
     // Cases
     public enum RingCase {Zero, One, Four}
 
+    // Rectangle
+    public static int RECT_X = 140;
+    public static int RECT_Y = 100;
+    public static int RECT_WIDTH = 90;
+    public static int RECT_HEIGHT = 90;
+
     // Thresholds
     public static int HEIGHT_MIN = 10;
     public static int WIDTH_MIN = 15;
@@ -54,7 +60,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
     public Mat processFrame(Mat input) {
         // Process Image
         processor.saveMatToDisk("raw.jpg", input);
-        input = new Mat(input, new Rect(140, 0, 90, 90));
+        input = new Mat(input, new Rect(RECT_X, RECT_Y, RECT_WIDTH, RECT_HEIGHT));
         processed = processor.processFrame(input)[0];
 
         // Find Contours

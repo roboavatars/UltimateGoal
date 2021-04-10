@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 import static java.lang.Math.PI;
 
-@TeleOp(name = "2 Teleop")
+@TeleOp(name = "1 Teleop")
 @Config
 public class Teleop extends LinearOpMode {
 
@@ -53,10 +53,10 @@ public class Teleop extends LinearOpMode {
     B - Cancel Shoot
     X - Toggle Sticks (Up/Out)
     Y - Pre-Rev Flywheel for High Goal
-    Dpad Up - Reset Theta Offset
     Dpad Left - Decrease Theta Offset
-    Dpad Down - Wobble Arm Up/Down
     Dpad Right - Increase Theta Offset
+    Dpad Up - Reset Theta Offset
+    Dpad Down - Wobble Arm Up/Down
     Left Bumper -  Wobble Clamp/Unclamp
     Right Bumper - Slow Mode
     Left Trigger - Shoot Override
@@ -138,7 +138,7 @@ public class Teleop extends LinearOpMode {
             }
 
             // Wobble Arm Up / Down
-            if (gamepad2.left_bumper && !downToggle) {
+            if (gamepad2.dpad_down && !downToggle) {
                 downToggle = true;
                 if (armDown) {
                     robot.wobbleArm.armUp();
@@ -146,12 +146,12 @@ public class Teleop extends LinearOpMode {
                     robot.wobbleArm.armDown();
                 }
                 armDown = !armDown;
-            } else if (!gamepad2.left_bumper && downToggle) {
+            } else if (!gamepad2.dpad_down && downToggle) {
                 downToggle = false;
             }
 
             // Wobble Clamp / Unclamp
-            if (gamepad2.dpad_down && !clampToggle) {
+            if (gamepad2.left_bumper && !clampToggle) {
                 clampToggle = true;
                 if (clamped) {
                     robot.wobbleArm.unClamp();
@@ -159,7 +159,7 @@ public class Teleop extends LinearOpMode {
                     robot.wobbleArm.clamp();
                 }
                 clamped = !clamped;
-            } else if (!gamepad2.dpad_down && clampToggle) {
+            } else if (!gamepad2.left_bumper && clampToggle) {
                 clampToggle = false;
             }
 

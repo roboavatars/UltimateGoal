@@ -90,7 +90,7 @@ public class RingLocatorPipeline extends OpenCvPipeline {
                 if (HEIGHT_MIN < height && height < HEIGHT_MAX && WIDTH_MIN < width && width < WIDTH_MAX && ANGLE_MIN < angle && angle < ANGLE_MAX) {
 
                     // Calculate Center of Ring if Y is in Valid Domain
-                    if (0 < yPix && yPix < 0.8) {
+                    if (0.1 < yPix && yPix < 0.8) {
                         Imgproc.ellipse(input, ellipse, new Scalar(0, 255, 0), 1);
 
                         double[] xy = map2Dto3D(xPix, yPix);

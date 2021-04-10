@@ -208,8 +208,8 @@ public class Robot {
             }
 
             // Move to shooting position
-            if (!isAtPose(target[0], target[1], target[2], 1, 1, PI/35) && !notMoving()) {
-                setTargetPoint(new Target(target[0], target[1], target[2]).xyKp(0.5).thetaKp(4).xyKd(0.04).thetaKd(0.15));
+            if (!isAtPose(target[0], target[1], target[2], 1, 1, PI/35) || !notMoving()) {
+                setTargetPoint(new Target(target[0], target[1], target[2]));
                 log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") (" + round(vx) + ", " + round(vy) + ", " + round(w) +
                         ") Moving to shoot position: [" + round(target[0]) + ", " + round(target[1]) + ", " + round(target[2]) + "]");
             }
@@ -252,7 +252,7 @@ public class Robot {
                     target = new double[] {psShootPos[0], psShootPos[1], thetaPositions[numRings - 1]};
                     lastTarget = 3 - numRings;
                 }
-                setTargetPoint(new Target(target[0], target[1], target[2]).xyKp(0.5).thetaKp(4).xyKd(0.04).thetaKd(0.15));
+                setTargetPoint(new Target(target[0], target[1], target[2]));
             }
 
             // Auto feed rings
