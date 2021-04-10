@@ -49,8 +49,8 @@ public class Robot {
     private final double xyTolerance = 1;
     private final double thetaTolerance = PI/35;
 
-    private double odoCovariance = 0;
-    private boolean useT265 = true;
+    private double odoCovariance = 1;
+    private boolean useT265 = false;
 
     // State Variables
     private final boolean isAuto;

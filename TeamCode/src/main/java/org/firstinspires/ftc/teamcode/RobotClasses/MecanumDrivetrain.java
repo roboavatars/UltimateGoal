@@ -50,10 +50,10 @@ public class MecanumDrivetrain {
 
     // Odometry constants
     public static double ticksToInch1 = 0.00600112521;
-    public static double ticksToInch2 = 0.00599737615;
-    public static double ticksToInch3 = 0.00600487896;
-    public static double OdometryTrackWidth = 13.5975;
-    public static double OdometryHorizontalOffset = -2.875;
+    public static double ticksToInch2 = 0.00600112521;
+    public static double ticksToInch3 = 0.00600112521;
+    public static double OdometryTrackWidth = 13.655;
+    public static double OdometryHorizontalOffset = -1.83;
     private final double OdometryHeadingThreshold = PI/8;
 
     // PD controller constants
@@ -181,7 +181,7 @@ public class MecanumDrivetrain {
         try {
             pod1 = motorFrontRight.getCurrentPosition() * -ticksToInch1;
             pod2 = motorBackRight.getCurrentPosition() * ticksToInch2;
-            pod3 = motorFrontLeft.getCurrentPosition() * ticksToInch3;
+            pod3 = motorFrontLeft.getCurrentPosition() * -ticksToInch3;
 
             deltapod1 = pod1 - lastpod1;
             deltapod2 = pod2 - lastpod2;
