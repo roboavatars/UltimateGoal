@@ -311,7 +311,7 @@ public class Robot {
         // Update Position
         drivetrain.updatePose();
         if (odoCovariance != 1) {
-            // t265.sendOdometryData(vx, vy);
+//             t265.sendOdometryData(vx, vy, theta, w);
             t265.updateCamPose();
         }
         intake.updateSticks();
