@@ -26,7 +26,7 @@ public class Shooter {
     public static final double RING_SPEED = 150;
     public static final double INITIAL_ANGLE = 0.08;
 
-    private double lastVelocity = 0;
+    private double targetVelocity = 0;
     private int numRings = 3;
 
     public Shooter(LinearOpMode op) {
@@ -65,13 +65,25 @@ public class Shooter {
 //        if (velocity != lastVelocity) {
             shooterMotor1.setVelocity(velocity);
             shooterMotor2.setVelocity(velocity);
-            Robot.log(velocity+" ");
-            lastVelocity = velocity;
+            Robot.log(velocity + "");
+            targetVelocity = velocity;
 //        }
     }
 
     public double getVelocity() {
+        return (shooterMotor1.getVelocity() + shooterMotor2.getVelocity()) / 2;
+    }
+
+    public double getTargetVelocity() {
+        return targetVelocity;
+    }
+
+    public double getVelocity1() {
         return shooterMotor1.getVelocity();
+    }
+
+    public double getVelocity2() {
+        return shooterMotor2.getVelocity();
     }
 
     public void magHome() {

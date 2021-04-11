@@ -15,7 +15,7 @@ import static java.lang.Math.PI;
 public class T265 {
 
     // Electronics
-    private static T265Camera t265Cam;
+    private final T265Camera t265Cam;
 
     // Constants
     public final double ODOMETRY_COVARIANCE = 0.1;
