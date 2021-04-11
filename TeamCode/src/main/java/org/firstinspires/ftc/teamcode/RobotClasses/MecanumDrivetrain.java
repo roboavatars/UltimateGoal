@@ -179,9 +179,9 @@ public class MecanumDrivetrain {
     // update position from odometry
     public void updatePose() {
         try {
-            pod1 = motorFrontRight.getCurrentPosition() * -ticksToInch1;
-            pod2 = motorBackRight.getCurrentPosition() * ticksToInch2;
-            pod3 = motorFrontLeft.getCurrentPosition() * -ticksToInch3;
+            pod1 = motorBackLeft.getCurrentPosition() * ticksToInch1;
+            pod2 = motorFrontLeft.getCurrentPosition() * -ticksToInch2;
+            pod3 = motorFrontRight.getCurrentPosition() * ticksToInch3;
 
             deltapod1 = pod1 - lastpod1;
             deltapod2 = pod2 - lastpod2;
