@@ -15,7 +15,7 @@ public class Constants {
     public static double R_SHOOT_POS = 0.1;
     public static double R_OUT_POS = 0;
 
-    public static double BLOCKER_HOME_POS = 0.7;
+    public static double BLOCKER_HOME_POS = 0.75;
     public static double BLOCKER_UP_POS = 0.45;
     public static double BLOCKER_DOWN_POS = 0.25;
 
@@ -35,8 +35,8 @@ public class Constants {
     public static double THREE_DIST = 2.5;
 
     // Wobble
-    public static double WOBBLE_UP_POS = 0.7;
-    public static double WOBBLE_DOWN_POS = 0.2;
+    public static double WOBBLE_UP_POS = 0.73;
+    public static double WOBBLE_DOWN_POS = 0.18;
 
     public static double WOBBLE_CLAMP_POS = 0.55;
     public static double WOBBLE_UNCLAMP_POS = 0;

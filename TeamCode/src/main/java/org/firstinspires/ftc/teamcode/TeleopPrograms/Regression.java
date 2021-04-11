@@ -3,9 +3,9 @@ package org.firstinspires.ftc.teamcode.TeleopPrograms;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import static java.lang.Math.PI;
-
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
+
+import static java.lang.Math.PI;
 
 @TeleOp
 public class Regression extends LinearOpMode {
@@ -21,7 +21,6 @@ public class Regression extends LinearOpMode {
     private final double thetaTol = PI/35;
 
     private Robot robot;
-    private final boolean robotCentric = false;
     public boolean flywheelToggle = false;
     public boolean flywheelOn = false;
 
@@ -80,11 +79,7 @@ public class Regression extends LinearOpMode {
 //                }
 //            }
 
-            if (robotCentric) {
-                robot.drivetrain.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
-            } else {
-                robot.drivetrain.setGlobalControls(gamepad1.left_stick_y, gamepad1.left_stick_x, -gamepad1.right_stick_x);
-            }
+            robot.drivetrain.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
 
             robot.update();
 

@@ -233,9 +233,9 @@ public class Robot {
             }
 
             // If robot does not converge or mag gets stuck
-            /*if (curTime - startShootTime > preShootTimeBackup) {
+            if (curTime - startShootTime > preShootTimeBackup) {
                 cancelShoot();
-            }*/
+            }
         }
 
         profile(2);
@@ -362,9 +362,7 @@ public class Robot {
         addPacket("1 X", round(x));
         addPacket("2 Y", round(y));
         addPacket("3 Theta", round(theta));
-        addPacket("4a Shooter Motor 1 Velocity", shooter.getVelocity1());
-        addPacket("4b Shooter Motor 2 Velocity", shooter.getVelocity2());
-        addPacket("4c Shooter Target Velocity", shooter.getTargetVelocity());
+        addPacket("4 Shooter Velocity", shooter.getVelocity() + " " + shooter.getVelocity2() + " " + shooter.getTargetVelocity());
         addPacket("5 numRings", numRings);
         addPacket("6 shoot", shoot  + " " + preShoot + " " + highGoal);
         addPacket("7 Run Time", (curTime - startTime) / 1000);

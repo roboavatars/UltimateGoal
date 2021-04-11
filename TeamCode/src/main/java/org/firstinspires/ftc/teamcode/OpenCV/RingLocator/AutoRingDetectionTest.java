@@ -14,8 +14,8 @@ import java.util.ArrayList;
 
 import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRing;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawPoint;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRing;
 
 @TeleOp(name = "Auto Ring Detection Test")
 public class AutoRingDetectionTest extends LinearOpMode {
@@ -84,9 +84,9 @@ public class AutoRingDetectionTest extends LinearOpMode {
                 if (curTime == ringTime && (robot.notMoving() || robot.isAtPose(111, 63, PI/2))) {
                     start = false;
                     intakePower = 0;
-                    if (rings.size() > 0) {
-                        robot.highGoalShoot(rings.size());
-                    }
+//                    if (rings.size() > 0) {
+//                        robot.highGoalShoot(rings.size());
+//                    }
                 }
             } else {
                 // Intake Controls
@@ -113,6 +113,12 @@ public class AutoRingDetectionTest extends LinearOpMode {
                     timer.reset();
                 }
 
+                boolean sweep = true;
+                for (Ring ring : rings) {
+                    sweep &= ring.getY() >= 130;
+                }
+                addPacket("sweep", sweep);
+
                 // Generate Path
                 ringWaypoints = new ArrayList<>();
                 ringWaypoints.add(new Waypoint(x, y, theta, 50, 60, 0, 0));
@@ -121,37 +127,37 @@ public class AutoRingDetectionTest extends LinearOpMode {
                 if (rings.size() >= 1) {
                     ringPos = rings.get(0).driveToRing(x, y);
                     ringTime += 1.5;
-                    if (ringPos[1] > 132) {
+                    if (ringPos[1] > 130) {
                         ringPos[2] = 0;
                         ringIntakeTheta[0] = ringPos[0] - x < 0 ? 3*PI/4 : PI/4;
                     } else {
                         ringIntakeTheta[0] = ringPos[2];
                     }
-                    ringWaypoints.add(new Waypoint(ringPos[0], Math.min(132, ringPos[1]), ringIntakeTheta[0], 30, 10, 0, ringTime));
+                    ringWaypoints.add(new Waypoint(ringPos[0], Math.min(130, ringPos[1]), ringIntakeTheta[0], 30, 10, 0, ringTime));
                 }
 
                 if (rings.size() >= 2) {
-                    ringPos = rings.get(1).driveToRing(ringPos[0], Math.min(132, ringPos[1]));
+                    ringPos = rings.get(1).driveToRing(ringPos[0], Math.min(130, ringPos[1]));
                     ringTime += 1.5;
-                    if (ringPos[1] > 132) {
+                    if (ringPos[1] > 130) {
                         ringPos[2] = 0;
                         ringIntakeTheta[1] = ringPos[0] - rings.get(0).getX() < 0 ? 3*PI/4 : PI/4;
                     } else {
                         ringIntakeTheta[1] = ringPos[2];
                     }
-                    ringWaypoints.add(new Waypoint(ringPos[0], Math.min(132, ringPos[1]), ringIntakeTheta[1], 30, 10, 0, ringTime));
+                    ringWaypoints.add(new Waypoint(ringPos[0], Math.min(130, ringPos[1]), ringIntakeTheta[1], 30, 10, 0, ringTime));
                 }
 
                 if (rings.size() >= 3) {
-                    ringPos = rings.get(2).driveToRing(ringPos[0], Math.min(132, ringPos[1]));
+                    ringPos = rings.get(2).driveToRing(ringPos[0], Math.min(130, ringPos[1]));
                     ringTime += 1.5;
-                    if (ringPos[1] > 132 && rings.get(2).getY() > 132) {
+                    if (ringPos[1] > 130 && rings.get(2).getY() > 130) {
                         ringPos[2] = 0;
                         ringIntakeTheta[2] = ringPos[0] - rings.get(1).getX() < 0 ? 3*PI/4 : PI/4;
                     } else {
                         ringIntakeTheta[2] = ringPos[2];
                     }
-                    ringWaypoints.add(new Waypoint(ringPos[0], Math.min(132, ringPos[1]), ringIntakeTheta[2], 30, 10, 0, ringTime));
+                    ringWaypoints.add(new Waypoint(ringPos[0], Math.min(130, ringPos[1]), ringIntakeTheta[2], 30, 10, 0, ringTime));
                 }
 
                 ringTime += 1.5;

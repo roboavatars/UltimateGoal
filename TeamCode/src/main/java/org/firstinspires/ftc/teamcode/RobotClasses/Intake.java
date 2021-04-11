@@ -37,12 +37,11 @@ public class Intake {
 
         if (!isAuto) {
             sticksOut();
+            blockerDown();
         } else {
             sticksHome();
         }
         updateSticks();
-
-        blockerDown();
 
         op.telemetry.addData("Status", "Intake initialized");
     }
