@@ -74,9 +74,9 @@ public class Robot {
     public double flickTime;
     public double shootDelay;
     public static double preShootTimeBackup = 4000;
-    public static double flickTimeBackup = 500;
-    public static int highGoalDelay = 120;
-    public static int psDelay = 240;
+    public static double flickTimeBackup = 1000;
+    public static int highGoalDelay = 250;
+    public static int psDelay = 450;
     public static double flapDelay = 250;
 
     // Motion Variables
