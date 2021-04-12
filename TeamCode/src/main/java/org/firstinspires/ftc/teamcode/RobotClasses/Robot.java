@@ -268,13 +268,13 @@ public class Robot {
                             log("PS pos: " + round(x) + ", " + round(y) + ", " + round(theta));
                         }
 
-                        if (shooter.feedState != 1) {
-                            shooter.feedMid();
+                        if (shooter.feedHome) {
+                            shooter.feedTop();
                         } else {
                             shooter.feedHome();
-                            shotRings.add(new Ring(x, y, theta + thetaOffset, vx, vy, w, curTime));
-                            numRings--;
                         }
+
+                        shotRings.add(new Ring(x, y, theta + thetaOffset, vx, vy, w, curTime));
 
                         if (numRings == 3) {
                             if (!isAuto) {
@@ -287,6 +287,7 @@ public class Robot {
                             log("Feed ring 3");
                         }
 
+                        numRings--;
                         flickTime = curTime;
                     } else {
                         log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") Moving to shoot position: " + Arrays.toString(target));
@@ -349,7 +350,7 @@ public class Robot {
 
         // Log Data
         if (loopCounter % loggerUpdatePeriod == 0) {
-            logger.logData(curTime - startTime, x, y, theta, vx, vy, w, ax, ay, a, numRings, shooter.magHome, shooter.feedState, lastTarget, cycles, cycleTotal / cycles);
+            logger.logData(curTime - startTime, x, y, theta, vx, vy, w, ax, ay, a, numRings, shooter.magHome, shooter.feedHome, lastTarget, cycles, cycleTotal / cycles);
         }
 
         profile(6);

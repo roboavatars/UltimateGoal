@@ -19,7 +19,7 @@ public class Shooter {
     private DistanceSensor ringSensor;
 
     public boolean magHome = true;
-    public int feedState = 0; // 0: home, 1: mid, 2: top
+    public boolean feedHome = false;
     public boolean sensorBroken = true;
 
     public static final double SHOOTER_DX = 6.5;
@@ -43,7 +43,7 @@ public class Shooter {
         feedServo = op.hardwareMap.get(Servo.class, "feedServo");
         ringSensor = op.hardwareMap.get(DistanceSensor.class, "ringSensor");
 
-        feedHome();
+        feedTop();
         magHome();
 
         op.telemetry.addData("Status", "Shooter initialized");
@@ -90,17 +90,12 @@ public class Shooter {
 
     public void feedHome() {
         feedServo.setPosition(Constants.FEED_HOME_POS);
-        feedState = 0;
-    }
-
-    public void feedMid() {
-        feedServo.setPosition(Constants.FEED_MID_POS);
-        feedState = 1;
+        feedHome = true;
     }
 
     public void feedTop() {
         feedServo.setPosition(Constants.FEED_TOP_POS);
-        feedState = 2;
+        feedHome = false;
     }
 
     public double getDistance() {
