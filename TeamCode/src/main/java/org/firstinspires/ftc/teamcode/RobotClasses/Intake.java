@@ -51,7 +51,7 @@ public class Intake {
     }
 
     public void reverse() {
-        setPower(-0.5);
+        setPower(-1);
     }
 
     public void off() {
