@@ -15,7 +15,7 @@ import static java.lang.Math.PI;
 public class T265 {
 
     // Electronics
-    private static T265Camera t265Cam;
+    private final T265Camera t265Cam;
 
     // Constants
     public final double ODOMETRY_COVARIANCE = 0.1;
@@ -36,7 +36,6 @@ public class T265 {
     private boolean exportingMap = true;
 
     public T265(LinearOpMode op, double startX, double startY, double startTheta) {
-
         File file = new File(mapPath);
         if (!file.exists() || file.length() == 0) {
             isEmpty = true;

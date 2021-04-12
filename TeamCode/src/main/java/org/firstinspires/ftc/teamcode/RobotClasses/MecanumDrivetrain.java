@@ -108,38 +108,35 @@ public class MecanumDrivetrain {
 
     // robot centric movement
     public void setControls(double xdot, double ydot, double w) {
-        double FRpower;
-        double BLpower;
-        double FLpower;
-        double BRpower;
+        double FRpower, FLpower, BRpower, BLpower;
 
         if (!zeroStrafeCorrection) {
             FRpower = ydot + xdot + w;
-            BLpower = ydot + xdot - w;
             FLpower = -ydot + xdot - w;
             BRpower = -ydot + xdot + w;
+            BLpower = ydot + xdot - w;
         } else {
             FRpower = xdot + w;
-            BLpower = xdot - w;
             FLpower = xdot - w;
             BRpower = xdot + w;
+            BLpower = xdot - w;
         }
 
-        double maxpower = Math.max(Math.abs(FRpower), Math.max(Math.abs(BLpower), Math.max(Math.abs(FLpower), Math.abs(BRpower))));
+        double maxpower = Math.max(Math.abs(FRpower), Math.max(Math.abs(FLpower), Math.max(Math.abs(BRpower), Math.abs(BLpower))));
 
         if (maxpower > 1) {
             FRpower /= maxpower;
-            BLpower /= maxpower;
             FLpower /= maxpower;
             BRpower /= maxpower;
+            BLpower /= maxpower;
         }
 
         if (xdot == 0 && ydot == 0 && w == 0) {
             // Set Motor Powers
             motorFrontRight.setPower(FRpower);
-            motorBackLeft.setPower(BLpower);
             motorFrontLeft.setPower(FLpower);
             motorBackRight.setPower(BRpower);
+            motorBackLeft.setPower(BLpower);
 
             // Cache New Motor Powers
             lastFRPower = FRpower;
@@ -152,9 +149,9 @@ public class MecanumDrivetrain {
 
             // Set Motor Powers
             motorFrontRight.setPower(FRpower);
-            motorBackLeft.setPower(BLpower);
             motorFrontLeft.setPower(FLpower);
             motorBackRight.setPower(BRpower);
+            motorBackLeft.setPower(BLpower);
 
             // Cache New Motor Powers
             lastFRPower = FRpower;
@@ -162,6 +159,20 @@ public class MecanumDrivetrain {
             lastBRPower = BRpower;
             lastBLPower = BLpower;
         }
+    }
+
+    public void setRawPower(double frontRight, double frontLeft, double backRight, double backLeft) {
+        // Set Motor Powers
+        motorFrontRight.setPower(frontRight);
+        motorFrontLeft.setPower(frontLeft);
+        motorBackRight.setPower(backRight);
+        motorBackLeft.setPower(backLeft);
+
+        // Cache New Motor Powers
+        lastFRPower = frontRight;
+        lastFLPower = frontLeft;
+        lastBRPower = backRight;
+        lastBLPower = backLeft;
     }
 
     // field centric movement

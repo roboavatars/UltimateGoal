@@ -84,9 +84,9 @@ public class AutoRingDetectionTest extends LinearOpMode {
                 if (curTime == ringTime && (robot.notMoving() || robot.isAtPose(111, 63, PI/2))) {
                     start = false;
                     intakePower = 0;
-//                    if (rings.size() > 0) {
-//                        robot.highGoalShoot(rings.size());
-//                    }
+                    if (rings.size() > 0) {
+                        robot.highGoalShoot(rings.size());
+                    }
                 }
             } else {
                 // Intake Controls
@@ -112,12 +112,6 @@ public class AutoRingDetectionTest extends LinearOpMode {
                     startTime = (double) System.currentTimeMillis() / 1000;
                     timer.reset();
                 }
-
-                boolean sweep = true;
-                for (Ring ring : rings) {
-                    sweep &= ring.getY() >= 130;
-                }
-                addPacket("sweep", sweep);
 
                 // Generate Path
                 ringWaypoints = new ArrayList<>();

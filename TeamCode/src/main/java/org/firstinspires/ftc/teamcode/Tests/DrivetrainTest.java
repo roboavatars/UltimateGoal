@@ -13,9 +13,8 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawField;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
-@TeleOp(name = "Odometry Test")
-public class OdometryTest extends LinearOpMode {
-
+@TeleOp(name = "Odometry / Drivetrain Test")
+public class DrivetrainTest extends LinearOpMode {
     private double x, y, theta, prevTime;
 
     @Override
@@ -29,6 +28,10 @@ public class OdometryTest extends LinearOpMode {
 
             if (gamepad1.x) {
                 dt.resetOdo(90, 9, PI/2);
+            }
+
+            if (gamepad1.dpad_right || gamepad1.dpad_up || gamepad1.dpad_down || gamepad1.dpad_left) {
+                dt.setRawPower(gamepad1.dpad_right ? 0.5 : 0, gamepad1.dpad_up ? 0.5 : 0, gamepad1.dpad_down ? 0.5 : 0, gamepad1.dpad_left ? 0.5 : 0);
             }
 
             dt.updatePose();

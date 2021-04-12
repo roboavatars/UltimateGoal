@@ -19,7 +19,7 @@ public class Shooter {
     private DistanceSensor ringSensor;
 
     public boolean magHome = true;
-    public boolean feedHome = false;
+    public int feedState = 0; // 0: home, 1: mid, 2: top
     public boolean sensorBroken = true;
 
     public static final double SHOOTER_DX = 6.5;
@@ -43,7 +43,7 @@ public class Shooter {
         feedServo = op.hardwareMap.get(Servo.class, "feedServo");
         ringSensor = op.hardwareMap.get(DistanceSensor.class, "ringSensor");
 
-        feedTop();
+        feedHome();
         magHome();
 
         op.telemetry.addData("Status", "Shooter initialized");
@@ -71,11 +71,7 @@ public class Shooter {
     }
 
     public double getVelocity() {
-        return shooterMotor1.getVelocity();
-    }
-
-    public double getVelocity2() {
-        return shooterMotor2.getVelocity();
+        return (shooterMotor1.getVelocity() + shooterMotor2.getVelocity()) / 2;
     }
 
     public double getTargetVelocity() {
@@ -94,12 +90,17 @@ public class Shooter {
 
     public void feedHome() {
         feedServo.setPosition(Constants.FEED_HOME_POS);
-        feedHome = true;
+        feedState = 0;
+    }
+
+    public void feedMid() {
+        feedServo.setPosition(Constants.FEED_MID_POS);
+        feedState = 1;
     }
 
     public void feedTop() {
         feedServo.setPosition(Constants.FEED_TOP_POS);
-        feedHome = false;
+        feedState = 2;
     }
 
     public double getDistance() {

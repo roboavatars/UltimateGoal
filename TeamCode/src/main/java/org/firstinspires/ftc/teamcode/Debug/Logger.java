@@ -71,11 +71,11 @@ public class Logger {
      */
     @SuppressLint("SimpleDateFormat")
     public void logData(double timeSinceSt, double x, double y, double theta, double vx, double vy, double w, double ax, double ay, double alpha,
-                        int numRings, boolean magHome, boolean feedHome, int lastTarget, int numCycles, double avgCycleTime) {
+                        int numRings, boolean magHome, int feedState, int lastTarget, int numCycles, double avgCycleTime) {
         if (data != null) {
             SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss.SSS");
             data.add(df.format(new Date()) + "," + timeSinceSt + "," + x + "," + y + "," + theta + "," + vx + "," + vy + "," + w + "," +
-                    ax + "," + ay + "," + alpha + "," + numRings + "," + magHome + "," + feedHome + "," + lastTarget + "," + numCycles + "," + avgCycleTime + "\n");
+                    ax + "," + ay + "," + alpha + "," + numRings + "," + magHome + "," + feedState + "," + lastTarget + "," + numCycles + "," + avgCycleTime + "\n");
         }
     }
 
