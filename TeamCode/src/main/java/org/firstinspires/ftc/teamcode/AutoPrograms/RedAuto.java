@@ -149,10 +149,12 @@ public class RedAuto extends LinearOpMode {
             if (!goToStack) {
                 robot.setTargetPoint(goToStackPath.getRobotPose(Math.min(time.seconds(), goToStackTime)), PI/2, 0);
 
-                if (ringCase == RingCase.Four) {
-                    robot.intake.blockerUp();
-                } else {
-                    robot.intake.blockerDown();
+                if (time.seconds() > 0.25) {
+                    if (ringCase == RingCase.Four) {
+                        robot.intake.blockerUp();
+                    } else {
+                        robot.intake.blockerDown();
+                    }
                 }
 
                 if (ringCase != RingCase.Zero) {
@@ -238,7 +240,7 @@ public class RedAuto extends LinearOpMode {
                     if (time.seconds() > intakeStack2Time + (ringCase == RingCase.One ? 1 : 0)) {
                         robot.thetaOffset = 0;
                         Constants.HIGH_GOAL_VELOCITY = 1950;
-//                        robot.powerShotShoot();
+                        robot.powerShotShoot();
 
                         intakeStack2 = true;
                         time.reset();
@@ -319,6 +321,9 @@ public class RedAuto extends LinearOpMode {
 
                         shootPowerShots = true;
                         time.reset();
+
+                        break;
+
                     }
                 }
             }
@@ -367,7 +372,7 @@ public class RedAuto extends LinearOpMode {
             else if (!deliverWobble) {
                 double curTime = Math.min(time.seconds(), deliverWobbleTime);
                 Pose curPose = deliverWobblePath.getRobotPose(curTime);
-                if (ringCase == RingCase.Four || sweep) {
+                if (ringCase == RingCase.Four && sweep) {
                     robot.drivetrain.stop();
                 } else {
                     robot.setTargetPoint(new Target(curPose).thetaW0(curPose.theta + PI));

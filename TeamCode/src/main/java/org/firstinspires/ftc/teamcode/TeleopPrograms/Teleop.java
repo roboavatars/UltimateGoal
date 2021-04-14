@@ -23,7 +23,7 @@ public class Teleop extends LinearOpMode {
 
     private Robot robot;
     public static boolean robotCentric = true;
-    public static boolean useAutoPos = true;
+    public static boolean useAutoPos = false;
 
     public double xyGain = 1;
     public double wGain = 1;
@@ -37,6 +37,8 @@ public class Teleop extends LinearOpMode {
     public boolean clamped = false;
     public boolean aimLockToggle = false;
     public boolean aimLock = false;
+
+    boolean magTog = false, magUp = false;
 
     /*
     Controller Button Mappings:
@@ -196,10 +198,22 @@ public class Teleop extends LinearOpMode {
             }*/
 
             // Mag Up
-            if (gamepad2.left_stick_button) {
-                robot.shooter.magShoot();
-            } else if (!robot.preShoot && !robot.shoot) {
-                robot.shooter.magHome();
+//            if (gamepad2.left_stick_button) {
+//                robot.shooter.magShoot();
+//            } else if (!robot.preShoot && !robot.shoot) {
+//                robot.shooter.magHome();
+//            }
+
+            if (gamepad1.a && !magTog) {
+                magTog = true;
+                if (magUp) {
+                    robot.shooter.magHome();
+                } else {
+                    robot.shooter.magShoot();
+                }
+                magUp = !magUp;
+            } else if (!gamepad1.a && magTog) {
+                magTog = false;
             }
 
             // Drivetrain Controls

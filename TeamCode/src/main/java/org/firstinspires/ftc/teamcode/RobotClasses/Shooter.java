@@ -19,7 +19,7 @@ public class Shooter {
     private DistanceSensor ringSensor;
 
     public boolean magHome = true;
-    public boolean feedHome = false;
+    public boolean feedHome = true;
     public boolean sensorBroken = true;
 
     public static final double SHOOTER_DX = 6.5;
@@ -43,7 +43,7 @@ public class Shooter {
         feedServo = op.hardwareMap.get(Servo.class, "feedServo");
         ringSensor = op.hardwareMap.get(DistanceSensor.class, "ringSensor");
 
-        feedTop();
+        feedHome();
         magHome();
 
         op.telemetry.addData("Status", "Shooter initialized");

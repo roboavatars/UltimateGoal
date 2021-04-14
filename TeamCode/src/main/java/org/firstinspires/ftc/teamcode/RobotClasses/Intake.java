@@ -40,6 +40,7 @@ public class Intake {
             blockerDown();
         } else {
             sticksHome();
+            blockerHome();
         }
         updateSticks();
 

@@ -76,8 +76,8 @@ public class Robot {
     public static double preShootTimeBackup = 4000;
     public static double flickTimeBackup = 1000;
     public static int highGoalDelay = 250;
-    public static int psDelay = 450;
-    public static double flapDelay = 250;
+    public static int psDelay = 500;
+    public static double flickDelay = 250;
 
     // Motion Variables
     public double x, y, theta, vx, vy, w;
@@ -95,9 +95,9 @@ public class Robot {
 
     // Powershot Debug Variables
     public final double[] psShootPos = new double[] {111, 63};
-    public static double theta0 = 1.9153;
-    public static double theta1 = 1.8207;
-    public static double theta2 = 1.7432;
+    public static double theta0 = 1.9100;
+    public static double theta1 = 1.8100;
+    public static double theta2 = 1.7300;
     public static double[] thetaPositions = {theta2, theta1, theta0};
 
     // Ring State Variables
@@ -248,7 +248,7 @@ public class Robot {
                 if (highGoal) {
                     target = shootTargets(3);
                     lastTarget = 3;
-                } else if (numRings == 3 || curTime - flickTime > flapDelay) {
+                } else if (numRings == 3 || curTime - flickTime > flickDelay) {
                     target = new double[] {psShootPos[0], psShootPos[1], thetaPositions[numRings - 1]};
                     lastTarget = 3 - numRings;
                 }
@@ -260,7 +260,7 @@ public class Robot {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position and velocity low enough
                     if ((highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/60))
-                            || (!highGoal && isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/180) && notMoving())
+                            || (!highGoal && isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/200) && notMoving())
                             || curTime - flickTime > flickTimeBackup) {
 
                         log("In shoot Velocity: " + shooter.getVelocity());
@@ -282,6 +282,8 @@ public class Robot {
                             }
                             log("Feed ring 1");
                         } else if (numRings == 2) {
+                            if (!highGoal) shooter.setVelocity(Constants.POWERSHOT_VELOCITY - 50);
+
                             log("Feed ring 2");
                         } else if (numRings == 1) {
                             log("Feed ring 3");

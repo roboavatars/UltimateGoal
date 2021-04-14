@@ -1,5 +1,7 @@
 package org.firstinspires.ftc.teamcode.RobotClasses;
 
+import android.annotation.SuppressLint;
+
 import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Transform2d;
@@ -15,7 +17,7 @@ import static java.lang.Math.PI;
 public class T265 {
 
     // Electronics
-    private final T265Camera t265Cam;
+    private static T265Camera t265Cam;
 
     // Constants
     public final double ODOMETRY_COVARIANCE = 0.1;
@@ -30,7 +32,8 @@ public class T265 {
 
     // Other
     public int confidence = 0;
-//    private final String mapPath = System.getProperty("java.io.tmpdir") + "/map.bin";
+
+    @SuppressLint("SdCardPath")
     private final String mapPath = "/data/user/0/com.qualcomm.ftcrobotcontroller/cache/map.bin";
     public boolean isEmpty = false;
     private boolean exportingMap = true;
@@ -41,12 +44,15 @@ public class T265 {
             isEmpty = true;
         }
 
-        Robot.log("isEmpty: " + isEmpty);
+        Robot.log(isEmpty ? "T265 Localization Map Not Found" : "Found T265 Localization Map");
+        Robot.log(t265Cam == null ? "Instantiating new T265" : "Using static T265");
 
-        if (!isEmpty) {
-            t265Cam = new T265Camera(new Transform2d(), ODOMETRY_COVARIANCE, mapPath, op.hardwareMap.appContext);
-        } else {
-            t265Cam = new T265Camera(new Transform2d(), ODOMETRY_COVARIANCE, op.hardwareMap.appContext);
+        if (t265Cam == null) {
+            if (!isEmpty) {
+                t265Cam = new T265Camera(new Transform2d(), ODOMETRY_COVARIANCE, mapPath, op.hardwareMap.appContext);
+            } else {
+                t265Cam = new T265Camera(new Transform2d(), ODOMETRY_COVARIANCE, op.hardwareMap.appContext);
+            }
         }
         setCameraPose(startX, startY, startTheta);
     }
