@@ -288,8 +288,9 @@ public class RedAuto extends LinearOpMode {
                                 ringPos = rings.get(1).driveToRing(ringPos[0], Math.min(maxY, ringPos[1]));
                                 ringTime += 1.5;
                                 if (ringPos[1] > maxY) {
+                                    ringIntakeTheta[1] = PI/4;
                                     ringPos[2] = 0;
-                                    ringIntakeTheta[1] = ringPos[0] - rings.get(0).getX() < 0 ? 3*PI/4 : PI/4;
+                                    ringWaypoints.add(new Waypoint(ringPos[0]-5, Math.min(maxY, ringPos[1])-5, ringIntakeTheta[1], 30, 10, 0, ringTime-0.6));
                                 } else {
                                     ringIntakeTheta[1] = ringPos[2];
                                 }
@@ -312,7 +313,7 @@ public class RedAuto extends LinearOpMode {
                             ringTime = 4.5;
                             Waypoint[] ringWaypoints = new Waypoint[] {
                                     new Waypoint(robot.x, robot.y, robot.theta, 50, 50, 0, 0),
-                                    new Waypoint(60, 129, 0, 30, 30, 0, 1.5),
+                                    new Waypoint(60, 129, 0, 30, 30, 0, 2.0),
                                     new Waypoint(109, 129, 0, 30, 20, 0, 3.75),
                                     new Waypoint(126, 131, 0, 30, 5, 0, ringTime),
                             };
@@ -341,7 +342,7 @@ public class RedAuto extends LinearOpMode {
                         robot.setTargetPoint(new Target(ringPath.getRobotPose(Math.min(time.seconds(), ringTime))).thetaW0(ringIntakeTheta[2]));
                     }
                 } else {
-                    if (time.seconds() < 1.5) {
+                    if (time.seconds() < 2.0) {
                         robot.setTargetPoint(ringPath.getRobotPose(Math.min(time.seconds(), ringTime)));
                     } else {
                         if (time.seconds() < 3.75) {
