@@ -7,7 +7,10 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Shooter;
 import java.util.ArrayList;
 import java.util.Comparator;
 
-import static org.firstinspires.ftc.teamcode.OpenCV.RingLocator.RingLocator.*;
+import static org.firstinspires.ftc.teamcode.OpenCV.RingLocator.RingLocator.maxX;
+import static org.firstinspires.ftc.teamcode.OpenCV.RingLocator.RingLocator.maxY;
+import static org.firstinspires.ftc.teamcode.OpenCV.RingLocator.RingLocator.minX;
+import static org.firstinspires.ftc.teamcode.OpenCV.RingLocator.RingLocator.minY;
 
 public class Ring {
     private double relX;
@@ -99,6 +102,16 @@ public class Ring {
         }
 
         return rings;
+    }
+
+    public static boolean isLowestX(ArrayList<Ring> rings, Ring ring) {
+        double low = rings.get(0).getX();
+        for (Ring r : rings) {
+            if (r.getX() < low) {
+                low = r.getX();
+            }
+        }
+        return low == ring.getX();
     }
 
     // Return a sorted list with up to three coordinate-filtered rings
