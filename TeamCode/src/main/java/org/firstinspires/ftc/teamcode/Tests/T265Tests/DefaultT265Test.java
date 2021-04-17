@@ -17,7 +17,7 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
 @TeleOp(name = "Basic T265 Test")
 public class DefaultT265Test extends LinearOpMode {
-    private static T265Camera slamra = null;
+    private static T265Camera slamra;
 
     public static double startX = 111;
     public static double startY = 63;
@@ -43,8 +43,12 @@ public class DefaultT265Test extends LinearOpMode {
             T265Camera.CameraUpdate up = slamra.getLastReceivedCameraUpdate();
             if (up == null) continue;
 
-            Translation2d translation = new Translation2d(up.pose.getTranslation().getX() / 0.0254, up.pose.getTranslation().getY() / 0.0254);
+            Translation2d translation = new Translation2d(up.pose.getTranslation().getX() / INCH_TO_METER, up.pose.getTranslation().getY() / INCH_TO_METER);
             Rotation2d rotation = up.pose.getRotation();
+
+            if (gamepad1.x) {
+                slamra.setPose(new Pose2d(startX * INCH_TO_METER, startY * INCH_TO_METER, new Rotation2d(startTheta)));
+            }
 
             drawField();
             drawRobot(translation.getX(), translation.getY(), rotation.getRadians(), "blue");

@@ -17,6 +17,10 @@ public class Dashboard {
         drawRobot(robot.x, robot.y, robot.theta, color);
     }
 
+    public static void drawRobot(double robotX, double robotY, double robotTheta) {
+        drawRobot(robotX, robotY, robotTheta, "black");
+    }
+
     public static void drawRobot(double robotX, double robotY, double robotTheta, String color) {
         double r = 9 * Math.sqrt(2);
         double x = robotY - 72;

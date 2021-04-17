@@ -2,9 +2,7 @@ package org.firstinspires.ftc.teamcode.Tests;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
-import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.MecanumDrivetrain;
 
 import static java.lang.Math.PI;
@@ -14,7 +12,7 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
 @TeleOp(name = "Odometry / Drivetrain Test")
-public class DrivetrainTest extends LinearOpMode {
+public class OdoDrivetrainTest extends LinearOpMode {
     private double x, y, theta, prevTime;
 
     @Override
