@@ -47,7 +47,7 @@ public class OdoDrivetrainTest extends LinearOpMode {
             addPacket("Y", y);
             addPacket("Theta", theta);
             addPacket("Update Frequency (Hz)", 1 / timeDiff);
-            addPacket("pod1", dt.pod1);
+//            addPacket("pod1", dt.pod1);
             addPacket("pod2", dt.pod2);
             addPacket("pod3", dt.pod3);
             addPacket("1 zeros", dt.zero1);

@@ -48,4 +48,8 @@ public class IMU {
     public double getTheta() {
         return theta;
     }
+
+    public double getDeltaHeading() {
+        return deltaHeading;
+    }
 }

@@ -12,7 +12,7 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawField;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
-@TeleOp(name = "IMU test")
+@TeleOp(name = "IMU Test")
 public class IMU_Test extends LinearOpMode {
 
     @Override
