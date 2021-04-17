@@ -13,6 +13,10 @@ public class Dashboard {
     public static FtcDashboard dashboard = FtcDashboard.getInstance();
     public static TelemetryPacket packet = new TelemetryPacket();
 
+    public static void drawRobot(Robot robot) {
+        drawRobot(robot, "black");
+    }
+
     public static void drawRobot(Robot robot, String color) {
         drawRobot(robot.x, robot.y, robot.theta, color);
     }

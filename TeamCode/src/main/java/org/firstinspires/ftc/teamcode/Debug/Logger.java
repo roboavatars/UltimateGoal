@@ -16,23 +16,38 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @SuppressLint("SdCardPath")
-public class Logger {
+public class Logger extends Thread {
 
     private static final String basePath = "/sdcard/FIRST/robotLogs/RobotData";
     private static FileWriter fileWriter;
-    private LinkedList<String> data;
+//    private LinkedList<String> data;
+    private int logCounter;
+    private int writeCounter;
+
+    private SimpleDateFormat df;
+    private double timeSinceSt;
+    private double x, y, theta;
+    private double vx, vy, w;
+    private double ax, ay, alpha;
+    private int numRings;
+    private boolean magHome, feedHome;
+    private int lastTarget;
+    private int numCycles;
+    private double avgCycleTime;
 
     /**
-     * Creates a new file and writes first row
-     * This method must be used before logging
+     * Creates a new file and writes initial rows
      */
     public void startLogging(boolean isAuto) {
         try {
-            data = new LinkedList<>();
+//            data = new LinkedList<>();
             File robotDataLog = new File(getLogName(true));
             fileWriter = new FileWriter(robotDataLog);
             fileWriter.write("# " + (isAuto ? "Auto" : "Teleop") + "\n");
             fileWriter.write("Timestamp,SinceStart,X,Y,Theta,VelocityX,VelocityY,VelocityTheta,AccelX,AccelY,AccelTheta,NumRings,MagHome,FeedHome,LastTarget,Cycles,AvgCycle\n");
+            logCounter = 0;
+            writeCounter = 0;
+            start();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -67,26 +82,50 @@ public class Logger {
     }
 
     /**
-     * Adds data to LinkedList
+     * Writes log data in separate thread
      */
-    @SuppressLint("SimpleDateFormat")
-    public void logData(double timeSinceSt, double x, double y, double theta, double vx, double vy, double w, double ax, double ay, double alpha,
-                        int numRings, boolean magHome, boolean feedHome, int lastTarget, int numCycles, double avgCycleTime) {
-        if (data != null) {
-            SimpleDateFormat df = new SimpleDateFormat("HH:mm:ss.SSS");
-            data.add(df.format(new Date()) + "," + timeSinceSt + "," + x + "," + y + "," + theta + "," + vx + "," + vy + "," + w + "," +
-                    ax + "," + ay + "," + alpha + "," + numRings + "," + magHome + "," + feedHome + "," + lastTarget + "," + numCycles + "," + avgCycleTime + "\n");
+    @Override
+    public void run() {
+        while (!isInterrupted()) {
+            if (writeCounter < logCounter) {
+                try {
+                    fileWriter.write(df.format(new Date()) + "," + timeSinceSt + "," + x + "," + y + "," + theta + "," + vx + "," + vy + "," + w + "," + ax + "," + ay + "," + alpha + "," + numRings + "," + magHome + "," + feedHome + "," + lastTarget + "," + numCycles + "," + avgCycleTime + "\n");
+                    writeCounter++;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
     /**
-     * Writes data to file, closes file
+     * Saves log data
+     */
+    @SuppressLint("SimpleDateFormat")
+    public void logData(double timeSinceSt, double x, double y, double theta, double vx, double vy, double w, double ax, double ay, double alpha, int numRings, boolean magHome, boolean feedHome, int lastTarget, int numCycles, double avgCycleTime) {
+        df = new SimpleDateFormat("HH:mm:ss.SSS");
+        this.timeSinceSt = timeSinceSt;
+        this.x = x; this.y = y; this.theta = theta;
+        this.vx = vx; this.vy = vy; this.w = w;
+        this.ax = ax; this.ay = ay; this.alpha = alpha;
+        this.numRings = numRings;
+        this.magHome = magHome; this.feedHome = feedHome;
+        this.lastTarget = lastTarget;
+        this.numCycles = numCycles;
+        this.avgCycleTime = avgCycleTime;
+
+        logCounter++;
+    }
+
+    /**
+     * Closes file
      */
     public void stopLogging() {
+        interrupt();
         try {
-            for (String line : data) {
-                fileWriter.write(line);
-            }
+//            for (String line : data) {
+//                fileWriter.write(line);
+//            }
             fileWriter.close();
         } catch (Exception e) {
             e.printStackTrace();

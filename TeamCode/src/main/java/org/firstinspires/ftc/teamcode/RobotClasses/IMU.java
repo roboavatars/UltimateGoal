@@ -11,11 +11,10 @@ import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 import static java.lang.Math.PI;
 
 public class IMU {
-
     private BNO055IMU imu;
-    private Orientation angles;
-    private double theta = PI/2;
-    private double lastHeading = 0;
+    private double angle;
+    private double theta;
+    private double lastHeading;
     private double deltaHeading = 0;
 
     public IMU(double startTheta, LinearOpMode op) {
@@ -25,23 +24,25 @@ public class IMU {
         while (!op.isStopRequested() && !imu.isGyroCalibrated()) {
             op.idle();
         }
+
+        theta = startTheta;
+        lastHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
     }
 
     public void updateHeading() {
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
-        deltaHeading = angles.firstAngle - lastHeading;
+        angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+        deltaHeading = angle - lastHeading;
 
-        theta += deltaHeading;
+        theta = (theta + deltaHeading) % (2*PI);
+        if (theta < 0) {
+            theta += 2*PI;
+        }
 
-        theta = theta % (2*PI);
-        if (theta < 0) theta += 2*PI;
-
-        lastHeading = angles.firstAngle;
+        lastHeading = angle;
     }
 
     public void resetHeading(double newTheta) {
-        angles = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS);
-        lastHeading = angles.firstAngle;
+        lastHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
         theta = newTheta;
     }
 

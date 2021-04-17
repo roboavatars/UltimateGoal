@@ -19,7 +19,6 @@ public class MecanumDrivetrain {
     private DcMotorEx motorFrontLeft;
     private DcMotorEx motorBackRight;
     private DcMotorEx motorBackLeft;
-    // private LynxModule module;
 
     // OpMode
     private LinearOpMode opMode;
@@ -28,18 +27,18 @@ public class MecanumDrivetrain {
     public double x;
     public double y;
     public double theta;
-    private double deltaheading = 0;
+    private double deltaHeading = 0;
 
     // Odometry
 //    public double pod1 = 0;
     public double pod2 = 0;
     public double pod3 = 0;
-//    private double lastpod1 = 0;
-    private double lastpod2 = 0;
-    private double lastpod3 = 0;
-    private double deltapod1;
-    private double deltapod2;
-    private double deltapod3;
+//    private double lastPod1 = 0;
+    private double lastPod2 = 0;
+    private double lastPod3 = 0;
+    private double deltaPod1;
+    private double deltaPod2;
+    private double deltaPod3;
 
     // Motor Caching
     private double lastFRPower = 0;
@@ -52,9 +51,9 @@ public class MecanumDrivetrain {
 //    public static double ticksToInch1 = 0.00600112521;
     public static double ticksToInch2 = 0.00600112521;
     public static double ticksToInch3 = 0.00600112521;
-    public static double OdometryTrackWidth = 13.655;
-    public static double OdometryHorizontalOffset = -1.83;
-    private final double OdometryHeadingThreshold = PI/8;
+    public static double ODOMETRY_TRACK_WIDTH = 13.655;
+    public static double ODOMETRY_HORIZONTAL_OFFSET = -1.83;
+    private final double ODOMETRY_HEADING_THRESHOLD = PI/8;
 
     // PD controller constants
     public final static double xKp = 0.7;
@@ -76,7 +75,6 @@ public class MecanumDrivetrain {
         this.opMode = opMode;
         HardwareMap hardwareMap = opMode.hardwareMap;
 
-        // module = hardwareMap.get(LynxModule.class, "Control Hub");
         imu = new IMU(initialTheta, opMode);
 
         motorFrontRight = hardwareMap.get(DcMotorEx.class, "motorFrontRight");
@@ -198,54 +196,54 @@ public class MecanumDrivetrain {
             pod2 = motorBackLeft.getCurrentPosition() * -ticksToInch2;
             pod3 = motorFrontRight.getCurrentPosition() * ticksToInch3;
 
-//            deltapod1 = pod1 - lastpod1;
-            deltapod2 = pod2 - lastpod2;
-            deltapod3 = pod3 - lastpod3;
+//            deltaPod1 = pod1 - lastPod1;
+            deltaPod2 = pod2 - lastPod2;
+            deltaPod3 = pod3 - lastPod3;
 
-//            deltaheading = (deltapod2 - deltapod1) / OdometryTrackWidth;
+//            deltaHeading = (deltaPod2 - deltaPod1) / ODOMETRY_TRACK_WIDTH;
 
             imu.updateHeading();
             theta = imu.getTheta();
-            deltaheading = imu.getDeltaHeading();
+            deltaHeading = imu.getDeltaHeading();
 
-            deltapod1 = deltapod2 - deltaheading * OdometryTrackWidth;
+            deltaPod1 = deltaPod2 - deltaHeading * ODOMETRY_TRACK_WIDTH;
 
-            if (!(deltapod1 == 0 && deltapod2 == 0 && deltapod3 == 0)) {
-                if (deltapod1 == 0) {
+            if (!(deltaPod1 == 0 && deltaPod2 == 0 && deltaPod3 == 0)) {
+                if (deltaPod1 == 0) {
                     Log.w("pod-delta-log", "pod1 delta 0");
                     zero1++;
                 }
-                if (deltapod2 == 0) {
+                if (deltaPod2 == 0) {
                     Log.w("pod-delta-log", "pod2 delta 0");
                     zero2++;
                 }
-                if (deltapod3 == 0) {
+                if (deltaPod3 == 0) {
                     Log.w("pod-delta-log", "pod3 delta 0");
                     zero3++;
                 }
             }
 
-            double localX = (deltapod1 + deltapod2) / 2;
-            double localY = deltapod3 - deltaheading * OdometryHorizontalOffset;
+            double localX = (deltaPod1 + deltaPod2) / 2;
+            double localY = deltaPod3 - deltaHeading * ODOMETRY_HORIZONTAL_OFFSET;
 
-            if (deltaheading < OdometryHeadingThreshold) {
+            if (deltaHeading < ODOMETRY_HEADING_THRESHOLD) {
                 x += localX * Math.cos(theta) - localY * Math.sin(theta);
                 y += localY * Math.cos(theta) + localX * Math.sin(theta);
 
             } else {
-                x += (localX * Math.sin(theta + deltaheading) + localY * Math.cos(theta + deltaheading)
-                        - localX * Math.sin(theta) - localY * Math.cos(theta)) / deltaheading;
-                y += (localY * Math.sin(theta + deltaheading) - localX * Math.cos(theta + deltaheading)
-                        - localY * Math.sin(theta) + localX * Math.cos(theta)) / deltaheading;
+                x += (localX * Math.sin(theta + deltaHeading) + localY * Math.cos(theta + deltaHeading)
+                        - localX * Math.sin(theta) - localY * Math.cos(theta)) / deltaHeading;
+                y += (localY * Math.sin(theta + deltaHeading) - localX * Math.cos(theta + deltaHeading)
+                        - localY * Math.sin(theta) + localX * Math.cos(theta)) / deltaHeading;
             }
 
-//            theta += deltaheading;
+//            theta += deltaHeading;
 //            theta = theta % (2*PI);
 //            if (theta < 0) theta += 2*PI;
 
-//            lastpod1 = pod1;
-            lastpod2 = pod2;
-            lastpod3 = pod3;
+//            lastPod1 = pod1;
+            lastPod2 = pod2;
+            lastPod3 = pod3;
         } catch (Exception e) {
             e.printStackTrace();
         }
