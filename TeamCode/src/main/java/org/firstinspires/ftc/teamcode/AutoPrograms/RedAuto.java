@@ -239,7 +239,7 @@ public class RedAuto extends LinearOpMode {
 
                     if (time.seconds() > intakeStack2Time + (ringCase == RingCase.One ? 1 : 0)) {
                         robot.thetaOffset = 0;
-                        Constants.HIGH_GOAL_VELOCITY = 1950;
+                        Constants.HIGH_GOAL_VELOCITY = 2000;
                         robot.powerShotShoot();
 
                         intakeStack2 = true;
@@ -319,9 +319,9 @@ public class RedAuto extends LinearOpMode {
                             ringTime = 4.5;
                             Waypoint[] ringWaypoints = new Waypoint[] {
                                     new Waypoint(robot.x, robot.y, robot.theta, 50, 50, 0, 0),
-                                    new Waypoint(60, 129, 0, 30, 30, 0, 2.0),
-                                    new Waypoint(109, 129, 0, 30, 20, 0, 3.75),
-                                    new Waypoint(126, 131, 0, 30, 5, 0, ringTime),
+                                    new Waypoint(64, 129, 0, 30, 30, 0, 2.0),
+                                    new Waypoint(109, 129, 0, 30, 30, 0, 3.75),
+                                    new Waypoint(126, 130, 0, 30, 5, 0, ringTime),
                             };
                             ringPath = new Path(new ArrayList<>(Arrays.asList(ringWaypoints)));
                         }
@@ -360,7 +360,7 @@ public class RedAuto extends LinearOpMode {
                 }
 
                 if (ringCase == RingCase.Four && time.seconds() > ringTime - 0.5) {
-                    robot.intake.blockerUp();
+                    robot.intake.blockerHome();
                 }
 
                 if (time.seconds() > ringTime) {
@@ -451,7 +451,7 @@ public class RedAuto extends LinearOpMode {
                     robot.setTargetPoint(goToHighShootPath.getRobotPose(Math.min(time.seconds(), goToHighShootTime)));
                 }
 
-                if (time.seconds() > 0.8) {
+                if (time.seconds() > 0.7) {
                     robot.wobbleArm.armUp();
                 } else if (time.seconds() > 0.3) {
                     robot.wobbleArm.clamp();

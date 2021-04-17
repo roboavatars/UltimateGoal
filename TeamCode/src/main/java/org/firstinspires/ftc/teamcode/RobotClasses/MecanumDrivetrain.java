@@ -58,10 +58,10 @@ public class MecanumDrivetrain {
     // PD controller constants
     public final static double xKp = 0.7;
     public final static double yKp = 0.6;
-    public final static double thetaKp = 5.0;
+    public final static double thetaKp = 4.5;
     public final static double xKd = 0.05;
     public final static double yKd = 0.05;
-    public final static double thetaKd = 0.2;
+    public final static double thetaKd = 0.15;
 
     // Odometry delta 0 counters
     public int zero1, zero2, zero3;
@@ -225,6 +225,8 @@ public class MecanumDrivetrain {
 
             double localX = (deltaPod1 + deltaPod2) / 2;
             double localY = deltaPod3 - deltaHeading * ODOMETRY_HORIZONTAL_OFFSET;
+
+//            Robot.log(deltaPod1 + " " + deltaPod2 + " " + deltaPod3 + " " + deltaHeading);
 
             if (deltaHeading < ODOMETRY_HEADING_THRESHOLD) {
                 x += localX * Math.cos(theta) - localY * Math.sin(theta);

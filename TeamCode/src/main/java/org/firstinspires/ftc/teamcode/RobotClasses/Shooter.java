@@ -62,12 +62,11 @@ public class Shooter {
     }
 
     public void setVelocity(double velocity) {
-//        if (velocity != lastVelocity) {
+        if (velocity != targetVelocity) {
             shooterMotor1.setVelocity(velocity);
             shooterMotor2.setVelocity(velocity);
-            Robot.log(velocity + "");
             targetVelocity = velocity;
-//        }
+        }
     }
 
     public double getVelocity() {

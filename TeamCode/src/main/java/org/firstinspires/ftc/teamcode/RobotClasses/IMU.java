@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesOrder;
 import org.firstinspires.ftc.robotcore.external.navigation.AxesReference;
-import org.firstinspires.ftc.robotcore.external.navigation.Orientation;
 
 import static java.lang.Math.PI;
 
@@ -33,11 +32,16 @@ public class IMU {
         angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
         deltaHeading = angle - lastHeading;
 
-        theta = (theta + deltaHeading) % (2*PI);
-        if (theta < 0) {
-            theta += 2*PI;
+        if (deltaHeading < -PI) {
+            deltaHeading += 2 * PI;
+        } else if (deltaHeading >= PI) {
+            deltaHeading -= 2 * PI;
         }
 
+        theta = (theta + deltaHeading) % (2*PI);
+        if (theta < 0) {
+            theta += 2 * PI;
+        }
         lastHeading = angle;
     }
 

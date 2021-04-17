@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -11,7 +10,6 @@ import static java.lang.Math.PI;
 
 @TeleOp(name = "PD Controller Test")
 @Config
-@Disabled
 public class PDTest extends LinearOpMode {
     private Robot robot;
     private static double targetX = 96;
@@ -19,10 +17,10 @@ public class PDTest extends LinearOpMode {
     private static double targetTheta = PI/2;
     public static double xKp = 0.7;
     public static double yKp = 0.6;
-    public static double thetaKp = 5.0;
+    public static double thetaKp = 4.5;
     public static double xKd = 0.05;
     public static double yKd = 0.05;
-    public static double thetaKd = 0.2;
+    public static double thetaKd = 0.15;
 
     @Override
     public void runOpMode() {
@@ -51,6 +49,8 @@ public class PDTest extends LinearOpMode {
                 robot.setTargetPoint(96, 72, 0, 0, 0, 0, xKp, yKp, thetaKp, xKd, yKd, thetaKd);
             } else if (gamepad1.a) {
                 robot.setTargetPoint(targetX, targetY, targetTheta, 0, 0, 0, xKp, yKp, thetaKp, xKd, yKd, thetaKd);
+            } else if (gamepad1.b) {
+                robot.setTargetPoint(111, 63, 1.91, 0, 0, 0, xKp, yKp, thetaKp, xKd, yKd, thetaKd);
             } else {
                 robot.drivetrain.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
             }

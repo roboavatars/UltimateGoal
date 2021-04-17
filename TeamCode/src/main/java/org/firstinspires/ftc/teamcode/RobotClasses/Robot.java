@@ -228,13 +228,19 @@ public class Robot {
                 shootTime = curTime;
                 flickTime = curTime;
                 preShoot = false;
+                preShootOverride = false;
                 log("Ready to shoot " + (highGoal ? "high goal" : "powershot") + ", velocity: " + shooter.getVelocity());
                 log("Pre shoot time: " +  (curTime - startShootTime) + " ms");
             }
 
             // If robot does not converge or mag gets stuck
             if (curTime - startShootTime > preShootTimeBackup) {
-                cancelShoot();
+                if (!isAuto) {
+                    cancelShoot();
+                } else {
+                    preShootOverride = true;
+                }
+                log("Preshoot Timed Out");
             }
         }
 
@@ -559,7 +565,7 @@ public class Robot {
     }
 
     public boolean notMoving() {
-        return notMoving(1.5, 0.1);
+        return notMoving(2, 0.2);
     }
 
     public boolean notMoving(double xyThreshold, double thetaThreshold) {
