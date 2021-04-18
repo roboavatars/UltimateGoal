@@ -60,6 +60,7 @@ public class Robot {
     public boolean highGoal = false;
     public boolean preShoot = false;
     public boolean preShootOverride = false;
+    public boolean aimLockShoot = false;
     public boolean shoot = false;
     public int lastTarget = -1;
 
@@ -73,6 +74,7 @@ public class Robot {
     public double startShootTime;
     public double flickTime;
     public double shootDelay;
+    private int vThresh;
     public static double preShootTimeBackup = 4000;
     public static double flickTimeBackup = 1000;
     public static int highGoalDelay = 250;
@@ -95,9 +97,9 @@ public class Robot {
 
     // Powershot Debug Variables
     public final double[] psShootPos = new double[] {111, 63};
-    public static double theta0 = 1.9100;
-    public static double theta1 = 1.8100;
-    public static double theta2 = 1.7300;
+    public static double theta0 = 1.900;
+    public static double theta1 = 1.810;
+    public static double theta2 = 1.725;
     public static double[] thetaPositions = {theta2, theta1, theta0};
 
     // Ring State Variables
@@ -188,7 +190,6 @@ public class Robot {
         if (preShoot) {
 
             // Set flywheel velocity based on what we want to shoot
-            int vThresh;
             if (highGoal) {
                 shooter.flywheelHG();
                 vThresh = Constants.HIGH_GOAL_VELOCITY - 40;
@@ -208,15 +209,13 @@ public class Robot {
             }
 
             // Move to shooting position
-            if (!isAtPose(target[0], target[1], target[2], 1, 1, PI/35) || !notMoving()) {
+            if (!aimLockShoot && (!isAtPose(target[0], target[1], target[2], 1, 1, PI/35) || !notMoving())) {
                 setTargetPoint(new Target(target[0], target[1], target[2]));
-                log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") (" + round(vx) + ", " + round(vy) + ", " + round(w) +
-                        ") Moving to shoot position: [" + round(target[0]) + ", " + round(target[1]) + ", " + round(target[2]) + "]");
+                log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") (" + round(vx) + ", " + round(vy) + ", " + round(w) + ") Moving to shoot position: [" + round(target[0]) + ", " + round(target[1]) + ", " + round(target[2]) + "]");
             }
 
             // Start auto-feed when mag is up, velocity is high enough, and robot is at position
-            if ((isAtPose(target[0], target[1], target[2], 1, 1, PI/35) && notMoving()
-                   && shooter.getVelocity() > vThresh) || preShootOverride) {
+            if (preShootOverride || (shooter.getVelocity() > vThresh && (aimLockShoot || (isAtPose(target[0], target[1], target[2], 1, 1, PI/35) && notMoving())))) {
                 if (highGoal) {
                     shootDelay = highGoalDelay;
                 } else {
@@ -248,7 +247,6 @@ public class Robot {
 
         // Shoot tasks: change/maintain shooting position, auto feed rings
         if (shoot && numRings >= 0 && !shooter.magHome) {
-
             // Maintain/change robot alignment, set flap
             if (numRings > 0) {
                 if (highGoal) {
@@ -258,15 +256,17 @@ public class Robot {
                     target = new double[] {psShootPos[0], psShootPos[1], thetaPositions[numRings - 1]};
                     lastTarget = 3 - numRings;
                 }
-                setTargetPoint(new Target(target[0], target[1], target[2]));
+                if (!aimLockShoot) {
+                    setTargetPoint(new Target(target[0], target[1], target[2]));
+                }
             }
 
             // Auto feed rings
             if (curTime - shootTime > shootDelay) {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position and velocity low enough
-                    if ((highGoal && isAtPose(target[0], target[1], target[2], 1, 1, PI/60))
-                            || (!highGoal && isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/200) && notMoving())
+                    if ((shooter.getVelocity() > vThresh && ((highGoal && (aimLockShoot || isAtPose(target[0], target[1], target[2], 1, 1, PI/60)))
+                            || (!highGoal && isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/200) && notMoving())))
                             || curTime - flickTime > flickTimeBackup) {
 
                         log("In shoot Velocity: " + shooter.getVelocity());
@@ -434,7 +434,7 @@ public class Robot {
             }
             startShootTime = curTime;
 
-            double shootY = 61;
+            double shootY = 60;
             if (isAuto) {
                 if (shootYOverride != 0) {
                     shootY = shootYOverride;
@@ -485,8 +485,8 @@ public class Robot {
         double targetX = shootXCor[targetNum];
         double targetY = shootYCor;
 
-        double shooterX = shootX + Shooter.SHOOTER_DX * Math.sin(shootTheta);
-        double shooterY = shootY - Shooter.SHOOTER_DX * Math.cos(shootTheta);
+        double shooterX = shootX + (aimLockShoot && 0.5 < vx ? vx : 0) * Shooter.RING_FLIGHT_TIME + Shooter.SHOOTER_DX * Math.sin(shootTheta);
+        double shooterY = shootY + (aimLockShoot && 0.5 < vy ? vy : 0) * Shooter.RING_FLIGHT_TIME - Shooter.SHOOTER_DX * Math.cos(shootTheta);
         double dx = targetX - shooterX;
         double dy = targetY - shooterY;
 
@@ -565,11 +565,11 @@ public class Robot {
     }
 
     public boolean notMoving() {
-        return notMoving(2, 0.2);
+        return notMoving(1.5, 0.2);
     }
 
     public boolean notMoving(double xyThreshold, double thetaThreshold) {
-        return (Math.abs(vx) + Math.abs(vy) < xyThreshold && Math.abs(w) < thetaThreshold);
+        return (Math.hypot(vx, vy) < xyThreshold && Math.abs(w) < thetaThreshold);
     }
 
     // Logging

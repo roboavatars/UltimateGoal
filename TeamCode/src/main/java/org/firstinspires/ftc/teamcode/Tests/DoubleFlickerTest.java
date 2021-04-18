@@ -19,31 +19,31 @@ public class DoubleFlickerTest extends LinearOpMode {
     public static double homePos = Constants.FEED_HOME_POS;
     public static double topPos = Constants.FEED_TOP_POS;
     public static int pos = 1;
-    public static boolean magUp = false;
+    public static boolean magUp = true;
     public static boolean debug = false;
     private double position;
 
-    private boolean magToggle = false;
     private boolean shootToggle = false;
+    private boolean flywheelOn = false;
     private long shootTime;
     private int delay = 4;
     public static int period = 250;
 
-    public static double thetaLeft = 1.627;
-    public static double thetaMid = 1.571;
-    public static double thetaRight = 1.504;
+    public static double thetaLeft = 1.900;
+    public static double thetaMid = 1.810;
+    public static double thetaRight = 1.725;
 
     private Robot robot;
 
     @Override
     public void runOpMode() {
         Servo servo = hardwareMap.get(Servo.class, "feedServo");
-        robot = new Robot(this, 87, 63, PI/2, false);
+        robot = new Robot(this, 111, 63, PI/2, false);
 
         waitForStart();
+        robot.shooter.magShoot();
 
         while(opModeIsActive()) {
-
             if (debug) {
                 if (pos == 1) {
                     position = homePos;
@@ -58,10 +58,28 @@ public class DoubleFlickerTest extends LinearOpMode {
                     robot.shooter.magHome();
                 }
             } else {
-                if (gamepad2.a) {
+                if (gamepad1.a) {
                     robot.intake.blockerDown();
                 } else {
                     robot.intake.blockerUp();
+                }
+
+                if (gamepad1.x && !shootToggle) {
+                    shootToggle = true;
+                    if (flywheelOn) {
+                        robot.shooter.flywheelPS();
+                    } else {
+                        robot.shooter.flywheelOff();
+                    }
+                    flywheelOn = !flywheelOn;
+                } else if (!gamepad1.x && shootToggle) {
+                    shootToggle = false;
+                }
+
+                if (gamepad1.b) {
+                    robot.shooter.feedHome();
+                } else {
+                    robot.shooter.feedTop();
                 }
 
                 if (gamepad1.left_trigger > 0) {
@@ -71,9 +89,17 @@ public class DoubleFlickerTest extends LinearOpMode {
                 } else {
                     robot.intake.off();
                 }
-            }
 
-            robot.drivetrain.setControls(-gamepad1.left_stick_y , -gamepad1.left_stick_x , -gamepad1.right_stick_x);
+                if (gamepad1.dpad_left) {
+                    robot.setTargetPoint(111, 63, thetaLeft);
+                } else if (gamepad1.dpad_up) {
+                    robot.setTargetPoint(111, 63, thetaMid);
+                } else if (gamepad1.dpad_right) {
+                    robot.setTargetPoint(111, 63, thetaRight);
+                } else {
+                    robot.drivetrain.setControls(-gamepad1.left_stick_y , -gamepad1.left_stick_x , -gamepad1.right_stick_x);
+                }
+            }
 
             addPacket("delay", delay);
             robot.update();

@@ -7,6 +7,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Debug.Logger;
+import org.firstinspires.ftc.teamcode.RobotClasses.MecanumDrivetrain;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import java.util.Arrays;
@@ -14,31 +15,30 @@ import java.util.Arrays;
 import static java.lang.Math.PI;
 
 @TeleOp(name = "1 Teleop")
+@SuppressWarnings("FieldCanBeLocal")
 @Config
 public class Teleop extends LinearOpMode {
 
-    public int startX = 111;
-    public int startY = 63;
-    public double startTheta = PI/2;
+    // Backup Starting Position
+    private final int startX = 111;
+    private final int startY = 63;
+    private final double startTheta = PI/2;
 
     private Robot robot;
+
     public static boolean robotCentric = true;
     public static boolean useAutoPos = true;
 
-    public double xyGain = 1;
-    public double wGain = 1;
+    // Control Gains
+    private double xyGain = 1;
+    private double wGain = 1;
 
     // Toggles
-    public boolean stickToggle = false;
-    public boolean sticksOut = true;
-    public boolean downToggle = false;
-    public boolean armDown = false;
-    public boolean clampToggle = false;
-    public boolean clamped = false;
-    public boolean aimLockToggle = false;
-    public boolean aimLock = false;
-
-    boolean magTog = false, magUp = false;
+    private boolean stickToggle = false;
+    private boolean downToggle = false, armDown = false;
+    private boolean clampToggle = false, clamped = false;
+    private boolean aimLockToggle = false, aimLock = false;
+    private boolean magToggle = false, magUp = false;
 
     /*
     Controller Button Mappings:
@@ -62,8 +62,8 @@ public class Teleop extends LinearOpMode {
     Left Bumper -  Wobble Clamp/Unclamp
     Right Bumper - Slow Mode
     Left Trigger - Shoot Override
-    Left Stick Button - Mag Up
-    Right Stick Button - Aimlock Toggle
+    Left Stick Button - Mag Up - Commented
+    Right Stick Button - AimLock Toggle
      */
 
     @Override
@@ -93,15 +93,16 @@ public class Teleop extends LinearOpMode {
                 robot.intake.off();
             }
 
+            // Override Shoots in Case it is Taking Too Long
+            robot.preShootOverride = gamepad2.left_trigger > 0;
+
             // High Goal / Powershot Shoot
+            robot.aimLockShoot = aimLock;
             if (gamepad1.left_bumper) {
                 robot.highGoalShoot();
             } else if (gamepad1.right_bumper) {
                 robot.powerShotShoot();
             }
-
-            // Override Shoots in Case it is Taking Too Long
-            robot.preShootOverride = gamepad2.left_trigger > 0;
 
             // Stop Shoot Sequence
             if (gamepad2.b) {
@@ -122,12 +123,11 @@ public class Teleop extends LinearOpMode {
             // Stick Retraction/Extension Toggle
             if (gamepad2.x && !stickToggle) {
                 stickToggle = true;
-                if (sticksOut) {
+                if (!robot.intake.sticksHalf) {
                     robot.intake.sticksHalf();
                 } else {
                     robot.intake.sticksOut();
                 }
-                sticksOut = !sticksOut;
             } else if (!gamepad2.x && stickToggle) {
                 stickToggle = false;
             }
@@ -190,12 +190,12 @@ public class Teleop extends LinearOpMode {
             }
 
             // Enter Aimlock / Strafe Mode
-            /*if (gamepad2.right_stick_button && !aimLockToggle) {
+            if (gamepad2.right_stick_button && !aimLockToggle) {
                 aimLockToggle = true;
                 aimLock = !aimLock;
             } else if (!gamepad2.right_stick_button && aimLockToggle) {
                 aimLockToggle = false;
-            }*/
+            }
 
             // Mag Up
 //            if (gamepad2.left_stick_button) {
@@ -204,28 +204,28 @@ public class Teleop extends LinearOpMode {
 //                robot.shooter.magHome();
 //            }
 
-            if (gamepad1.a && !magTog) {
-                magTog = true;
+            if (gamepad1.a && !magToggle) {
+                magToggle = true;
                 if (magUp) {
                     robot.shooter.magHome();
                 } else {
                     robot.shooter.magShoot();
                 }
                 magUp = !magUp;
-            } else if (!gamepad1.a && magTog) {
-                magTog = false;
+            } else if (!gamepad1.a && magToggle) {
+                magToggle = false;
             }
 
             // Drivetrain Controls
-//            if (!aimLock || gamepad2.right_bumper) {
+            if (!aimLock || gamepad2.right_bumper) {
                 if (robotCentric) {
                     robot.drivetrain.setControls(-gamepad1.left_stick_y * xyGain, -gamepad1.left_stick_x * xyGain, -gamepad1.right_stick_x * wGain);
                 } else {
                     robot.drivetrain.setGlobalControls(gamepad1.left_stick_y * xyGain, gamepad1.left_stick_x * xyGain, -gamepad1.right_stick_x * wGain);
                 }
-//            } else if (!robot.preShoot && !robot.shoot) {
-//                robot.drivetrain.setGlobalControls(gamepad1.left_stick_x * xyGain, MecanumDrivetrain.yKp * (63 - robot.y) + MecanumDrivetrain.yKd * (-robot.vy), MecanumDrivetrain.thetaKp * (robot.shootTargets(3)[2] - robot.theta) + MecanumDrivetrain.thetaKd * (-robot.w));
-//            }
+            } else if (aimLock) {
+                robot.drivetrain.setGlobalControls(gamepad1.left_stick_x * xyGain, MecanumDrivetrain.yKp * (63 - robot.y) + MecanumDrivetrain.yKd * (-robot.vy), (gamepad1.right_stick_x == 0 ? MecanumDrivetrain.thetaKp * (robot.shootTargets(3)[2] - robot.theta) + MecanumDrivetrain.thetaKd * (-robot.w) : -gamepad1.right_stick_x * 0.5 * wGain));
+            }
 
             // Update Robot
             robot.update();
@@ -237,6 +237,7 @@ public class Teleop extends LinearOpMode {
             telemetry.addData("X", robot.x);
             telemetry.addData("Y", robot.y);
             telemetry.addData("Theta", robot.theta);
+            telemetry.addData("AimLock", aimLock);
             telemetry.addData("# Rings", robot.numRings);
             telemetry.addData("Shooter Velocity", robot.shooter.getVelocity());
             telemetry.addData("# Cycles", robot.cycles);

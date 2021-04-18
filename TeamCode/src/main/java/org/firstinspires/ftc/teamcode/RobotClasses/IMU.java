@@ -33,14 +33,14 @@ public class IMU {
         deltaHeading = angle - lastHeading;
 
         if (deltaHeading < -PI) {
-            deltaHeading += 2 * PI;
+            deltaHeading += 2*PI;
         } else if (deltaHeading >= PI) {
-            deltaHeading -= 2 * PI;
+            deltaHeading -= 2*PI;
         }
 
         theta = (theta + deltaHeading) % (2*PI);
         if (theta < 0) {
-            theta += 2 * PI;
+            theta += 2*PI;
         }
         lastHeading = angle;
     }
