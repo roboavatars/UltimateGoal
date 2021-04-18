@@ -98,7 +98,7 @@ public class Robot {
     // Powershot Debug Variables
     public final double[] psShootPos = new double[] {111, 63};
     public static double theta0 = 1.900;
-    public static double theta1 = 1.810;
+    public static double theta1 = 1.8125;
     public static double theta2 = 1.725;
     public static double[] thetaPositions = {theta2, theta1, theta0};
 
@@ -265,8 +265,8 @@ public class Robot {
             if (curTime - shootTime > shootDelay) {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position and velocity low enough
-                    if ((shooter.getVelocity() > vThresh && ((highGoal && (aimLockShoot || isAtPose(target[0], target[1], target[2], 1, 1, PI/60)))
-                            || (!highGoal && isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/200) && notMoving())))
+                    if (((highGoal && (aimLockShoot || isAtPose(target[0], target[1], target[2], 1, 1, PI/60)))
+                            || (!highGoal && isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/200) && notMoving()))
                             || curTime - flickTime > flickTimeBackup) {
 
                         log("In shoot Velocity: " + shooter.getVelocity());
@@ -288,7 +288,7 @@ public class Robot {
                             }
                             log("Feed ring 1");
                         } else if (numRings == 2) {
-                            if (!highGoal) shooter.setVelocity(Constants.POWERSHOT_VELOCITY - 50);
+                            if (!highGoal) shooter.setVelocity(Constants.POWERSHOT_VELOCITY - 30);
 
                             log("Feed ring 2");
                         } else if (numRings == 1) {

@@ -5,16 +5,14 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
-
 @TeleOp
 @Config
 public class HardwareTest extends LinearOpMode {
 
-    public static double leftHome = 0.4;
-    public static double leftOut = 0.3;
-    public static double rightHome = 0;
-    public static double rightOut = 1;
+    public static double leftHome = 0.73;
+    public static double leftOut = 0.18;
+    public static double rightHome = 0.55;
+    public static double rightOut = 0;
     public static boolean home = true;
     public static boolean debug = true;
 
