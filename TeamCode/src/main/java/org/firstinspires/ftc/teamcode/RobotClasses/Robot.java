@@ -433,6 +433,7 @@ public class Robot {
                 log("Shooting with " + numRings + " rings");
             }
             startShootTime = curTime;
+            shooter.flapHome();
 
             double shootY = 60;
             if (isAuto) {
@@ -453,6 +454,7 @@ public class Robot {
             highGoal = false;
             numRingsPreset = 3;
             startShootTime = curTime;
+            shooter.flapDown();
             target = new double[] {psShootPos[0], psShootPos[1], thetaPositions[2]};
             log("Powershot shoot initiated");
         }
@@ -503,7 +505,7 @@ public class Robot {
 
         // Calculate Robot Angle
         double d = Math.sqrt(Math.pow(targetX - shooterX, 2) + Math.pow(targetY - shooterY, 2));
-        double alignRobotAngle = Math.atan2(dy, dx) + 0.0013 * d - 0.2300 - thetaOffset;
+        double alignRobotAngle = Math.atan2(dy, dx) + (highGoal ? 0.00125 : 0.0013) * d - 0.2300 - thetaOffset;
         double alignRobotX = shooterX - Shooter.SHOOTER_DX * Math.sin(alignRobotAngle);
         double alignRobotY = shooterY + Shooter.SHOOTER_DX * Math.cos(alignRobotAngle);
 

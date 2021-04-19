@@ -16,6 +16,7 @@ public class Shooter {
     public DcMotorEx shooterMotor2;
     private Servo magServo;
     public Servo feedServo;
+    private Servo flapServo;
     private DistanceSensor ringSensor;
 
     public boolean magHome = true;
@@ -40,10 +41,12 @@ public class Shooter {
         shooterMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
         shooterMotor2.setDirection(DcMotorSimple.Direction.FORWARD);
 
+        flapServo = op.hardwareMap.get(Servo.class, "flapServo");
         magServo = op.hardwareMap.get(Servo.class, "magServo");
         feedServo = op.hardwareMap.get(Servo.class, "feedServo");
         ringSensor = op.hardwareMap.get(DistanceSensor.class, "ringSensor");
 
+        flapHome();
         feedHome();
         magHome();
 
@@ -96,6 +99,22 @@ public class Shooter {
     public void feedTop() {
         feedServo.setPosition(Constants.FEED_TOP_POS);
         feedHome = false;
+    }
+
+    public void setFlapPosition(double position) {
+        flapServo.setPosition(position);
+    }
+
+    public double getFlapAngle() {
+        return flapServo.getPosition();
+    }
+
+    public void flapDown() {
+        flapServo.setPosition(Constants.FLAP_DOWN_POS);
+    }
+
+    public void flapHome() {
+        flapServo.setPosition(Constants.FLAP_HOME_POS);
     }
 
     public double getDistance() {

@@ -25,12 +25,8 @@ public class T265 {
     private final double xOffset = -9;
     private final double yOffset = 2;
 
-    // Position Variables
-    private double x;
-    private double y;
-    private double theta;
-
-    // Other
+    // State Variables
+    private double x, y, theta;
     public int confidence = 0;
 
     @SuppressLint("SdCardPath")
