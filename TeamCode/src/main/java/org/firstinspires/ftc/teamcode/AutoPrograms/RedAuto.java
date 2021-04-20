@@ -20,7 +20,7 @@ import java.util.Arrays;
 import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 
-@Autonomous(name = "1 Red Auto", preselectTeleOp = "Teleop")
+@Autonomous(name = "1 Red Auto", preselectTeleOp = "1 Teleop")
 public class RedAuto extends LinearOpMode {
 
     @Override
@@ -108,7 +108,7 @@ public class RedAuto extends LinearOpMode {
         RingCase ringCase = detector.getStackPipe().getModeResult();
         Robot.log("Ring case: " + ringCase);
 
-        double[][] wobbleDelivery = {{121, 93}, {97, 118}, {127, 130}};
+        double[][] wobbleDelivery = {{121, 93}, {97, 118}, {126, 131}};
         double[][] wobble2Delivery = {{116, 79}, {92, 109}, {118, 130}};
         double[] wobbleCor;
         double[] wobble2Cor;
@@ -167,8 +167,8 @@ public class RedAuto extends LinearOpMode {
                     if (ringCase != RingCase.Zero) {
                         robot.shootYOverride = 36;
                         robot.thetaOffset = 0.06;
-                        Constants.HIGH_GOAL_VELOCITY = 2050;
-                        robot.highGoalShoot(ringCase == RingCase.Four ? 4 : 1, false);
+                        Constants.HIGH_GOAL_VELOCITY = 1950;
+                        robot.highGoalShoot(ringCase == RingCase.Four ? 4 : 1);
                     } else {
                         robot.powerShotShoot();
                     }
@@ -208,7 +208,7 @@ public class RedAuto extends LinearOpMode {
                 if (time.seconds() > intakeStackTime || ringCase == RingCase.One) {
                     if (ringCase == RingCase.Four) {
                         robot.shootYOverride = robot.y;
-                        robot.highGoalShoot(1, false);
+                        robot.highGoalShoot(1);
                     }
 
                     Waypoint[] intakeStack2Waypoints = new Waypoint[] {
@@ -321,7 +321,7 @@ public class RedAuto extends LinearOpMode {
                                     new Waypoint(robot.x, robot.y, robot.theta, 60, 60, 0, 0),
                                     new Waypoint(64, 128, 0, 40, 30, 0, 2.0),
                                     new Waypoint(116, 129, 0, 40, 30, 0, 3.75),
-                                    new Waypoint(127, 130, 0, 40, 5, 0, ringTime),
+                                    new Waypoint(126, 131, 0, 40, 5, 0, ringTime),
                             };
                             ringPath = new Path(new ArrayList<>(Arrays.asList(ringWaypoints)));
                         }
