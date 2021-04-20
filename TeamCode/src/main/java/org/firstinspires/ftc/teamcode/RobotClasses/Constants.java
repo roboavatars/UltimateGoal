@@ -16,7 +16,7 @@ public class Constants {
     public static double R_OUT_POS = 0;
 
     public static double BLOCKER_HOME_POS = 0.72;
-    public static double BLOCKER_UP_POS = 0.45;
+    public static double BLOCKER_UP_POS = 0.49;
     public static double BLOCKER_DOWN_POS = 0.25;
 
     // Shooter
@@ -30,7 +30,7 @@ public class Constants {
     public static double FEED_TOP_POS = 0.14;
 
     public static double FLAP_DOWN_POS = 0.45;
-    public static double FLAP_HOME_POS = 0.45;
+    public static double FLAP_HOME_POS = 0.70;
 
     public static double ZERO_DIST = 4.4;
     public static double ONE_DIST = 3.9;

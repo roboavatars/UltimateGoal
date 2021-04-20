@@ -37,7 +37,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
     public static int HEIGHT_MAX = 60;
     public static int WIDTH_MAX = 60;
     public static double ONE_MIN = 2.3;
-    public static double ONE_MAX = 2.8;
+    public static double ONE_MAX = 3.3;
     public static double FOUR_MIN = 0.5;
     public static double FOUR_AREA = 1000;
 
