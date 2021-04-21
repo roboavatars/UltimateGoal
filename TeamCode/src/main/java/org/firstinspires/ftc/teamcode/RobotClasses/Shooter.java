@@ -46,7 +46,7 @@ public class Shooter {
         feedServo = op.hardwareMap.get(Servo.class, "feedServo");
         ringSensor = op.hardwareMap.get(DistanceSensor.class, "ringSensor");
 
-        flapHome();
+        flapDown();
         feedHome();
         magHome();
 
@@ -113,8 +113,8 @@ public class Shooter {
         flapServo.setPosition(Constants.FLAP_DOWN_POS);
     }
 
-    public void flapHome() {
-        flapServo.setPosition(Constants.FLAP_HOME_POS);
+    public void flapUp() {
+        flapServo.setPosition(Constants.FLAP_UP_POS);
     }
 
     public double getDistance() {

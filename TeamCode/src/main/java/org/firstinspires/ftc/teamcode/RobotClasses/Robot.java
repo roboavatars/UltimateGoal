@@ -192,7 +192,7 @@ public class Robot {
             // Set flywheel velocity based on what we want to shoot
             if (highGoal) {
                 shooter.flywheelHG();
-                vThresh = Constants.HIGH_GOAL_VELOCITY - 40;
+                vThresh = Constants.HIGH_GOAL_VELOCITY - 100;
             } else {
                 shooter.flywheelPS();
                 vThresh = Constants.POWERSHOT_VELOCITY - 40;
@@ -216,7 +216,8 @@ public class Robot {
             }
 
             // Start auto-feed when mag is up, velocity is high enough, and robot is at position
-            if (preShootOverride || (shooter.getVelocity() > vThresh && (aimLockShoot || (isAtPose(target[0], target[1], target[2], 1, 1, PI/35) && notMoving())))) {
+            if (preShootOverride || (shooter.getVelocity() > vThresh &&
+                    (aimLockShoot || (isAtPose(target[0], target[1], target[2], 1, 1, PI/35) && notMoving())))) {
                 if (highGoal) {
                     shootDelay = highGoalDelay;
                 } else {
@@ -376,7 +377,7 @@ public class Robot {
         addPacket("3 Theta", round(theta));
         addPacket("4 Shooter Velocity", shooter.getVelocity() + " " + shooter.getTargetVelocity());
         addPacket("5 numRings", numRings);
-        addPacket("6 shoot", shoot  + " " + preShoot + " " + highGoal);
+        addPacket("6 shoot", preShoot  + " " + shoot + " " + highGoal);
         addPacket("7 Run Time", (curTime - startTime) / 1000);
         addPacket("8 Update Frequency (Hz)", round(1 / timeDiff));
         addPacket("9 Pod Zeroes", drivetrain.zero1 + ", " + drivetrain.zero2 + ", " + drivetrain.zero3);
@@ -421,15 +422,19 @@ public class Robot {
     }
 
     public void highGoalShoot() {
-        highGoalShoot(!shooter.sensorBroken ? shooter.getNumRings() : 3, true);
+        highGoalShoot(!shooter.sensorBroken ? shooter.getNumRings() : 3, false);
+    }
+
+    public void highGoalShoot(boolean useFlap) {
+        highGoalShoot(!shooter.sensorBroken ? shooter.getNumRings() : 3, useFlap);
     }
 
     public void highGoalShoot(int numRings) {
-        highGoalShoot(numRings, true);
+        highGoalShoot(numRings, false);
     }
 
     // Set variables for high goal shoot
-    public void highGoalShoot(int numRings, boolean flapHome) {
+    public void highGoalShoot(int numRings, boolean useFlap) {
         if (!preShoot && !shoot) {
             preShoot = true;
             highGoal = true;
@@ -438,8 +443,8 @@ public class Robot {
                 log("Shooting with " + numRings + " rings");
             }
             startShootTime = curTime;
-            if (flapHome) {
-                shooter.flapHome();
+            if (useFlap) {
+                shooter.flapUp();
             } else {
                 shooter.flapDown();
             }
@@ -488,10 +493,10 @@ public class Robot {
     }
 
     public double[] shootTargets(double shootX, double shootY, double shootTheta, int targetNum) {
-        /*  power1- (76.5,144,24)
-            power2- (84,144,24)
-            power3- (91.5,144,24)
-            high goal- (108,144,35.5) */
+        /* power1- (76.5,144,24)
+           power2- (84,144,24)
+           power3- (91.5,144,24)
+           high goal- (108,144,35.5) */
 
         double targetX = shootXCor[targetNum];
         double targetY = shootYCor;
@@ -537,8 +542,6 @@ public class Robot {
             thetaControl = theta - thetaTarget;
         }
 
-         // log("target theta: " + thetaTarget);
-
         drawRobot(xTarget, yTarget, thetaTarget, "blue");
 
         drivetrain.setGlobalControls(xKp * (xTarget - x) + xKd * (vxTarget - vx), yKp * (yTarget - y) + yKd * (vyTarget - vy), thetaKp * (-thetaControl) + thetaKd * (wTarget - w));
@@ -576,7 +579,10 @@ public class Robot {
     }
 
     public boolean notMoving() {
-        return notMoving((isAuto ? 1.5 : 5), (isAuto ? 0.2 : 1));
+        if (isAuto || !highGoal) {
+            return notMoving(1.5, 0.2);
+        }
+        return true;
     }
 
     public boolean notMoving(double xyThreshold, double thetaThreshold) {

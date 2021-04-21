@@ -99,7 +99,7 @@ public class Teleop extends LinearOpMode {
             // High Goal / Powershot Shoot
             robot.aimLockShoot = aimLock;
             if (gamepad1.left_bumper) {
-                robot.highGoalShoot();
+                robot.highGoalShoot(true);
             } else if (gamepad1.right_bumper) {
                 robot.powerShotShoot();
             }

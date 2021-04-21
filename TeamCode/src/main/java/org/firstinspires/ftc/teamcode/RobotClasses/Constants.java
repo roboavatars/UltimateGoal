@@ -30,7 +30,7 @@ public class Constants {
     public static double FEED_TOP_POS = 0.14;
 
     public static double FLAP_DOWN_POS = 0.45;
-    public static double FLAP_HOME_POS = 0.70;
+    public static double FLAP_UP_POS = 0.70;
 
     public static double ZERO_DIST = 4.4;
     public static double ONE_DIST = 3.9;
