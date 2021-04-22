@@ -1,8 +1,8 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
@@ -22,23 +22,20 @@ public class IntakeTest extends LinearOpMode {
         double intakeStackTime = 2.5;
 
         waitForStart();
-
         time.reset();
 
         while (opModeIsActive()) {
             if (time.seconds() > intakeStackTime) {
                 break;
-            } else if (time.seconds() > intakeStackTime - 0.5) {
-                robot.intake.setPower(-0.2);
-            } else if (time.seconds() > intakeStackTime - 1) {
+            } else if (time.seconds() > intakeStackTime - 0.75) {
+                robot.intake.setPower(-0.75);
                 robot.intake.blockerDown();
-                robot.intake.off();
-            } else if (robot.isAtPose(109, 38.0, PI/2, 0.5, 0.5, PI/35)) {
+            } else if (robot.isAtPose(109, 38, PI/2, 0.5, 0.5, PI/35)) {
                 robot.intake.on();
-                robot.intake.setBlocker(0.48 - 0.175 * time.seconds());
+                robot.intake.setBlocker(0.51 - 0.12 * time.seconds());
                 robot.drivetrain.stop();
             } else {
-                robot.setTargetPoint(109, 38.0, PI/2);
+                robot.setTargetPoint(109, 38, PI/2);
             }
 
             robot.update();

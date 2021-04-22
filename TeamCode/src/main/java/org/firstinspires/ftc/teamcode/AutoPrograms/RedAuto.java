@@ -166,8 +166,8 @@ public class RedAuto extends LinearOpMode {
                 if (time.seconds() > goToStackTime) {
                     if (ringCase != RingCase.Zero) {
                         robot.shootYOverride = 36;
-                        robot.thetaOffset = 0.06;
-                        Constants.HIGH_GOAL_VELOCITY = 1950;
+                        robot.thetaOffset = 0.10;
+                        Constants.HIGH_GOAL_VELOCITY = 1670;
                         robot.highGoalShoot(ringCase == RingCase.Four ? 4 : 1);
                     } else {
                         robot.powerShotShoot();
@@ -182,6 +182,7 @@ public class RedAuto extends LinearOpMode {
             else if (!shootHighGoal) {
                 if (!robot.preShoot && !robot.shoot && robot.numRings == 0) {
                     if (ringCase == RingCase.Four) {
+                        Constants.HIGH_GOAL_VELOCITY = 1750;
                         robot.shooter.flywheelHG();
                     }
 
@@ -196,12 +197,12 @@ public class RedAuto extends LinearOpMode {
                     if (time.seconds() > intakeStackTime - 0.75) {
                         robot.intake.setPower(-0.75);
                         robot.intake.blockerDown();
-                    } else if (robot.isAtPose(109, 38.0, PI/2, 0.5, 0.5, PI/35)) {
+                    } else if (robot.isAtPose(109, 38, PI/2, 0.5, 0.5, PI/35)) {
                         robot.intake.on();
                         robot.intake.setBlocker(0.51 - 0.12 * time.seconds());
                         robot.drivetrain.stop();
                     } else {
-                        robot.setTargetPoint(109, 38.0, PI/2);
+                        robot.setTargetPoint(109, 38, PI/2);
                     }
                 }
 
@@ -260,71 +261,78 @@ public class RedAuto extends LinearOpMode {
 
                         Robot.log("Detected " + rings.size() + " ring(s): " + rings);
 
-                        int maxY = 130;
-                        for (Ring ring : rings) {
-                            sweep &= ring.getY() >= maxY;
-                        }
+//                        int maxY = 130;
                         sweep = true;
-
-                        if (!sweep) {
-                            ArrayList<Waypoint> ringWaypoints = new ArrayList<>();
-                            ringWaypoints.add(new Waypoint(robot.x, robot.y, robot.theta, 50, 60, 0, 0));
-
-                            double[] ringPos = new double[3];
-                            ringTime = 0;
-                            if (rings.size() >= 1) {
-                                ringPos = rings.get(0).driveToRing(robot.x, robot.y);
-                                ringTime += 1.5;
-                                if (ringPos[1] > maxY) {
-                                    ringIntakeTheta[0] = ringPos[0] - robot.x < 0 ? 3*PI/4 : PI/4;
-                                    ringPos[0] -= 2;
-                                } else if (Ring.isLowestX(rings, rings.get(0))) {
-                                    ringIntakeTheta[0] = PI/2;
-                                } else {
-                                    ringIntakeTheta[0] = ringPos[2];
-                                }
-                                ringWaypoints.add(new Waypoint(ringPos[0], Math.min(maxY, ringPos[1]), ringIntakeTheta[0], 30, 10, 0, ringTime));
+                        Ring closestRing = null;
+                        for (Ring ring : rings) {
+                            if (ring.getY() < 126) {
+                                sweep = false;
+                                closestRing = ring.clone();
+                                break;
                             }
-
-                            if (rings.size() >= 2) {
-                                ringPos = rings.get(1).driveToRing(ringPos[0], Math.min(maxY, ringPos[1]));
-                                ringTime += 1.5;
-                                if (ringPos[1] > maxY || Ring.isLowestX(rings, rings.get(1))) {
-                                    if (ringPos[1] > maxY && !Ring.isLowestX(rings, rings.get(1))) {
-                                        ringIntakeTheta[1] = ringPos[0] - rings.get(0).getX() < 0 ? 3 * PI / 4 : PI / 4;
-                                        ringPos[0] -= 2;
-                                    } else {
-                                        ringIntakeTheta[1] = PI/4;
-                                        ringWaypoints.add(new Waypoint(ringPos[0]-5, Math.min(maxY, ringPos[1])-5, ringIntakeTheta[1], 30, 10, 0, ringTime-0.6));
-                                    }
-                                } else {
-                                    ringIntakeTheta[1] = ringPos[2];
-                                }
-                                ringWaypoints.add(new Waypoint(ringPos[0], Math.min(maxY, ringPos[1]), ringIntakeTheta[1], 30, 10, 0, ringTime));
-                            }
-
-                            if (rings.size() >= 3) {
-                                ringPos = rings.get(2).driveToRing(ringPos[0], Math.min(maxY, ringPos[1]));
-                                ringTime += 1.5;
-                                if (ringPos[1] > maxY && rings.get(2).getY() > maxY) {
-                                    ringIntakeTheta[2] = ringPos[0] - rings.get(1).getX() < 0 ? 3*PI/4 : PI/4;
-                                    ringPos[0] -= 2;
-                                } else {
-                                    ringIntakeTheta[2] = ringPos[2];
-                                }
-                                ringWaypoints.add(new Waypoint(ringPos[0], Math.min(maxY, ringPos[1]), ringIntakeTheta[2], 30, 10, 0, ringTime));
-                            }
-                            ringPath = new Path(new ArrayList<>(ringWaypoints));
-                        } else {
-                            ringTime = 4.75;
-                            Waypoint[] ringWaypoints = new Waypoint[] {
-                                    new Waypoint(robot.x, robot.y, robot.theta, 60, 60, 0, 0),
-                                    new Waypoint(64, 128, 0, 40, 30, 0, 2.0),
-                                    new Waypoint(116, 129, 0, 40, 30, 0, 3.75),
-                                    new Waypoint(126, 131, 0, 40, 5, 0, ringTime),
-                            };
-                            ringPath = new Path(new ArrayList<>(Arrays.asList(ringWaypoints)));
                         }
+
+//                        if (!sweep) {
+//                            ArrayList<Waypoint> ringWaypoints = new ArrayList<>();
+//                            ringWaypoints.add(new Waypoint(robot.x, robot.y, robot.theta, 50, 60, 0, 0));
+//
+//                            double[] ringPos = new double[3];
+//                            ringTime = 0;
+//                            if (rings.size() >= 1) {
+//                                ringPos = rings.get(0).driveToRing(robot.x, robot.y);
+//                                ringTime += 1.5;
+//                                if (ringPos[1] > maxY) {
+//                                    ringIntakeTheta[0] = ringPos[0] - robot.x < 0 ? 3*PI/4 : PI/4;
+//                                    ringPos[0] -= 2;
+//                                } else if (Ring.isLowestX(rings, rings.get(0))) {
+//                                    ringIntakeTheta[0] = PI/2;
+//                                } else {
+//                                    ringIntakeTheta[0] = ringPos[2];
+//                                }
+//                                ringWaypoints.add(new Waypoint(ringPos[0], Math.min(maxY, ringPos[1]), ringIntakeTheta[0], 30, 10, 0, ringTime));
+//                            }
+//
+//                            if (rings.size() >= 2) {
+//                                ringPos = rings.get(1).driveToRing(ringPos[0], Math.min(maxY, ringPos[1]));
+//                                ringTime += 1.5;
+//                                if (ringPos[1] > maxY || Ring.isLowestX(rings, rings.get(1))) {
+//                                    if (ringPos[1] > maxY && !Ring.isLowestX(rings, rings.get(1))) {
+//                                        ringIntakeTheta[1] = ringPos[0] - rings.get(0).getX() < 0 ? 3 * PI / 4 : PI / 4;
+//                                        ringPos[0] -= 2;
+//                                    } else {
+//                                        ringIntakeTheta[1] = PI/4;
+//                                        ringWaypoints.add(new Waypoint(ringPos[0]-5, Math.min(maxY, ringPos[1])-5, ringIntakeTheta[1], 30, 10, 0, ringTime-0.6));
+//                                    }
+//                                } else {
+//                                    ringIntakeTheta[1] = ringPos[2];
+//                                }
+//                                ringWaypoints.add(new Waypoint(ringPos[0], Math.min(maxY, ringPos[1]), ringIntakeTheta[1], 30, 10, 0, ringTime));
+//                            }
+//
+//                            if (rings.size() >= 3) {
+//                                ringPos = rings.get(2).driveToRing(ringPos[0], Math.min(maxY, ringPos[1]));
+//                                ringTime += 1.5;
+//                                if (ringPos[1] > maxY && rings.get(2).getY() > maxY) {
+//                                    ringIntakeTheta[2] = ringPos[0] - rings.get(1).getX() < 0 ? 3*PI/4 : PI/4;
+//                                    ringPos[0] -= 2;
+//                                } else {
+//                                    ringIntakeTheta[2] = ringPos[2];
+//                                }
+//                                ringWaypoints.add(new Waypoint(ringPos[0], Math.min(maxY, ringPos[1]), ringIntakeTheta[2], 30, 10, 0, ringTime));
+//                            }
+//                            ringPath = new Path(new ArrayList<>(ringWaypoints));
+//                        } else {
+                        ringTime = 5.0;
+                        ArrayList<Waypoint> ringWaypoints = new ArrayList<>();
+                        ringWaypoints.add(new Waypoint(robot.x, robot.y, robot.theta, 60, 60, 0, 0));
+                        if (!sweep) {
+                            ringWaypoints.add(new Waypoint(closestRing.getX(), closestRing.getY(), closestRing.driveToRing(robot.x, robot.y)[2], 40, 30, 0, 1.25));
+                        }
+                        ringWaypoints.add(new Waypoint(62, 128, 0, 40, 30, 0, sweep ? 2.0 : 2.25));
+                        ringWaypoints.add(new Waypoint(116, 129, 0, 40, 30, 0, 3.75));
+                        ringWaypoints.add(new Waypoint(126, 131, 0, 40, 5, 0, ringTime));
+                        ringPath = new Path(ringWaypoints);
+//                        }
 
                         shootPowerShots = true;
                         time.reset();
@@ -334,27 +342,25 @@ public class RedAuto extends LinearOpMode {
 
             // Collect bounce backed rings
             else if (!bounceBack) {
-                if (!sweep) {
-                    if (time.seconds() < 0.75) {
-                        robot.setTargetPoint(ringPath.getRobotPose(Math.min(time.seconds(), ringTime)));
-                    } else if (rings.size() >= 1 && time.seconds() < 1.5) {
-                        robot.setTargetPoint(new Target(ringPath.getRobotPose(Math.min(time.seconds(), ringTime))).thetaW0(ringIntakeTheta[0]));
-                    } else if (rings.size() >= 2 && time.seconds() < 3.0) {
-                        robot.setTargetPoint(new Target(ringPath.getRobotPose(Math.min(time.seconds(), ringTime))).thetaW0(ringIntakeTheta[1]));
-                    } else if (rings.size() == 3 && time.seconds() < 4.5) {
-                        robot.setTargetPoint(new Target(ringPath.getRobotPose(Math.min(time.seconds(), ringTime))).thetaW0(ringIntakeTheta[2]));
-                    }
+//                if (!sweep) {
+//                    if (time.seconds() < 0.75) {
+//                        robot.setTargetPoint(ringPath.getRobotPose(Math.min(time.seconds(), ringTime)));
+//                    } else if (rings.size() >= 1 && time.seconds() < 1.5) {
+//                        robot.setTargetPoint(new Target(ringPath.getRobotPose(Math.min(time.seconds(), ringTime))).thetaW0(ringIntakeTheta[0]));
+//                    } else if (rings.size() >= 2 && time.seconds() < 3.0) {
+//                        robot.setTargetPoint(new Target(ringPath.getRobotPose(Math.min(time.seconds(), ringTime))).thetaW0(ringIntakeTheta[1]));
+//                    } else if (rings.size() == 3 && time.seconds() < 4.5) {
+//                        robot.setTargetPoint(new Target(ringPath.getRobotPose(Math.min(time.seconds(), ringTime))).thetaW0(ringIntakeTheta[2]));
+//                    }
+//                } else {
+                if (time.seconds() < (sweep ? 2.0 : 2.25)) {
+                    robot.setTargetPoint(ringPath.getRobotPose(Math.min(time.seconds(), ringTime)));
+                } else if (robot.y < 122) {
+                    robot.setTargetPoint(new Target(ringPath.getRobotPose(Math.min(time.seconds(), ringTime))).thetaW0(PI/6).thetaKp(7.0));
                 } else {
-                    if (time.seconds() < 2.0) {
-                        robot.setTargetPoint(ringPath.getRobotPose(Math.min(time.seconds(), ringTime)));
-                    } else {
-                        if (time.seconds() < 3.75) {
-                            robot.setTargetPoint(new Target(ringPath.getRobotPose(Math.min(time.seconds(), ringTime))).thetaW0(PI/4).thetaKp(7.0));
-                        } else {
-                            robot.setTargetPoint(ringPath.getRobotPose(Math.min(time.seconds(), ringTime)), PI/2, 0);
-                        }
-                    }
+                    robot.setTargetPoint(ringPath.getRobotPose(Math.min(time.seconds(), ringTime)), PI/2, 0);
                 }
+//                }
 
                 if (ringCase == RingCase.Four && time.seconds() > ringTime - 0.5) {
                     robot.intake.blockerHome();
@@ -377,7 +383,7 @@ public class RedAuto extends LinearOpMode {
             else if (!deliverWobble) {
                 double curTime = Math.min(time.seconds(), deliverWobbleTime);
                 Pose curPose = deliverWobblePath.getRobotPose(curTime);
-                if (ringCase == RingCase.Four && sweep) {
+                if (ringCase == RingCase.Four) {
                     robot.drivetrain.stop();
                 } else {
                     robot.setTargetPoint(new Target(curPose).thetaW0(curPose.theta + PI));
@@ -400,10 +406,10 @@ public class RedAuto extends LinearOpMode {
 
                     robot.intake.off();
                     robot.wobbleArm.armUp();
-                    if (ringCase == RingCase.Four) {
-                        robot.intake.blockerDown();
-                        robot.intake.sticksHome();
-                    }
+//                    if (ringCase == RingCase.Four) {
+//                        robot.intake.blockerDown();
+//                        robot.intake.sticksHome();
+//                    }
 
                     Waypoint[] intakeWobble2Waypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, robot.theta, -30, -50, 0, 0),
@@ -429,10 +435,17 @@ public class RedAuto extends LinearOpMode {
 
                 if (time.seconds() > intakeWobble2Time - 0.5) {
                     robot.wobbleArm.armDown();
+                    if (ringCase == RingCase.Four) {
+                        robot.intake.stickLeft(Constants.L_SHOOT_POS);
+                    }
                 }
 
                 if (time.seconds() > intakeWobble2Time + 0.5) {
                     robot.shooter.flywheelHG();
+                    if (ringCase == RingCase.Four) {
+                        robot.intake.blockerDown();
+                        robot.intake.stickLeft(Constants.L_HALF_POS);
+                    }
 
                     Waypoint[] goToHighShootWaypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, robot.theta, 40, 40, 0, 0),
@@ -453,9 +466,7 @@ public class RedAuto extends LinearOpMode {
                     robot.setTargetPoint(goToHighShootPath.getRobotPose(Math.min(time.seconds(), goToHighShootTime)));
                 }
 
-                if (time.seconds() > 0.7) {
-//                    robot.wobbleArm.armUp();
-                } else if (time.seconds() > 0.3) {
+                if (time.seconds() > 0.3) {
                     robot.wobbleArm.clamp();
                 }
 

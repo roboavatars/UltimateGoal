@@ -74,7 +74,8 @@ public class Robot {
     public double startShootTime;
     public double flickTime;
     public double shootDelay;
-    private int vThresh;
+    private int flywheelLowerThreshold;
+    private int flywheelUpperThreshold;
     public static double preShootTimeBackup = 4000;
     public static double flickTimeBackup = 1000;
     public static int highGoalDelay = 250;
@@ -192,10 +193,12 @@ public class Robot {
             // Set flywheel velocity based on what we want to shoot
             if (highGoal) {
                 shooter.flywheelHG();
-                vThresh = Constants.HIGH_GOAL_VELOCITY - 100;
+                flywheelLowerThreshold = Constants.HIGH_GOAL_VELOCITY - 60;
+                flywheelUpperThreshold = Constants.HIGH_GOAL_VELOCITY + 20;
             } else {
                 shooter.flywheelPS();
-                vThresh = Constants.POWERSHOT_VELOCITY - 40;
+                flywheelLowerThreshold = Constants.POWERSHOT_VELOCITY - 40;
+                flywheelUpperThreshold = Constants.POWERSHOT_VELOCITY + 40;
             }
 
             // Turn off intake and put mag up
@@ -212,11 +215,11 @@ public class Robot {
             if (!aimLockShoot && (!isAtPose(target[0], target[1], target[2], 1, 1, PI/35) || !notMoving())) {
                 setTargetPoint(new Target(target[0], target[1], target[2]));
                 log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") (" + round(vx) + ", " + round(vy) + ", " + round(w) + ") Moving to shoot position: [" + round(target[0]) + ", " + round(target[1]) + ", " + round(target[2]) + "]");
-                log(shooter.getVelocity() + " Velocity Threshold: " + vThresh);
+                log(shooter.getVelocity() + " Velocity Low Threshold " + flywheelLowerThreshold + " Velocity High Threshold " + flywheelUpperThreshold);
             }
 
             // Start auto-feed when mag is up, velocity is high enough, and robot is at position
-            if (preShootOverride || (shooter.getVelocity() > vThresh &&
+            if (preShootOverride || (flywheelLowerThreshold <= shooter.getVelocity() && shooter.getVelocity() <= flywheelUpperThreshold &&
                     (aimLockShoot || (isAtPose(target[0], target[1], target[2], 1, 1, PI/35) && notMoving())))) {
                 if (highGoal) {
                     shootDelay = highGoalDelay;
@@ -266,7 +269,8 @@ public class Robot {
             if (curTime - shootTime > shootDelay) {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position and velocity low enough
-                    if (((highGoal && (preShootOverride || aimLockShoot || isAtPose(target[0], target[1], target[2], 1, 1, PI/60)))
+                    if (((highGoal && (preShootOverride || aimLockShoot || (isAuto && flywheelLowerThreshold <= shooter.getVelocity() && shooter.getVelocity() <= flywheelUpperThreshold)
+                            && isAtPose(target[0], target[1], target[2], 1, 1, PI/60) && notMoving()))
                             || (!highGoal && isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/200) && notMoving()))
                             || curTime - flickTime > flickTimeBackup) {
 
@@ -395,7 +399,9 @@ public class Robot {
 //            drawRobot(t265.getX(), t265.getY(), t265.getTheta(), t265.confidenceColor());
 //        }
         for (Ring ring : ringPos) {
-            drawRing(ring);
+            if (ring.getX() != x && ring.getY() != y) {
+                drawRing(ring);
+            }
         }
         int shotRingCount = 0;
         while (shotRingCount < shotRings.size()) {
