@@ -269,7 +269,7 @@ public class Robot {
             if (curTime - shootTime > shootDelay) {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position and velocity low enough
-                    if (((highGoal && (preShootOverride || aimLockShoot || (isAuto && flywheelLowerThreshold <= shooter.getVelocity() && shooter.getVelocity() <= flywheelUpperThreshold)
+                    if (((highGoal && (preShootOverride || aimLockShoot || (!isAuto || (flywheelLowerThreshold <= shooter.getVelocity() && shooter.getVelocity() <= flywheelUpperThreshold))
                             && isAtPose(target[0], target[1], target[2], 1, 1, PI/60) && notMoving()))
                             || (!highGoal && isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/200) && notMoving()))
                             || curTime - flickTime > flickTimeBackup) {
