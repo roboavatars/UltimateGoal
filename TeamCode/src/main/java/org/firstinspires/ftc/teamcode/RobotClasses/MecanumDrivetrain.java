@@ -61,7 +61,7 @@ public class MecanumDrivetrain {
     public final static double thetaKp = 4.5;
     public final static double xKd = 0.05;
     public final static double yKd = 0.05;
-    public final static double thetaKd = 0.15;
+    public final static double thetaKd = 0.13;
 
     // Odometry delta 0 counters
     public int zero1, zero2, zero3;

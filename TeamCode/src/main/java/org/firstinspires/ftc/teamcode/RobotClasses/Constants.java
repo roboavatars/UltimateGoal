@@ -6,7 +6,7 @@ import com.acmerobotics.dashboard.config.Config;
 public class Constants {
     // Intake
     public static double L_HOME_POS = 0.15;
-    public static double L_HALF_POS = 0.35;
+    public static double L_HALF_POS = 0.4;
     public static double L_SHOOT_POS = 0.6;
     public static double L_OUT_POS = 1;
 

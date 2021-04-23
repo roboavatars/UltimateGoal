@@ -62,6 +62,7 @@ public class Teleop extends LinearOpMode {
     Left Bumper -  Wobble Clamp/Unclamp
     Right Bumper - Slow Mode
     Left Trigger - Shoot Override
+    Right Trigger - Outake override
     Left Stick Button - Mag Up - Commented
     Right Stick Button - AimLock Toggle
      */
@@ -85,9 +86,9 @@ public class Teleop extends LinearOpMode {
 
         while (opModeIsActive()) {
             // Intake On / Rev / Off
-            if (gamepad1.right_trigger > 0) {
+            if (gamepad1.right_trigger > 0 && gamepad2.right_trigger == 0) {
                 robot.intake.on();
-            } else if (gamepad1.left_trigger > 0) {
+            } else if (gamepad1.left_trigger > 0 || gamepad2.right_trigger > 0) {
                 robot.intake.reverse();
             } else {
                 robot.intake.off();
