@@ -15,7 +15,6 @@ import org.firstinspires.ftc.teamcode.Pathing.Pose;
 import org.firstinspires.ftc.teamcode.Pathing.Target;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import static java.lang.Math.PI;
@@ -97,8 +96,8 @@ public class Robot {
 
     // Powershot Debug Variables
     public final double[] psShootPos = new double[] {111, 63};
-    public static double theta0 = 1.900;
-    public static double theta1 = 1.8125;
+    public static double theta0 = 1.895;
+    public static double theta1 = 1.810;
     public static double theta2 = 1.725;
     public static double[] thetaPositions = {theta2, theta1, theta0};
 
@@ -212,14 +211,15 @@ public class Robot {
             if (!aimLockShoot && (!isAtPose(target[0], target[1], target[2], 1, 1, PI/35) || !notMoving())) {
                 setTargetPoint(new Target(target[0], target[1], target[2]));
                 log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") (" + round(vx) + ", " + round(vy) + ", " + round(w) + ") Moving to shoot position: [" + round(target[0]) + ", " + round(target[1]) + ", " + round(target[2]) + "]");
-                log(shooter.getVelocity() + " Velocity > " + vThresh);
+                log(shooter.getVelocity() + ", Target: " + shooter.getTargetVelocity() + ", > " + vThresh);
             }
 
             // Start auto-feed when mag is up, velocity is high enough, and robot is at position
-            if (preShootOverride || (vThresh <= shooter.getVelocity() &&
+            if (preShootOverride || (shooter.getVelocity() >= vThresh &&
                     (aimLockShoot || (isAtPose(target[0], target[1], target[2], 1, 1, PI/35) && notMoving())))) {
                 if (highGoal) {
                     shootDelay = highGoalDelay;
+                    vThresh = Constants.HIGH_GOAL_VELOCITY - 100;
                 } else {
                     shootDelay = psDelay;
                 }
@@ -234,7 +234,7 @@ public class Robot {
             }
 
             // If robot does not converge or mag gets stuck
-            if (curTime - startShootTime > (isAuto ? 3000 : 4000)) {
+            if (curTime - startShootTime > (isAuto ? 1500 : 4000)) {
                 if (!isAuto) {
                     cancelShoot();
                 } else {
@@ -266,11 +266,11 @@ public class Robot {
             if (curTime - shootTime > shootDelay) {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position and velocity low enough
-                    if (((highGoal && (preShootOverride || aimLockShoot || (isAtPose(target[0], target[1], target[2], 1, 1, PI/60) && notMoving())))
+                    if (((highGoal && (preShootOverride || aimLockShoot || (shooter.getVelocity() >= vThresh && isAtPose(target[0], target[1], target[2], 1, 1, PI/60) && notMoving())))
                             || (!highGoal && isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/200) && notMoving()))
                             || curTime - flickTime > flickTimeBackup) {
 
-                        log("In shoot Velocity: " + shooter.getVelocity());
+                        log("In shoot Velocity/Target: " + shooter.getVelocity() + "/" + shooter.getTargetVelocity());
                         if (!highGoal) {
                             log("PS pos: " + round(x) + ", " + round(y) + ", " + round(theta));
                         }
@@ -299,7 +299,8 @@ public class Robot {
                         numRings--;
                         flickTime = curTime;
                     } else {
-                        log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") Moving to shoot position: " + Arrays.toString(target));
+                        log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") (" + round(vx) + ", " + round(vy) + ", " + round(w) + ") Moving to shoot position: [" + round(target[0]) + ", " + round(target[1]) + ", " + round(target[2]) + "]");
+                        log(shooter.getVelocity() + ", Target: " + shooter.getTargetVelocity() + ", > " + vThresh);
                     }
                 } else {
                     shooter.flywheelOff();
@@ -381,6 +382,7 @@ public class Robot {
         addPacket("7 Run Time", (curTime - startTime) / 1000);
         addPacket("8 Update Frequency (Hz)", round(1 / timeDiff));
         addPacket("9 Pod Zeroes", drivetrain.zero1 + ", " + drivetrain.zero2 + ", " + drivetrain.zero3);
+        addPacket("flap", shooter.getFlapPosition());
         if (!isAuto) {
             addPacket("Cycle Time", (curTime - lastCycleTime) / 1000);
             addPacket("Average Cycle Time", round(cycleTotal / cycles));
@@ -582,7 +584,7 @@ public class Robot {
 
     public boolean notMoving() {
         if (isAuto || !highGoal) {
-            return notMoving(1.5, 0.2);
+            return notMoving(3.5, 0.35);
         }
         return true;
     }

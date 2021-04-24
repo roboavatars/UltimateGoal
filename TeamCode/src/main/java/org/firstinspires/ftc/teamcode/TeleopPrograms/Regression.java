@@ -3,6 +3,7 @@ package org.firstinspires.ftc.teamcode.TeleopPrograms;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import static java.lang.Math.PI;
@@ -13,9 +14,6 @@ public class Regression extends LinearOpMode {
     public int startX = 111;
     public int startY = 63;
     public double startTheta = PI/2;
-
-    public int v = 1560;
-    public double blocker = 0.31;
 
     private final double xyTol = 1;
     private final double thetaTol = PI/35;
@@ -48,7 +46,7 @@ public class Regression extends LinearOpMode {
                     robot.shooter.flywheelOff();
                 } else {
                     robot.shooter.magShoot();
-                    robot.shooter.setVelocity(v);
+                    robot.shooter.setVelocity(Constants.HIGH_GOAL_VELOCITY);
                 }
                 flywheelOn = !flywheelOn;
             } else if (!gamepad1.left_bumper && flywheelToggle) {
@@ -56,19 +54,25 @@ public class Regression extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
-                robot.shooter.feedHome();
-            } else {
                 robot.shooter.feedTop();
+            } else {
+                robot.shooter.feedHome();
             }
 
             if (gamepad2.a) {
-                robot.intake.setBlocker(blocker);
+                robot.intake.blockerDown();
             } else {
                 robot.intake.blockerDown();
             }
 
             if (gamepad1.x) {
                 robot.resetOdo(111, 63, Math.PI/2);
+            }
+
+            if (gamepad1.dpad_up) {
+                robot.shooter.setFlapPosition(robot.shooter.getFlapPosition() + 0.001);
+            } else if (gamepad1.dpad_down) {
+                robot.shooter.setFlapPosition(robot.shooter.getFlapPosition() - 0.001);
             }
 
 //            if (gamepad1.right_trigger > 0) {
@@ -89,7 +93,6 @@ public class Regression extends LinearOpMode {
             telemetry.addData("Robot Y", robot.y);
             telemetry.addData("Robot Theta", robot.theta);
             telemetry.addData("Shooter Velocity", robot.shooter.getVelocity());
-            telemetry.addData("vel", v);
             telemetry.update();
         }
     }
