@@ -74,6 +74,7 @@ public class Robot {
     public double flickTime;
     public double shootDelay;
     private int vThresh;
+    private int vHighThresh;
     public static double preShootTimeBackup = 4000;
     public static double flickTimeBackup = 1000;
     public static int highGoalDelay = 250;
@@ -96,9 +97,9 @@ public class Robot {
 
     // Powershot Debug Variables
     public final double[] psShootPos = new double[] {111, 63};
-    public static double theta0 = 1.895;
+    public static double theta0 = 1.888;
     public static double theta1 = 1.810;
-    public static double theta2 = 1.725;
+    public static double theta2 = 1.722;
     public static double[] thetaPositions = {theta2, theta1, theta0};
 
     // Ring State Variables
@@ -192,9 +193,11 @@ public class Robot {
             if (highGoal) {
                 shooter.flywheelHG();
                 vThresh = Constants.HIGH_GOAL_VELOCITY - 60;
+                vHighThresh = Constants.HIGH_GOAL_VELOCITY + 60;
             } else {
                 shooter.flywheelPS();
                 vThresh = Constants.POWERSHOT_VELOCITY - 40;
+                vHighThresh = Constants.POWERSHOT_VELOCITY + 40;
             }
 
             // Turn off intake and put mag up
@@ -211,15 +214,16 @@ public class Robot {
             if (!aimLockShoot && (!isAtPose(target[0], target[1], target[2], 1, 1, PI/35) || !notMoving())) {
                 setTargetPoint(new Target(target[0], target[1], target[2]));
                 log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") (" + round(vx) + ", " + round(vy) + ", " + round(w) + ") Moving to shoot position: [" + round(target[0]) + ", " + round(target[1]) + ", " + round(target[2]) + "]");
-                log(shooter.getVelocity() + ", Target: " + shooter.getTargetVelocity() + ", > " + vThresh);
+                log(shooter.getVelocity() + ", Target: " + shooter.getTargetVelocity() + ", Min: " + vThresh + ", Max: " + vHighThresh);
             }
 
             // Start auto-feed when mag is up, velocity is high enough, and robot is at position
-            if (preShootOverride || (shooter.getVelocity() >= vThresh &&
+            if (preShootOverride || (vThresh <= shooter.getVelocity() /*&& shooter.getVelocity() < vHighThresh*/ &&
                     (aimLockShoot || (isAtPose(target[0], target[1], target[2], 1, 1, PI/35) && notMoving())))) {
                 if (highGoal) {
                     shootDelay = highGoalDelay;
-                    vThresh = Constants.HIGH_GOAL_VELOCITY - 100;
+                    vThresh = Constants.HIGH_GOAL_VELOCITY - 80;
+                    vHighThresh = Constants.HIGH_GOAL_VELOCITY + 20;
                 } else {
                     shootDelay = psDelay;
                 }
@@ -266,8 +270,8 @@ public class Robot {
             if (curTime - shootTime > shootDelay) {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position and velocity low enough
-                    if (((highGoal && (preShootOverride || aimLockShoot || (shooter.getVelocity() >= vThresh && isAtPose(target[0], target[1], target[2], 1, 1, PI/60) && notMoving())))
-                            || (!highGoal && isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/200) && notMoving()))
+                    if (((highGoal && (preShootOverride || aimLockShoot || (/*vThresh <= shooter.getVelocity() && shooter.getVelocity() <= vHighThresh &&*/ isAtPose(target[0], target[1], target[2], 1, 1, PI/60) && notMoving())))
+                            || (!highGoal && isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/225) && notMoving()))
                             || curTime - flickTime > flickTimeBackup) {
 
                         log("In shoot Velocity/Target: " + shooter.getVelocity() + "/" + shooter.getTargetVelocity());
@@ -300,7 +304,7 @@ public class Robot {
                         flickTime = curTime;
                     } else {
                         log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") (" + round(vx) + ", " + round(vy) + ", " + round(w) + ") Moving to shoot position: [" + round(target[0]) + ", " + round(target[1]) + ", " + round(target[2]) + "]");
-                        log(shooter.getVelocity() + ", Target: " + shooter.getTargetVelocity() + ", > " + vThresh);
+                        log(shooter.getVelocity() + ", Target: " + shooter.getTargetVelocity() + ", Min: " + vThresh + ", Max: " + vHighThresh);
                     }
                 } else {
                     shooter.flywheelOff();
@@ -373,6 +377,8 @@ public class Robot {
         /*if (shooter.sensorBroken) {
             addPacket("0", "Distance Sensor Broken!!!!");
         }*/
+        addPacket("0 battery voltage", battery.getVoltage());
+        batteryLog(battery.getVoltage());
         addPacket("1 X", round(x));
         addPacket("2 Y", round(y));
         addPacket("3 Theta", round(theta));
@@ -382,7 +388,6 @@ public class Robot {
         addPacket("7 Run Time", (curTime - startTime) / 1000);
         addPacket("8 Update Frequency (Hz)", round(1 / timeDiff));
         addPacket("9 Pod Zeroes", drivetrain.zero1 + ", " + drivetrain.zero2 + ", " + drivetrain.zero3);
-        addPacket("flap", shooter.getFlapPosition());
         if (!isAuto) {
             addPacket("Cycle Time", (curTime - lastCycleTime) / 1000);
             addPacket("Average Cycle Time", round(cycleTotal / cycles));
@@ -457,7 +462,7 @@ public class Robot {
             if (isAuto) {
                 if (shootYOverride != 0) {
                     shootY = shootYOverride;
-                    log("Shooting at y = " + shootYOverride);
+                    log("Shooting at y = " + shootY);
                 }
             }
             target = shootTargets(x, shootY, PI/2, 3);
@@ -596,6 +601,10 @@ public class Robot {
     // Logging
     public static void log(String message) {
         Log.w("robot-log", message);
+    }
+
+    public static void batteryLog(double voltage) {
+        Log.w("battery-log", "voltage: " + voltage);
     }
 
     private void profile(int num) {

@@ -21,7 +21,8 @@ public class Constants {
 
     // Shooter
     public static int HIGH_GOAL_VELOCITY = 2050;
-    public static int POWERSHOT_VELOCITY = 1530;
+    public static int HIGH_GOAL_BACK_VELOCITY = 1800;
+    public static int POWERSHOT_VELOCITY = 1550;
 
     public static double MAG_HOME_POS = 0.15;
     public static double MAG_SHOOT_POS = 0.36;
@@ -30,6 +31,7 @@ public class Constants {
     public static double FEED_TOP_POS = 0.14;
 
     public static double FLAP_DOWN_POS = 0.45;
+    public static double FLAP_BACK_POS = 0.625;
     public static double FLAP_UP_POS = 0.60;
 
     public static double ZERO_DIST = 4.4;

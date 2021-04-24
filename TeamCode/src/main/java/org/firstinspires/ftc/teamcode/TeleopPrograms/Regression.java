@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.TeleopPrograms;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -8,7 +9,7 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import static java.lang.Math.PI;
 
-@TeleOp
+@TeleOp @Config
 public class Regression extends LinearOpMode {
 
     public int startX = 111;
@@ -19,8 +20,13 @@ public class Regression extends LinearOpMode {
     private final double thetaTol = PI/35;
 
     private Robot robot;
-    public boolean flywheelToggle = false;
-    public boolean flywheelOn = false;
+    public boolean flywheelToggle = false, flywheelOn = false;
+    public boolean magToggle = false, magUp = false;
+
+    public static double flywheelVelocity = Constants.POWERSHOT_VELOCITY;
+    public static double theta0 = 1.875;
+    public static double theta1 = 1.810;
+    public static double theta2 = 1.725;
 
     @Override
     public void runOpMode() {
@@ -46,7 +52,7 @@ public class Regression extends LinearOpMode {
                     robot.shooter.flywheelOff();
                 } else {
                     robot.shooter.magShoot();
-                    robot.shooter.setVelocity(Constants.HIGH_GOAL_VELOCITY);
+                    robot.shooter.setVelocity(flywheelVelocity);
                 }
                 flywheelOn = !flywheelOn;
             } else if (!gamepad1.left_bumper && flywheelToggle) {
@@ -59,20 +65,42 @@ public class Regression extends LinearOpMode {
                 robot.shooter.feedHome();
             }
 
-            if (gamepad2.a) {
-                robot.intake.blockerDown();
+            if (gamepad2.b) {
+                robot.intake.blockerUp();
             } else {
                 robot.intake.blockerDown();
+            }
+
+            if (gamepad1.a && !magToggle) {
+                magToggle = true;
+                if (magUp) {
+                    robot.shooter.magHome();
+                } else {
+                    robot.shooter.magShoot();
+                }
+                magUp = !magUp;
+            } else if (!gamepad1.a && magToggle) {
+                magToggle = false;
             }
 
             if (gamepad1.x) {
                 robot.resetOdo(111, 63, Math.PI/2);
             }
 
-            if (gamepad1.dpad_up) {
-                robot.shooter.setFlapPosition(robot.shooter.getFlapPosition() + 0.001);
-            } else if (gamepad1.dpad_down) {
-                robot.shooter.setFlapPosition(robot.shooter.getFlapPosition() - 0.001);
+//            if (gamepad1.dpad_up) {
+//                robot.shooter.setFlapPosition(robot.shooter.getFlapPosition() + 0.001);
+//            } else if (gamepad1.dpad_down) {
+//                robot.shooter.setFlapPosition(robot.shooter.getFlapPosition() - 0.001);
+//            }
+
+            if (gamepad1.dpad_left) {
+                robot.setTargetPoint(111, 63, theta0);
+            } else if (gamepad1.dpad_up) {
+                robot.setTargetPoint(111, 63, theta1);
+            } else if (gamepad1.dpad_right) {
+                robot.setTargetPoint(111, 63, theta2);
+            } else {
+                robot.drivetrain.setControls(-gamepad1.left_stick_y , -gamepad1.left_stick_x , -gamepad1.right_stick_x);
             }
 
 //            if (gamepad1.right_trigger > 0) {
@@ -83,7 +111,7 @@ public class Regression extends LinearOpMode {
 //                }
 //            }
 
-            robot.drivetrain.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
+//            robot.drivetrain.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
 
             robot.update();
 

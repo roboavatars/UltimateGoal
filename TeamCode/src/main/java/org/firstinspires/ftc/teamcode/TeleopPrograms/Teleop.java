@@ -28,6 +28,7 @@ public class Teleop extends LinearOpMode {
 
     public static boolean robotCentric = true;
     public static boolean useAutoPos = true;
+    public static boolean autoSticks = false;
 
     // Control Gains
     private double xyGain = 1;
@@ -133,6 +134,10 @@ public class Teleop extends LinearOpMode {
                 stickToggle = false;
             }
 
+            if (autoSticks) {
+                robot.intake.autoSticks(robot.x, robot.y, robot.theta, 2);
+            }
+
             // Ring Blocker
             if (gamepad2.a) {
                 robot.intake.blockerUp();
@@ -205,7 +210,7 @@ public class Teleop extends LinearOpMode {
 //                robot.shooter.magHome();
 //            }
 
-            if (gamepad1.a && !magToggle) {
+            /*if (gamepad1.a && !magToggle) {
                 magToggle = true;
                 if (magUp) {
                     robot.shooter.magHome();
@@ -215,7 +220,7 @@ public class Teleop extends LinearOpMode {
                 magUp = !magUp;
             } else if (!gamepad1.a && magToggle) {
                 magToggle = false;
-            }
+            }*/
 
             // Drivetrain Controls
             if (!aimLock || gamepad2.right_bumper) {
@@ -240,6 +245,7 @@ public class Teleop extends LinearOpMode {
             telemetry.addData("Theta", robot.theta);
             telemetry.addData("AimLock", aimLock);
             telemetry.addData("# Rings", robot.numRings);
+            telemetry.addData("Theta Offset", robot.thetaOffset);
             telemetry.addData("Shooter Velocity", robot.shooter.getVelocity());
             telemetry.addData("# Cycles", robot.cycles);
             telemetry.addData("Average Cycle Time", (robot.cycleTotal / robot.cycles) + "s");
