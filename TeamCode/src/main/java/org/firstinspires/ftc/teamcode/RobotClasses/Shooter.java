@@ -31,7 +31,7 @@ public class Shooter {
     private double targetVelocity = 0;
     private int numRings = 3;
 
-    public Shooter(LinearOpMode op) {
+    public Shooter(LinearOpMode op, boolean isAuto) {
         shooterMotor1 = op.hardwareMap.get(DcMotorEx.class, "shooter1");
         shooterMotor2 = op.hardwareMap.get(DcMotorEx.class, "shooter2");
         shooterMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -47,7 +47,11 @@ public class Shooter {
         ringSensor = op.hardwareMap.get(DistanceSensor.class, "ringSensor");
 
         flapDown();
-        feedHome();
+        if (isAuto) {
+            feedHome();
+        } else {
+            feedTop();
+        }
         magHome();
 
         op.telemetry.addData("Status", "Shooter initialized");

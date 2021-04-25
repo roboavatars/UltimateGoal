@@ -66,6 +66,7 @@ public class Robot {
     public int cycles = 0;
     public double cycleTotal;
     public double lastCycleTime;
+    public double longestCycle = 0;
 
     // Time and Delay Variables
     public double curTime;
@@ -97,9 +98,9 @@ public class Robot {
 
     // Powershot Debug Variables
     public final double[] psShootPos = new double[] {111, 63};
-    public static double theta0 = 1.888;
-    public static double theta1 = 1.810;
-    public static double theta2 = 1.722;
+    public static double theta0 = 1.885;
+    public static double theta1 = 1.808;
+    public static double theta2 = 1.720;
     public static double[] thetaPositions = {theta2, theta1, theta0};
 
     // Ring State Variables
@@ -119,7 +120,7 @@ public class Robot {
 
         drivetrain = new MecanumDrivetrain(op, x, y, theta);
         intake = new Intake(op, isAuto);
-        shooter = new Shooter(op);
+        shooter = new Shooter(op, isAuto);
         wobbleArm = new WobbleArm(op);
         logger = new Logger();
         try {
@@ -192,7 +193,7 @@ public class Robot {
             // Set flywheel velocity based on what we want to shoot
             if (highGoal) {
                 shooter.flywheelHG();
-                vThresh = Constants.HIGH_GOAL_VELOCITY - 60;
+                vThresh = Constants.HIGH_GOAL_VELOCITY - (isAuto ? 40 : 60);
                 vHighThresh = Constants.HIGH_GOAL_VELOCITY + 60;
             } else {
                 shooter.flywheelPS();
@@ -293,10 +294,11 @@ public class Robot {
                             }
                             log("Feed ring 1");
                         } else if (numRings == 2) {
-                            if (!highGoal) shooter.setVelocity(Constants.POWERSHOT_VELOCITY - 30);
 
                             log("Feed ring 2");
                         } else if (numRings == 1) {
+                            if (isAuto && !highGoal) drivetrain.stop();
+
                             log("Feed ring 3");
                         }
 
@@ -318,6 +320,9 @@ public class Robot {
                     cycleTotal += cycleTime;
                     cycles++;
                     Log.w("cycle-log", "Cycle " + cycles + ": " + cycleTime + "s");
+                    if (cycleTime > longestCycle) {
+                        longestCycle = cycleTime;
+                    }
                     lastCycleTime = curTime;
                 }
                 shootTime = curTime;
@@ -378,7 +383,6 @@ public class Robot {
             addPacket("0", "Distance Sensor Broken!!!!");
         }*/
         addPacket("0 battery voltage", battery.getVoltage());
-        batteryLog(battery.getVoltage());
         addPacket("1 X", round(x));
         addPacket("2 Y", round(y));
         addPacket("3 Theta", round(theta));
@@ -589,7 +593,7 @@ public class Robot {
 
     public boolean notMoving() {
         if (isAuto || !highGoal) {
-            return notMoving(3.5, 0.35);
+            return notMoving(3.0, 0.3);
         }
         return true;
     }
@@ -601,10 +605,6 @@ public class Robot {
     // Logging
     public static void log(String message) {
         Log.w("robot-log", message);
-    }
-
-    public static void batteryLog(double voltage) {
-        Log.w("battery-log", "voltage: " + voltage);
     }
 
     private void profile(int num) {
