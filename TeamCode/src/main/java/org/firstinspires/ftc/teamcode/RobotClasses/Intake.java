@@ -13,6 +13,7 @@ public class Intake {
     private Servo lStickServo;
     private Servo rStickServo;
     private Servo blockerServo;
+    private Servo stackServo;
 
     private double leftStickPos;
     private double rightStickPos;
@@ -36,6 +37,7 @@ public class Intake {
         lStickServo = op.hardwareMap.get(Servo.class, "leftStick");
         rStickServo = op.hardwareMap.get(Servo.class, "rightStick");
         blockerServo = op.hardwareMap.get(Servo.class, "blocker");
+        stackServo = op.hardwareMap.get(Servo.class, "stackServo");
 
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         intakeMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -43,9 +45,11 @@ public class Intake {
         if (!isAuto) {
             sticksOut();
             blockerDown();
+            stackHome();
         } else {
             sticksHome();
             blockerHome();
+            stackOut();
         }
         updateSticks();
 
@@ -165,5 +169,13 @@ public class Intake {
             blockerServo.setPosition(position);
             lastBlocker = position;
         }
+    }
+
+    public void stackHome() {
+        stackServo.setPosition(Constants.STACK_HOME_POS);
+    }
+
+    public void stackOut() {
+        stackServo.setPosition(Constants.STACK_OUT_POS);
     }
 }
