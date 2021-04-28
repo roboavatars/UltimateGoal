@@ -17,15 +17,14 @@ public class Constants {
 
     public static double BLOCKER_HOME_POS = 0.72;
     public static double BLOCKER_UP_POS = 0.51;
-    public static double BLOCKER_KNOCK_POS = 0.322;
     public static double BLOCKER_DOWN_POS = 0.21;
 
-    public static double STACK_HOME_POS = 0;
-    public static double STACK_OUT_POS = 0.9;
+    public static double STACK_HOME_POS = 0.2;
+    public static double STACK_OUT_POS = 0.97;
 
     // Shooter
     public static int HIGH_GOAL_VELOCITY = 2050;
-    public static int HIGH_GOAL_BACK_VELOCITY = 1780;
+    public static int HIGH_GOAL_BACK_VELOCITY = 1940;
     public static int POWERSHOT_VELOCITY = 1550;
 
     public static double MAG_HOME_POS = 0.15;
@@ -45,7 +44,7 @@ public class Constants {
 
     // Wobble
     public static double WOBBLE_UP_POS = 0.73;
-    public static double WOBBLE_DOWN_POS = 0.19;
+    public static double WOBBLE_DOWN_POS = 0.21;
 
     public static double WOBBLE_CLAMP_POS = 0.9;
     public static double WOBBLE_UNCLAMP_POS = 0.3;

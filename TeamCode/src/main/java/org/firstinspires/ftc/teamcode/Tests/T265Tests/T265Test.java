@@ -12,7 +12,7 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawField;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
-@TeleOp(name = "2 T265 Test")
+@TeleOp(name = "T265 Test")
 @Config
 //@Disabled
 public class T265Test extends LinearOpMode {

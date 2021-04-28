@@ -25,11 +25,12 @@ public class HardwareTest extends LinearOpMode {
         Servo leftStick = hardwareMap.get(Servo.class, "wobbleServo");
         Servo rightStick = hardwareMap.get(Servo.class, "clampServo");
         Servo stackServo = hardwareMap.get(Servo.class, "stackServo");
+        Servo blocker = hardwareMap.get(Servo.class, "blocker");
 
         waitForStart();
 
         while(opModeIsActive()) {
-
+            blocker.setPosition(Constants.BLOCKER_DOWN_POS);
             if (debug) {
                 if (home) {
                     leftStick.setPosition(leftHome);

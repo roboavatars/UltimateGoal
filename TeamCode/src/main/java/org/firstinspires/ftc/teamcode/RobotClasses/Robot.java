@@ -271,7 +271,7 @@ public class Robot {
             if (curTime - shootTime > shootDelay) {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position and velocity low enough
-                    if (((highGoal && (preShootOverride || aimLockShoot || (/*vThresh <= shooter.getVelocity() && shooter.getVelocity() <= vHighThresh &&*/ isAtPose(target[0], target[1], target[2], 1, 1, PI/60) && notMoving())))
+                    if (((highGoal && (preShootOverride || aimLockShoot || ((!isAuto || (vThresh <= shooter.getVelocity() && shooter.getVelocity() <= vHighThresh)) && isAtPose(target[0], target[1], target[2], 1, 1, PI/60) && notMoving())))
                             || (!highGoal && isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/225) && notMoving()))
                             || curTime - flickTime > flickTimeBackup) {
 
@@ -382,7 +382,6 @@ public class Robot {
         /*if (shooter.sensorBroken) {
             addPacket("0", "Distance Sensor Broken!!!!");
         }*/
-        addPacket("0 battery voltage", battery.getVoltage());
         addPacket("1 X", round(x));
         addPacket("2 Y", round(y));
         addPacket("3 Theta", round(theta));
