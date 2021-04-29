@@ -40,6 +40,7 @@ public class Teleop extends LinearOpMode {
     private boolean clampToggle = false, clamped = false;
     private boolean aimLockToggle = false, aimLock = false;
     private boolean magToggle = false, magUp = false;
+    private boolean yIncrease = false, yDecrease = false;
 
     /*
     Controller Button Mappings:
@@ -58,13 +59,13 @@ public class Teleop extends LinearOpMode {
     Y - Pre-Rev Flywheel for High Goal
     Dpad Left - Decrease Theta Offset
     Dpad Right - Increase Theta Offset
-    Dpad Up - Reset Theta Offset
-    Dpad Down - Wobble Arm Up/Down
+    Dpad Up - Increase Flap Angle
+    Dpad Down - Decrease Flap Angle
     Left Bumper -  Wobble Clamp/Unclamp
     Right Bumper - Slow Mode
     Left Trigger - Shoot Override
     Right Trigger - Outake override
-    Left Stick Button - Mag Up - Commented
+    Left Stick Button - Wobble Arm Up/Down
     Right Stick Button - AimLock Toggle
      */
 
@@ -146,7 +147,7 @@ public class Teleop extends LinearOpMode {
             }
 
             // Wobble Arm Up / Down
-            if (gamepad2.dpad_down && !downToggle) {
+            if (gamepad2.left_stick_button && !downToggle) {
                 downToggle = true;
                 if (armDown) {
                     robot.wobbleArm.armUp();
@@ -154,7 +155,7 @@ public class Teleop extends LinearOpMode {
                     robot.wobbleArm.armDown();
                 }
                 armDown = !armDown;
-            } else if (!gamepad2.dpad_down && downToggle) {
+            } else if (!gamepad2.left_stick_button && downToggle) {
                 downToggle = false;
             }
 
@@ -184,6 +185,7 @@ public class Teleop extends LinearOpMode {
             if (gamepad1.x) {
                 robot.resetOdo(111, 63, PI/2);
                 robot.thetaOffset = 0;
+                robot.flapOverride = 0;
             }
 
             // Change Shooting Theta Offset to Compensate for Odometry Drift
@@ -191,8 +193,13 @@ public class Teleop extends LinearOpMode {
                 robot.thetaOffset -= 0.01;
             } else if (gamepad2.dpad_right) {
                 robot.thetaOffset += 0.01;
-            } else if (gamepad2.dpad_up) {
-                robot.thetaOffset = 0;
+            }
+
+            // Change Flap Angle
+            if (gamepad2.dpad_up) {
+                robot.flapOverride += 0.005;
+            } else if (gamepad2.dpad_down) {
+                robot.flapOverride -= 0.005;
             }
 
             // Enter Aimlock / Strafe Mode
@@ -202,13 +209,6 @@ public class Teleop extends LinearOpMode {
             } else if (!gamepad2.right_stick_button && aimLockToggle) {
                 aimLockToggle = false;
             }
-
-            // Mag Up
-//            if (gamepad2.left_stick_button) {
-//                robot.shooter.magShoot();
-//            } else if (!robot.preShoot && !robot.shoot) {
-//                robot.shooter.magHome();
-//            }
 
             /*if (gamepad1.a && !magToggle) {
                 magToggle = true;

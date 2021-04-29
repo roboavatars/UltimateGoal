@@ -30,7 +30,7 @@ public class DoubleFlickerTest extends LinearOpMode {
     public static int period = 250;
 
     public static double thetaLeft = 1.900;
-    public static double thetaMid = 1.810;
+    public static double thetaMid = 1.812;
     public static double thetaRight = 1.725;
 
     private Robot robot;
@@ -59,9 +59,9 @@ public class DoubleFlickerTest extends LinearOpMode {
                 }
             } else {
                 if (gamepad1.a) {
-                    robot.intake.blockerDown();
-                } else {
                     robot.intake.blockerUp();
+                } else {
+                    robot.intake.blockerDown();
                 }
 
                 if (gamepad1.x && !shootToggle) {

@@ -93,13 +93,15 @@ public class Robot {
     private double[] target = {};
 
     public double shootYOverride = 0;
+    public double flapPos = Constants.FLAP_DOWN_POS;
+    public double flapOverride = 0;
     public int numRingsPreset = 3;
     public double thetaOffset = 0;
 
     // Powershot Debug Variables
     public final double[] psShootPos = new double[] {111, 63};
     public static double theta0 = 1.885;
-    public static double theta1 = 1.808;
+    public static double theta1 = 1.812;
     public static double theta2 = 1.720;
     public static double[] thetaPositions = {theta2, theta1, theta0};
 
@@ -327,6 +329,8 @@ public class Robot {
             }
         }
 
+        shooter.setFlapPosition(flapPos + flapOverride);
+
         profile(3);
 
         // Update Position
@@ -432,7 +436,7 @@ public class Robot {
     }
 
     public void highGoalShoot() {
-        highGoalShoot(!shooter.sensorBroken ? shooter.getNumRings() : 3, false);
+        highGoalShoot(!shooter.sensorBroken ? shooter.getNumRings() : 3, true);
     }
 
     public void highGoalShoot(boolean useFlap) {
@@ -440,7 +444,7 @@ public class Robot {
     }
 
     public void highGoalShoot(int numRings) {
-        highGoalShoot(numRings, false);
+        highGoalShoot(numRings, true);
     }
 
     // Set variables for high goal shoot
@@ -454,9 +458,9 @@ public class Robot {
             }
             startShootTime = curTime;
             if (useFlap) {
-                shooter.flapUp();
+                flapPos = Constants.FLAP_UP_POS;
             } else {
-                shooter.flapDown();
+                flapPos = Constants.FLAP_DOWN_POS;
             }
 
             double shootY = 56;
