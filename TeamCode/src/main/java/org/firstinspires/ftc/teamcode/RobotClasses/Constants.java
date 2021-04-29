@@ -23,12 +23,12 @@ public class Constants {
     public static double STACK_OUT_POS = 0.9;
 
     // Shooter
-    public static int HIGH_GOAL_VELOCITY = 2050;
-    public static int HIGH_GOAL_BACK_VELOCITY = 1930;
+    public static int HIGH_GOAL_VELOCITY = 2300;
+    public static int HIGH_GOAL_BACK_VELOCITY = 1880;
     public static int POWERSHOT_VELOCITY = 1550;
 
     public static double MAG_HOME_POS = 0.15;
-    public static double MAG_SHOOT_POS = 0.3375;
+    public static double MAG_SHOOT_POS = 0.34;
 
     public static double FEED_HOME_POS = 0.86;
     public static double FEED_MID_POS = 0.5;
@@ -47,6 +47,6 @@ public class Constants {
     public static double WOBBLE_UP_POS = 0.73;
     public static double WOBBLE_DOWN_POS = 0.21;
 
-    public static double WOBBLE_CLAMP_POS = 0.9;
-    public static double WOBBLE_UNCLAMP_POS = 0.3;
+    public static double WOBBLE_CLAMP_POS = 1;
+    public static double WOBBLE_UNCLAMP_POS = 0.5;
 }
