@@ -8,10 +8,11 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -20,7 +21,6 @@ public class Logger extends Thread {
 
     private static final String basePath = "/sdcard/FIRST/robotLogs/RobotData";
     private static FileWriter fileWriter;
-//    private LinkedList<String> data;
     private int logCounter;
     private int writeCounter;
 
@@ -40,7 +40,6 @@ public class Logger extends Thread {
      */
     public void startLogging(boolean isAuto) {
         try {
-//            data = new LinkedList<>();
             File robotDataLog = new File(getLogName(true));
             fileWriter = new FileWriter(robotDataLog);
             fileWriter.write("# " + (isAuto ? "Auto" : "Teleop") + "\n");
@@ -151,5 +150,25 @@ public class Logger extends Thread {
             e.printStackTrace();
         }
         return robotPos;
+    }
+
+    public ArrayList<double[]> replay(String path) {
+        String curLine;
+        int lineNum = 0;
+        ArrayList<double[]> dataArray = new ArrayList<>();
+        try {
+            File robotDataLog = new File(path);
+            BufferedReader bufferedReader = new BufferedReader(new FileReader(robotDataLog));
+
+            while ((curLine = bufferedReader.readLine()) != null) {
+                if (lineNum != 0) {
+                    String[] data = curLine.split(",");
+                    dataArray.add(new double[] {Double.parseDouble(data[1]), Double.parseDouble(data[2]), Double.parseDouble(data[3]), Double.parseDouble(data[4])});
+                }
+                lineNum++;
+            }
+            bufferedReader.close();
+        } catch (IOException e) {e.printStackTrace();}
+        return dataArray;
     }
 }
