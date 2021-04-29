@@ -109,7 +109,6 @@ public class Robot {
 
     // OpMode Stuff
     private LinearOpMode op;
-
     // Constructor
     public Robot(LinearOpMode op, double x, double y, double theta, boolean isAuto) {
         this.x = x;
@@ -193,8 +192,8 @@ public class Robot {
             // Set flywheel velocity based on what we want to shoot
             if (highGoal) {
                 shooter.flywheelHG();
-                vThresh = Constants.HIGH_GOAL_VELOCITY - (isAuto ? 40 : 60);
-                vHighThresh = Constants.HIGH_GOAL_VELOCITY + 60;
+                vThresh = Constants.HIGH_GOAL_VELOCITY - 50;
+                vHighThresh = Constants.HIGH_GOAL_VELOCITY + 50;
             } else {
                 shooter.flywheelPS();
                 vThresh = Constants.POWERSHOT_VELOCITY - 40;
@@ -223,7 +222,7 @@ public class Robot {
                     (aimLockShoot || (isAtPose(target[0], target[1], target[2], 1, 1, PI/35) && notMoving())))) {
                 if (highGoal) {
                     shootDelay = highGoalDelay;
-                    vThresh = Constants.HIGH_GOAL_VELOCITY - 80;
+                    vThresh = Constants.HIGH_GOAL_VELOCITY - 120;
                     vHighThresh = Constants.HIGH_GOAL_VELOCITY + 20;
                 } else {
                     shootDelay = psDelay;
@@ -280,14 +279,6 @@ public class Robot {
                             log("PS pos: " + round(x) + ", " + round(y) + ", " + round(theta));
                         }
 
-                        if (shooter.feedHome) {
-                            shooter.feedTop();
-                        } else {
-                            shooter.feedHome();
-                        }
-
-                        shotRings.add(new Ring(x, y, theta + thetaOffset, vx, vy, w, curTime));
-
                         if (numRings == 3) {
                             if (!isAuto) {
                                 intake.sticksOut();
@@ -302,7 +293,14 @@ public class Robot {
                             log("Feed ring 3");
                         }
 
+                        if (shooter.feedHome) {
+                            shooter.feedTop();
+                        } else {
+                            shooter.feedHome();
+                        }
+                        shotRings.add(new Ring(x, y, theta + thetaOffset, vx, vy, w, curTime));
                         numRings--;
+
                         flickTime = curTime;
                     } else {
                         log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") (" + round(vx) + ", " + round(vy) + ", " + round(w) + ") Moving to shoot position: [" + round(target[0]) + ", " + round(target[1]) + ", " + round(target[2]) + "]");

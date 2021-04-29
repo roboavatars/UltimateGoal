@@ -32,7 +32,7 @@ public class RobotReset extends LinearOpMode {
 
         leftStick.setPosition(Constants.L_HOME_POS);
         rightStick.setPosition(Constants.R_HOME_POS);
-        magServo.setPosition(Constants.MAG_HOME_POS);
+        // magServo.setPosition(Constants.MAG_HOME_POS);
         sleep(500);
     }
 }

@@ -177,4 +177,8 @@ public class Intake {
     public void stackOut() {
         stackServo.setPosition(Constants.STACK_OUT_POS);
     }
+
+//    public void stackDown() {
+//        stackServo.setPosition(0.98);
+//    }
 }
