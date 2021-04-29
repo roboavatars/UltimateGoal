@@ -459,7 +459,7 @@ public class Robot {
                 shooter.flapDown();
             }
 
-            double shootY = 60;
+            double shootY = 56;
             if (isAuto) {
                 if (shootYOverride != 0) {
                     shootY = shootYOverride;
