@@ -107,7 +107,7 @@ public class RedAuto extends LinearOpMode {
         waitForStart();
 
         // Wobble coordinates based on ring case
-        RingCase ringCase = detector.getStackPipe().getModeResult();
+        RingCase ringCase = RingCase.Four; //detector.getStackPipe().getModeResult();
         Robot.log("Ring case: " + ringCase);
 
         double[][] wobbleDelivery = {{121, 93}, {97, 116}, {124.5, 128}};
@@ -151,7 +151,7 @@ public class RedAuto extends LinearOpMode {
             if (!goToStack) {
                 robot.setTargetPoint(new Target(goToStackPath.getRobotPose(Math.min(time.seconds(), goToStackTime))).thetaW0(PI/2).xKp(0.6));
 
-                if (time.seconds() > 0.25) {
+                if (time.seconds() > 0.4) {
                     robot.intake.blockerDown();
                 }
 
@@ -232,7 +232,7 @@ public class RedAuto extends LinearOpMode {
                     }
 
                     if (time.seconds() < 1.5) {
-                        robot.setTargetPoint(new Target(109, 64, PI/2).thetaW0(PI/2).thetaKp(5.0));
+                        robot.setTargetPoint(new Target(109, Math.min(41 + 12 * time.seconds(), 63), PI/2).thetaW0(PI/2).thetaKp(5.0));
                     } else {
                         robot.setTargetPoint(111, 63, PI/2);
                     }
@@ -272,7 +272,7 @@ public class RedAuto extends LinearOpMode {
                         sweep = true;
                         Ring closestRing = null;
                         for (Ring ring : rings) {
-                            if (ring.getX() > 72 && ring.getY() > 96 && ring.getY() < 126) {
+                            if (72 < ring.getX() && 96 < ring.getY() && ring.getY() < 124) {
                                 sweep = false;
                                 closestRing = ring.clone();
                                 break;
@@ -335,7 +335,7 @@ public class RedAuto extends LinearOpMode {
                         if (!sweep) {
                             ringWaypoints.add(new Waypoint(closestRing.getX(), closestRing.getY(), closestRing.driveToRing(robot.x, robot.y)[2], 40, 30, 0, 1.25));
                         }
-                        ringWaypoints.add(new Waypoint(sweep ? 62 : 65, 127, 0, 40, 30, 0, sweep ? 2.0 : 2.25));
+                        ringWaypoints.add(new Waypoint(sweep ? 62 : 70, 127, 0, 40, 30, 0, sweep ? 2.0 : 2.25));
                         ringWaypoints.add(new Waypoint(116, 127, 0, 40, 30, 0, 3.75));
                         ringWaypoints.add(new Waypoint(wobbleDelivery[2][0], wobbleDelivery[2][1], 0, 40, 5, 0, ringTime));
                         ringPath = new Path(ringWaypoints);
@@ -422,8 +422,8 @@ public class RedAuto extends LinearOpMode {
 
                     Waypoint[] intakeWobble2Waypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, robot.theta, -30, -50, 0, 0),
-                            new Waypoint(79, 24.5, PI/2, -0.1, 60, 0, 2.5),
-                            new Waypoint(87, 24.5, PI/2, -0.1, -0.1, 0, intakeWobble2Time),
+                            new Waypoint(78, 22.5, PI/2, -0.1, 60, 0, 2.5),
+                            new Waypoint(85, 22.5, PI/2, -0.1, -0.1, 0, intakeWobble2Time),
                     };
                     intakeWobble2Path = new Path(new ArrayList<>(Arrays.asList(intakeWobble2Waypoints)));
 

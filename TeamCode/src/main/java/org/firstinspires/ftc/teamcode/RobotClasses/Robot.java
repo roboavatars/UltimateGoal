@@ -272,7 +272,7 @@ public class Robot {
             if (curTime - shootTime > shootDelay) {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position and velocity low enough
-                    if (((highGoal && (preShootOverride || aimLockShoot || ((!isAuto || (vThresh <= shooter.getVelocity() && shooter.getVelocity() <= vHighThresh)) && isAtPose(target[0], target[1], target[2], 1, 1, PI/60) && notMoving())))
+                    if (((highGoal && (preShootOverride || aimLockShoot || (/*(!isAuto || (vThresh <= shooter.getVelocity() && shooter.getVelocity() <= vHighThresh)) &&*/ isAtPose(target[0], target[1], target[2], 1, 1, PI/60) && notMoving())))
                             || (!highGoal && isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/225) && notMoving()))
                             || curTime - flickTime > flickTimeBackup) {
 
@@ -287,11 +287,11 @@ public class Robot {
                             }
                             log("Feed ring 1");
                         } else if (numRings == 2) {
-
                             log("Feed ring 2");
                         } else if (numRings == 1) {
-                            if (isAuto && !highGoal) drivetrain.stop();
-
+                            if (isAuto && !highGoal) {
+                                drivetrain.stop();
+                            }
                             log("Feed ring 3");
                         }
 
@@ -393,6 +393,7 @@ public class Robot {
         addPacket("7 Run Time", (curTime - startTime) / 1000);
         addPacket("8 Update Frequency (Hz)", round(1 / timeDiff));
         addPacket("9 Pod Zeroes", drivetrain.zero1 + ", " + drivetrain.zero2 + ", " + drivetrain.zero3);
+        addPacket("offsets", thetaOffset + " " + flapOverride);
         if (!isAuto) {
             addPacket("Cycle Time", (curTime - lastCycleTime) / 1000);
             addPacket("Average Cycle Time", round(cycleTotal / cycles));

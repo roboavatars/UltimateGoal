@@ -83,6 +83,7 @@ public class Teleop extends LinearOpMode {
         robot.logger.startLogging(false);
         robot.intake.sticksOut();
         robot.wobbleArm.armUp();
+        robot.thetaOffset = 0.05;
 
         waitForStart();
 
@@ -184,8 +185,8 @@ public class Teleop extends LinearOpMode {
             // Reset Odometry
             if (gamepad1.x) {
                 robot.resetOdo(111, 63, PI/2);
-                robot.thetaOffset = 0;
-                robot.flapOverride = 0;
+                robot.thetaOffset = 0.05;
+//                robot.flapOverride = 0;
             }
 
             // Change Shooting Theta Offset to Compensate for Odometry Drift
