@@ -39,8 +39,8 @@ public class Intake {
         blockerServo = op.hardwareMap.get(Servo.class, "blocker");
         stackServo = op.hardwareMap.get(Servo.class, "stackServo");
 
-        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-        intakeMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
+//        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+//        intakeMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         if (!isAuto) {
             sticksOut();

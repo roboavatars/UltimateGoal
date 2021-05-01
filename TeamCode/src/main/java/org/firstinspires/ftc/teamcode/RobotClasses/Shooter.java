@@ -36,8 +36,8 @@ public class Shooter {
         shooterMotor2 = op.hardwareMap.get(DcMotorEx.class, "shooter2");
         shooterMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooterMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooterMotor1.setVelocityPIDFCoefficients(50, 0, 0.05, 13);
-        shooterMotor2.setVelocityPIDFCoefficients(50, 0, 0.05, 13);
+        shooterMotor1.setVelocityPIDFCoefficients(100, 0, 0, 0);
+        shooterMotor2.setVelocityPIDFCoefficients(100, 0, 0, 0);
         shooterMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
         shooterMotor2.setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -72,7 +72,7 @@ public class Shooter {
     public void setVelocity(double velocity) {
         if (velocity != targetVelocity) {
             shooterMotor1.setVelocity(velocity);
-            shooterMotor2.setVelocity(velocity);
+            shooterMotor2.setVelocity(-velocity);
             targetVelocity = velocity;
         }
     }
