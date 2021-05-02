@@ -68,7 +68,8 @@ public class MecanumDrivetrain {
 
     public boolean zeroStrafeCorrection = false;
 
-    private DcMotorEx intake;
+//    private DcMotorEx intake;
+//    private DcMotorEx intake2;
 
     private IMU imu;
 
@@ -84,17 +85,24 @@ public class MecanumDrivetrain {
         motorBackRight = hardwareMap.get(DcMotorEx.class, "motorBackRight");
         motorBackLeft = hardwareMap.get(DcMotorEx.class, "motorBackLeft");
 
-        intake = hardwareMap.get(DcMotorEx.class, "intake");
+//        intake = hardwareMap.get(DcMotorEx.class, "intake");
+//        intake2 = hardwareMap.get(DcMotorEx.class, "intake2");
 
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
+//        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+//        intake2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+
+//        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+//        intake2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -197,8 +205,8 @@ public class MecanumDrivetrain {
     public void updatePose() {
         try {
 //            pod1 = motorFrontLeft.getCurrentPosition() * ticksToInch1;
-            pod2 = motorBackLeft.getCurrentPosition() * -ticksToInch2;
-            pod3 = motorFrontRight.getCurrentPosition() * ticksToInch3;
+            pod2 = motorBackRight.getCurrentPosition() * ticksToInch2;
+            pod3 = motorBackLeft.getCurrentPosition() * -ticksToInch3;
 
 //            deltaPod1 = pod1 - lastPod1;
             deltaPod2 = pod2 - lastPod2;

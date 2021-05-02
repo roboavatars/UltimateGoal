@@ -28,9 +28,9 @@ public class DoubleFlickerTest extends LinearOpMode {
     private boolean flywheelOn = false;
     private int delay = 4;
 
-    public static int velocity = 1650;
+    public static int velocity = 1680;
 
-    public static double thetaLeft = 1.89;
+    public static double thetaLeft = 90;
     public static double thetaMid = 1.81;
     public static double thetaRight = 1.73;
 

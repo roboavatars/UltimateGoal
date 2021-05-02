@@ -40,7 +40,8 @@ public class Teleop extends LinearOpMode {
     private boolean clampToggle = false, clamped = false;
     private boolean aimLockToggle = false, aimLock = false;
     private boolean magToggle = false, magUp = false;
-    private boolean yIncrease = false, yDecrease = false;
+    private boolean yIncreaseToggle = false, yDecreaseToggle = false;
+    private boolean yOffsetToggle = false;
 
     /*
     Controller Button Mappings:
@@ -66,8 +67,8 @@ public class Teleop extends LinearOpMode {
     Right Bumper - Slow Mode
     Left Trigger - Shoot Override
     Right Trigger - Outake override
-    Left Stick Button - Wobble Arm Up/Down
-    Right Stick Button - AimLock Toggle
+    Left Stick Button - Y Offset Decrease // Wobble Arm Up/Down
+    Right Stick Button - Y Offset Increase // AimLock Toggle
      */
 
     @Override
@@ -105,6 +106,7 @@ public class Teleop extends LinearOpMode {
             // Override Shoots in Case it is Taking Too Long
             if (gamepad2.left_trigger > 0) {
                 robot.preShootOverride = true;
+                robot.shootOverride = true;
                 if (!robot.preShoot && !robot.shoot) {
                     robot.highGoalShoot();
                 }
@@ -158,17 +160,17 @@ public class Teleop extends LinearOpMode {
             }
 
             // Wobble Arm Up / Down
-            if (gamepad2.left_stick_button && !downToggle) {
-                downToggle = true;
-                if (armDown) {
-                    robot.wobbleArm.armUp();
-                } else {
-                    robot.wobbleArm.armDown();
-                }
-                armDown = !armDown;
-            } else if (!gamepad2.left_stick_button && downToggle) {
-                downToggle = false;
-            }
+//            if (gamepad2.left_stick_button && !downToggle) {
+//                downToggle = true;
+//                if (armDown) {
+//                    robot.wobbleArm.armUp();
+//                } else {
+//                    robot.wobbleArm.armDown();
+//                }
+//                armDown = !armDown;
+//            } else if (!gamepad2.left_stick_button && downToggle) {
+//                downToggle = false;
+//            }
 
             // Wobble Clamp / Unclamp
             if (gamepad2.left_bumper && !clampToggle) {
@@ -196,6 +198,22 @@ public class Teleop extends LinearOpMode {
             if (gamepad1.x) {
                 robot.resetOdo(111, 63, PI/2);
                 robot.thetaOffset = 0.05;
+                robot.shootYOffset = 0;
+                robot.flapOverride = 0;
+            }
+
+            if (gamepad2.right_stick_button && !yIncreaseToggle) {
+                yIncreaseToggle = true;
+                robot.shootYOffset += 3;
+            } else if (!gamepad2.right_stick_button && yIncreaseToggle) {
+                yIncreaseToggle = false;
+            }
+
+            if (gamepad2.left_stick_button && !yDecreaseToggle) {
+                yDecreaseToggle = true;
+                robot.shootYOffset -= 3;
+            } else if (!gamepad2.left_stick_button && yDecreaseToggle) {
+                yDecreaseToggle = false;
             }
 
             // Change Shooting Theta Offset to Compensate for Odometry Drift
@@ -213,12 +231,12 @@ public class Teleop extends LinearOpMode {
             }
 
             // Enter Aimlock / Strafe Mode
-            if (gamepad2.right_stick_button && !aimLockToggle) {
-                aimLockToggle = true;
-                aimLock = !aimLock;
-            } else if (!gamepad2.right_stick_button && aimLockToggle) {
-                aimLockToggle = false;
-            }
+//            if (gamepad2.right_stick_button && !aimLockToggle) {
+//                aimLockToggle = true;
+//                aimLock = !aimLock;
+//            } else if (!gamepad2.right_stick_button && aimLockToggle) {
+//                aimLockToggle = false;
+//            }
 
             /*if (gamepad1.a && !magToggle) {
                 magToggle = true;

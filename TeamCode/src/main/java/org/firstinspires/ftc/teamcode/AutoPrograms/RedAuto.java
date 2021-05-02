@@ -83,7 +83,6 @@ public class RedAuto extends LinearOpMode {
                 new Waypoint(109, 32, PI/2, 5, -30, 0, goToStackTime),
         };
         Path goToStackPath = new Path(new ArrayList<>(Arrays.asList(goToStackWaypoints)));
-        Path intakeStack2Path = null;
         Path deliverWobblePath = null;
         Path ringPath = null;
         Path intakeWobble2Path = null;
@@ -337,8 +336,8 @@ public class RedAuto extends LinearOpMode {
                         if (!sweep) {
                             ringWaypoints.add(new Waypoint(closestRing.getX(), closestRing.getY(), closestRing.driveToRing(robot.x, robot.y)[2], 40, 30, 0, 1.25));
                         }
-                        ringWaypoints.add(new Waypoint(sweep ? 62 : 70, 125, 0, 40, 30, 0, sweep ? 2.0 : 2.25));
-                        ringWaypoints.add(new Waypoint(116, 125, 0, 40, 30, 0, 3.75));
+                        ringWaypoints.add(new Waypoint(sweep ? 62 : 72, 124, 0, 40, 30, 0, sweep ? 2.0 : 2.25));
+                        ringWaypoints.add(new Waypoint(116, 124, 0, 40, 30, 0, 3.75));
                         ringWaypoints.add(new Waypoint(ringCase == RingCase.Four ? wobbleDelivery[2][0] : 122, wobbleDelivery[2][1], 0, 40, 5, 0, ringTime));
                         ringPath = new Path(ringWaypoints);
 //                        }
@@ -376,7 +375,7 @@ public class RedAuto extends LinearOpMode {
                 if (ringCase == RingCase.Four && time.seconds() > ringTime - 0.5) {
                     robot.intake.blockerHome();
                     robot.intake.sticksHalf();
-                    robot.intake.reverse();
+                    robot.intake.setPower(0.5);
                 }
 
                 if (time.seconds() > ringTime) {
@@ -389,7 +388,6 @@ public class RedAuto extends LinearOpMode {
                     if (ringCase == RingCase.Four) {
                         robot.intake.stickRight(0.35);
                     }
-                    robot.intake.off();
 
                     bounceBack = true;
                     time.reset();
@@ -421,11 +419,12 @@ public class RedAuto extends LinearOpMode {
                     depositReachTime = 0;
 
                     robot.wobbleArm.armUp();
+                    robot.intake.reverse();
 
                     Waypoint[] intakeWobble2Waypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, robot.theta, -30, -50, 0, 0),
-                            new Waypoint(78, 21.5, PI/2, -0.1, 60, 0, 2.5),
-                            new Waypoint(85.5, 21.5, PI/2, -0.1, -0.1, 0, intakeWobble2Time),
+                            new Waypoint(78, 21.75, PI/2, -0.1, 60, 0, 2.5),
+                            new Waypoint(85.5, 21.75, PI/2, -0.1, -0.1, 0, intakeWobble2Time),
                     };
                     intakeWobble2Path = new Path(new ArrayList<>(Arrays.asList(intakeWobble2Waypoints)));
 
@@ -442,6 +441,10 @@ public class RedAuto extends LinearOpMode {
                     robot.setTargetPoint(new Target(curPose).thetaW0(curPose.theta + PI).yKp(0.65));
                 } else {
                     robot.setTargetPoint(new Target(curPose).thetaW0(PI/2).thetaKp(3.5));
+                }
+
+                if (time.seconds() > 0.5) {
+                    robot.intake.off();
                 }
 
                 if (time.seconds() > intakeWobble2Time - 0.25) {
