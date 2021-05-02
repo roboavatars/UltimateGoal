@@ -11,18 +11,17 @@ import static java.lang.Math.PI;
 
 @TeleOp(name = "PD Controller Test")
 @Config
-@Disabled
 public class PDTest extends LinearOpMode {
     private Robot robot;
     private static double targetX = 96;
     private static double targetY = 72;
     private static double targetTheta = PI/2;
-    public static double xKp = 0.7;
-    public static double yKp = 0.6;
-    public static double thetaKp = 4.5;
-    public static double xKd = 0.05;
-    public static double yKd = 0.05;
-    public static double thetaKd = 0.15;
+    public static double xKp = 0.53;
+    public static double yKp = 0.55;
+    public static double thetaKp = 2.0;
+    public static double xKd = 0.04;
+    public static double yKd = 0.04;
+    public static double thetaKd = 0.05;
 
     @Override
     public void runOpMode() {

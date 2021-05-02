@@ -103,7 +103,7 @@ public class Teleop extends LinearOpMode {
             // High Goal / Powershot Shoot
             robot.aimLockShoot = aimLock;
             if (gamepad1.left_bumper) {
-                robot.highGoalShoot(true);
+                robot.highGoalShoot(4);
             } else if (gamepad1.right_bumper) {
                 robot.powerShotShoot();
             }
@@ -186,7 +186,6 @@ public class Teleop extends LinearOpMode {
             if (gamepad1.x) {
                 robot.resetOdo(111, 63, PI/2);
                 robot.thetaOffset = 0.05;
-//                robot.flapOverride = 0;
             }
 
             // Change Shooting Theta Offset to Compensate for Odometry Drift
@@ -198,9 +197,9 @@ public class Teleop extends LinearOpMode {
 
             // Change Flap Angle
             if (gamepad2.dpad_up) {
-                robot.flapOverride += 0.005;
+                robot.flapOverride += 0.0025;
             } else if (gamepad2.dpad_down) {
-                robot.flapOverride -= 0.005;
+                robot.flapOverride -= 0.0025;
             }
 
             // Enter Aimlock / Strafe Mode

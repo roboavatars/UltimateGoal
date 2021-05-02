@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.RobotClasses;
 
+import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
@@ -10,6 +11,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @SuppressWarnings("FieldCanBeLocal")
+@Config
 public class Shooter {
 
     public DcMotorEx shooterMotor1;
@@ -28,16 +30,22 @@ public class Shooter {
     public static final double RING_FLIGHT_TIME = 0.5;
     public static final double INITIAL_ANGLE = 0.08;
 
+    public static double p1 = 30;
+    public static double f1 = 0;
+    public static double p2 = 6.25;
+    public static double f2 = 1.2;
+    public static double p3 = 7;
+    public static double f3 = 1.15;
+    public static double pidThresh = 100;
+
     private double targetVelocity = 0;
     private int numRings = 3;
 
-    public Shooter(LinearOpMode op, boolean isAuto) {
+    public Shooter(LinearOpMode op) {
         shooterMotor1 = op.hardwareMap.get(DcMotorEx.class, "shooter1");
         shooterMotor2 = op.hardwareMap.get(DcMotorEx.class, "shooter2");
         shooterMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooterMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooterMotor1.setVelocityPIDFCoefficients(100, 0, 0, 0);
-        shooterMotor2.setVelocityPIDFCoefficients(100, 0, 0, 0);
         shooterMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
         shooterMotor2.setDirection(DcMotorSimple.Direction.FORWARD);
 
@@ -47,14 +55,25 @@ public class Shooter {
         ringSensor = op.hardwareMap.get(DistanceSensor.class, "ringSensor");
 
         flapDown();
-        if (isAuto) {
-            feedHome();
-        } else {
-            feedTop();
-        }
+        feedHome();
         magHome();
 
         op.telemetry.addData("Status", "Shooter initialized");
+    }
+
+    public void updateShooter() {
+        if (Math.abs(targetVelocity - getVelocity()) > pidThresh) {
+            shooterMotor1.setVelocityPIDFCoefficients(p1, 0, 0, f1);
+            shooterMotor2.setVelocityPIDFCoefficients(p1, 0, 0, f1);
+        } else {
+//            if (targetVelocity > 1800) {
+            shooterMotor1.setVelocityPIDFCoefficients(p2, 0, 0, f2);
+            shooterMotor2.setVelocityPIDFCoefficients(p2, 0, 0, f2);
+//            } else {
+//                shooterMotor1.setVelocityPIDFCoefficients(p3, 0, 0, f3);
+//                shooterMotor2.setVelocityPIDFCoefficients(p3, 0, 0, f3);
+//            }
+        }
     }
 
     public void flywheelHG() {

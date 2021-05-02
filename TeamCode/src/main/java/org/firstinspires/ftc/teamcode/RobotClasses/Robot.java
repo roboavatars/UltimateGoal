@@ -6,6 +6,7 @@ import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -111,6 +112,7 @@ public class Robot {
 
     // OpMode Stuff
     private LinearOpMode op;
+
     // Constructor
     public Robot(LinearOpMode op, double x, double y, double theta, boolean isAuto) {
         this.x = x;
@@ -121,7 +123,7 @@ public class Robot {
 
         drivetrain = new MecanumDrivetrain(op, x, y, theta);
         intake = new Intake(op, isAuto);
-        shooter = new Shooter(op, isAuto);
+        shooter = new Shooter(op);
         wobbleArm = new WobbleArm(op);
         logger = new Logger();
         try {
@@ -194,7 +196,7 @@ public class Robot {
             // Set flywheel velocity based on what we want to shoot
             if (highGoal) {
                 shooter.flywheelHG();
-                vThresh = Constants.HIGH_GOAL_VELOCITY - 50;
+                vThresh = Constants.HIGH_GOAL_VELOCITY - 80;
                 vHighThresh = Constants.HIGH_GOAL_VELOCITY + 50;
             } else {
                 shooter.flywheelPS();
@@ -214,7 +216,11 @@ public class Robot {
 
             // Move to shooting position
             if (!aimLockShoot && (!isAtPose(target[0], target[1], target[2], 1, 1, PI/35) || !notMoving())) {
-                setTargetPoint(new Target(target[0], target[1], target[2]));
+                if (!highGoal) {
+                    setTargetPoint(new Target(target[0], target[1], target[2]).thetaKp(3.0).thetaKd(0.05).xKp(0.4).yKp(0.4));
+                } else {
+                    setTargetPoint(new Target(target[0], target[1], target[2]));
+                }
                 log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") (" + round(vx) + ", " + round(vy) + ", " + round(w) + ") Moving to shoot position: [" + round(target[0]) + ", " + round(target[1]) + ", " + round(target[2]) + "]");
                 log(shooter.getVelocity() + ", Target: " + shooter.getTargetVelocity() + ", Min: " + vThresh + ", Max: " + vHighThresh);
             }
@@ -264,7 +270,11 @@ public class Robot {
                     lastTarget = 3 - numRings;
                 }
                 if (!aimLockShoot) {
-                    setTargetPoint(new Target(target[0], target[1], target[2]));
+                    if (!highGoal) {
+                        setTargetPoint(new Target(target[0], target[1], target[2]).thetaKp(3.0).thetaKd(0.05).xKp(0.4).yKp(0.4));
+                    } else {
+                        setTargetPoint(new Target(target[0], target[1], target[2]));
+                    }
                 }
             }
 
@@ -314,6 +324,7 @@ public class Robot {
                     shoot = false;
                     preShootOverride = false;
 
+                    log("In shoot Velocity/Target: --------------------");
                     log("Shoot done");
                     log("Total shoot time: " +  (curTime - startShootTime) + " ms");
                     double cycleTime = (curTime - lastCycleTime) / 1000;
@@ -329,7 +340,7 @@ public class Robot {
             }
         }
 
-        shooter.setFlapPosition(flapPos + flapOverride);
+//        shooter.setFlapPosition(flapPos + flapOverride);
 
         profile(3);
 
@@ -339,6 +350,7 @@ public class Robot {
 //             t265.sendOdometryData(vx, vy, theta, w);
             t265.updateCamPose();
         }
+        shooter.updateShooter();
         intake.updateSticks();
 
         profile(4);
@@ -394,6 +406,7 @@ public class Robot {
         addPacket("8 Update Frequency (Hz)", round(1 / timeDiff));
         addPacket("9 Pod Zeroes", drivetrain.zero1 + ", " + drivetrain.zero2 + ", " + drivetrain.zero3);
         addPacket("offsets", thetaOffset + " " + flapOverride);
+        addPacket("coeffs", shooter.shooterMotor1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
         if (!isAuto) {
             addPacket("Cycle Time", (curTime - lastCycleTime) / 1000);
             addPacket("Average Cycle Time", round(cycleTotal / cycles));

@@ -149,7 +149,7 @@ public class RedAuto extends LinearOpMode {
 
             // Go to starting stack
             if (!goToStack) {
-                robot.setTargetPoint(new Target(goToStackPath.getRobotPose(Math.min(time.seconds(), goToStackTime))).thetaW0(PI/2).xKp(0.6));
+                robot.setTargetPoint(new Target(goToStackPath.getRobotPose(Math.min(time.seconds(), goToStackTime))).thetaW0(PI/2).xKp(0.5).thetaKp(2.5));
 
                 if (time.seconds() > 0.4) {
                     robot.intake.blockerDown();
@@ -197,12 +197,11 @@ public class RedAuto extends LinearOpMode {
             // Intake start stack
             else if (!intakeStack) {
                 if (ringCase == RingCase.Four) {
-
                     if (time.seconds() > intakeStackTime - 0.25) {
                         robot.intake.setPower(-0.5);
                     } else if (knockStack) {
                         robot.intake.on();
-                        robot.setTargetPoint(new Target(110, Math.min(36 + 4.5 * time.seconds(), 41), PI/2).thetaW0(PI/2).thetaKp(5.0));
+                        robot.setTargetPoint(new Target(110, Math.min(36 + 4.5 * time.seconds(), 41), PI/2).thetaW0(PI/2).thetaKp(3.0));
                     } else if (robot.isAtPose(110, 36, PI/2, 0.5, 0.5, PI/35) && robot.notMoving()) {
                         robot.drivetrain.stop();
                         knockStack = true;
@@ -232,7 +231,7 @@ public class RedAuto extends LinearOpMode {
                     }
 
                     if (time.seconds() < 1.5) {
-                        robot.setTargetPoint(new Target(109, Math.min(41 + 12 * time.seconds(), 63), PI/2).thetaW0(PI/2).thetaKp(5.0));
+                        robot.setTargetPoint(new Target(109, Math.min(41 + 12 * time.seconds(), 63), PI/2).thetaW0(PI/2).thetaKp(3.0));
                     } else {
                         robot.setTargetPoint(111, 63, PI/2);
                     }
@@ -365,7 +364,7 @@ public class RedAuto extends LinearOpMode {
                 if (time.seconds() < (sweep ? 2.0 : 2.25)) {
                     robot.setTargetPoint(ringPath.getRobotPose(Math.min(time.seconds(), ringTime)));
                 } else if (robot.x < 100) {
-                    robot.setTargetPoint(new Target(ringPath.getRobotPose(Math.min(time.seconds(), ringTime))).thetaW0(PI/6).thetaKp(7.0).yKp(0.5));
+                    robot.setTargetPoint(new Target(ringPath.getRobotPose(Math.min(time.seconds(), ringTime))).thetaW0(PI/6).thetaKp(3.5).yKp(0.45));
                 } else {
                     robot.setTargetPoint(ringPath.getRobotPose(Math.min(time.seconds(), ringTime)), PI/2, 0);
                 }
@@ -437,9 +436,9 @@ public class RedAuto extends LinearOpMode {
                 double curTime = Math.min(time.seconds(), intakeWobble2Time);
                 Pose curPose = intakeWobble2Path.getRobotPose(curTime);
                 if (curTime < 2.5) {
-                    robot.setTargetPoint(new Target(curPose).thetaW0(curPose.theta + PI).yKp(0.75));
+                    robot.setTargetPoint(new Target(curPose).thetaW0(curPose.theta + PI).yKp(0.65));
                 } else {
-                    robot.setTargetPoint(new Target(curPose).thetaW0(PI/2).thetaKp(7.0));
+                    robot.setTargetPoint(new Target(curPose).thetaW0(PI/2).thetaKp(3.5));
                 }
 
                 if (time.seconds() > intakeWobble2Time - 0.25) {

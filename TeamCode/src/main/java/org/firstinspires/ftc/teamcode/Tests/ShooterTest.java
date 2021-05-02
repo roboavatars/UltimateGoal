@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
@@ -13,15 +16,17 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 @TeleOp(name = "Shooter Test")
 @Config
 public class ShooterTest extends LinearOpMode {
-
     private DcMotorEx shooter1;
     private DcMotorEx shooter2;
 
-    public static double p = 50;//6.5;
-    public static double i = 0;
-    public static double d = 0;
-    public static double f = 12;//0;
-    public static double velocity = 1950;
+    public static double p1 = 30; // 6.5;
+    public static double d1 = 0;
+    public static double f1 = 0; // 0.7;
+    public static double p2 = 6.1;
+    public static double d2 = 0;
+    public static double f2 = 1.85;
+    public static double pidThresh = 100;
+    public static int velocity = 2100;
     public static boolean on = true;
 
     @Override
@@ -33,23 +38,35 @@ public class ShooterTest extends LinearOpMode {
         shooter1.setDirection(DcMotorSimple.Direction.REVERSE);
         shooter2.setDirection(DcMotorSimple.Direction.FORWARD);
 
+        Servo feed = hardwareMap.get(Servo.class, "feedServo");
+        Servo mag = hardwareMap.get(Servo.class, "magServo");
+
         waitForStart();
 
         while (opModeIsActive()) {
             if (on) {
                 shooter1.setVelocity(velocity);
                 shooter2.setVelocity(-velocity);
-//                shooter1.setPower(-velocity);
-//                shooter2.setPower(velocity);
-
-//                shooter1.setPower(shooter2.getPower());
             } else {
-                shooter1.setPower(0);
-                shooter2.setPower(0);
+                shooter1.setVelocity(0);
+                shooter2.setVelocity(0);
             }
 
-            shooter1.setVelocityPIDFCoefficients(p, i, d, f);
-            shooter2.setVelocityPIDFCoefficients(p, i, d, f);
+            mag.setPosition(Constants.MAG_SHOOT_POS);
+
+            if (gamepad1.left_bumper) {
+                feed.setPosition(Constants.FEED_HOME_POS);
+            } else {
+                feed.setPosition(Constants.FEED_TOP_POS);
+            }
+
+            if (Math.abs(velocity - shooter1.getVelocity()) > pidThresh) {
+                shooter1.setVelocityPIDFCoefficients(p1, 0, d1, f1);
+                shooter2.setVelocityPIDFCoefficients(p1, 0, d1, f1);
+            } else {
+                shooter1.setVelocityPIDFCoefficients(p2, 0, d2, f2);
+                shooter2.setVelocityPIDFCoefficients(p2, 0, d2, f2);
+            }
 
             addPacket("S1 Velo", shooter1.getVelocity());
             addPacket("S2 Velo", shooter2.getVelocity());
@@ -57,6 +74,7 @@ public class ShooterTest extends LinearOpMode {
             addPacket("S2 Pos", shooter2.getCurrentPosition());
             addPacket("S1 Power", shooter1.getPower());
             addPacket("S2 Power", shooter2.getPower());
+            addPacket("Coeffs", shooter1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
             addPacket("Target V", velocity);
 
             sendPacket();

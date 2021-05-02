@@ -23,7 +23,8 @@ public class Regression extends LinearOpMode {
     public boolean flywheelToggle = false, flywheelOn = false;
     public boolean magToggle = false, magUp = false;
 
-    public static double flywheelVelocity = Constants.POWERSHOT_VELOCITY;
+    public static double flywheelVelocity = Constants.HIGH_GOAL_BACK_VELOCITY;
+    public static double flapPos = Constants.FLAP_BACK_POS;
     public static double theta0 = 1.875;
     public static double theta1 = 1.810;
     public static double theta2 = 1.725;
@@ -44,6 +45,8 @@ public class Regression extends LinearOpMode {
             } else {
                 robot.intake.off();
             }
+
+            robot.shooter.setFlapPosition(flapPos);
 
             if (gamepad1.left_bumper && !flywheelToggle) {
                 flywheelToggle = true;
