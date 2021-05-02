@@ -19,12 +19,10 @@ public class ShooterTest extends LinearOpMode {
     private DcMotorEx shooter1;
     private DcMotorEx shooter2;
 
-    public static double p1 = 30; // 6.5;
-    public static double d1 = 0;
-    public static double f1 = 0; // 0.7;
-    public static double p2 = 6.1;
-    public static double d2 = 0;
-    public static double f2 = 1.85;
+    public static double p1 = 40;
+    public static double f1 = 0;
+    public static double p2 = 6.25;
+    public static double f2 = 1.4;
     public static double pidThresh = 100;
     public static int velocity = 2100;
     public static boolean on = true;
@@ -61,11 +59,11 @@ public class ShooterTest extends LinearOpMode {
             }
 
             if (Math.abs(velocity - shooter1.getVelocity()) > pidThresh) {
-                shooter1.setVelocityPIDFCoefficients(p1, 0, d1, f1);
-                shooter2.setVelocityPIDFCoefficients(p1, 0, d1, f1);
+                shooter1.setVelocityPIDFCoefficients(p1, 0, 0, f1);
+                shooter2.setVelocityPIDFCoefficients(p1, 0, 0, f1);
             } else {
-                shooter1.setVelocityPIDFCoefficients(p2, 0, d2, f2);
-                shooter2.setVelocityPIDFCoefficients(p2, 0, d2, f2);
+                shooter1.setVelocityPIDFCoefficients(p2, 0, 0, f2);
+                shooter2.setVelocityPIDFCoefficients(p2, 0, 0, f2);
             }
 
             addPacket("S1 Velo", shooter1.getVelocity());

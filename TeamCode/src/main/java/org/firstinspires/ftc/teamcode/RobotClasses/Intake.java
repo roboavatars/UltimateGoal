@@ -59,6 +59,12 @@ public class Intake {
         setPower(1);
     }
 
+    public void verticalOn() {
+        intakeMotor.setPower(0);
+        intakeMotor2.setPower(1);
+        lastIntakePow = 2;
+    }
+
     public void reverse() {
         setPower(-1);
     }

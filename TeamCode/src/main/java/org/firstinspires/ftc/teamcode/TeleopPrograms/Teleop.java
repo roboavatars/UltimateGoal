@@ -47,6 +47,7 @@ public class Teleop extends LinearOpMode {
     Gamepad 1
     Left stick/Right Stick - Drivetrain Controls
     X - Reset Odo
+    B - Reset Odo Pods
     Left Bumper - High Goal Shoot
     Right Bumper - Powershot Shoot
     Left Trigger - Intake Reverse
@@ -90,7 +91,11 @@ public class Teleop extends LinearOpMode {
         while (opModeIsActive()) {
             // Intake On / Rev / Off
             if (gamepad1.right_trigger > 0 && gamepad2.right_trigger == 0) {
-                robot.intake.on();
+                if (robot.shooter.magHome) {
+                    robot.intake.on();
+                } else {
+                    robot.intake.verticalOn();
+                }
             } else if (gamepad1.left_trigger > 0 || gamepad2.right_trigger > 0) {
                 robot.intake.reverse();
             } else {
@@ -98,12 +103,17 @@ public class Teleop extends LinearOpMode {
             }
 
             // Override Shoots in Case it is Taking Too Long
-            robot.preShootOverride = gamepad2.left_trigger > 0;
+            if (gamepad2.left_trigger > 0) {
+                robot.preShootOverride = true;
+                if (!robot.preShoot && !robot.shoot) {
+                    robot.highGoalShoot();
+                }
+            }
 
             // High Goal / Powershot Shoot
             robot.aimLockShoot = aimLock;
             if (gamepad1.left_bumper) {
-                robot.highGoalShoot(4);
+                robot.highGoalShoot();
             } else if (gamepad1.right_bumper) {
                 robot.powerShotShoot();
             }
@@ -186,6 +196,10 @@ public class Teleop extends LinearOpMode {
             if (gamepad1.x) {
                 robot.resetOdo(111, 63, PI/2);
                 robot.thetaOffset = 0.05;
+            }
+
+            if (gamepad1.b) {
+                robot.drivetrain.resetOdoPods();
             }
 
             // Change Shooting Theta Offset to Compensate for Odometry Drift

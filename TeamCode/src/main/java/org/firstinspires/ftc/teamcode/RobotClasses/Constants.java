@@ -17,7 +17,7 @@ public class Constants {
 
     public static double BLOCKER_HOME_POS = 0.72;
     public static double BLOCKER_UP_POS = 0.51;
-    public static double BLOCKER_DOWN_POS = 0.25;
+    public static double BLOCKER_DOWN_POS = 0.26;
 
     public static double STACK_HOME_POS = 0;
     public static double STACK_OUT_POS = 0.87;
@@ -35,7 +35,7 @@ public class Constants {
     public static double FEED_TOP_POS = 0.14;
 
     public static double FLAP_DOWN_POS = 0.55;
-    public static double FLAP_BACK_POS = 0.715;
+    public static double FLAP_BACK_POS = 0.55;
     public static double FLAP_UP_POS = 0.735;
 
     public static double ZERO_DIST = 4.4;

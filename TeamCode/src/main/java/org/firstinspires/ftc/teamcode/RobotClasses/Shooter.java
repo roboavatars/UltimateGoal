@@ -30,12 +30,12 @@ public class Shooter {
     public static final double RING_FLIGHT_TIME = 0.5;
     public static final double INITIAL_ANGLE = 0.08;
 
-    public static double p1 = 30;
+    public static double p1 = 50;
     public static double f1 = 0;
     public static double p2 = 6.25;
-    public static double f2 = 1.2;
-    public static double p3 = 7;
-    public static double f3 = 1.15;
+    public static double f2 = 1.4; // 0.25
+    // public static double p3 = 7;
+    // public static double f3 = 1.15;
     public static double pidThresh = 100;
 
     private double targetVelocity = 0;

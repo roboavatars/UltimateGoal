@@ -20,6 +20,8 @@ public class MecanumDrivetrain {
     private DcMotorEx motorBackRight;
     private DcMotorEx motorBackLeft;
 
+    DcMotorEx intake;
+
     // OpMode
     private LinearOpMode opMode;
 
@@ -30,11 +32,11 @@ public class MecanumDrivetrain {
     private double deltaHeading = 0;
 
     // Odometry
-//    public double pod1 = 0;
-    public double pod2 = 0;
+    public double pod1 = 0;
+//    public double pod2 = 0;
     public double pod3 = 0;
-//    private double lastPod1 = 0;
-    private double lastPod2 = 0;
+    private double lastPod1 = 0;
+//    private double lastPod2 = 0;
     private double lastPod3 = 0;
     private double deltaPod1;
     private double deltaPod2;
@@ -48,9 +50,9 @@ public class MecanumDrivetrain {
     private final double motorUpdateTolerance = 0.05;
 
     // Odometry constants
-//    public static double ticksToInch1 = 0.00600112521;
-    public static double ticksToInch2 = 0.00600112521;
-    public static double ticksToInch3 = 0.00597572362;
+    public static double ticksToInch1 = 0.00597622428;
+//    public static double ticksToInch2 = 0.00597622428;
+    public static double ticksToInch3 = 0.00596020226;
     public static double ODOMETRY_TRACK_WIDTH = 13.655;
     public static double ODOMETRY_HORIZONTAL_OFFSET = -1.81;
     private final double ODOMETRY_HEADING_THRESHOLD = PI/8;
@@ -81,6 +83,8 @@ public class MecanumDrivetrain {
         motorFrontLeft = hardwareMap.get(DcMotorEx.class, "motorFrontLeft");
         motorBackRight = hardwareMap.get(DcMotorEx.class, "motorBackRight");
         motorBackLeft = hardwareMap.get(DcMotorEx.class, "motorBackLeft");
+
+        intake = hardwareMap.get(DcMotorEx.class, "intake");
 
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -189,15 +193,23 @@ public class MecanumDrivetrain {
         setGlobalControls(0, 0, 0);
     }
 
+    public void resetOdoPods() {
+        motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorBackLeft.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+
+        motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        motorFrontRight.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+    }
+
     // update position from odometry
     public void updatePose() {
         try {
-//            pod1 = motorFrontLeft.getCurrentPosition() * ticksToInch1;
-            pod2 = motorBackLeft.getCurrentPosition() * -ticksToInch2;
+            pod1 = intake.getCurrentPosition() * ticksToInch1;
+//            pod2 = motorBackLeft.getCurrentPosition() * -ticksToInch2;
             pod3 = motorFrontRight.getCurrentPosition() * ticksToInch3;
 
-//            deltaPod1 = pod1 - lastPod1;
-            deltaPod2 = pod2 - lastPod2;
+            deltaPod1 = pod1 - lastPod1;
+//            deltaPod2 = pod2 - lastPod2;
             deltaPod3 = pod3 - lastPod3;
 
 //            deltaHeading = (deltaPod2 - deltaPod1) / ODOMETRY_TRACK_WIDTH;
@@ -206,7 +218,7 @@ public class MecanumDrivetrain {
             theta = imu.getTheta();
             deltaHeading = imu.getDeltaHeading();
 
-            deltaPod1 = deltaPod2 - deltaHeading * ODOMETRY_TRACK_WIDTH;
+            deltaPod2 = deltaPod1 - deltaHeading * ODOMETRY_TRACK_WIDTH;
 
             if (!(deltaPod1 == 0 && deltaPod2 == 0 && deltaPod3 == 0)) {
                 if (deltaPod1 == 0) {
@@ -243,8 +255,8 @@ public class MecanumDrivetrain {
 //            theta = theta % (2*PI);
 //            if (theta < 0) theta += 2*PI;
 
-//            lastPod1 = pod1;
-            lastPod2 = pod2;
+            lastPod1 = pod1;
+//            lastPod2 = pod2;
             lastPod3 = pod3;
         } catch (Exception e) {
             e.printStackTrace();

@@ -248,6 +248,7 @@ public class RedAuto extends LinearOpMode {
                         robot.thetaOffset = 0;
                         Constants.HIGH_GOAL_VELOCITY = highGoalVelocity;
                         Constants.FLAP_UP_POS = flapUpPosition;
+                        robot.wobbleArm.armUp();
                         robot.powerShotShoot();
 
                         intakeStack2 = true;
@@ -336,8 +337,8 @@ public class RedAuto extends LinearOpMode {
                         if (!sweep) {
                             ringWaypoints.add(new Waypoint(closestRing.getX(), closestRing.getY(), closestRing.driveToRing(robot.x, robot.y)[2], 40, 30, 0, 1.25));
                         }
-                        ringWaypoints.add(new Waypoint(sweep ? 62 : 70, 127, 0, 40, 30, 0, sweep ? 2.0 : 2.25));
-                        ringWaypoints.add(new Waypoint(116, 127, 0, 40, 30, 0, 3.75));
+                        ringWaypoints.add(new Waypoint(sweep ? 62 : 70, 125, 0, 40, 30, 0, sweep ? 2.0 : 2.25));
+                        ringWaypoints.add(new Waypoint(116, 125, 0, 40, 30, 0, 3.75));
                         ringWaypoints.add(new Waypoint(ringCase == RingCase.Four ? wobbleDelivery[2][0] : 122, wobbleDelivery[2][1], 0, 40, 5, 0, ringTime));
                         ringPath = new Path(ringWaypoints);
 //                        }
@@ -424,7 +425,7 @@ public class RedAuto extends LinearOpMode {
                     Waypoint[] intakeWobble2Waypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, robot.theta, -30, -50, 0, 0),
                             new Waypoint(78, 21.5, PI/2, -0.1, 60, 0, 2.5),
-                            new Waypoint(84.5, 21.5, PI/2, -0.1, -0.1, 0, intakeWobble2Time),
+                            new Waypoint(85.5, 21.5, PI/2, -0.1, -0.1, 0, intakeWobble2Time),
                     };
                     intakeWobble2Path = new Path(new ArrayList<>(Arrays.asList(intakeWobble2Waypoints)));
 
