@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.teamcode.Pathing.Target;
 import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
@@ -14,7 +15,7 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 
 @TeleOp
 @Config
-@Disabled
+//@Disabled
 public class DoubleFlickerTest extends LinearOpMode {
     public static double homePos = Constants.FEED_HOME_POS;
     public static double topPos = Constants.FEED_TOP_POS;
@@ -25,13 +26,13 @@ public class DoubleFlickerTest extends LinearOpMode {
 
     private boolean shootToggle = false;
     private boolean flywheelOn = false;
-    private long shootTime;
     private int delay = 4;
-    public static int period = 250;
 
-    public static double thetaLeft = 1.900;
-    public static double thetaMid = 1.812;
-    public static double thetaRight = 1.725;
+    public static int velocity = 1650;
+
+    public static double thetaLeft = 1.89;
+    public static double thetaMid = 1.81;
+    public static double thetaRight = 1.73;
 
     private Robot robot;
 
@@ -67,7 +68,7 @@ public class DoubleFlickerTest extends LinearOpMode {
                 if (gamepad1.x && !shootToggle) {
                     shootToggle = true;
                     if (flywheelOn) {
-                        robot.shooter.flywheelPS();
+                        robot.shooter.setVelocity(velocity);
                     } else {
                         robot.shooter.flywheelOff();
                     }
@@ -91,11 +92,11 @@ public class DoubleFlickerTest extends LinearOpMode {
                 }
 
                 if (gamepad1.dpad_left) {
-                    robot.setTargetPoint(111, 63, thetaLeft);
+                    robot.setTargetPoint(new Target(111, 63, thetaLeft).thetaKp(3.0).thetaKd(0.10).xyKp(0.45).xyKd(0.04));
                 } else if (gamepad1.dpad_up) {
-                    robot.setTargetPoint(111, 63, thetaMid);
+                    robot.setTargetPoint(new Target(111, 63, thetaMid).thetaKp(3.0).thetaKd(0.10).xyKp(0.45).xyKp(0.04));
                 } else if (gamepad1.dpad_right) {
-                    robot.setTargetPoint(111, 63, thetaRight);
+                    robot.setTargetPoint(new Target(111, 63, thetaRight).thetaKp(3.0).thetaKd(0.10).xyKp(0.45).xyKp(0.04));
                 } else {
                     robot.drivetrain.setControls(-gamepad1.left_stick_y , -gamepad1.left_stick_x , -gamepad1.right_stick_x);
                 }
