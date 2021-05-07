@@ -24,7 +24,7 @@ dependencies {
 
     boolean useAar = false
     if (!useAar) {
-        implementation 'com.acmerobotics.dashboard:dashboard:0.4.1'
+        implementation 'com.acmerobotics.dashboard:dashboard:0.4.2'
     } else {
         implementation(name: 'FtcDashboard-debug2', ext: 'aar')
         implementation('org.nanohttpd:nanohttpd-websocket:2.3.1') { exclude module: 'nanohttpd' }
