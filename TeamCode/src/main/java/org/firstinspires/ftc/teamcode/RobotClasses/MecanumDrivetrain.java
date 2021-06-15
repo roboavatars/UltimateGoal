@@ -30,10 +30,10 @@ public class MecanumDrivetrain {
     private double deltaHeading = 0;
 
     // Odometry
-//    public double pod1 = 0;
+    public double pod1 = 0;
     public double pod2 = 0;
     public double pod3 = 0;
-    //    private double lastPod1 = 0;
+    private double lastPod1 = 0;
     private double lastPod2 = 0;
     private double lastPod3 = 0;
     private double deltaPod1;
@@ -48,8 +48,8 @@ public class MecanumDrivetrain {
     private final double motorUpdateTolerance = 0.05;
 
     // Odometry constants
-//    public static double ticksToInch1 = 0.00597622428;
-    public static double ticksToInch2 = 0.00597622428;
+    public static double ticksToInch1 = 0.00052634636;
+    public static double ticksToInch2 = 0.00052634636;
     public static double ticksToInch3 = 0.00596020226;
     public static double ODOMETRY_TRACK_WIDTH = 13.655;
     public static double ODOMETRY_HORIZONTAL_OFFSET = -1.81;
@@ -204,21 +204,21 @@ public class MecanumDrivetrain {
     // update position from odometry
     public void updatePose() {
         try {
-//            pod1 = motorFrontLeft.getCurrentPosition() * ticksToInch1;
+            pod1 = motorFrontLeft.getCurrentPosition() * -ticksToInch1;
             pod2 = motorBackRight.getCurrentPosition() * ticksToInch2;
             pod3 = motorBackLeft.getCurrentPosition() * -ticksToInch3;
 
-//            deltaPod1 = pod1 - lastPod1;
+            deltaPod1 = pod1 - lastPod1;
             deltaPod2 = pod2 - lastPod2;
             deltaPod3 = pod3 - lastPod3;
 
 //            deltaHeading = (deltaPod2 - deltaPod1) / ODOMETRY_TRACK_WIDTH;
+//
+//            imu.updateHeading();
+//            theta = imu.getTheta();
+//            deltaHeading = imu.getDeltaHeading();
 
-            imu.updateHeading();
-            theta = imu.getTheta();
-            deltaHeading = imu.getDeltaHeading();
-
-            deltaPod1 = deltaPod2 - deltaHeading * ODOMETRY_TRACK_WIDTH;
+//            deltaPod1 = deltaPod2 - deltaHeading * ODOMETRY_TRACK_WIDTH;
 
             if (!(deltaPod1 == 0 && deltaPod2 == 0 && deltaPod3 == 0)) {
                 if (deltaPod1 == 0) {
@@ -234,6 +234,8 @@ public class MecanumDrivetrain {
                     zero3++;
                 }
             }
+
+            deltaHeading = (deltaPod2 - deltaPod1) / ODOMETRY_TRACK_WIDTH;
 
             double localX = (deltaPod1 + deltaPod2) / 2;
             double localY = deltaPod3 - deltaHeading * ODOMETRY_HORIZONTAL_OFFSET;
@@ -251,11 +253,11 @@ public class MecanumDrivetrain {
                         - localY * Math.sin(theta) + localX * Math.cos(theta)) / deltaHeading;
             }
 
-//            theta += deltaHeading;
-//            theta = theta % (2*PI);
-//            if (theta < 0) theta += 2*PI;
+            theta += deltaHeading;
+            theta = theta % (2*PI);
+            if (theta < 0) theta += 2*PI;
 
-//            lastPod1 = pod1;
+            lastPod1 = pod1;
             lastPod2 = pod2;
             lastPod3 = pod3;
         } catch (Exception e) {
