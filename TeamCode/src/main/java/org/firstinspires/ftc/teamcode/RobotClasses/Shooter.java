@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
+import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
@@ -14,7 +15,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 @Config
 public class Shooter {
 
-    public DcMotorEx shooterMotor1;
+    public DcMotorEx shooterMotor;
     public DcMotorEx shooterMotor2;
     private Servo magServo;
     private Servo feedServo;
@@ -32,22 +33,21 @@ public class Shooter {
 
     public static double p1 = 50;
     public static double f1 = 0;
-    public static double p2 = 6.25;
-    public static double f2 = 1.4; // 0.25
-    // public static double p3 = 7;
-    // public static double f3 = 1.15;
-    public static double pidThresh = 100;
+    public static double p2 = 7;
+    public static double f2 = 1.15;
 
+    private static final double RADIANS_PER_TICK = 1;
     private double targetVelocity = 0;
+    private double targetPosition = 0;
+    private int lock = 0; // 0: none, 1: high goal, 2: power shot
     private int numRings = 3;
 
     public Shooter(LinearOpMode op) {
-        shooterMotor1 = op.hardwareMap.get(DcMotorEx.class, "shooter1");
+        shooterMotor = op.hardwareMap.get(DcMotorEx.class, "shooter1");
         shooterMotor2 = op.hardwareMap.get(DcMotorEx.class, "shooter2");
-        shooterMotor1.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooterMotor2.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooterMotor1.setDirection(DcMotorSimple.Direction.REVERSE);
-        shooterMotor2.setDirection(DcMotorSimple.Direction.FORWARD);
+        shooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         flapServo = op.hardwareMap.get(Servo.class, "flapServo");
         magServo = op.hardwareMap.get(Servo.class, "magServo");
@@ -62,42 +62,61 @@ public class Shooter {
     }
 
     public void updateShooter() {
-        if (Math.abs(targetVelocity - getVelocity()) > pidThresh) {
-            shooterMotor1.setVelocityPIDFCoefficients(p1, 0, 0, f1);
-            shooterMotor2.setVelocityPIDFCoefficients(p1, 0, 0, f1);
-        } else {
-//            if (targetVelocity > 1800) {
-            shooterMotor1.setVelocityPIDFCoefficients(p2, 0, 0, f2);
-            shooterMotor2.setVelocityPIDFCoefficients(p2, 0, 0, f2);
-//            } else {
-//                shooterMotor1.setVelocityPIDFCoefficients(p3, 0, 0, f3);
-//                shooterMotor2.setVelocityPIDFCoefficients(p3, 0, 0, f3);
-//            }
-        }
+        shooterMotor.setVelocityPIDFCoefficients(p1, 0, 0, f1);
+        shooterMotor2.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(p2, 0, 0, f2));
     }
 
     public void flywheelHG() {
-        setVelocity(Constants.HIGH_GOAL_VELOCITY);
+        setFlywheelVelocity(Constants.HIGH_GOAL_VELOCITY);
     }
 
     public void flywheelPS() {
-        setVelocity(Constants.POWERSHOT_VELOCITY);
+        setFlywheelVelocity(Constants.POWERSHOT_VELOCITY);
     }
 
     public void flywheelOff() {
-        setVelocity(0);
+        setFlywheelVelocity(0);
     }
 
-    public void setVelocity(double velocity) {
+    public void setFlywheelVelocity(double velocity) {
         if (velocity != targetVelocity) {
-            shooterMotor1.setVelocity(velocity);
-            shooterMotor2.setVelocity(-velocity);
+            shooterMotor.setVelocity(velocity);
             targetVelocity = velocity;
         }
     }
 
+    public double getFlywheelVelocity() {
+        return shooterMotor.getVelocity();
+    }
+
+    public void setTargetPosition(int position) {
+        if (position != targetPosition) {
+            shooterMotor2.setTargetPosition((int) (targetPosition / RADIANS_PER_TICK));
+            targetPosition = position;
+        }
+    }
+
+    public double getTargetPosition() {
+        return shooterMotor2.getTargetPosition() * RADIANS_PER_TICK;
+    }
+
     public double getVelocity() {
-        return (shooterMotor1.getVelocity() + shooterMotor2.getVelocity()) / 2;
+        return shooterMotor2.getVelocity();
+    }
+
+    public void setLock(int lockMode) {
+        lock = lockMode;
+    }
+
+    public void targetLock(double x, double y, double theta, int lockMode) {
+        setLock(lockMode);
+        targetLock(x, y, theta);
+    }
+
+    public void targetLock(double x, double y, double theta) {
+        // get angle that robot needs
+        // compare with robot angle
+        // determine if mod is necessary
     }
 
     public double getTargetVelocity() {

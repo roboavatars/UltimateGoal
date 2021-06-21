@@ -55,7 +55,7 @@ public class Regression extends LinearOpMode {
                     robot.shooter.flywheelOff();
                 } else {
                     robot.shooter.magShoot();
-                    robot.shooter.setVelocity(flywheelVelocity);
+                    robot.shooter.setFlywheelVelocity(flywheelVelocity);
                 }
                 flywheelOn = !flywheelOn;
             } else if (!gamepad1.left_bumper && flywheelToggle) {
@@ -123,7 +123,7 @@ public class Regression extends LinearOpMode {
             telemetry.addData("Robot X", robot.x);
             telemetry.addData("Robot Y", robot.y);
             telemetry.addData("Robot Theta", robot.theta);
-            telemetry.addData("Shooter Velocity", robot.shooter.getVelocity());
+            telemetry.addData("Shooter Velocity", robot.shooter.getFlywheelVelocity());
             telemetry.update();
         }
     }

@@ -224,11 +224,11 @@ public class Robot {
                     setTargetPoint(new Target(target[0], target[1], target[2] - thetaOffset).yKp(0.5));
                 }
                 log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") (" + round(vx) + ", " + round(vy) + ", " + round(w) + ") Moving to shoot position: [" + round(target[0]) + ", " + round(target[1]) + ", " + round(target[2]) + "]");
-                log(shooter.getVelocity() + ", Target: " + shooter.getTargetVelocity() + ", Min: " + vThresh + ", Max: " + vHighThresh);
+                log(shooter.getFlywheelVelocity() + ", Target: " + shooter.getTargetVelocity() + ", Min: " + vThresh + ", Max: " + vHighThresh);
             }
 
             // Start auto-feed when mag is up, velocity is high enough, and robot is at position
-            if (preShootOverride || (vThresh <= shooter.getVelocity() /*&& shooter.getVelocity() < vHighThresh*/ &&
+            if (preShootOverride || (vThresh <= shooter.getFlywheelVelocity() /*&& shooter.getVelocity() < vHighThresh*/ &&
                     (aimLockShoot || (isAtPose(target[0], target[1], target[2] - (highGoal ? thetaOffset : 0), 1, 1, PI/35) && notMoving())))) {
                 if (highGoal) {
                     shootDelay = highGoalDelay;
@@ -244,7 +244,7 @@ public class Robot {
                 flickTime = curTime;
                 preShoot = false;
                 preShootOverride = false;
-                log("Ready to shoot " + (highGoal ? "high goal" : "powershot") + ", velocity: " + shooter.getVelocity());
+                log("Ready to shoot " + (highGoal ? "high goal" : "powershot") + ", velocity: " + shooter.getFlywheelVelocity());
                 log("Pre shoot time: " +  (curTime - startShootTime) + " ms");
             }
 
@@ -253,7 +253,7 @@ public class Robot {
                 if (!isAuto && highGoal) {
                     cancelShoot();
                 } else {
-                    log("PS: vel: " + (vThresh <= shooter.getVelocity())  + ", pose: " + isAtPose(target[0], target[1], target[2] - (highGoal ? thetaOffset : 0), 1, 1, PI/35) + ", v: " + notMoving());
+                    log("PS: vel: " + (vThresh <= shooter.getFlywheelVelocity())  + ", pose: " + isAtPose(target[0], target[1], target[2] - (highGoal ? thetaOffset : 0), 1, 1, PI/35) + ", v: " + notMoving());
                     preShootOverride = true;
                 }
                 log("Preshoot Timed Out");
@@ -286,11 +286,11 @@ public class Robot {
             if (curTime - shootTime > shootDelay) {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position and velocity low enough
-                    if (((highGoal && (shootOverride || aimLockShoot || ((!isAuto || highGoal && 1600 <= shooter.getVelocity()) && isAtPose(target[0], target[1], target[2] - thetaOffset, 1, 1, PI/60) && notMoving())))
+                    if (((highGoal && (shootOverride || aimLockShoot || ((!isAuto || highGoal && 1600 <= shooter.getFlywheelVelocity()) && isAtPose(target[0], target[1], target[2] - thetaOffset, 1, 1, PI/60) && notMoving())))
                             || (!highGoal && isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/300) && notMoving()))
                            /* || curTime - flickTime > flickTimeBackup*/) {
 
-                        log("In shoot Velocity/Target: " + shooter.getVelocity() + "/" + shooter.getTargetVelocity());
+                        log("In shoot Velocity/Target: " + shooter.getFlywheelVelocity() + "/" + shooter.getTargetVelocity());
                         if (!highGoal) {
                             log("PS pos: " + round(x) + ", " + round(y) + ", " + round(theta) + ", time: " + (curTime - flickTime > flickTimeBackup) + ", xy: " + isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/35) + ", theta: " + (Math.abs(theta - target[2]) < PI/300));
                         }
@@ -321,7 +321,7 @@ public class Robot {
                         flickTime = curTime;
                     } else {
                         log("W (" + round(x) + ", " + round(y) + ", " + round(theta) + ") (" + round(vx) + ", " + round(vy) + ", " + round(w) + ") Moving to shoot position: [" + round(target[0]) + ", " + round(target[1]) + ", " + round(target[2]) + "]");
-                        log(shooter.getVelocity() + ", Target: " + shooter.getTargetVelocity() + ", Min: " + vThresh + ", Max: " + vHighThresh);
+                        log(shooter.getFlywheelVelocity() + ", Target: " + shooter.getTargetVelocity() + ", Min: " + vThresh + ", Max: " + vHighThresh);
                     }
                 } else {
                     shooter.flywheelOff();
@@ -404,7 +404,7 @@ public class Robot {
         addPacket("1 X", round(x));
         addPacket("2 Y", round(y));
         addPacket("3 Theta", round(theta));
-        addPacket("4 Shooter Velocity", shooter.getVelocity());
+        addPacket("4 Shooter Velocity", shooter.getFlywheelVelocity());
         addPacket("4 Target Velocity",  shooter.getTargetVelocity());
         addPacket("5 numRings", numRings);
         addPacket("6 shoot", preShoot  + " " + shoot + " " + highGoal);
@@ -412,7 +412,7 @@ public class Robot {
         addPacket("8 Update Frequency (Hz)", round(1 / timeDiff));
         addPacket("9 Pod Zeroes", drivetrain.zero1 + ", " + drivetrain.zero2 + ", " + drivetrain.zero3);
         addPacket("offsets", round(thetaOffset) + " " + round(flapOverride) + " " + shootYOffset);
-        addPacket("coeffs", shooter.shooterMotor1.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
+        addPacket("coeffs", shooter.shooterMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
         if (!isAuto) {
             addPacket("Cycle Time", (curTime - lastCycleTime) / 1000);
             addPacket("Average Cycle Time", round(cycleTotal / cycles));
@@ -611,6 +611,16 @@ public class Robot {
     // Check if robot is at a certain point/angle (custom tolerance)
     public boolean isAtPose(double targetX, double targetY, double targetTheta, double xTolerance, double yTolerance, double thetaTolerance) {
         return Math.abs(x - targetX) < xTolerance && Math.abs(y - targetY) < yTolerance && Math.abs(theta - targetTheta) < thetaTolerance;
+    }
+
+    // Check if robot is at a certain point (default tolerance)
+    public boolean isAtPose(double targetX, double targetY) {
+        return isAtPose(targetX, targetY, xyTolerance, xyTolerance);
+    }
+
+    // Check if robot is at a certain point (custom tolerance)
+    public boolean isAtPose(double targetX, double targetY, double xTolerance, double yTolerance) {
+        return Math.abs(x - targetX) < xTolerance && Math.abs(y - targetY) < yTolerance;
     }
 
     public boolean notMoving() {

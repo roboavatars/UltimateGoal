@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.Servo;
@@ -68,7 +67,7 @@ public class DoubleFlickerTest extends LinearOpMode {
                 if (gamepad1.x && !shootToggle) {
                     shootToggle = true;
                     if (flywheelOn) {
-                        robot.shooter.setVelocity(velocity);
+                        robot.shooter.setFlywheelVelocity(velocity);
                     } else {
                         robot.shooter.flywheelOff();
                     }

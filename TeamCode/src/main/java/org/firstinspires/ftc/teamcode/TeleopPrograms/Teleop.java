@@ -274,7 +274,7 @@ public class Teleop extends LinearOpMode {
             telemetry.addData("AimLock", aimLock);
             telemetry.addData("# Rings", robot.numRings);
             telemetry.addData("Theta Offset", robot.thetaOffset);
-            telemetry.addData("Shooter Velocity", robot.shooter.getVelocity());
+            telemetry.addData("Shooter Velocity", robot.shooter.getFlywheelVelocity());
             telemetry.addData("# Cycles", robot.cycles);
             telemetry.addData("Average Cycle Time", (robot.cycleTotal / robot.cycles) + "s");
             telemetry.update();
