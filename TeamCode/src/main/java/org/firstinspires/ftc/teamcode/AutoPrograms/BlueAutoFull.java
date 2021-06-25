@@ -2,23 +2,6 @@ package org.firstinspires.ftc.teamcode.AutoPrograms;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
-
-import org.firstinspires.ftc.teamcode.OpenCV.Ring;
-import org.firstinspires.ftc.teamcode.OpenCV.StackHeight.StackHeightPipeline.RingCase;
-import org.firstinspires.ftc.teamcode.OpenCV.Vision;
-import org.firstinspires.ftc.teamcode.Pathing.Path;
-import org.firstinspires.ftc.teamcode.Pathing.Pose;
-import org.firstinspires.ftc.teamcode.Pathing.Target;
-import org.firstinspires.ftc.teamcode.Pathing.Waypoint;
-import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
-import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import static java.lang.Math.PI;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 
 @Autonomous(name = "Blue Auto", preselectTeleOp = "1 Teleop", group = "Blue")
 public class BlueAutoFull extends LinearOpMode {
@@ -42,7 +25,7 @@ public class BlueAutoFull extends LinearOpMode {
             park on line
         */
 
-        Robot robot = new Robot(this, 114, 9, PI/2, true);
+        /*Robot robot = new Robot(this, 114, 9, PI/2, true);
         robot.logger.startLogging(true);
 
         Vision detector = new Vision(this, Vision.Pipeline.StackHeight);
@@ -280,7 +263,7 @@ public class BlueAutoFull extends LinearOpMode {
                             }
                         }
 
-                        /*if (!sweep) {
+                        *//*if (!sweep) {
                             ArrayList<Waypoint> ringWaypoints = new ArrayList<>();
                             ringWaypoints.add(new Waypoint(robot.x, robot.y, robot.theta, 50, 60, 0, 0));
 
@@ -329,7 +312,7 @@ public class BlueAutoFull extends LinearOpMode {
                                 ringWaypoints.add(new Waypoint(ringPos[0], Math.min(maxY, ringPos[1]), ringIntakeTheta[2], 30, 10, 0, ringTime));
                             }
                             ringPath = new Path(new ArrayList<>(ringWaypoints));
-                        } else {*/
+                        } else {*//*
                         ringTime = 5.0;
                         ArrayList<Waypoint> ringWaypoints = new ArrayList<>();
                         ringWaypoints.add(new Waypoint(robot.x, robot.y, robot.theta, 60, 60, 0, 0));
@@ -632,6 +615,6 @@ public class BlueAutoFull extends LinearOpMode {
         robot.stop();
         try {
             detector.stop();
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {}*/
     }
 }
