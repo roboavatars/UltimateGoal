@@ -20,7 +20,7 @@ import java.util.Arrays;
 import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 
-@Autonomous(name = "1 Red Auto", preselectTeleOp = "1 Teleop", group = "Red")
+@Autonomous(name = "Red Auto Full", preselectTeleOp = "1 Teleop", group = "Red")
 public class RedAutoFull extends LinearOpMode {
 
     @Override
@@ -30,15 +30,15 @@ public class RedAutoFull extends LinearOpMode {
             detect stack
             shoot preloaded rings into high goal
             intake 3 rings from the stack
-            shoot 3rd ring into hg
-            intake 4th ring
+            shoot third ring into high goal
+            intake fourth ring
             shoot rings at powershot
-            detect rings that bounced back from powershot
+            detect powershot bounce backs
             collect powershot bounce backs
             drop off wobble goal at corresponding zone
-            go back to pick up second wobble
-            shoot bounce back rings into high goal
-            drop off second wobble at corresponding zone
+            pick up second wobble goal
+            shoot powershot bounce backs into high goal
+            drop off second wobble goal at corresponding zone
             park on line
         */
 

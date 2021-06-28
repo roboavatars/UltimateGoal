@@ -3,7 +3,7 @@ package org.firstinspires.ftc.teamcode.AutoPrograms;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
-@Autonomous(name = "Blue Auto", preselectTeleOp = "1 Teleop", group = "Blue")
+@Autonomous(name = "Blue Auto Full", preselectTeleOp = "1 Teleop", group = "Blue")
 public class BlueAutoFull extends LinearOpMode {
 
     @Override
@@ -13,15 +13,15 @@ public class BlueAutoFull extends LinearOpMode {
             detect stack
             shoot preloaded rings into high goal
             intake 3 rings from the stack
-            shoot 3rd ring into hg
-            intake 4th ring
+            shoot third ring into high goal
+            intake fourth ring
             shoot rings at powershot
-            detect rings that bounced back from powershot
+            detect powershot bounce backs
             collect powershot bounce backs
             drop off wobble goal at corresponding zone
-            go back to pick up second wobble
-            shoot bounce back rings into high goal
-            drop off second wobble at corresponding zone
+            pick up second wobble goal
+            shoot powershot bounce backs into high goal
+            drop off second wobble goal at corresponding zone
             park on line
         */
 
