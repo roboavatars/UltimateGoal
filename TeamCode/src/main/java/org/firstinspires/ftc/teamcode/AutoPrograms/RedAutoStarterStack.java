@@ -15,6 +15,7 @@ public class RedAutoStarterStack extends LinearOpMode {
             intake 3 rings from the stack
             shoot third ring into high goal
             intake fourth ring
+            shoot remaining rings from stack
             drop off wobble goal at corresponding zone
             park on line
         */

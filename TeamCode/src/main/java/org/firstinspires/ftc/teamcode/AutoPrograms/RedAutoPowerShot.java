@@ -11,7 +11,6 @@ public class RedAutoPowerShot extends LinearOpMode {
         /*
         Timeline:
             detect stack
-            shoot preloaded rings into high goal
             shoot rings at powershot
             detect powershot bounce backs
             drop off wobble goal at corresponding zone

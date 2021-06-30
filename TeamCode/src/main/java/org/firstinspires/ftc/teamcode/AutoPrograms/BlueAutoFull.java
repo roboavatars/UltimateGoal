@@ -1,9 +1,11 @@
 package org.firstinspires.ftc.teamcode.AutoPrograms;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 @Autonomous(name = "Blue Auto Full", preselectTeleOp = "1 Teleop", group = "Blue")
+@Disabled
 public class BlueAutoFull extends LinearOpMode {
 
     @Override
