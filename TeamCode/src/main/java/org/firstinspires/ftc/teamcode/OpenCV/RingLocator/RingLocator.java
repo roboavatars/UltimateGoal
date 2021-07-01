@@ -12,7 +12,7 @@ import java.util.ArrayList;
 public class RingLocator extends BaseDetector {
 
     private RingLocatorPipeline pipeline;
-    public static double minX = 48;
+    public static double minX = 0;
     public static double minY = 72;
     public static double maxX = 144;
     public static double maxY = 144;

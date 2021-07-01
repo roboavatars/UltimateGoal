@@ -20,10 +20,9 @@ public class RingProcessor {
     public static double cbmin2 = 70;
     public static double cbmax2 = 95;
 
-    /*
-    ycrcb->cb: 70-95
-    lab->a+b:a(0-170) b(160-255)
-     */
+//    ycrcb ->cb: 70-95
+//    lab -> a+b: a(0-170) b(160-255)
+
     public static double amin = 0;
     public static double amax = 170;
     public static double bmin = 160;
