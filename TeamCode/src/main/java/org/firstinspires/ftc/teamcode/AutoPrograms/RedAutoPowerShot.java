@@ -2,6 +2,21 @@ package org.firstinspires.ftc.teamcode.AutoPrograms;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.OpenCV.Ring;
+import org.firstinspires.ftc.teamcode.OpenCV.StackHeight.StackHeightPipeline.RingCase;
+import org.firstinspires.ftc.teamcode.OpenCV.Vision;
+import org.firstinspires.ftc.teamcode.Pathing.Path;
+import org.firstinspires.ftc.teamcode.Pathing.Pose;
+import org.firstinspires.ftc.teamcode.Pathing.Waypoint;
+import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import static java.lang.Math.PI;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 
 @Autonomous(name = "Red Auto Power Shot", preselectTeleOp = "1 Teleop", group = "Red")
 public class RedAutoPowerShot extends LinearOpMode {
@@ -19,65 +34,47 @@ public class RedAutoPowerShot extends LinearOpMode {
             park on line
         */
 
-        /*Robot robot = new Robot(this, 114, 9, PI/2, true);
+        Robot robot = new Robot(this, 114, 9, PI/2, true);
         robot.logger.startLogging(true);
 
         Vision detector = new Vision(this, Vision.Pipeline.StackHeight);
         detector.start();
 
         // Segments
-        boolean goToStack = false;
-        boolean shootHighGoal = false;
-        boolean intakeStack = false;
-        boolean intakeStack2 = false;
+        boolean goToPowerShots = false;
         boolean shootPowerShots = false;
         boolean deliverWobble = false;
-        boolean bounceBack = false;
-        boolean intakeWobble2 = false;
-        boolean goToHighShoot = false;
-        boolean shootHighGoal2 = false;
-        boolean deliverWobble2 = false;
+        boolean goToBounceBacks = false;
+        boolean intakeBounceBacks = false;
+        boolean goToHighGoal = false;
+        boolean shootBounceBacks = false;
         boolean park = false;
 
         // Segment Times
-        double goToStackTime = 0.75;
-        double shootHighGoal1Time = 1.5;
-        double intakeStackTime = 2.5;
-        double shoot1RingTime = 0.75;
-        double intakeStack2Time = 2.25;
-        double shootPowerShotsTime = 3.0;
+        double goToPowerShotsTime = 1.0;
         double deliverWobbleTime = 1.75;
-        double ringTime = 0;
-        double intakeWobble2Time = 3.25;
-        double goToHighShootTime = 0.75;
-        double shootHighGoal2Time = 1.5;
-        double deliverWobble2Time = 2.25;
-        double parkTime = 1.5;
+        double goToBounceBacksTime = 1.25;
+        double intakeBounceBacksTime = 3.5;
+        double goToHighGoalTime = 1.5;
+        double parkTime = 1.25;
 
         // Paths
-        Waypoint[] goToStackWaypoints = new Waypoint[] {
-                new Waypoint(114, 9, PI/2, 30, 30, 0, 0),
-                new Waypoint(109, 32, PI/2, 5, -30, 0, goToStackTime),
+        Waypoint[] goToPowerShotsWaypoints = new Waypoint[] {
+                new Waypoint(90, 9, PI/2, 30, 30, 0, 0),
+                new Waypoint(87, 63, PI/2, 5, -30, 0, goToPowerShotsTime),
         };
-        Path goToStackPath = new Path(new ArrayList<>(Arrays.asList(goToStackWaypoints)));
+        Path goToPowerShotsPath = new Path(new ArrayList<>(Arrays.asList(goToPowerShotsWaypoints)));
         Path deliverWobblePath = null;
-        Path ringPath = null;
-        Path intakeWobble2Path = null;
-        Path goToHighShootPath = null;
-        Path deliverWobble2Path = null;
+        Path goToBounceBacksPath = null;
+        Path intakeBounceBacksPath = null;
+        Path goToHighGoalPath = null;
         Path parkPath = null;
 
-        // Other variables
-        final int highGoalVelocity = Constants.HIGH_GOAL_VELOCITY;
-        final double flapUpPosition = Constants.FLAP_UP_POS;
-        boolean knockStack = false;
-        boolean shot1Ring = false;
+        // Other Variables
         boolean psFinish = false;
         double psFinishTime = 0;
         boolean reachedDeposit = false;
         double depositReachTime = 0;
-        boolean sweep = true;
-        double[] ringIntakeTheta = new double[3];
         ArrayList<Ring> rings;
 
         waitForStart();
@@ -86,34 +83,14 @@ public class RedAutoPowerShot extends LinearOpMode {
         RingCase ringCase = detector.getStackPipe().getModeResult();
         Robot.log("Ring case: " + ringCase);
 
-        double[][] wobbleDelivery = {{121, 93}, {97, 114}, {124.5, 127}};
-        double[][] wobble2Delivery = {{116, 83}, {92, 110}, {115.5, 127.5}};
+        double[][] wobbleDeliveryPositions = {{125, 69, PI/2}, {105, 93, PI/4}, {127, 117, PI}};
         double[] wobbleCor;
-        double[] wobble2Cor;
         if (ringCase == RingCase.Zero) {
-            wobbleCor = wobbleDelivery[0];
-            wobble2Cor = wobble2Delivery[0];
-
-            goToStackTime = 1.75;
-            goToStackWaypoints = new Waypoint[] {
-                    new Waypoint(114, 9, PI/2, 40, 50, 0, 0),
-                    new Waypoint(111, 63, PI/2, 30, 20, 0, goToStackTime),
-            };
-            goToStackPath = new Path(new ArrayList<>(Arrays.asList(goToStackWaypoints)));
-
-            shootHighGoal = true;
-            intakeStack = true;
-            intakeStack2 = true;
-            parkTime = 2.0;
+            wobbleCor = wobbleDeliveryPositions[0];
         } else if (ringCase == RingCase.One) {
-            wobbleCor = wobbleDelivery[1];
-            wobble2Cor = wobble2Delivery[1];
-            deliverWobble2Time = 1.75;
+            wobbleCor = wobbleDeliveryPositions[1];
         } else {
-            wobbleCor = wobbleDelivery[2];
-            wobble2Cor = wobble2Delivery[2];
-            intakeStack2Time = 2.0;
-            goToHighShootTime = 1.25;
+            wobbleCor = wobbleDeliveryPositions[2];
         }
 
         detector.setPipeline(Vision.Pipeline.RingLocator);
@@ -125,473 +102,143 @@ public class RedAutoPowerShot extends LinearOpMode {
             rings = detector.getRingPipe().getRings(robot.x, robot.y, robot.theta);
             robot.ringPos = rings;
 
-            // Go to starting stack
-            if (!goToStack) {
-                robot.setTargetPoint(new Target(goToStackPath.getRobotPose(Math.min(time.seconds(), goToStackTime))).thetaW0(PI/2).xKp(0.5).thetaKp(2.5));
+            // Go to Power Shots
+            if (!goToPowerShots) {
+                double curTime = Math.min(time.seconds(), goToPowerShotsTime);
+                Pose curPose = goToPowerShotsPath.getRobotPose(curTime);
+                robot.setTargetPoint(curPose);
 
-                if (time.seconds() > 0.4) {
-                    robot.intake.blockerDown();
-                }
+                if (curTime > goToPowerShotsTime) {
+                    robot.powerShotShoot();
 
-                if (ringCase != RingCase.Zero) {
-                    Constants.HIGH_GOAL_VELOCITY = Constants.HIGH_GOAL_BACK_VELOCITY;
-                    Constants.FLAP_UP_POS = Constants.FLAP_BACK_POS;
-                    robot.shooter.flywheelHG();
-                } else {
-                    robot.shooter.flywheelPS();
-                }
-
-                if (time.seconds() > goToStackTime) {
-                    if (ringCase != RingCase.Zero) {
-                        robot.shootYOverride = 28;
-                        robot.thetaOffset = 0.08;
-                        robot.highGoalShoot(ringCase == RingCase.Four ? 4 : 1, true);
-                    } else {
-                        robot.powerShotShoot();
-                    }
-
-                    goToStack = true;
+                    goToPowerShots = true;
                     time.reset();
                 }
             }
 
-            // Time block to shoot into high goal
-            else if (!shootHighGoal) {
-                if (!robot.preShoot && !robot.shoot && robot.numRings == 0) {
-                    if (ringCase == RingCase.Four) {
-                        robot.shooter.flywheelHG();
-                        robot.intake.stackOut();
-                    }
-
-                    shootHighGoal = true;
-                    time.reset();
-                } else {
-                    if (time.seconds() > 0.5 && ringCase == RingCase.Four) {
-                        robot.intake.stackOut();
-                    }
-                }
-            }
-
-            // Intake start stack
-            else if (!intakeStack) {
-                if (ringCase == RingCase.Four) {
-                    if (time.seconds() > intakeStackTime - 0.25) {
-                        robot.intake.setPower(-0.5);
-                    } else if (knockStack) {
-                        robot.intake.on();
-                        robot.setTargetPoint(new Target(110, Math.min(36 + 4.5 * time.seconds(), 41), PI/2).thetaW0(PI/2).thetaKp(3.0));
-                    } else if (robot.isAtPose(110, 36, PI/2, 0.5, 0.5, PI/35) && robot.notMoving()) {
-                        robot.drivetrain.stop();
-                        knockStack = true;
-                    } else {
-                        robot.setTargetPoint(110, 36, PI/2);
-                    }
-                }
-
-                if (time.seconds() > intakeStackTime || ringCase == RingCase.One) {
-                    if (ringCase == RingCase.Four) {
-                        robot.shootYOverride = robot.y;
-                        robot.highGoalShoot(1, true);
-//                        robot.intake.stackHome();
-                    }
-
-                    intakeStack = true;
-                    time.reset();
-                }
-            }
-
-            else if (!intakeStack2) {
-                if (!robot.preShoot && !robot.shoot && robot.numRings == 0) {
-                    if (!shot1Ring) {
-                        shot1Ring = true;
-                        robot.intake.on();
-                        time.reset();
-                    }
-
-                    if (time.seconds() < 1.5) {
-                        robot.setTargetPoint(new Target(109, Math.min(41 + 12 * time.seconds(), 63), PI/2).thetaW0(PI/2).thetaKp(3.0));
-                    } else {
-                        robot.setTargetPoint(111, 63, PI/2);
-                    }
-
-                    if (time.seconds() > intakeStack2Time - 1) {
-                        robot.shooter.flywheelPS();
-                    }
-
-                    if (time.seconds() > intakeStack2Time) {
-                        robot.intake.stackHome();
-
-                        robot.thetaOffset = 0;
-                        Constants.HIGH_GOAL_VELOCITY = highGoalVelocity;
-                        Constants.FLAP_UP_POS = flapUpPosition;
-                        robot.wobbleArm.armUp();
-                        robot.powerShotShoot();
-
-                        intakeStack2 = true;
-                        time.reset();
-                    }
-                }
-            }
-
-            // Time block to shoot powershot
+            // Shoot Power Shots
             else if (!shootPowerShots) {
                 if (!robot.preShoot && !robot.shoot && robot.numRings == 0) {
-                    if (!psFinish) {
-                        psFinish = true;
-                        psFinishTime = time.seconds();
-                        robot.drivetrain.stop();
-                    } else if (time.seconds() > psFinishTime + (ringCase != RingCase.Four ? 2 : 0.5)) {
-                        robot.intake.on();
-                        robot.intake.sticksHome();
-
-                        Robot.log("Detected " + rings.size() + " ring(s): " + rings);
-
-//                        int maxY = 130;
-                        sweep = true;
-                        Ring closestRing = null;
-                        for (Ring ring : rings) {
-                            if (72 < ring.getX() && 96 < ring.getY() && ring.getY() < 124) {
-                                sweep = false;
-                                closestRing = ring.clone();
-                                break;
-                            }
-                        }
-
-                        *//*if (!sweep) {
-                            ArrayList<Waypoint> ringWaypoints = new ArrayList<>();
-                            ringWaypoints.add(new Waypoint(robot.x, robot.y, robot.theta, 50, 60, 0, 0));
-
-                            double[] ringPos = new double[3];
-                            ringTime = 0;
-                            if (rings.size() >= 1) {
-                                ringPos = rings.get(0).driveToRing(robot.x, robot.y);
-                                ringTime += 1.5;
-                                if (ringPos[1] > maxY) {
-                                    ringIntakeTheta[0] = ringPos[0] - robot.x < 0 ? 3*PI/4 : PI/4;
-                                    ringPos[0] -= 2;
-                                } else if (Ring.isLowestX(rings, rings.get(0))) {
-                                    ringIntakeTheta[0] = PI/2;
-                                } else {
-                                    ringIntakeTheta[0] = ringPos[2];
-                                }
-                                ringWaypoints.add(new Waypoint(ringPos[0], Math.min(maxY, ringPos[1]), ringIntakeTheta[0], 30, 10, 0, ringTime));
-                            }
-
-                            if (rings.size() >= 2) {
-                                ringPos = rings.get(1).driveToRing(ringPos[0], Math.min(maxY, ringPos[1]));
-                                ringTime += 1.5;
-                                if (ringPos[1] > maxY || Ring.isLowestX(rings, rings.get(1))) {
-                                    if (ringPos[1] > maxY && !Ring.isLowestX(rings, rings.get(1))) {
-                                        ringIntakeTheta[1] = ringPos[0] - rings.get(0).getX() < 0 ? 3 * PI / 4 : PI / 4;
-                                        ringPos[0] -= 2;
-                                    } else {
-                                        ringIntakeTheta[1] = PI/4;
-                                        ringWaypoints.add(new Waypoint(ringPos[0]-5, Math.min(maxY, ringPos[1])-5, ringIntakeTheta[1], 30, 10, 0, ringTime-0.6));
-                                    }
-                                } else {
-                                    ringIntakeTheta[1] = ringPos[2];
-                                }
-                                ringWaypoints.add(new Waypoint(ringPos[0], Math.min(maxY, ringPos[1]), ringIntakeTheta[1], 30, 10, 0, ringTime));
-                            }
-
-                            if (rings.size() >= 3) {
-                                ringPos = rings.get(2).driveToRing(ringPos[0], Math.min(maxY, ringPos[1]));
-                                ringTime += 1.5;
-                                if (ringPos[1] > maxY && rings.get(2).getY() > maxY) {
-                                    ringIntakeTheta[2] = ringPos[0] - rings.get(1).getX() < 0 ? 3*PI/4 : PI/4;
-                                    ringPos[0] -= 2;
-                                } else {
-                                    ringIntakeTheta[2] = ringPos[2];
-                                }
-                                ringWaypoints.add(new Waypoint(ringPos[0], Math.min(maxY, ringPos[1]), ringIntakeTheta[2], 30, 10, 0, ringTime));
-                            }
-                            ringPath = new Path(new ArrayList<>(ringWaypoints));
-                        } else {*//*
-                        ringTime = 5.0;
-                        ArrayList<Waypoint> ringWaypoints = new ArrayList<>();
-                        ringWaypoints.add(new Waypoint(robot.x, robot.y, robot.theta, 60, 60, 0, 0));
-                        if (!sweep) {
-                            ringWaypoints.add(new Waypoint(closestRing.getX(), closestRing.getY(), closestRing.driveToRing(robot.x, robot.y)[2], 40, 30, 0, 1.25));
-                        }
-                        ringWaypoints.add(new Waypoint(sweep ? 62 : 72, 124, 0, 40, 30, 0, sweep ? 2.0 : 2.25));
-                        ringWaypoints.add(new Waypoint(116, 124, 0, 40, 30, 0, 3.75));
-                        ringWaypoints.add(new Waypoint(ringCase == RingCase.Four ? wobbleDelivery[2][0] : 122, wobbleDelivery[2][1], 0, 40, 5, 0, ringTime));
-                        ringPath = new Path(ringWaypoints);
-//                        }
-
-                        shootPowerShots = true;
-                        time.reset();
-
-                        // break;
-                    }
-                }
-            }
-
-            // Collect bounce backed rings
-            else if (!bounceBack) {
-//                if (!sweep) {
-//                    if (time.seconds() < 0.75) {
-//                        robot.setTargetPoint(ringPath.getRobotPose(Math.min(time.seconds(), ringTime)));
-//                    } else if (rings.size() >= 1 && time.seconds() < 1.5) {
-//                        robot.setTargetPoint(new Target(ringPath.getRobotPose(Math.min(time.seconds(), ringTime))).thetaW0(ringIntakeTheta[0]));
-//                    } else if (rings.size() >= 2 && time.seconds() < 3.0) {
-//                        robot.setTargetPoint(new Target(ringPath.getRobotPose(Math.min(time.seconds(), ringTime))).thetaW0(ringIntakeTheta[1]));
-//                    } else if (rings.size() == 3 && time.seconds() < 4.5) {
-//                        robot.setTargetPoint(new Target(ringPath.getRobotPose(Math.min(time.seconds(), ringTime))).thetaW0(ringIntakeTheta[2]));
-//                    }
-//                } else {
-                if (time.seconds() < (sweep ? 2.0 : 2.25)) {
-                    robot.setTargetPoint(ringPath.getRobotPose(Math.min(time.seconds(), ringTime)));
-                } else if (robot.x < 100) {
-                    robot.setTargetPoint(new Target(ringPath.getRobotPose(Math.min(time.seconds(), ringTime))).thetaW0(PI/6).thetaKp(3.5).yKp(0.45));
-                } else {
-                    robot.setTargetPoint(ringPath.getRobotPose(Math.min(time.seconds(), ringTime)), PI/2, 0);
-                }
-//                }
-
-                if (ringCase == RingCase.Four && time.seconds() > ringTime - 0.5) {
-                    robot.intake.blockerHome();
-                    robot.intake.sticksHalf();
-                    robot.intake.setPower(0.5);
-                }
-
-                if (time.seconds() > ringTime) {
                     Waypoint[] deliverWobbleWaypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, robot.theta, 40, 30, 0, 0),
-                            new Waypoint(wobbleCor[0], wobbleCor[1], ringCase != RingCase.Four ? PI/2 : 7*PI/12, -30, -30, 0, deliverWobbleTime),
+                            new Waypoint(wobbleCor[0], wobbleCor[1], wobbleCor[2], 5, -30, 0, deliverWobbleTime),
                     };
                     deliverWobblePath = new Path(new ArrayList<>(Arrays.asList(deliverWobbleWaypoints)));
 
-                    if (ringCase == RingCase.Four) {
-                        robot.intake.stickRight(0.35);
-                    }
-
-                    bounceBack = true;
+                    shootPowerShots = true;
                     time.reset();
                 }
             }
 
-            // Deliver first wobble goal
+            // Deliver Wobble Goal
             else if (!deliverWobble) {
                 double curTime = Math.min(time.seconds(), deliverWobbleTime);
                 Pose curPose = deliverWobblePath.getRobotPose(curTime);
-                if (ringCase == RingCase.Four && robot.x > wobbleCor[0] - 4) {
-                    robot.setTargetPoint(wobbleCor[0], wobbleCor[1], 7*PI/12);
-                } else {
-                    robot.setTargetPoint(new Target(curPose).thetaW0(ringCase != RingCase.Four ? curPose.theta + PI : PI/2));
-                }
+                robot.setTargetPoint(curPose);
 
-                if ((!reachedDeposit && robot.isAtPose(wobbleCor[0], wobbleCor[1], ringCase == RingCase.Four ? 7*PI/12 : PI/2)) || time.seconds() > (ringCase == RingCase.Four ? 0.25 : 2.25)) {
+                if ((!reachedDeposit && robot.isAtPose(wobbleCor[0], wobbleCor[1], wobbleCor[2])) || time.seconds() > 0.75) {
                     robot.wobbleArm.armDown();
                 }
 
-                if ((!reachedDeposit && robot.isAtPose(wobbleCor[0], wobbleCor[1], ringCase == RingCase.Four ? 7*PI/12 : PI/2) && robot.notMoving()) || time.seconds() > (ringCase == RingCase.Four ? 0.5 : 2.75)) {
+                if ((!reachedDeposit && robot.isAtPose(wobbleCor[0], wobbleCor[1], wobbleCor[2]) && robot.notMoving()) || time.seconds() > 1.25) {
                     reachedDeposit = true;
                     depositReachTime = curTime;
                     robot.wobbleArm.unClamp();
                 }
 
-                if ((reachedDeposit && time.seconds() > depositReachTime + 0.5) || time.seconds() > (ringCase == RingCase.Four ? 1.0 : 3.25)) {
-                    reachedDeposit = false;
-                    depositReachTime = 0;
-
+                if ((reachedDeposit && time.seconds() > depositReachTime + 0.5) || time.seconds() > deliverWobbleTime + 0.5) {
                     robot.wobbleArm.armUp();
-                    robot.intake.reverse();
 
-                    Waypoint[] intakeWobble2Waypoints = new Waypoint[] {
-                            new Waypoint(robot.x, robot.y, robot.theta, -30, -50, 0, 0),
-                            new Waypoint(78, 21.75, PI/2, -0.1, 60, 0, 2.5),
-                            new Waypoint(85.5, 21.75, PI/2, -0.1, -0.1, 0, intakeWobble2Time),
+                    Waypoint[] goToBounceBacksWaypoints = new Waypoint[] {
+                            new Waypoint(robot.x, robot.y, robot.theta, 30, 20, 0, 0),
+                            new Waypoint(130, 127, 3*PI/4, 5, 5, 0, goToBounceBacksTime),
                     };
-                    intakeWobble2Path = new Path(new ArrayList<>(Arrays.asList(intakeWobble2Waypoints)));
+                    goToBounceBacksPath = new Path(new ArrayList<>(Arrays.asList(goToBounceBacksWaypoints)));
 
                     deliverWobble = true;
                     time.reset();
                 }
             }
 
-            // Go to pick up second wobble goal
-            else if (!intakeWobble2) {
-                double curTime = Math.min(time.seconds(), intakeWobble2Time);
-                Pose curPose = intakeWobble2Path.getRobotPose(curTime);
-                if (curTime < 2.5) {
-                    robot.setTargetPoint(new Target(curPose).thetaW0(curPose.theta + PI).yKp(0.65));
-                } else {
-                    robot.setTargetPoint(new Target(curPose).thetaW0(PI/2).thetaKp(3.5));
-                }
+            // Go to Bounce Backs
+            else if (!goToBounceBacks) {
+                double curTime = Math.min(time.seconds(), goToBounceBacksTime);
+                Pose curPose = goToBounceBacksPath.getRobotPose(curTime);
+                robot.setTargetPoint(curPose);
 
-                if (time.seconds() > 0.5) {
-                    robot.intake.off();
-                }
-
-                if (time.seconds() > intakeWobble2Time - 0.25) {
-                    robot.wobbleArm.armDown();
-                }
-
-                if (time.seconds() > intakeWobble2Time + 0.5) {
-                    robot.shooter.flywheelHG();
-                    if (ringCase == RingCase.Four) {
-                        robot.intake.blockerDown();
-                        robot.intake.stickRight(Constants.R_SHOOT_POS);
-                    }
-
-                    Waypoint[] goToHighShootWaypoints = new Waypoint[] {
-                            new Waypoint(robot.x, robot.y, robot.theta, 40, 40, 0, 0),
-                            new Waypoint(88, 61, PI/2, 30, 30, 0, goToHighShootTime),
+                if (curTime > goToBounceBacksTime || ringCase == RingCase.Four) {
+                    Waypoint[] intakeBounceBacksWaypoints = new Waypoint[] {
+                            new Waypoint(robot.x, robot.y, PI, 60, 60, 0, 0),
+                            new Waypoint(91, 127, PI, 30, 20, 0, 2.75),
+                            new Waypoint(81, 131, PI, 20, 5, 0, intakeBounceBacksTime),
                     };
-                    goToHighShootPath = new Path(new ArrayList<>(Arrays.asList(goToHighShootWaypoints)));
+                    intakeBounceBacksPath = new Path(new ArrayList<>(Arrays.asList(intakeBounceBacksWaypoints)));
 
-                    intakeWobble2 = true;
+                    robot.intake.on();
+
+                    goToBounceBacks = true;
                     time.reset();
                 }
             }
 
-            // Go to high goal shoot position
-            else if (!goToHighShoot) {
-                if (time.seconds() < 1) {
-                    robot.setTargetPoint(robot.x, robot.y + 1, PI/2);
-                } else {
-                    robot.setTargetPoint(goToHighShootPath.getRobotPose(Math.min(time.seconds(), goToHighShootTime)));
-                }
+            // Intake Bounce Backs
+            else if (!intakeBounceBacks) {
+                double curTime = Math.min(time.seconds(), intakeBounceBacksTime);
+                Pose curPose = intakeBounceBacksPath.getRobotPose(curTime);
+                robot.setTargetPoint(curPose);
 
-                if (time.seconds() > 0.5) {
-                    robot.wobbleArm.clamp();
-                }
+                if (curTime > intakeBounceBacksTime) {
+                    Waypoint[] goToHighGoalWaypoints = new Waypoint[] {
+                            new Waypoint(robot.x, robot.y, robot.theta, -40, -30, 0, 0),
+                            new Waypoint(85, 63, PI/2, -5, 20, 0, goToHighGoalTime),
+                    };
+                    goToHighGoalPath = new Path(new ArrayList<>(Arrays.asList(goToHighGoalWaypoints)));
 
-                if (ringCase == RingCase.Zero && time.seconds() > 0.75) {
-                    robot.wobbleArm.armUp();
-                }
+                    robot.intake.off();
 
-                if (time.seconds() > goToHighShootTime) {
-                    robot.shootYOverride = 61;
-                    robot.thetaOffset = 0.07;
-                    robot.highGoalShoot(ringCase == RingCase.One ? 4 : 3);
-
-//                    robot.wobbleArm.armUp();
-
-                    goToHighShoot = true;
+                    intakeBounceBacks = true;
                     time.reset();
                 }
             }
 
-            // Time block to shoot into high goal
-            else if (!shootHighGoal2) {
+            // Go to High Goal
+            else if (!goToHighGoal) {
+                double curTime = Math.min(time.seconds(), goToHighGoalTime);
+                Pose curPose = goToHighGoalPath.getRobotPose(curTime);
+                robot.setTargetPoint(curPose);
+
+                if (curTime > intakeBounceBacksTime) {
+                    robot.highGoalShoot();
+
+                    goToHighGoal = true;
+                    time.reset();
+                }
+            }
+
+            // Shoot Bounce Backs
+            else if (!shootBounceBacks) {
                 if (!robot.preShoot && !robot.shoot && robot.numRings == 0) {
-                    robot.thetaOffset = 0;
-
-                    if (ringCase == RingCase.Four) {
-                        robot.intake.blockerUp();
-                        robot.intake.sticksHalf();
-                        robot.intake.stickRight(0.35);
-                    }
-
-                    Waypoint[] deliverWobble2Waypoints;
-                    if (ringCase == RingCase.Zero) {
-                        deliverWobble2Waypoints = new Waypoint[] {
-                                new Waypoint(robot.x, robot.y, robot.theta, 50, 40, 0, 0),
-                                new Waypoint(wobble2Cor[0], wobble2Cor[1], PI/2, 30, 30, 0, deliverWobble2Time),
-                        };
-                    } else if (ringCase == RingCase.One) {
-                        deliverWobble2Waypoints = new Waypoint[] {
-                                new Waypoint(robot.x, robot.y, robot.theta, 50, 40, 0, 0),
-                                new Waypoint(wobble2Cor[0], wobble2Cor[1], PI/2, 10, -10, 0, deliverWobble2Time),
-                        };
-                    } else {
-                        deliverWobble2Waypoints = new Waypoint[] {
-                                new Waypoint(robot.x, robot.y, robot.theta, 50, 40, 0, 0),
-                                new Waypoint(wobble2Cor[0], wobble2Cor[1], 7*PI/12, 30, 30, 0, deliverWobble2Time),
-                        };
-                    }
-                    deliverWobble2Path = new Path(new ArrayList<>(Arrays.asList(deliverWobble2Waypoints)));
-
-                    shootHighGoal2 = true;
-                    time.reset();
-                }
-            }
-
-            // Deliver second wobble goal
-            else if (!deliverWobble2) {
-                double curTime = Math.min(time.seconds(), deliverWobble2Time);
-                if (ringCase == RingCase.Zero) {
-                    robot.setTargetPoint(wobble2Cor[0], wobble2Cor[1], PI/2);
-                } else {
-                    robot.setTargetPoint(deliverWobble2Path.getRobotPose(curTime));
-                }
-
-                if ((!reachedDeposit && robot.isAtPose(wobble2Cor[0], wobble2Cor[1], PI/2) && robot.notMoving()) || time.seconds() > deliverWobble2Time + 0.25) {
-                    reachedDeposit = true;
-                    depositReachTime = curTime;
-                    robot.wobbleArm.armDown();
-                    robot.wobbleArm.unClamp();
-                }
-
-                if ((reachedDeposit && time.seconds() > depositReachTime + 0.5) || time.seconds() > deliverWobble2Time + 0.75) {
-                    robot.wobbleArm.armUp();
-
-                    Waypoint[] parkWaypoints;
-                    if (ringCase == RingCase.Zero) {
-                        parkWaypoints = new Waypoint[] {
-                                new Waypoint(robot.x, robot.y, robot.theta, -30, -30, 0, 0),
-                                new Waypoint(robot.x, robot.y - 15, PI/2, -10, 0, 0, 0.75),
-                                new Waypoint(85, 90, PI/3, 20, 20, 0, parkTime),
-                        };
-                    } else if (ringCase == RingCase.One) {
-                        parkWaypoints = new Waypoint[] {
-                                new Waypoint(robot.x, robot.y, robot.theta, -30, -30, 0, 0),
-                                new Waypoint(90, 85, PI/2, -10, 0, 0, parkTime),
-                        };
-                    } else {
-                        parkWaypoints = new Waypoint[] {
-                                new Waypoint(robot.x, robot.y, robot.theta, -50, -60, 0, 0),
-                                new Waypoint(104, 88, PI/2, -30, -30, 0, parkTime),
-                        };
-                    }
+                    Waypoint[] parkWaypoints = new Waypoint[] {
+                            new Waypoint(robot.x, robot.y, robot.theta, 40, 30, 0, 0),
+                            new Waypoint(85, 85, PI/2, 5, -30, 0, parkTime),
+                    };
                     parkPath = new Path(new ArrayList<>(Arrays.asList(parkWaypoints)));
 
-                    deliverWobble2 = true;
+                    shootBounceBacks = true;
                     time.reset();
                 }
             }
 
-            // Park on line
+            // Park
             else if (!park) {
-                if ((System.currentTimeMillis() - robot.startTime) < 30000) {
-                    double curTime = Math.min(time.seconds(), parkTime);
-                    Pose curPose = parkPath.getRobotPose(curTime);
-                    if (ringCase == RingCase.Zero) {
-                        if (curTime < 0.8) {
-                            robot.setTargetPoint(curPose, PI/2, 0);
-                        } else {
-                            robot.setTargetPoint(curPose, 5*PI/12, 0);
-                        }
-                    } else if (ringCase == RingCase.Four) {
-                        if (curTime < 0.5) {
-                            robot.setTargetPoint(curPose, curPose.theta + PI, 0);
-                        } else {
-                            robot.setTargetPoint(curPose, PI/4, 0);
-                        }
-                    } else {
-                        robot.setTargetPoint(curPose, curPose.theta + PI, 0);
-                    }
+                double curTime = Math.min(time.seconds(), parkTime);
+                Pose curPose = parkPath.getRobotPose(curTime);
+                robot.setTargetPoint(curPose);
 
-                    if (ringCase == RingCase.Four && robot.y < 120) {
-                        robot.intake.sticksOut();
-                    }
+                if (time.seconds() > parkTime) {
+                    Robot.log("Auto finished in " + ((System.currentTimeMillis() - robot.startTime) / 1000) + " seconds");
 
-                    if (time.seconds() > parkTime) {
-                        Robot.log("Auto finished in " + ((System.currentTimeMillis() - robot.startTime) / 1000) + " seconds");
-                        robot.intake.sticksOut();
-
-                        park = true;
-                    }
-                } else {
-                    Robot.log("Stopping Robot");
-                    robot.drivetrain.stop();
-                }
-
-                if ((System.currentTimeMillis() - robot.startTime) >= 33000) {
-                    Robot.log("Breaking Loop");
-                    break;
+                    park = true;
                 }
             }
 
@@ -609,6 +256,6 @@ public class RedAutoPowerShot extends LinearOpMode {
         robot.stop();
         try {
             detector.stop();
-        } catch (Exception ignore) {}*/
+        } catch (Exception ignore) {}
     }
 }
