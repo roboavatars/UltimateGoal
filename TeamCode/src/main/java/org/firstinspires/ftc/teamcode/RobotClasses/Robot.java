@@ -6,7 +6,6 @@ import android.util.Log;
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.hardware.lynx.LynxModule;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -77,8 +76,6 @@ public class Robot {
     public double flickTime;
     public double shootDelay;
     private int vThresh;
-    private int vHighThresh;
-    public static double preShootTimeBackup = 4000;
     public static double flickTimeBackup = 1000;
     public static int highGoalDelay = 250;
     public static int psDelay = 500;
@@ -100,6 +97,10 @@ public class Robot {
     public double flapOverride = 0;
     public int numRingsPreset = 3;
     public double thetaOffset = 0;
+
+
+    private double lockX, lockY;
+    private int lockTarget = 0; // 0: none, 1: high goal, 2: power shot
 
     // Powershot Debug Variables
     public final double[] psShootPos = new double[] {111, 63};
@@ -186,10 +187,6 @@ public class Robot {
             firstLoop = false;
         }
 
-//        if (!isAuto && !preShoot && !shoot && !shooter.sensorBroken && loopCounter % sensorUpdatePeriod == 0) {
-//            numRings = shooter.getNumRings();
-//        }
-
         profile(1);
 
         // Pre-shoot tasks: Turn on flywheel, move robot to shooting position, mag up, start auto-feed once ready
@@ -199,11 +196,9 @@ public class Robot {
             if (highGoal) {
                 shooter.flywheelHG();
                 vThresh = (isAuto ? Constants.HIGH_GOAL_VELOCITY - 100 : 1400);
-                vHighThresh = Constants.HIGH_GOAL_VELOCITY + 50;
             } else {
                 shooter.flywheelPS();
                 vThresh = Constants.POWERSHOT_VELOCITY - 70;
-                vHighThresh = Constants.POWERSHOT_VELOCITY + 40;
             }
 
             // Turn off intake and put mag up
@@ -217,23 +212,22 @@ public class Robot {
             }
 
             // Move to shooting position
-            if (!preShootOverride && !aimLockShoot && (!isAtPose(target[0], target[1], target[2] - (highGoal ? thetaOffset : 0), 1, 1, PI/35) || !notMoving())) {
+            if (!preShootOverride && !aimLockShoot && (Math.abs(y - target[1]) < 2 || !notMoving())) {
                 if (!highGoal) {
-                    setTargetPoint(new Target(target[0], target[1], target[2]).thetaKp(3.5).thetaKd(0.10).yKp(0.3).yKd(0.02));
+                    setTargetPoint(new Target(target[0], target[1], target[2]).yKp(0.3).yKd(0.02));
                 } else {
                     setTargetPoint(new Target(target[0], target[1], target[2] - thetaOffset).yKp(0.5));
                 }
                 log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") (" + round(vx) + ", " + round(vy) + ", " + round(w) + ") Moving to shoot position: [" + round(target[0]) + ", " + round(target[1]) + ", " + round(target[2]) + "]");
-                log(shooter.getFlywheelVelocity() + ", Target: " + shooter.getTargetVelocity() + ", Min: " + vThresh + ", Max: " + vHighThresh);
+                log(shooter.getFlywheelVelocity() + ", Target: " + shooter.getTargetVelocity() + ", Min: " + vThresh );
             }
 
             // Start auto-feed when mag is up, velocity is high enough, and robot is at position
-            if (preShootOverride || (vThresh <= shooter.getFlywheelVelocity() /*&& shooter.getVelocity() < vHighThresh*/ &&
-                    (aimLockShoot || (isAtPose(target[0], target[1], target[2] - (highGoal ? thetaOffset : 0), 1, 1, PI/35) && notMoving())))) {
+            if (preShootOverride || (vThresh <= shooter.getFlywheelVelocity() &&
+                    (aimLockShoot || (Math.abs(y - target[1]) < 2 && notMoving())))) {
                 if (highGoal) {
                     shootDelay = highGoalDelay;
                     vThresh = Constants.HIGH_GOAL_VELOCITY - 120;
-                    vHighThresh = Constants.HIGH_GOAL_VELOCITY + 20;
                 } else {
                     shootDelay = psDelay;
                 }
@@ -275,7 +269,7 @@ public class Robot {
                 }
                 if (!shootOverride && !aimLockShoot) {
                     if (!highGoal) {
-                        setTargetPoint(new Target(target[0], target[1], target[2]).thetaKp(3.5).thetaKd(0.10).yKp(0.3).yKd(0.02));
+                        setTargetPoint(new Target(target[0], target[1], target[2]).yKp(0.3).yKd(0.02));
                     } else {
                         setTargetPoint(new Target(target[0], target[1], target[2] - thetaOffset).yKp(0.5));
                     }
@@ -286,7 +280,7 @@ public class Robot {
             if (curTime - shootTime > shootDelay) {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position and velocity low enough
-                    if (((highGoal && (shootOverride || aimLockShoot || ((!isAuto || highGoal && 1600 <= shooter.getFlywheelVelocity()) && isAtPose(target[0], target[1], target[2] - thetaOffset, 1, 1, PI/60) && notMoving())))
+                    if (((highGoal && (shootOverride || aimLockShoot || (vThresh <= shooter.getFlywheelVelocity() && Math.abs(y - target[1]) < 2 && notMoving())))
                             || (!highGoal && isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/300) && notMoving()))
                            /* || curTime - flickTime > flickTimeBackup*/) {
 
@@ -321,7 +315,7 @@ public class Robot {
                         flickTime = curTime;
                     } else {
                         log("W (" + round(x) + ", " + round(y) + ", " + round(theta) + ") (" + round(vx) + ", " + round(vy) + ", " + round(w) + ") Moving to shoot position: [" + round(target[0]) + ", " + round(target[1]) + ", " + round(target[2]) + "]");
-                        log(shooter.getFlywheelVelocity() + ", Target: " + shooter.getTargetVelocity() + ", Min: " + vThresh + ", Max: " + vHighThresh);
+                        log(shooter.getFlywheelVelocity() + ", Target: " + shooter.getTargetVelocity() + ", Min: " + vThresh);
                     }
                 } else {
                     shooter.flywheelOff();
@@ -357,6 +351,10 @@ public class Robot {
         }
         shooter.updateShooter();
         intake.updateSticks();
+
+        if (lockTarget != 0) {
+            updateTurret();
+        }
 
         profile(4);
 
@@ -398,9 +396,6 @@ public class Robot {
         if (startVoltTooLow) {
             addPacket("0", "Starting Battery Voltage < 12.4!!!!");
         }
-        /*if (shooter.sensorBroken) {
-            addPacket("0", "Distance Sensor Broken!!!!");
-        }*/
         addPacket("1 X", round(x));
         addPacket("2 Y", round(y));
         addPacket("3 Theta", round(theta));
@@ -412,7 +407,6 @@ public class Robot {
         addPacket("8 Update Frequency (Hz)", round(1 / timeDiff));
         addPacket("9 Pod Zeroes", drivetrain.zero1 + ", " + drivetrain.zero2 + ", " + drivetrain.zero3);
         addPacket("offsets", round(thetaOffset) + " " + round(flapOverride) + " " + shootYOffset);
-        addPacket("coeffs", shooter.shooterMotor.getPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER));
         if (!isAuto) {
             addPacket("Cycle Time", (curTime - lastCycleTime) / 1000);
             addPacket("Average Cycle Time", round(cycleTotal / cycles));
@@ -456,11 +450,11 @@ public class Robot {
     }
 
     public void highGoalShoot() {
-        highGoalShoot(!shooter.sensorBroken ? shooter.getNumRings() : 3, true);
+        highGoalShoot(3, true);
     }
 
     public void highGoalShoot(boolean useFlap) {
-        highGoalShoot(!shooter.sensorBroken ? shooter.getNumRings() : 3, useFlap);
+        highGoalShoot(3, useFlap);
     }
 
     public void highGoalShoot(int numRings) {
@@ -490,7 +484,7 @@ public class Robot {
                     log("Shooting at y = " + shootY);
                 }
             }
-            target = shootTargets(x, shootY, PI/2, 3);
+            target = new double[] {x, shootY, theta};
             log("High goal shoot initiated");
         }
     }
@@ -520,44 +514,39 @@ public class Robot {
         log("Shoot cancelled");
     }
 
-    // Calculate robot pose for auto aim
-    // left ps = 0, middle ps = 1, right ps = 2, high goal = 3
-    public double[] shootTargets(int targetNum) {
-        return shootTargets(x, y, theta, targetNum);
+    public void setLock(double x, double y, int lockMode) {
+        lockTarget = lockMode;
+        lockX = x;
+        lockY = y;
     }
 
-    public double[] shootTargets(double shootX, double shootY, double shootTheta, int targetNum) {
+    public void updateTurret() {
         /* power1- (76.5,144,24)
            power2- (84,144,24)
            power3- (91.5,144,24)
            high goal- (108,144,35.5) */
 
-        double targetX = shootXCor[targetNum];
-        double targetY = shootYCor;
-
-        double shooterX = shootX + (aimLockShoot && 0.5 < vx ? vx : 0) * Shooter.RING_FLIGHT_TIME + Shooter.SHOOTER_DX * Math.sin(shootTheta);
-        double shooterY = shootY + (aimLockShoot && 0.5 < vy ? vy : 0) * Shooter.RING_FLIGHT_TIME - Shooter.SHOOTER_DX * Math.cos(shootTheta);
-        double dx = targetX - shooterX;
-        double dy = targetY - shooterY;
+        double shooterX = x + (aimLockShoot && 0.5 < vx ? vx : 0) * Shooter.RING_FLIGHT_TIME + Shooter.SHOOTER_DX * Math.sin(theta);
+        double shooterY = y + (aimLockShoot && 0.5 < vy ? vy : 0) * Shooter.RING_FLIGHT_TIME - Shooter.SHOOTER_DX * Math.cos(theta);
+        double dx = lockX - shooterX;
+        double dy = lockY - shooterY;
 
         // Uses Angle Bisector for High Goal for more consistency
-        if (targetNum == 3) {
+        if (lockTarget == 3) {
             double d = 8;
             double a = Math.sqrt(Math.pow(dx + d/2, 2) + Math.pow(dy, 2));
             double b = Math.sqrt(Math.pow(dx - d/2, 2) + Math.pow(dy, 2));
 
-            targetX += - d/2 + d * b / (a + b);
-            dx = targetX - shooterX;
-            drawLine(shooterX, shooterY, targetX, targetY, "blue");
+            lockX += - d/2 + d * b / (a + b);
+            dx = lockY - shooterX;
+            drawLine(shooterX, shooterY, lockX, lockY, "blue");
         }
 
         // Calculate Robot Angle
-        double d = Math.sqrt(Math.pow(targetX - shooterX, 2) + Math.pow(targetY - shooterY, 2));
+        double d = Math.sqrt(Math.pow(lockX - shooterX, 2) + Math.pow(lockY - shooterY, 2));
         double alignRobotAngle = Math.atan2(dy, dx) + 0.0013 * d - 0.2300;
-        double alignRobotX = shooterX - Shooter.SHOOTER_DX * Math.sin(alignRobotAngle);
-        double alignRobotY = shooterY + Shooter.SHOOTER_DX * Math.cos(alignRobotAngle);
 
-        return new double[] {alignRobotX, alignRobotY, alignRobotAngle};
+        shooter.setTheta(alignRobotAngle);
     }
 
     // Set target point (velocity specification, custom Kp and Kv values)

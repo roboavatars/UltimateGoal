@@ -5,11 +5,8 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 
 @SuppressWarnings("FieldCanBeLocal")
 @Config
@@ -20,11 +17,13 @@ public class Shooter {
     private Servo magServo;
     private Servo feedServo;
     private Servo flapServo;
-    private DistanceSensor ringSensor;
+
+//    private DistanceSensor ringSensor;
+//    public boolean sensorBroken = true;
+//    private int numRings = 3;
 
     public boolean magHome = true;
     public boolean feedHome = true;
-    public boolean sensorBroken = true;
 
     public static final double SHOOTER_DX = 6.5;
     public static final double RING_SPEED = 150;
@@ -38,9 +37,7 @@ public class Shooter {
 
     private static final double RADIANS_PER_TICK = 1;
     private double targetVelocity = 0;
-    private double targetPosition = 0;
-    private int target = 0; // 0: none, 1: high goal, 2: power shot
-    private int numRings = 3;
+    private double targetTheta = 0;
 
     public Shooter(LinearOpMode op) {
         shooterMotor = op.hardwareMap.get(DcMotorEx.class, "shooter");
@@ -52,7 +49,7 @@ public class Shooter {
         flapServo = op.hardwareMap.get(Servo.class, "flapServo");
         magServo = op.hardwareMap.get(Servo.class, "magServo");
         feedServo = op.hardwareMap.get(Servo.class, "feedServo");
-        ringSensor = op.hardwareMap.get(DistanceSensor.class, "ringSensor");
+//        ringSensor = op.hardwareMap.get(DistanceSensor.class, "ringSensor");
 
         flapDown();
         feedHome();
@@ -93,14 +90,14 @@ public class Shooter {
         return targetVelocity;
     }
 
-    public void setTargetPosition(int position) {
-        if (position != targetPosition) {
-            turretMotor.setTargetPosition((int) (targetPosition / RADIANS_PER_TICK));
-            targetPosition = position;
+    public void setTheta(double theta) {
+        if (theta != targetTheta) {
+            turretMotor.setTargetPosition((int) (theta / RADIANS_PER_TICK));
+            targetTheta = theta;
         }
     }
 
-    public double getTargetPosition() {
+    public double getTheta() {
         return turretMotor.getTargetPosition() * RADIANS_PER_TICK;
     }
 
@@ -108,21 +105,7 @@ public class Shooter {
         return turretMotor.getVelocity();
     }
 
-    public void setTarget(int lockMode) {
-        target = lockMode;
-    }
-
-    public void lockTarget(double x, double y, double theta, int lockMode) {
-        setTarget(lockMode);
-        lockTarget(x, y, theta);
-    }
-
-    public void lockTarget(double x, double y, double theta) {
-        // get angle that robot needs
-        // compare with robot angle
-        // determine if mod is necessary
-    }
-
+    // Mag
     public void magHome() {
         magServo.setPosition(Constants.MAG_HOME_POS);
         magHome = true;
@@ -133,6 +116,7 @@ public class Shooter {
         magHome = false;
     }
 
+    // Flicker
     public void feedHome() {
         feedServo.setPosition(Constants.FEED_HOME_POS);
         feedHome = true;
@@ -148,6 +132,7 @@ public class Shooter {
         feedHome = false;
     }
 
+    // Flap
     public void setFlapPosition(double position) {
         flapServo.setPosition(position);
     }
@@ -164,7 +149,7 @@ public class Shooter {
         flapServo.setPosition(Constants.FLAP_UP_POS);
     }
 
-    public double getDistance() {
+    /*public double getDistance() {
         double distance = ringSensor.getDistance(DistanceUnit.INCH);
 //        sensorBroken = distance > 6;
         return distance;
@@ -188,5 +173,5 @@ public class Shooter {
         }
 
         return numRings;
-    }
+    }*/
 }

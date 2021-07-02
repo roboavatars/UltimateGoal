@@ -7,7 +7,6 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.Debug.Logger;
-import org.firstinspires.ftc.teamcode.RobotClasses.MecanumDrivetrain;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import java.util.Arrays;
@@ -113,7 +112,6 @@ public class Teleop extends LinearOpMode {
             }
 
             // High Goal / Powershot Shoot
-            robot.aimLockShoot = aimLock;
             if (gamepad1.left_bumper) {
                 robot.highGoalShoot();
             } else if (gamepad1.right_bumper) {
@@ -126,15 +124,10 @@ public class Teleop extends LinearOpMode {
             }
 
             // Rev Up Flywheel for High Goal
-            if (gamepad2.y /*|| (!robot.shooter.sensorBroken && robot.numRings == 2)*/) {
+            if (gamepad2.y) {
                 robot.shooter.flywheelHG();
                 robot.intake.sticksShoot();
             }
-
-            // Auto Move Back Sticks After 3 Rings
-            /*if (!robot.shooter.sensorBroken && robot.numRings == 3 && !robot.preShoot && !robot.shoot && !robot.postShoot) {
-                robot.intake.sticksOut();
-            }*/
 
             // Stick Retraction/Extension Toggle
             if (gamepad2.x && !stickToggle) {
@@ -251,23 +244,16 @@ public class Teleop extends LinearOpMode {
             }*/
 
             // Drivetrain Controls
-            if (!aimLock || gamepad2.right_bumper) {
-                if (robotCentric) {
-                    robot.drivetrain.setControls(-gamepad1.left_stick_y * xyGain, -gamepad1.left_stick_x * xyGain, -gamepad1.right_stick_x * wGain);
-                } else {
-                    robot.drivetrain.setGlobalControls(gamepad1.left_stick_y * xyGain, gamepad1.left_stick_x * xyGain, -gamepad1.right_stick_x * wGain);
-                }
-            } else if (aimLock) {
-                robot.drivetrain.setGlobalControls(gamepad1.left_stick_x * xyGain, MecanumDrivetrain.yKp * (63 - robot.y) + MecanumDrivetrain.yKd * (-robot.vy), (gamepad1.right_stick_x == 0 ? MecanumDrivetrain.thetaKp * (robot.shootTargets(3)[2] - robot.theta) + MecanumDrivetrain.thetaKd * (-robot.w) : -gamepad1.right_stick_x * 0.5 * wGain));
+            if (robotCentric) {
+                robot.drivetrain.setControls(-gamepad1.left_stick_y * xyGain, -gamepad1.left_stick_x * xyGain, -gamepad1.right_stick_x * wGain);
+            } else {
+                robot.drivetrain.setGlobalControls(gamepad1.left_stick_y * xyGain, gamepad1.left_stick_x * xyGain, -gamepad1.right_stick_x * wGain);
             }
 
             // Update Robot
             robot.update();
 
             // Telemetry
-            if (robot.shooter.sensorBroken) {
-                telemetry.addData("Distance Sensor", "Broken");
-            }
             telemetry.addData("X", robot.x);
             telemetry.addData("Y", robot.y);
             telemetry.addData("Theta", robot.theta);
