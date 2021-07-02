@@ -8,9 +8,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -122,9 +120,6 @@ public class Logger extends Thread {
     public void stopLogging() {
         interrupt();
         try {
-//            for (String line : data) {
-//                fileWriter.write(line);
-//            }
             fileWriter.close();
         } catch (Exception e) {
             e.printStackTrace();
@@ -150,25 +145,5 @@ public class Logger extends Thread {
             e.printStackTrace();
         }
         return robotPos;
-    }
-
-    public ArrayList<double[]> replay(String path) {
-        String curLine;
-        int lineNum = 0;
-        ArrayList<double[]> dataArray = new ArrayList<>();
-        try {
-            File robotDataLog = new File(path);
-            BufferedReader bufferedReader = new BufferedReader(new FileReader(robotDataLog));
-
-            while ((curLine = bufferedReader.readLine()) != null) {
-                if (lineNum != 0) {
-                    String[] data = curLine.split(",");
-                    dataArray.add(new double[] {Double.parseDouble(data[1]), Double.parseDouble(data[2]), Double.parseDouble(data[3]), Double.parseDouble(data[4])});
-                }
-                lineNum++;
-            }
-            bufferedReader.close();
-        } catch (IOException e) {e.printStackTrace();}
-        return dataArray;
     }
 }

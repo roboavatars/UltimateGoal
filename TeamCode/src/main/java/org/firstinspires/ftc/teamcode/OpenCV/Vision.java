@@ -12,13 +12,6 @@ public class Vision extends BaseDetector {
 
     public enum Pipeline {StackHeight, RingLocator}
 
-    public Vision(LinearOpMode op) {
-        super(op);
-
-        stackHeightPipeline = new StackHeightPipeline();
-        ringLocatorPipeline = new RingLocatorPipeline();
-    }
-
     public Vision(LinearOpMode op, Pipeline pipeline) {
         super(op);
 

@@ -10,7 +10,6 @@ import org.openftc.easyopencv.OpenCvCameraRotation;
 import org.openftc.easyopencv.OpenCvPipeline;
 
 public class BaseDetector {
-
     private OpenCvCamera cam;
 
     public BaseDetector(LinearOpMode op) {
@@ -39,21 +38,5 @@ public class BaseDetector {
 
     public double getFPS() {
         return cam.getFps();
-    }
-
-    public int getTotalFrameTimeMS() {
-        return cam.getTotalFrameTimeMs();
-    }
-
-    public int getPipelineTimeMS() {
-        return cam.getPipelineTimeMs();
-    }
-
-    public int getOverheadTimeMS() {
-        return cam.getOverheadTimeMs();
-    }
-
-    public int getCurrentPipelineMaxFPS() {
-        return cam.getCurrentPipelineMaxFps();
     }
 }

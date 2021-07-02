@@ -65,6 +65,9 @@ public class RingProcessor {
         Core.inRange(lab, labmin, labmax, processed3);
 
         // Remove Noise
+        Imgproc.morphologyEx(processed, processed, Imgproc.MORPH_OPEN, new Mat());
+        Imgproc.morphologyEx(processed2, processed2, Imgproc.MORPH_OPEN, new Mat());
+        Imgproc.morphologyEx(processed3, processed3, Imgproc.MORPH_OPEN, new Mat());
         Imgproc.morphologyEx(processed, processed, Imgproc.MORPH_CLOSE, new Mat());
         Imgproc.morphologyEx(processed2, processed2, Imgproc.MORPH_CLOSE, new Mat());
         Imgproc.morphologyEx(processed3, processed3, Imgproc.MORPH_CLOSE, new Mat());
