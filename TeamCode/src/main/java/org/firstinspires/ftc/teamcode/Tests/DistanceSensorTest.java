@@ -10,7 +10,8 @@ import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import static java.lang.Math.PI;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
 @TeleOp(name = "Distance Sensor Test")
 @Config
@@ -50,8 +51,8 @@ public class DistanceSensorTest extends LinearOpMode {
             addPacket("Three", threeDist);
             sendPacket();
 
-            telemetry.addData("Distance", robot.shooter.getDistance());
-            telemetry.addData("# Rings", robot.shooter.getNumRings());
+//            telemetry.addData("Distance", robot.shooter.getDistance());
+//            telemetry.addData("# Rings", robot.shooter.getNumRings());
             telemetry.update();
         }
     }
