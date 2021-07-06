@@ -26,10 +26,10 @@ public class StackHeightPipeline extends OpenCvPipeline {
     public enum RingCase {Zero, One, Four}
 
     // Rectangle
-    public static int RECT_X = 90;
-    public static int RECT_Y = 100;
-    public static int RECT_WIDTH = 140;
-    public static int RECT_HEIGHT = 90;
+    public static int RECT_X = 0;
+    public static int RECT_Y = 150;
+    public static int RECT_WIDTH = 320;
+    public static int RECT_HEIGHT = 80;
 
     // Thresholds
     public static int HEIGHT_MIN = 10;
