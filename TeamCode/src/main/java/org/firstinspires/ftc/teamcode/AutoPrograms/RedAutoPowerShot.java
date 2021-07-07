@@ -34,7 +34,7 @@ public class RedAutoPowerShot extends LinearOpMode {
             park on line
         */
 
-        Robot robot = new Robot(this, 114, 9, PI/2, true);
+        Robot robot = new Robot(this, 90, 9, PI/2, true);
         robot.logger.startLogging(true);
 
         Vision detector = new Vision(this, Vision.Pipeline.StackHeight);
@@ -71,18 +71,17 @@ public class RedAutoPowerShot extends LinearOpMode {
         Path parkPath = null;
 
         // Other Variables
-        boolean psFinish = false;
-        double psFinishTime = 0;
         boolean reachedDeposit = false;
         double depositReachTime = 0;
         ArrayList<Ring> rings;
 
         waitForStart();
 
-        // Wobble coordinates based on ring case
+        // Determine Ring Case
         RingCase ringCase = detector.getStackPipe().getModeResult();
         Robot.log("Ring case: " + ringCase);
 
+        // Customize Pathing Depending on Ring Case
         double[][] wobbleDeliveryPositions = {{125, 69, PI/2}, {105, 93, PI/4}, {127, 117, PI}};
         double[] wobbleCor;
         if (ringCase == RingCase.Zero) {
