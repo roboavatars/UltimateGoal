@@ -13,7 +13,6 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 @TeleOp(name = "Shooter Test")
 @Config
 public class ShooterTest extends LinearOpMode {
-
     private DcMotorEx shooter;
 
     public static double p1 = 40;
