@@ -36,14 +36,17 @@ public class Dashboard {
     }
 
     public static void drawField() {
-        // Clear Left Side
-        drawRect(0, 0, 48, 144, "white");
-
         // Perimeter
-        outlineRect(48, 0, 144, 144, "black");
+        outlineRect(0, 0, 144, 144, "black");
 
-        // Tower Goal
+        // Tower Goals
+        drawRect(24, 144, 48, 150, "black");
         drawRect(96, 144, 120, 150, "black");
+
+        // Blue Powershots
+        drawRect(67, 144, 68, 147.5, "blue");
+        drawRect(59.5, 144, 60.5, 147.5, "blue");
+        drawRect(52, 144, 53, 147.5, "blue");
 
         // Red Powershots
         drawRect(76, 144, 77, 147.5, "red");
