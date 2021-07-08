@@ -4,9 +4,10 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
+
+import static java.lang.Math.PI;
 
 @SuppressWarnings("FieldCanBeLocal")
 @Config
@@ -35,7 +36,7 @@ public class Shooter {
     public static double p2 = 7;
     public static double f2 = 1.15;
 
-    private static final double RADIANS_PER_TICK = 1;
+    private static final double RADIANS_PER_TICK = 126 / PI;
     private double targetVelocity = 0;
     private double targetTheta = 0;
 
@@ -44,7 +45,6 @@ public class Shooter {
         turretMotor = op.hardwareMap.get(DcMotorEx.class, "turret");
         shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         turretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
-        shooterMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         flapServo = op.hardwareMap.get(Servo.class, "flapServo");
         magServo = op.hardwareMap.get(Servo.class, "magServo");
