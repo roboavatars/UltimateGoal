@@ -52,7 +52,4 @@ public class Constants {
 
     public static double WOBBLE_CLAMP_POS_RIGHT_SERVO = 1;
     public static double WOBBLE_UNCLAMP_POS_RIGHT_SERVO = 0.2;
-
-
-
 }

@@ -8,7 +8,7 @@ import org.firstinspires.ftc.teamcode.RobotClasses.MecanumDrivetrain;
 import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawField;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawDrivetrain;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
 @TeleOp(name = "Odometry / Drivetrain Test")
@@ -42,7 +42,7 @@ public class OdoDrivetrainTest extends LinearOpMode {
             prevTime = curTime;
 
             drawField();
-            drawRobot(x, y, theta, "green");
+            drawDrivetrain(x, y, theta, "green");
             addPacket("X", x);
             addPacket("Y", y);
             addPacket("Theta", theta);

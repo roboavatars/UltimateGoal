@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.RobotClasses.MecanumDrivetrain;
 import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawField;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawDrivetrain;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
 @TeleOp(name = "IMU Test")
@@ -40,7 +40,7 @@ public class IMUTest extends LinearOpMode {
 
             addPacket("theta", imu.getTheta());
             addPacket("Update Frequency (Hz)", 1 / timeDiff);
-            drawRobot(111, 63, imu.getTheta());
+            drawDrivetrain(111, 63, imu.getTheta(), "black");
             drawField();
             sendPacket();
         }

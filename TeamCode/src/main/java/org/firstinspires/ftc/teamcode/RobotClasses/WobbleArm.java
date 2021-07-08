@@ -10,7 +10,6 @@ public class WobbleArm {
     private Servo leftClampServo;
     private Servo rightClampServo;
 
-
     public WobbleArm(LinearOpMode op) {
         armServo = op.hardwareMap.get(Servo.class, "wobbleServo");
         leftClampServo = op.hardwareMap.get(Servo.class, "leftClampServo");

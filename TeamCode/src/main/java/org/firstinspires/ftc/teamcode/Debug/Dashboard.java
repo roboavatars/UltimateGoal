@@ -7,6 +7,11 @@ import org.firstinspires.ftc.teamcode.OpenCV.Ring;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import static java.lang.Math.PI;
+import static java.lang.Math.sin;
+import static java.lang.Math.cos;
+import static org.firstinspires.ftc.teamcode.RobotClasses.Shooter.TURRET_DX;
+import static org.firstinspires.ftc.teamcode.RobotClasses.Shooter.TURRET_DY;
+import static org.firstinspires.ftc.teamcode.RobotClasses.Shooter.TURRET_DIAMETER;
 
 public class Dashboard {
 
@@ -14,25 +19,34 @@ public class Dashboard {
     public static TelemetryPacket packet = new TelemetryPacket();
 
     public static void drawRobot(Robot robot) {
-        drawRobot(robot, "black");
+        drawRobot(robot, "black", "gray");
     }
 
-    public static void drawRobot(Robot robot, String color) {
-        drawRobot(robot.x, robot.y, robot.theta, color);
+    public static void drawRobot(Robot robot, String drivetrainColor, String turretColor) {
+        drawRobot(robot.x, robot.y, robot.theta, robot.turretGlobalTheta, drivetrainColor, turretColor);
     }
 
-    public static void drawRobot(double robotX, double robotY, double robotTheta) {
-        drawRobot(robotX, robotY, robotTheta, "black");
+    public static void drawRobot(double robotX, double robotY, double robotTheta, double turretTheta, String drivetrainColor, String turretColor) {
+        drawDrivetrain(robotX, robotY, robotTheta, drivetrainColor);
+        drawTurret(robotX, robotY, robotTheta, turretTheta, turretColor);
     }
 
-    public static void drawRobot(double robotX, double robotY, double robotTheta, String color) {
+    public static void drawDrivetrain(double robotX, double robotY, double robotTheta, String robotColor) {
         double r = 9 * Math.sqrt(2);
         double x = robotY - 72;
         double y = 72 - robotX;
         double theta = PI/2 + robotTheta;
-        double[] ycoords = {r * Math.sin(PI/4 + theta) + y, r * Math.sin(3*PI/4 + theta) + y, r * Math.sin(5*PI/4 + theta) + y, r * Math.sin(7*PI/4 + theta) + y};
-        double[] xcoords = {r * Math.cos(PI/4 + theta) + x, r * Math.cos(3*PI/4 + theta) + x, r * Math.cos(5*PI/4 + theta) + x, r * Math.cos(7*PI/4 + theta) + x};
-        packet.fieldOverlay().setFill(color).fillPolygon(xcoords, ycoords);
+        double[] xcoords = {r * cos(PI/4 + theta) + x, r * cos(3*PI/4 + theta) + x, r * cos(5*PI/4 + theta) + x, r * cos(7*PI/4 + theta) + x};
+        double[] ycoords = {r * sin(PI/4 + theta) + y, r * sin(3*PI/4 + theta) + y, r * sin(5*PI/4 + theta) + y, r * sin(7*PI/4 + theta) + y};
+        packet.fieldOverlay().setFill(robotColor).fillPolygon(xcoords, ycoords);
+    }
+
+    public static void drawTurret(double robotX, double robotY, double robotTheta, double turretTheta, String turretColor) {
+        double cx = robotY - TURRET_DX * cos(robotTheta) + TURRET_DY * sin(robotTheta);
+        double cy = robotX + TURRET_DX * sin(robotTheta) + TURRET_DY * cos(robotTheta);
+        double r = TURRET_DIAMETER / 2;
+        packet.fieldOverlay().setFill(turretColor).fillCircle(cy - 72, 72 - cx, 2 * r);
+        drawRect(robotX - r * cos(turretTheta - PI/2) / 2, robotY - r * sin(turretTheta - PI/2) / 2, robotX + r * cos(turretTheta - PI/2) / 2 + cos(turretTheta), robotY + r * sin(turretTheta - PI/2) / 2 + sin(turretTheta), turretColor);
     }
 
     public static void drawField() {

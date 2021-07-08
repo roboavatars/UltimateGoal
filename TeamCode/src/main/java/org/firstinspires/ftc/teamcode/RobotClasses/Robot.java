@@ -18,7 +18,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Math.PI;
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawDrivetrain;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawField;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawLine;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRing;
@@ -77,12 +80,12 @@ public class Robot {
     public double shootDelay;
     private int vThresh;
     public static double flickTimeBackup = 1000;
-    public static int highGoalDelay = 250;
-    public static int psDelay = 500;
+    public static int highGoalDelay = 125;
+    public static int psDelay = 250;
     public static double flickDelay = 250;
 
     // Motion Variables
-    public double x, y, theta, vx, vy, w;
+    public double x, y, theta, vx, vy, w, turretGlobalTheta;
     private double prevX, prevY, prevTheta, prevVx, prevVy, prevW, prevTime, ax, ay, a;
     public double startTime;
 
@@ -153,7 +156,7 @@ public class Robot {
         }
 
         drawField();
-        drawRobot(this, "black");
+        drawRobot(this);
         sendPacket();
     }
 
@@ -301,11 +304,10 @@ public class Robot {
                             shooter.feedTop();
                         } else {
                             shooter.feedHome();
+                            shotRings.add(new Ring(x, y, turretGlobalTheta + thetaOffset, vx, vy, w, curTime));
+                            numRings--;
+                            flickTime = curTime;
                         }
-                        shotRings.add(new Ring(x, y, shooter.getTheta() + thetaOffset, vx, vy, w, curTime));
-                        numRings--;
-
-                        flickTime = curTime;
                     } else {
                         log("W (" + round(x) + ", " + round(y) + ", " + round(theta) + ") (" + round(vx) + ", " + round(vy) + ", " + round(w) + ") Moving to shoot position: [" + round(target[0]) + ", " + round(target[1]) + ", " + round(target[2]) + "]");
                         log(shooter.getFlywheelVelocity() + ", Target: " + shooter.getTargetVelocity() + ", Min: " + vThresh);
@@ -342,7 +344,8 @@ public class Robot {
 //             t265.sendOdometryData(vx, vy, theta, w);
             t265.updateCamPose();
         }
-        shooter.updateShooter();
+        shooter.updatePID();
+        turretGlobalTheta = shooter.getTheta() + theta;
         intake.updateSticks();
 
         if (tMode != NONE) {
@@ -403,11 +406,7 @@ public class Robot {
 
         // Dashboard Drawings
         drawField();
-        drawRobot(this, "black");
-//        drawRobot(drivetrain.x, drivetrain.y, drivetrain.theta, "green");
-//        if (useT265) {
-//            drawRobot(t265.getX(), t265.getY(), t265.getTheta(), t265.confidenceColor());
-//        }
+        drawRobot(this);
         for (Ring ring : ringPos) {
             if (ring.getX() != x && ring.getY() != y) {
                 drawRing(ring);
@@ -518,13 +517,12 @@ public class Robot {
            power3- (91.5,144,24)
            high goal- (108,144,35.5) */
 
-
-        shooter.setTheta(getShootAngle() - thetaOffset);
+        shooter.setTargetTheta(getShootAngle() - thetaOffset);
     }
 
     public double getShootAngle() {
-        double shooterX = x + (tMode != NONE && 0.5 < vx ? vx : 0) * Shooter.RING_FLIGHT_TIME + Shooter.SHOOTER_DX * Math.sin(theta);
-        double shooterY = y + (tMode != NONE && 0.5 < vy ? vy : 0) * Shooter.RING_FLIGHT_TIME - Shooter.SHOOTER_DX * Math.cos(theta);
+        double shooterX = x + (tMode != NONE && 0.5 < vx ? vx : 0) * Shooter.RING_FLIGHT_TIME + Shooter.TURRET_DX * Math.sin(theta) + Shooter.TURRET_DY * cos(theta);
+        double shooterY = y + (tMode != NONE && 0.5 < vy ? vy : 0) * Shooter.RING_FLIGHT_TIME - Shooter.TURRET_DX * Math.cos(theta) + Shooter.TURRET_DY * sin(theta);
         double dx = lockX - shooterX;
         double dy = lockY - shooterY;
 
@@ -560,7 +558,7 @@ public class Robot {
             thetaControl = theta - thetaTarget;
         }
 
-        drawRobot(xTarget, yTarget, thetaTarget, "blue");
+        drawDrivetrain(xTarget, yTarget, thetaTarget, "blue");
 //        Robot.log(xTarget + " " + yTarget + " " + thetaTarget);
 
         drivetrain.setGlobalControls(xKp * (xTarget - x) + xKd * (vxTarget - vx), yKp * (yTarget - y) + yKd * (vyTarget - vy), thetaKp * (-thetaControl) + thetaKd * (wTarget - w));
@@ -611,7 +609,7 @@ public class Robot {
 
     // Check if robot is at a certain point, turret at certain angle (custom tolerance)
     public boolean isAtPoseTurret(double targetX, double targetY, double turretTheta, double xTolerance, double yTolerance, double thetaTolerance) {
-        return Math.abs(x - targetX) < xTolerance && Math.abs(y - targetY) < yTolerance && Math.abs(shooter.getTheta() - turretTheta) < thetaTolerance;
+        return Math.abs(x - targetX) < xTolerance && Math.abs(y - targetY) < yTolerance && Math.abs(turretGlobalTheta - turretTheta) < thetaTolerance;
     }
 
     public boolean notMoving() {

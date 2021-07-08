@@ -8,8 +8,6 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
-import org.firstinspires.ftc.teamcode.RobotClasses.Shooter;
-
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
@@ -50,19 +48,16 @@ public class ShooterTest extends LinearOpMode {
                 shooter.setPower(0);
             }
 
-            if(flick){
+            if (flick) {
                 flicker.setPosition(0.8);
                 sleep(flickDist);
                 flicker.setPosition(0.98);
                 sleep(flickDist);
-
-
             }
-            if(!flick){
+
+            if (!flick) {
                 flicker.setPosition(flickDist);
-
             }
-
 
 //            mag.setPosition(Constants.MAG_SHOOT_POS);
 //
@@ -77,8 +72,6 @@ public class ShooterTest extends LinearOpMode {
             } else {
                 shooter.setVelocityPIDFCoefficients(p2, 0, 0, f2);
             }
-
-
 
             addPacket("S1 Velo", shooter.getVelocity());
             addPacket("S1 Pos", shooter.getCurrentPosition());

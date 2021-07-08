@@ -12,10 +12,10 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 
-@TeleOp
+@TeleOp(name = "Flicker Test")
 @Config
 //@Disabled
-public class DoubleFlickerTest extends LinearOpMode {
+public class FlickerTest extends LinearOpMode {
     public static double homePos = Constants.FEED_HOME_POS;
     public static double topPos = Constants.FEED_TOP_POS;
     public static int pos = 1;

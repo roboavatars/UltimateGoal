@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.Tests.T265Tests;
 
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RobotClasses.MecanumDrivetrain;
@@ -9,12 +10,12 @@ import org.firstinspires.ftc.teamcode.RobotClasses.T265;
 
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawField;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawDrivetrain;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
 @TeleOp(name = "T265 Test")
 @Config
-//@Disabled
+@Disabled
 public class T265Test extends LinearOpMode {
 
     public static double startX = 111;
@@ -59,7 +60,7 @@ public class T265Test extends LinearOpMode {
             prevTime = curTime;
 
             drawField();
-            drawRobot(x, y, theta, t265.confidenceColor());
+            drawDrivetrain(x, y, theta, t265.confidenceColor());
             addPacket("X", x);
             addPacket("Y", y);
             addPacket("Theta", theta);

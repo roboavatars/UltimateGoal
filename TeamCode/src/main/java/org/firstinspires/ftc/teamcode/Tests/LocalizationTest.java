@@ -9,7 +9,7 @@ import org.firstinspires.ftc.teamcode.RobotClasses.T265;
 import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawField;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawDrivetrain;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
 @TeleOp(name = "Combined Localization Test")
@@ -79,9 +79,9 @@ public class LocalizationTest extends LinearOpMode {
 
             // Dashboard
             drawField();
-            drawRobot(odoX, odoY, odoTheta, "blue");
-            drawRobot(camX, camY, camTheta, t265.confidenceColor());
-            drawRobot(x, y, theta, "black");
+            drawDrivetrain(odoX, odoY, odoTheta, "blue");
+            drawDrivetrain(camX, camY, camTheta, t265.confidenceColor());
+            drawDrivetrain(x, y, theta, "black");
             addPacket("X", x);
             addPacket("Y", y);
             addPacket("Theta", theta);

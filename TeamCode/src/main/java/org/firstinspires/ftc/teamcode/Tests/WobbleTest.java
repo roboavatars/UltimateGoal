@@ -1,7 +1,6 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -25,6 +24,5 @@ public class WobbleTest extends LinearOpMode {
             sleep(1000);
             wobbleArm.armUp();
         }
-
     }
 }

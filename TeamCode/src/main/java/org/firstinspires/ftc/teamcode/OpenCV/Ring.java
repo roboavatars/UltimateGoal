@@ -12,6 +12,9 @@ import static org.firstinspires.ftc.teamcode.OpenCV.RingLocator.RingLocator.maxY
 import static org.firstinspires.ftc.teamcode.OpenCV.RingLocator.RingLocator.minX;
 import static org.firstinspires.ftc.teamcode.OpenCV.RingLocator.RingLocator.minY;
 
+import static java.lang.Math.sin;
+import static java.lang.Math.cos;
+
 public class Ring {
     private double relX;
     private double relY;
@@ -38,12 +41,12 @@ public class Ring {
     }
 
     public Ring(double startX, double startY, double theta, double vx, double vy, double omega, double startTime) {
-        this.startX = startX + Shooter.SHOOTER_DX * Math.sin(theta);
-        this.startY = startY - Shooter.SHOOTER_DX * Math.cos(theta);
+        this.startX = startX + Shooter.TURRET_DX * sin(theta) + Shooter.TURRET_DY * cos(theta);
+        this.startY = startY - Shooter.TURRET_DX * cos(theta) + Shooter.TURRET_DY * sin(theta);
         this.absX = this.startX;
         this.absY = this.startY;
-        this.vx = vx - Shooter.SHOOTER_DX * omega * Math.sin(theta) + Shooter.RING_SPEED * Math.cos(theta + Shooter.INITIAL_ANGLE);
-        this.vy = vy + Shooter.SHOOTER_DX * omega * Math.cos(theta) + Shooter.RING_SPEED * Math.sin(theta + Shooter.INITIAL_ANGLE);
+        this.vx = vx - Shooter.TURRET_DX * omega * sin(theta) - Shooter.TURRET_DY * omega * cos(theta) + Shooter.RING_SPEED * cos(theta + Shooter.INITIAL_ANGLE);
+        this.vy = vy + Shooter.TURRET_DX * omega * cos(theta) - Shooter.TURRET_DY * omega * sin(theta) + Shooter.RING_SPEED * sin(theta + Shooter.INITIAL_ANGLE);
         this.startTime = startTime;
     }
 
@@ -121,8 +124,8 @@ public class Ring {
 
     // Calculate ring absolute coordinates using relative coordinates and robot position
     public void calcAbsCoords(double robotX, double robotY, double robotTheta) {
-        absX = robotX + relX * Math.sin(robotTheta) + relY * Math.cos(robotTheta);
-        absY = robotY - relX * Math.cos(robotTheta) + relY * Math.sin(robotTheta);
+        absX = robotX + relX * sin(robotTheta) + relY * cos(robotTheta);
+        absY = robotY - relX * cos(robotTheta) + relY * sin(robotTheta);
     }
 
     @SuppressLint("DefaultLocale")

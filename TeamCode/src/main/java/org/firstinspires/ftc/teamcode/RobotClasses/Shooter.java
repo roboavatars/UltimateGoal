@@ -13,7 +13,7 @@ import static java.lang.Math.PI;
 @Config
 public class Shooter {
 
-    public DcMotorEx shooterMotor;
+    public DcMotorEx flywheelMotor;
     public DcMotorEx turretMotor;
     private Servo magServo;
     private Servo feedServo;
@@ -26,7 +26,9 @@ public class Shooter {
     public boolean magHome = true;
     public boolean feedHome = true;
 
-    public static final double SHOOTER_DX = 6.5;
+    public static final double TURRET_DX = 6.5;
+    public static final double TURRET_DY = -1;
+    public static final double TURRET_DIAMETER = 8.5;
     public static final double RING_SPEED = 150;
     public static final double RING_FLIGHT_TIME = 0.5;
     public static final double INITIAL_ANGLE = 0.08;
@@ -41,9 +43,9 @@ public class Shooter {
     private double targetTheta = 0;
 
     public Shooter(LinearOpMode op) {
-        shooterMotor = op.hardwareMap.get(DcMotorEx.class, "shooter");
+        flywheelMotor = op.hardwareMap.get(DcMotorEx.class, "shooter");
         turretMotor = op.hardwareMap.get(DcMotorEx.class, "turret");
-        shooterMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         turretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         flapServo = op.hardwareMap.get(Servo.class, "flapServo");
@@ -58,11 +60,12 @@ public class Shooter {
         op.telemetry.addData("Status", "Shooter initialized");
     }
 
-    public void updateShooter() {
-        shooterMotor.setVelocityPIDFCoefficients(p1, 0, 0, f1);
+    public void updatePID() {
+        flywheelMotor.setVelocityPIDFCoefficients(p1, 0, 0, f1);
         turretMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(p2, 0, 0, f2));
     }
 
+    // Flywheel
     public void flywheelHG() {
         setFlywheelVelocity(Constants.HIGH_GOAL_VELOCITY);
     }
@@ -77,32 +80,37 @@ public class Shooter {
 
     public void setFlywheelVelocity(double velocity) {
         if (velocity != targetVelocity) {
-            shooterMotor.setVelocity(velocity);
+            flywheelMotor.setVelocity(velocity);
             targetVelocity = velocity;
         }
-    }
-
-    public double getFlywheelVelocity() {
-        return shooterMotor.getVelocity();
     }
 
     public double getTargetVelocity() {
         return targetVelocity;
     }
 
-    public void setTheta(double theta) {
+    public double getFlywheelVelocity() {
+        return flywheelMotor.getVelocity();
+    }
+
+    // Turret
+    public void setTargetTheta(double theta) {
         if (theta != targetTheta) {
             turretMotor.setTargetPosition((int) (theta / RADIANS_PER_TICK));
             targetTheta = theta;
         }
     }
 
-    public double getTheta() {
-        return turretMotor.getTargetPosition() * RADIANS_PER_TICK;
+    public double getTargetTheta() {
+        return targetTheta;
     }
 
-    public double getVelocity() {
-        return turretMotor.getVelocity();
+    public double getTheta() {
+        return turretMotor.getCurrentPosition() * RADIANS_PER_TICK;
+    }
+
+    public double getTurretVelocity() {
+        return turretMotor.getVelocity() * RADIANS_PER_TICK;
     }
 
     // Mag
