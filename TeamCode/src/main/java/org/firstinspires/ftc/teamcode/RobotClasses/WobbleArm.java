@@ -7,11 +7,14 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class WobbleArm {
 
     private Servo armServo;
-    private Servo clampServo;
+    private Servo leftClampServo;
+    private Servo rightClampServo;
+
 
     public WobbleArm(LinearOpMode op) {
         armServo = op.hardwareMap.get(Servo.class, "wobbleServo");
-        clampServo = op.hardwareMap.get(Servo.class, "clampServo");
+        leftClampServo = op.hardwareMap.get(Servo.class, "clampServo");
+        rightClampServo = op.hardwareMap.get(Servo.class, "clampServo");
 
         armUp();
         clamp();
@@ -32,14 +35,15 @@ public class WobbleArm {
     }
 
     public void clamp() {
-        setClampPosition(Constants.WOBBLE_CLAMP_POS);
+        setClampPosition(Constants.WOBBLE_CLAMP_POS_LEFT_SERVO, Constants.WOBBLE_CLAMP_POS_RIGHT_SERVO);
     }
 
     public void unClamp() {
-        setClampPosition(Constants.WOBBLE_UNCLAMP_POS);
+        setClampPosition(Constants.WOBBLE_UNCLAMP_POS_LEFT_SERVO, Constants.WOBBLE_UNCLAMP_POS_RIGHT_SERVO);
     }
 
-    public void setClampPosition(double position) {
-        clampServo.setPosition(position);
+    public void setClampPosition(double leftClampPosition, double rightClampPosition) {
+        leftClampServo.setPosition(leftClampPosition);
+        rightClampServo.setPosition(rightClampPosition);
     }
 }
