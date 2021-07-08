@@ -13,11 +13,10 @@ public class WobbleArm {
 
     public WobbleArm(LinearOpMode op) {
         armServo = op.hardwareMap.get(Servo.class, "wobbleServo");
-        leftClampServo = op.hardwareMap.get(Servo.class, "clampServo");
-        rightClampServo = op.hardwareMap.get(Servo.class, "clampServo");
+        leftClampServo = op.hardwareMap.get(Servo.class, "leftClampServo");
+        rightClampServo = op.hardwareMap.get(Servo.class, "rightClampServo");
 
         armUp();
-        clamp();
 
         op.telemetry.addData("Status", "Wobble Arm initialized");
     }

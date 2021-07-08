@@ -1,9 +1,14 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
+import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RobotClasses.WobbleArm;
 
+@TeleOp
+@Config
 public class WobbleTest extends LinearOpMode {
 
     @Override
@@ -13,7 +18,12 @@ public class WobbleTest extends LinearOpMode {
         waitForStart();
 
         while(opModeIsActive()) {
+            wobbleArm.unClamp();
+            wobbleArm.armDown();
+            sleep(1000);
             wobbleArm.clamp();
+            sleep(1000);
+            wobbleArm.armUp();
         }
 
     }

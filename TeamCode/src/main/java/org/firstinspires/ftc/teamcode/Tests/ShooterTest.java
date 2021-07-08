@@ -6,6 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
+import com.qualcomm.robotcore.hardware.Servo;
+
+import org.firstinspires.ftc.teamcode.RobotClasses.Shooter;
 
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
@@ -14,6 +17,7 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 @Config
 public class ShooterTest extends LinearOpMode {
     private DcMotorEx shooter;
+    private Servo flicker;
 
     public static double p1 = 40;
     public static double f1 = 0;
@@ -22,12 +26,17 @@ public class ShooterTest extends LinearOpMode {
     public static double pidThresh = 100;
     public static int velocity = 2100;
     public static boolean on = true;
+    public static boolean flick = true;
+    public static int flickDist = 80;
 
     @Override
     public void runOpMode() {
         shooter = hardwareMap.get(DcMotorEx.class, "shooter");
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooter.setDirection(DcMotorSimple.Direction.REVERSE);
+
+        flicker = hardwareMap.get(Servo.class, "flicker");
+        flicker.setPosition(1);
 
 //        Servo feed = hardwareMap.get(Servo.class, "feedServo");
 //        Servo mag = hardwareMap.get(Servo.class, "magServo");
@@ -36,10 +45,24 @@ public class ShooterTest extends LinearOpMode {
 
         while (opModeIsActive()) {
             if (on) {
-                shooter.setVelocity(velocity);
+                shooter.setPower(1);
             } else {
-                shooter.setVelocity(0);
+                shooter.setPower(0);
             }
+
+            if(flick){
+                flicker.setPosition(0.8);
+                sleep(flickDist);
+                flicker.setPosition(0.98);
+                sleep(flickDist);
+
+
+            }
+            if(!flick){
+                flicker.setPosition(flickDist);
+
+            }
+
 
 //            mag.setPosition(Constants.MAG_SHOOT_POS);
 //
@@ -54,6 +77,8 @@ public class ShooterTest extends LinearOpMode {
             } else {
                 shooter.setVelocityPIDFCoefficients(p2, 0, 0, f2);
             }
+
+
 
             addPacket("S1 Velo", shooter.getVelocity());
             addPacket("S1 Pos", shooter.getCurrentPosition());
