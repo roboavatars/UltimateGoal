@@ -209,9 +209,6 @@ public class Robot {
             if (shooter.magHome) {
                 intake.off();
                 shooter.magShoot();
-                if (!isAuto) {
-                    intake.sticksShoot();
-                }
                 log("Mag up");
             }
 
@@ -286,9 +283,6 @@ public class Robot {
                         }
 
                         if (numRings == 3) {
-                            if (!isAuto) {
-                                intake.sticksOut();
-                            }
                             log("Feed ring 1");
                         } else if (numRings == 2) {
                             log("Feed ring 2");
@@ -346,7 +340,6 @@ public class Robot {
         }
         shooter.updatePID();
         turretGlobalTheta = shooter.getTheta() + theta;
-        intake.updateSticks();
 
         if (tMode != NONE) {
             updateTurret();
@@ -496,7 +489,6 @@ public class Robot {
         numRings = 0;
         shootYOverride = 0;
         shooter.flywheelOff();
-        intake.sticksOut();
         shooter.magHome();
         log("Shoot cancelled");
     }

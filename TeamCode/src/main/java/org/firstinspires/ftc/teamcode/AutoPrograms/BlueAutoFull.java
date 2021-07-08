@@ -142,7 +142,6 @@ public class BlueAutoFull extends LinearOpMode {
         }
 
         detector.setPipeline(Vision.Pipeline.RingLocator);
-        robot.intake.sticksHalf();
 
         ElapsedTime time = new ElapsedTime();
 
@@ -267,7 +266,6 @@ public class BlueAutoFull extends LinearOpMode {
                         robot.drivetrain.stop();
                     } else if (time.seconds() > psFinishTime + (ringCase != RingCase.Four ? 2 : 0.5)) {
                         robot.intake.on();
-                        robot.intake.sticksHome();
 
                         Robot.log("Detected " + rings.size() + " ring(s): " + rings);
 
@@ -376,7 +374,6 @@ public class BlueAutoFull extends LinearOpMode {
 
                 if (ringCase == RingCase.Four && time.seconds() > ringTime - 0.5) {
                     robot.intake.blockerHome();
-                    robot.intake.sticksHalf();
                     robot.intake.setPower(0.5);
                 }
 
@@ -386,10 +383,6 @@ public class BlueAutoFull extends LinearOpMode {
                             new Waypoint(wobbleCor[0], wobbleCor[1], ringCase != RingCase.Four ? PI/2 : 7*PI/12, -30, -30, 0, deliverWobbleTime),
                     };
                     deliverWobblePath = new Path(new ArrayList<>(Arrays.asList(deliverWobbleWaypoints)));
-
-                    if (ringCase == RingCase.Four) {
-                        robot.intake.stickRight(0.35);
-                    }
 
                     bounceBack = true;
                     time.reset();
@@ -457,7 +450,6 @@ public class BlueAutoFull extends LinearOpMode {
                     robot.shooter.flywheelHG();
                     if (ringCase == RingCase.Four) {
                         robot.intake.blockerDown();
-                        robot.intake.stickRight(Constants.R_SHOOT_POS);
                     }
 
                     Waypoint[] goToHighShootWaypoints = new Waypoint[] {
@@ -506,8 +498,6 @@ public class BlueAutoFull extends LinearOpMode {
 
                     if (ringCase == RingCase.Four) {
                         robot.intake.blockerUp();
-                        robot.intake.sticksHalf();
-                        robot.intake.stickRight(0.35);
                     }
 
                     Waypoint[] deliverWobble2Waypoints;
@@ -599,13 +589,8 @@ public class BlueAutoFull extends LinearOpMode {
                         robot.setTargetPoint(curPose, curPose.theta + PI, 0);
                     }
 
-                    if (ringCase == RingCase.Four && robot.y < 120) {
-                        robot.intake.sticksOut();
-                    }
-
                     if (time.seconds() > parkTime) {
                         Robot.log("Auto finished in " + ((System.currentTimeMillis() - robot.startTime) / 1000) + " seconds");
-                        robot.intake.sticksOut();
 
                         park = true;
                     }

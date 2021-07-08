@@ -12,8 +12,8 @@ public class WobbleArm {
 
     public WobbleArm(LinearOpMode op) {
         armServo = op.hardwareMap.get(Servo.class, "wobbleServo");
-        leftClampServo = op.hardwareMap.get(Servo.class, "leftClampServo");
-        rightClampServo = op.hardwareMap.get(Servo.class, "rightClampServo");
+        leftClampServo = op.hardwareMap.get(Servo.class, "leftClamp");
+        rightClampServo = op.hardwareMap.get(Servo.class, "rightClamp");
 
         armUp();
 
@@ -33,11 +33,11 @@ public class WobbleArm {
     }
 
     public void clamp() {
-        setClampPosition(Constants.WOBBLE_CLAMP_POS_LEFT_SERVO, Constants.WOBBLE_CLAMP_POS_RIGHT_SERVO);
+        setClampPosition(Constants.WOBBLE_CLAMP_POS_LEFT, Constants.WOBBLE_CLAMP_POS_RIGHT);
     }
 
     public void unClamp() {
-        setClampPosition(Constants.WOBBLE_UNCLAMP_POS_LEFT_SERVO, Constants.WOBBLE_UNCLAMP_POS_RIGHT_SERVO);
+        setClampPosition(Constants.WOBBLE_UNCLAMP_POS_LEFT, Constants.WOBBLE_UNCLAMP_POS_RIGHT);
     }
 
     public void setClampPosition(double leftClampPosition, double rightClampPosition) {

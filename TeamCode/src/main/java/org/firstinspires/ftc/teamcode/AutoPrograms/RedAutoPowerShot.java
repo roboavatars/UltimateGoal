@@ -93,7 +93,6 @@ public class RedAutoPowerShot extends LinearOpMode {
         }
 
         detector.setPipeline(Vision.Pipeline.RingLocator);
-        robot.intake.sticksHalf();
 
         ElapsedTime time = new ElapsedTime();
 

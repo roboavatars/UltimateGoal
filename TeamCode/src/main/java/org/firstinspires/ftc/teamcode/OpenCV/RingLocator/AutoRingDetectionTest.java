@@ -159,9 +159,6 @@ public class AutoRingDetectionTest extends LinearOpMode {
                 ringPath = new Path(ringWaypoints);
             }
 
-            // Auto Sticks
-            robot.intake.autoSticks(x, y, theta, 6);
-
             // Force Stop
             if (gamepad1.b) {
                 start = false;

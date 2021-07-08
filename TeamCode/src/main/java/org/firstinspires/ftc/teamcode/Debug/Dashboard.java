@@ -45,7 +45,7 @@ public class Dashboard {
         double cx = robotY - TURRET_DX * cos(robotTheta) + TURRET_DY * sin(robotTheta);
         double cy = robotX + TURRET_DX * sin(robotTheta) + TURRET_DY * cos(robotTheta);
         double r = TURRET_DIAMETER / 2;
-        packet.fieldOverlay().setFill(turretColor).fillCircle(cy - 72, 72 - cx, 2 * r);
+        packet.fieldOverlay().setFill(turretColor).fillCircle(cy - 72, 72 - cx, r);
         drawRect(robotX - r * cos(turretTheta - PI/2) / 2, robotY - r * sin(turretTheta - PI/2) / 2, robotX + r * cos(turretTheta - PI/2) / 2 + cos(turretTheta), robotY + r * sin(turretTheta - PI/2) / 2 + sin(turretTheta), turretColor);
     }
 

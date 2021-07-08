@@ -9,20 +9,20 @@ import com.qualcomm.robotcore.hardware.Servo;
 @Config
 public class HardwareTest extends LinearOpMode {
 
-    public static String servoName1 = "wobbleServo";
-//    public static String servoName2 = "clampServo";
+    public static String servoName1 = "leftClamp";
+    public static String servoName2 = "rightClamp";
 
-    public static double home1 = 0.73;
-    public static double out1 = 0.18;
-//    public static double home2 = 0.55;
-//    public static double out2 = 0;
+    public static double home1 = 0.2;
+    public static double out1 = 0.6;
+    public static double home2 = 0.5;
+    public static double out2 = 0.05;
 
     public static boolean home = true;
 
     @Override
     public void runOpMode() {
         Servo servo1 = hardwareMap.get(Servo.class, servoName1);
-//        Servo servo2 = hardwareMap.get(Servo.class, servoName2);
+        Servo servo2 = hardwareMap.get(Servo.class, servoName2);
 
         waitForStart();
 
@@ -30,18 +30,18 @@ public class HardwareTest extends LinearOpMode {
 
             if (home) {
                 servo1.setPosition(home1);
-//                servo2.setPosition(home2);
+                servo2.setPosition(home2);
             } else {
                 servo1.setPosition(out1);
-//                servo2.setPosition(out2);
+                servo2.setPosition(out2);
             }
 
             if (gamepad1.dpad_left) {
                 servo1.setPosition(home1);
-//                servo2.setPosition(home2);
+                servo2.setPosition(home2);
             } else if (gamepad1.dpad_right) {
                 servo1.setPosition(out1);
-//                servo2.setPosition(out2);
+                servo2.setPosition(out2);
             }
         }
     }

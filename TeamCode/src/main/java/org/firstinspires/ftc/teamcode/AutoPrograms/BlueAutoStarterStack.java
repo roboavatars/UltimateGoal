@@ -102,7 +102,6 @@ public class BlueAutoStarterStack extends LinearOpMode {
         }
 
         detector.setPipeline(Vision.Pipeline.RingLocator);
-        robot.intake.sticksHalf();
 
         ElapsedTime time = new ElapsedTime();
 

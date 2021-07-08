@@ -43,7 +43,7 @@ public class Shooter {
     private double targetTheta = 0;
 
     public Shooter(LinearOpMode op) {
-        flywheelMotor = op.hardwareMap.get(DcMotorEx.class, "shooter");
+        flywheelMotor = op.hardwareMap.get(DcMotorEx.class, "flywheel");
         turretMotor = op.hardwareMap.get(DcMotorEx.class, "turret");
         flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         turretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
@@ -128,11 +128,6 @@ public class Shooter {
     public void feedHome() {
         feedServo.setPosition(Constants.FEED_HOME_POS);
         feedHome = true;
-    }
-
-    public void feedMid() {
-        feedServo.setPosition(Constants.FEED_MID_POS);
-        feedHome = false;
     }
 
     public void feedTop() {

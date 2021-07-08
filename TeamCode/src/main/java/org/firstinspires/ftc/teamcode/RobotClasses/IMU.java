@@ -24,7 +24,7 @@ public class IMU {
             op.idle();
         }
 
-        theta = startTheta;
+        theta = startTheta + PI/2;
         lastHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
     }
 
@@ -42,6 +42,20 @@ public class IMU {
         if (theta < 0) {
             theta += 2*PI;
         }
+        lastHeading = angle;
+    }
+
+    public void updateHeadingUncapped() {
+        angle = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+        deltaHeading = angle - lastHeading;
+
+        if (deltaHeading < -PI) {
+            deltaHeading += 2*PI;
+        } else if (deltaHeading >= PI) {
+            deltaHeading -= 2*PI;
+        }
+
+        theta += deltaHeading;
         lastHeading = angle;
     }
 

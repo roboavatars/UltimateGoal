@@ -10,13 +10,8 @@ public class Intake {
 
     public DcMotorEx intakeMotor;
     public DcMotorEx intakeMotor2;
-    private Servo lStickServo;
-    private Servo rStickServo;
     private Servo blockerServo;
     private Servo stackServo;
-
-    private double leftStickPos;
-    private double rightStickPos;
 
     private double lastIntakePow = 0;
     private double lastBlocker = 0;
@@ -25,17 +20,10 @@ public class Intake {
     public boolean reverse = false;
     public boolean forward = false;
 
-    public boolean sticksHome = false;
-    public boolean sticksHalf = false;
-    public boolean sticksShoot = false;
-    public boolean sticksOut = false;
-
     public Intake(LinearOpMode op, boolean isAuto) {
         intakeMotor = op.hardwareMap.get(DcMotorEx.class, "intake");
         intakeMotor2 = op.hardwareMap.get(DcMotorEx.class, "intake2");
 
-        lStickServo = op.hardwareMap.get(Servo.class, "leftStick");
-        rStickServo = op.hardwareMap.get(Servo.class, "rightStick");
         blockerServo = op.hardwareMap.get(Servo.class, "blocker");
         stackServo = op.hardwareMap.get(Servo.class, "stackServo");
 
@@ -43,14 +31,11 @@ public class Intake {
 //        intakeMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         if (!isAuto) {
-            sticksOut();
             blockerDown();
         } else {
-            sticksHome();
             blockerHome();
         }
         stackHome();
-        updateSticks();
 
         op.telemetry.addData("Status", "Intake initialized");
     }
@@ -83,78 +68,6 @@ public class Intake {
             reverse = power < 0;
             lastIntakePow = power;
         }
-    }
-
-    public void sticksHome() {
-        stickLeft(Constants.L_HOME_POS);
-        stickRight(Constants.R_HOME_POS);
-        sticksHome = true;
-        sticksHalf = false;
-        sticksShoot = false;
-        sticksOut = false;
-    }
-
-    public void sticksHalf() {
-        stickLeft(Constants.L_HALF_POS);
-        stickRight(Constants.R_HALF_POS);
-        sticksHome = false;
-        sticksHalf = true;
-        sticksShoot = false;
-        sticksOut = false;
-    }
-
-    public void sticksShoot() {
-        stickLeft(Constants.L_SHOOT_POS);
-        stickRight(Constants.R_SHOOT_POS);
-        sticksHome = false;
-        sticksHalf = false;
-        sticksShoot = true;
-        sticksOut = false;
-    }
-
-    public void sticksOut() {
-        stickLeft(Constants.L_OUT_POS);
-        stickRight(Constants.R_OUT_POS);
-        sticksHome = false;
-        sticksHalf = false;
-        sticksShoot = false;
-        sticksOut = true;
-    }
-
-    public void autoSticks(double x, double y, double theta, double buffer) {
-        double[] leftPos = new double[] {x - 25 * Math.sin(theta) + 8 * Math.cos(theta), y + 25 * Math.cos(theta) + 8 * Math.sin(theta)};
-        double[] rightPos = new double[] {x + 25 * Math.sin(theta) + 8 * Math.cos(theta), y - 25 * Math.cos(theta) + 8 * Math.sin(theta)};
-        if (48 + buffer <= leftPos[0] && leftPos[0] <= 144 - buffer && 0 + buffer <= leftPos[1] && leftPos[1] <= 144 - buffer) {
-            stickLeft(Constants.L_OUT_POS);
-        } else {
-            stickLeft(Constants.L_HALF_POS);
-        }
-        if (48 + buffer <= rightPos[0] && rightPos[0] <= 144 - buffer && 0 + buffer <= rightPos[1] && rightPos[1] <= 144 - buffer) {
-            stickRight(Constants.R_OUT_POS);
-        } else {
-            stickRight(Constants.R_HALF_POS);
-        }
-    }
-
-    public void stickLeft(double position) {
-        leftStickPos = position;
-    }
-
-    public void stickRight(double position) {
-        rightStickPos = position;
-    }
-
-    public void updateLeft() {
-        lStickServo.setPosition(leftStickPos);
-    }
-
-    public void updateRight() {
-        rStickServo.setPosition(rightStickPos);
-    }
-
-    public void updateSticks() {
-        updateLeft();
-        updateRight();
     }
 
     public void blockerHome() {

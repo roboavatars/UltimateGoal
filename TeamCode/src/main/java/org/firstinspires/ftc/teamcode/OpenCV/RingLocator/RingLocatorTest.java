@@ -41,7 +41,7 @@ public class RingLocatorTest extends LinearOpMode {
                     drawRing(rings.get(i), "red");
                 }
             }
-            drawRobot(dt.x, dt.y, dt.theta, "black");
+            drawDrivetrain(dt.x, dt.y, dt.theta, "black");
             drawField();
 
             addPacket("Rings", rings);

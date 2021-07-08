@@ -27,14 +27,12 @@ public class Teleop extends LinearOpMode {
 
     public static boolean robotCentric = true;
     public static boolean useAutoPos = true;
-    public static boolean autoSticks = false;
 
     // Control Gains
     private double xyGain = 1;
     private double wGain = 1;
 
     // Toggles
-    private boolean stickToggle = false;
     private boolean downToggle = false, armDown = false;
     private boolean clampToggle = false, clamped = false;
     private boolean aimLockToggle = false, aimLock = false;
@@ -56,7 +54,6 @@ public class Teleop extends LinearOpMode {
     Gamepad 2
     A - Blocker Up
     B - Cancel Shoot
-    X - Toggle Sticks (Up/Out)
     Y - Pre-Rev Flywheel for High Goal
     Dpad Left - Decrease Theta Offset
     Dpad Right - Increase Theta Offset
@@ -82,7 +79,6 @@ public class Teleop extends LinearOpMode {
         }
 
         robot.logger.startLogging(false);
-        robot.intake.sticksOut();
         robot.wobbleArm.armUp();
         robot.thetaOffset = 0.05;
 
@@ -126,23 +122,6 @@ public class Teleop extends LinearOpMode {
             // Rev Up Flywheel for High Goal
             if (gamepad2.y) {
                 robot.shooter.flywheelHG();
-                robot.intake.sticksShoot();
-            }
-
-            // Stick Retraction/Extension Toggle
-            if (gamepad2.x && !stickToggle) {
-                stickToggle = true;
-                if (!robot.intake.sticksHalf) {
-                    robot.intake.sticksHalf();
-                } else {
-                    robot.intake.sticksOut();
-                }
-            } else if (!gamepad2.x && stickToggle) {
-                stickToggle = false;
-            }
-
-            if (autoSticks) {
-                robot.intake.autoSticks(robot.x, robot.y, robot.theta, 2);
             }
 
             // Ring Blocker
