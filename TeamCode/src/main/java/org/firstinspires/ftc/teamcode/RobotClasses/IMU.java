@@ -24,7 +24,7 @@ public class IMU {
             op.idle();
         }
 
-        theta = startTheta + PI/2;
+        theta = startTheta;
         lastHeading = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
     }
 

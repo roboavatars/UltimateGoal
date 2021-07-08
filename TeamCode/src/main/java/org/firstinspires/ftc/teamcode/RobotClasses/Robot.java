@@ -338,7 +338,7 @@ public class Robot {
 //             t265.sendOdometryData(vx, vy, theta, w);
             t265.updateCamPose();
         }
-        shooter.updatePID();
+        shooter.updatePID(theta);
         turretGlobalTheta = shooter.getTheta() + theta;
 
         if (tMode != NONE) {

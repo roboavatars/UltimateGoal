@@ -4,7 +4,6 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import static java.lang.Math.PI;
@@ -33,19 +32,27 @@ public class Shooter {
     public static final double RING_FLIGHT_TIME = 0.5;
     public static final double INITIAL_ANGLE = 0.08;
 
-    public static double p1 = 50;
-    public static double f1 = 0;
-    public static double p2 = 7;
-    public static double f2 = 1.15;
+    public static double pFlywheel = 50;
+    public static double fFlywheel = 0;
 
-    private static final double RADIANS_PER_TICK = 126 / PI;
-    private double targetVelocity = 0;
+    public static double pTurret = 0.6;
+    public static double dTurret = 5.5;
+    public static double fTurret = 0.04;
+
     private double targetTheta = 0;
+    private double turretTheta;
+    private double turretError;
+    private double turretErrorChange;
+    private double lockFactor;
+
+    private static final double TICKS_PER_RADIAN = 126 / PI;
+    private double targetVelocity = 0;
 
     public Shooter(LinearOpMode op) {
         flywheelMotor = op.hardwareMap.get(DcMotorEx.class, "flywheel");
         turretMotor = op.hardwareMap.get(DcMotorEx.class, "turret");
         flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         flapServo = op.hardwareMap.get(Servo.class, "flapServo");
@@ -60,9 +67,14 @@ public class Shooter {
         op.telemetry.addData("Status", "Shooter initialized");
     }
 
-    public void updatePID() {
-        flywheelMotor.setVelocityPIDFCoefficients(p1, 0, 0, f1);
-        turretMotor.setPIDFCoefficients(DcMotor.RunMode.RUN_USING_ENCODER, new PIDFCoefficients(p2, 0, 0, f2));
+    public void updatePID(double robotTheta) {
+        targetTheta = lockFactor - robotTheta;
+        turretTheta = turretMotor.getCurrentPosition() / TICKS_PER_RADIAN;
+        turretErrorChange = targetTheta - turretTheta - turretError;
+        turretError = targetTheta - turretTheta;
+        turretMotor.setPower(Math.max(-0.5, Math.min(pTurret * turretError + dTurret * turretErrorChange + fTurret, 0.5)));
+
+        flywheelMotor.setVelocityPIDFCoefficients(pFlywheel, 0, 0, fFlywheel);
     }
 
     // Flywheel
@@ -96,7 +108,7 @@ public class Shooter {
     // Turret
     public void setTargetTheta(double theta) {
         if (theta != targetTheta) {
-            turretMotor.setTargetPosition((int) (theta / RADIANS_PER_TICK));
+//            lockFactor
             targetTheta = theta;
         }
     }
@@ -106,11 +118,11 @@ public class Shooter {
     }
 
     public double getTheta() {
-        return turretMotor.getCurrentPosition() * RADIANS_PER_TICK;
+        return turretTheta;
     }
 
     public double getTurretVelocity() {
-        return turretMotor.getVelocity() * RADIANS_PER_TICK;
+        return turretMotor.getVelocity() / TICKS_PER_RADIAN;
     }
 
     // Mag

@@ -6,7 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.PIDFCoefficients;
 
 import org.firstinspires.ftc.teamcode.RobotClasses.IMU;
 
@@ -19,13 +18,12 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 public class TurretTest extends LinearOpMode {
 
     private DcMotorEx turret;
+    private IMU imu;
     private double targetTheta = 0;
 
     public static double TICKS_PER_RADIAN = 126 / PI;
     public static double a_NumFactor = 0;
     public static double b_DemonFactor = 2;
-
-//    public static double power = 0.25;
 
     public static double p = 0.6;
     public static double i = 0;
@@ -43,10 +41,9 @@ public class TurretTest extends LinearOpMode {
         turret = hardwareMap.get(DcMotorEx.class, "turret");
         turret.setDirection(DcMotorSimple.Direction.REVERSE);
         turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        turret.setTargetPosition((int) (targetTheta * TICKS_PER_RADIAN));
         turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        IMU imu = new IMU(0, this);
+        imu = new IMU(PI/2, this);
 
         waitForStart();
 
@@ -59,7 +56,6 @@ public class TurretTest extends LinearOpMode {
             turretError = targetTheta - turretTheta;
 
             if (dashTarget) {
-                turret.setTargetPosition((int) (targetTheta * TICKS_PER_RADIAN));
                 turret.setPower(Math.max(-0.5, Math.min(p * turretError + d * turretErrorChange + f, 0.5)));
                 turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             } else {
