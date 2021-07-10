@@ -8,15 +8,18 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
 import org.firstinspires.ftc.teamcode.RobotClasses.IMU;
+import org.firstinspires.ftc.teamcode.RobotClasses.MecanumDrivetrain;
 
 import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
 @TeleOp(name = "0 Turret Test")
 @Config
 public class TurretTest extends LinearOpMode {
 
+    private MecanumDrivetrain drivetrain;
     private DcMotorEx turret;
     private IMU imu;
     private double targetTheta = 0;
@@ -25,10 +28,10 @@ public class TurretTest extends LinearOpMode {
     public static double a_NumFactor = 0;
     public static double b_DemonFactor = 2;
 
-    public static double p = 0.6;
+    public static double p = 1;
     public static double i = 0;
-    public static double d = 5.5;
-    public static double f = 0.04;
+    public static double d = 5;
+    public static double f = 0;
 
     public static boolean dashTarget = true;
 
@@ -44,6 +47,7 @@ public class TurretTest extends LinearOpMode {
         turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         imu = new IMU(PI/2, this);
+        drivetrain = new MecanumDrivetrain(this, 102, 54, PI/2);
 
         waitForStart();
 
@@ -63,6 +67,9 @@ public class TurretTest extends LinearOpMode {
                 turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
 
+            drivetrain.setControls(-gamepad1.left_stick_y * 0.5, -gamepad1.left_stick_x * 0.5, -gamepad1.right_stick_x * 0.5);
+
+            drawRobot(102, 54, imu.getTheta(), imu.getTheta() + turretTheta, "black", "gray");
             addPacket("Target Theta", targetTheta);
             addPacket("Turret Theta", turretTheta);
             addPacket("Theta Error", turretError);

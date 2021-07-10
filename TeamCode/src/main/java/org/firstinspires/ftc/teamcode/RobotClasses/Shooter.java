@@ -25,8 +25,8 @@ public class Shooter {
     public boolean magHome = true;
     public boolean feedHome = true;
 
-    public static final double TURRET_DX = 6.5;
-    public static final double TURRET_DY = -1;
+    public static final double TURRET_DX = 0.5;
+    public static final double TURRET_DY = -4;
     public static final double TURRET_DIAMETER = 8.5;
     public static final double RING_SPEED = 150;
     public static final double RING_FLIGHT_TIME = 0.5;

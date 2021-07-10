@@ -9,6 +9,7 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 import static java.lang.Math.PI;
 import static java.lang.Math.sin;
 import static java.lang.Math.cos;
+import static java.lang.Math.sqrt;
 import static org.firstinspires.ftc.teamcode.RobotClasses.Shooter.TURRET_DX;
 import static org.firstinspires.ftc.teamcode.RobotClasses.Shooter.TURRET_DY;
 import static org.firstinspires.ftc.teamcode.RobotClasses.Shooter.TURRET_DIAMETER;
@@ -32,7 +33,7 @@ public class Dashboard {
     }
 
     public static void drawDrivetrain(double robotX, double robotY, double robotTheta, String robotColor) {
-        double r = 9 * Math.sqrt(2);
+        double r = 9 * sqrt(2);
         double x = robotY - 72;
         double y = 72 - robotX;
         double theta = PI/2 + robotTheta;
@@ -42,11 +43,15 @@ public class Dashboard {
     }
 
     public static void drawTurret(double robotX, double robotY, double robotTheta, double turretTheta, String turretColor) {
-        double cx = robotY - TURRET_DX * cos(robotTheta) + TURRET_DY * sin(robotTheta);
-        double cy = robotX + TURRET_DX * sin(robotTheta) + TURRET_DY * cos(robotTheta);
+        double cx = robotX + TURRET_DX * sin(robotTheta) + TURRET_DY * cos(robotTheta);
+        double cy = robotY - TURRET_DX * cos(robotTheta) + TURRET_DY * sin(robotTheta);
         double r = TURRET_DIAMETER / 2;
         packet.fieldOverlay().setFill(turretColor).fillCircle(cy - 72, 72 - cx, r);
-        drawRect(robotX - r * cos(turretTheta - PI/2) / 2, robotY - r * sin(turretTheta - PI/2) / 2, robotX + r * cos(turretTheta - PI/2) / 2 + cos(turretTheta), robotY + r * sin(turretTheta - PI/2) / 2 + sin(turretTheta), turretColor);
+
+        double theta = turretTheta - PI/2;
+        double[] xcoords = {cx - r * sin(theta), cx + r*sqrt(2) * cos(theta + PI/4), cx + r*sqrt(2) * cos(theta - PI/4), cx + r * sin(theta)};
+        double[] ycoords = {cy + r * cos(theta), cy + r*sqrt(2) * sin(theta + PI/4), cy + r*sqrt(2) * sin(theta - PI/4), cy - r * cos(theta)};
+        drawPolygon(xcoords, ycoords, turretColor);
     }
 
     public static void drawField() {
@@ -85,6 +90,21 @@ public class Dashboard {
     public static void drawRect(double x1, double y1, double x2, double y2, String color) {
         double[] xcoords = {y1 - 72, y2 - 72, y2 - 72, y1 - 72};
         double[] ycoords = {72 - x1, 72 - x1, 72 - x2, 72 - x2};
+        packet.fieldOverlay().setFill(color).fillPolygon(xcoords, ycoords);
+    }
+
+    public static void drawPolygon(double[] x, double[] y, String color) {
+        double[] xcoords = new double[y.length];
+        double[] ycoords = new double[x.length];
+
+        for (int i = 0; i < xcoords.length; i++) {
+            xcoords[i] = y[i] - 72;
+        }
+
+        for (int i = 0; i < ycoords.length; i++) {
+            ycoords[i] = 72- x[i];
+        }
+
         packet.fieldOverlay().setFill(color).fillPolygon(xcoords, ycoords);
     }
 
