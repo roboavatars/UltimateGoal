@@ -107,10 +107,7 @@ public class Shooter {
 
     // Turret
     public void setTargetTheta(double theta) {
-        if (theta != targetTheta) {
-//            lockFactor
-            targetTheta = theta;
-        }
+        lockFactor = PI/2 + theta;
     }
 
     public double getTargetTheta() {

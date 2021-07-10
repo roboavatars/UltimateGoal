@@ -48,11 +48,15 @@ public class MecanumDrivetrain {
     private final double motorUpdateTolerance = 0.05;
 
     // Odometry constants
-    public static double ticksToInch1 = 0.00052777128;
-    public static double ticksToInch2 = 0.00052799178;
-    public static double ticksToInch3 = 0.00053018169;
-    public static double ODOMETRY_TRACK_WIDTH = 13.18; // cw 13.35 ccw
-    public static double ODOMETRY_HORIZONTAL_OFFSET = -1.43;
+    public static double ticksToInch1 = 0.00052704439;
+    public static double ticksToInch2 = 0.00052738561;
+    public static double ticksToInch3 = 0.00052907779;
+    public static double ODOMETRY_TRACK_WIDTH = 13.39;
+    //                          13.39 5 rev         13.39 10 rev                13.395 5 rev          1.385 5 rev
+    // cw:  1.56 1.56 1.57 | 1.59 1.59 1.58 1.58 | 1.59 1.58 1.53 1.55 1.56 | 1.58 1.58 1.58 1.58 | 1.55 1.54
+    // ccw: 1.63 1.63 1.62 | 1.60 1.61 1.60 1.60 | 1.66 1.69 1.67 1.68 1.66 | 1.63 1.61 1.62 1.60 | 1.62 1.63
+    public static double ODOMETRY_HORIZONTAL_OFFSET = -0.2;
+
     private final double ODOMETRY_HEADING_THRESHOLD = PI/8;
 
     // PD controller constants
