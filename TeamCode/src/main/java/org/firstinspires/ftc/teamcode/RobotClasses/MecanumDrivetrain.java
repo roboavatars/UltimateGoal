@@ -24,9 +24,7 @@ public class MecanumDrivetrain {
     private LinearOpMode opMode;
 
     // Tracking X/Y/Theta
-    public double x;
-    public double y;
-    public double theta;
+    public double x, y, theta, startTheta;
     private double deltaHeading = 0;
 
     // Odometry
@@ -113,6 +111,7 @@ public class MecanumDrivetrain {
 
         x = initialX;
         y = initialY;
+        startTheta = initialTheta;
         theta = initialTheta;
     }
 
@@ -208,9 +207,9 @@ public class MecanumDrivetrain {
     // update position from odometry
     public void updatePose() {
         try {
-            pod1 = motorFrontLeft.getCurrentPosition() * -ticksToInch1;
-            pod2 = motorFrontRight.getCurrentPosition() * ticksToInch2;
-            pod3 = motorBackRight.getCurrentPosition() * -ticksToInch3;
+            pod1 = motorFrontRight.getCurrentPosition() * ticksToInch1;
+            pod2 = motorFrontLeft.getCurrentPosition() * -ticksToInch2;
+            pod3 = motorBackLeft.getCurrentPosition() * ticksToInch3;
 
             deltaPod1 = pod1 - lastPod1;
             deltaPod2 = pod2 - lastPod2;
@@ -257,7 +256,7 @@ public class MecanumDrivetrain {
                         - localY * Math.sin(theta) + localX * Math.cos(theta)) / deltaHeading;
             }
 
-            theta += deltaHeading;
+            theta = startTheta + (pod2 - pod1) / ODOMETRY_TRACK_WIDTH;
             theta = theta % (2*PI);
             if (theta < 0) theta += 2*PI;
 
