@@ -30,7 +30,7 @@ public class TurretTest extends LinearOpMode {
 
     public static double p = 1;
     public static double i = 0;
-    public static double d = 5;
+    public static double d = 4.8;
     public static double f = 0;
 
     public static boolean dashTarget = true;
@@ -38,6 +38,7 @@ public class TurretTest extends LinearOpMode {
     private double turretTheta;
     private double turretError;
     private double turretErrorChange;
+    private double prevTime;
 
     @Override
     public void runOpMode() {
@@ -67,7 +68,11 @@ public class TurretTest extends LinearOpMode {
                 turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
 
-            drivetrain.setControls(-gamepad1.left_stick_y * 0.5, -gamepad1.left_stick_x * 0.5, -gamepad1.right_stick_x * 0.5);
+            drivetrain.setControls(-gamepad1.left_stick_y * 0.7, -gamepad1.left_stick_x * 0.7, -gamepad1.right_stick_x * 0.7);
+
+            double curTime = (double) System.currentTimeMillis() / 1000;
+            double timeDiff = curTime - prevTime;
+            prevTime = curTime;
 
             drawRobot(102, 54, imu.getTheta(), imu.getTheta() + turretTheta, "black", "gray");
             addPacket("Target Theta", targetTheta);
@@ -76,7 +81,7 @@ public class TurretTest extends LinearOpMode {
             addPacket("IMU", imu.getTheta());
             addPacket("Ticks", turret.getCurrentPosition());
             addPacket("Power", turret.getPower());
-//            addPacket("Coeffs", turret.getPIDFCoefficients(DcMotor.RunMode.RUN_TO_POSITION));
+            addPacket("Update Frequency (Hz)", 1 / timeDiff);
             sendPacket();
 
             telemetry.addData("Target Theta", targetTheta);

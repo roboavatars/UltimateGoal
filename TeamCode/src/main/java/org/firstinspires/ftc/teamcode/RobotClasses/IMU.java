@@ -15,7 +15,9 @@ public class IMU {
     private double angle;
     private double theta;
     private double lastHeading;
+    private double lastHeading2;
     private double deltaHeading = 0;
+    private double deltaHeading2 = 0;
 
     public IMU(double startTheta, LinearOpMode op) {
         imu = op.hardwareMap.get(BNO055IMU.class, "imu");
@@ -56,17 +58,23 @@ public class IMU {
     public void updateHeadingUncapped() {
         double angle1 = imu2.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
         double angle2 = imu2.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
-        angle = (angle1 + angle2) / 2;
-        deltaHeading = angle - lastHeading;
+        deltaHeading = angle1 - lastHeading;
+        deltaHeading2 = angle2 - lastHeading2;
 
         if (deltaHeading < -PI) {
             deltaHeading += 2*PI;
         } else if (deltaHeading >= PI) {
             deltaHeading -= 2*PI;
         }
+        if (deltaHeading2 < -PI) {
+            deltaHeading2 += 2*PI;
+        } else if (deltaHeading2 >= PI) {
+            deltaHeading2 -= 2*PI;
+        }
 
-        theta += deltaHeading;
-        lastHeading = angle;
+        theta += (deltaHeading+deltaHeading2)/2;
+        lastHeading = angle1;
+        lastHeading2 = angle2;
     }
 
     public void resetHeading(double newTheta) {

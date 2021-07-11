@@ -80,7 +80,7 @@ public class Teleop extends LinearOpMode {
 
         robot.logger.startLogging(false);
         robot.wobbleArm.armUp();
-        robot.thetaOffset = 0.05;
+        robot.setLockMode(Robot.TurretMode.HIGH_GOAL);
 
         waitForStart();
 
@@ -132,17 +132,17 @@ public class Teleop extends LinearOpMode {
             }
 
             // Wobble Arm Up / Down
-//            if (gamepad2.left_stick_button && !downToggle) {
-//                downToggle = true;
-//                if (armDown) {
-//                    robot.wobbleArm.armUp();
-//                } else {
-//                    robot.wobbleArm.armDown();
-//                }
-//                armDown = !armDown;
-//            } else if (!gamepad2.left_stick_button && downToggle) {
-//                downToggle = false;
-//            }
+            if (gamepad2.left_stick_button && !downToggle) {
+                downToggle = true;
+                if (armDown) {
+                    robot.wobbleArm.armUp();
+                } else {
+                    robot.wobbleArm.armDown();
+                }
+                armDown = !armDown;
+            } else if (!gamepad2.left_stick_button && downToggle) {
+                downToggle = false;
+            }
 
             // Wobble Clamp / Unclamp
             if (gamepad2.left_bumper && !clampToggle) {
@@ -174,7 +174,7 @@ public class Teleop extends LinearOpMode {
                 robot.flapOverride = 0;
             }
 
-            if (gamepad2.right_stick_button && !yIncreaseToggle) {
+            /*if (gamepad2.right_stick_button && !yIncreaseToggle) {
                 yIncreaseToggle = true;
                 robot.shootYOffset += 3;
             } else if (!gamepad2.right_stick_button && yIncreaseToggle) {
@@ -186,7 +186,7 @@ public class Teleop extends LinearOpMode {
                 robot.shootYOffset -= 3;
             } else if (!gamepad2.left_stick_button && yDecreaseToggle) {
                 yDecreaseToggle = false;
-            }
+            }*/
 
             // Change Shooting Theta Offset to Compensate for Odometry Drift
             if (gamepad2.dpad_left) {
@@ -202,13 +202,18 @@ public class Teleop extends LinearOpMode {
                 robot.flapOverride -= 0.0025;
             }
 
-            // Enter Aimlock / Strafe Mode
-//            if (gamepad2.right_stick_button && !aimLockToggle) {
-//                aimLockToggle = true;
-//                aimLock = !aimLock;
-//            } else if (!gamepad2.right_stick_button && aimLockToggle) {
-//                aimLockToggle = false;
-//            }
+            // High goal lock
+            if (gamepad2.right_stick_button && !aimLockToggle) {
+                aimLockToggle = true;
+                if (aimLock) {
+                    robot.setLockMode(Robot.TurretMode.NONE);
+                } else {
+                    robot.setLockMode(Robot.TurretMode.HIGH_GOAL);
+                }
+                aimLock = !aimLock;
+            } else if (!gamepad2.right_stick_button && aimLockToggle) {
+                aimLockToggle = false;
+            }
 
             /*if (gamepad1.a && !magToggle) {
                 magToggle = true;
@@ -236,7 +241,6 @@ public class Teleop extends LinearOpMode {
             telemetry.addData("X", robot.x);
             telemetry.addData("Y", robot.y);
             telemetry.addData("Theta", robot.theta);
-            telemetry.addData("AimLock", aimLock);
             telemetry.addData("# Rings", robot.numRings);
             telemetry.addData("Theta Offset", robot.thetaOffset);
             telemetry.addData("Shooter Velocity", robot.shooter.getFlywheelVelocity());

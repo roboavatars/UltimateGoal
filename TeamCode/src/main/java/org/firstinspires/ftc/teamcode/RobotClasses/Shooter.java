@@ -35,15 +35,15 @@ public class Shooter {
     public static double pFlywheel = 50;
     public static double fFlywheel = 0;
 
-    public static double pTurret = 0.6;
-    public static double dTurret = 5.5;
-    public static double fTurret = 0.04;
+    public static double pTurret = 1;
+    public static double dTurret = 4.8;
+    public static double fTurret = 0;
 
     private double targetTheta = 0;
     private double turretTheta;
     private double turretError;
     private double turretErrorChange;
-    private double lockFactor;
+    private double lockTheta;
 
     private static final double TICKS_PER_RADIAN = 126 / PI;
     private double targetVelocity = 0;
@@ -68,7 +68,7 @@ public class Shooter {
     }
 
     public void updatePID(double robotTheta) {
-        targetTheta = lockFactor - robotTheta;
+        targetTheta = PI - robotTheta + lockTheta;
         turretTheta = turretMotor.getCurrentPosition() / TICKS_PER_RADIAN;
         turretErrorChange = targetTheta - turretTheta - turretError;
         turretError = targetTheta - turretTheta;
@@ -107,7 +107,7 @@ public class Shooter {
 
     // Turret
     public void setTargetTheta(double theta) {
-        lockFactor = PI/2 + theta;
+        lockTheta = theta;
     }
 
     public double getTargetTheta() {
@@ -116,10 +116,6 @@ public class Shooter {
 
     public double getTheta() {
         return turretTheta;
-    }
-
-    public double getTurretVelocity() {
-        return turretMotor.getVelocity() / TICKS_PER_RADIAN;
     }
 
     // Mag

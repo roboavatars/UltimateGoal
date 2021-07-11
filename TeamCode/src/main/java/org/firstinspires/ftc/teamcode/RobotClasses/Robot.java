@@ -51,6 +51,7 @@ public class Robot {
     private final int loggerUpdatePeriod = 2;
     private final double xyTolerance = 1;
     private final double thetaTolerance = PI/35;
+    private final double turretTolerance = PI/150;
 
     private double odoCovariance = 1;
     private boolean useT265 = false;
@@ -104,7 +105,7 @@ public class Robot {
     private double lockX, lockY;
     private TurretMode tMode = NONE;
 
-    enum TurretMode {PS_L, PS_C, PS_R, HIGH_GOAL, NONE};
+    public enum TurretMode {PS_L, PS_C, PS_R, HIGH_GOAL, NONE};
 
     // Powershot Debug Variables
     public final double[] psShootPos = new double[] {87, 63};
@@ -199,7 +200,7 @@ public class Robot {
             // Set flywheel velocity based on what we want to shoot
             if (highGoal) {
                 shooter.flywheelHG();
-                vThresh = (isAuto ? Constants.HIGH_GOAL_VELOCITY - 100 : 1400);
+                vThresh = Constants.HIGH_GOAL_VELOCITY - 100;
             } else {
                 shooter.flywheelPS();
                 vThresh = Constants.POWERSHOT_VELOCITY - 70;
@@ -214,7 +215,7 @@ public class Robot {
 
             // Move to shooting position
             if (!preShootOverride && (isAtPose(target[0], target[1], 2, 2) || !notMoving())) {
-                setTargetPoint(new Target(target[0], target[1], target[2]).yKp(0.3).yKd(0.02));
+                setTargetPoint(new Target(target[0], target[1], target[2]));
                 log("(" + round(x) + ", " + round(y) + ", " + round(theta) + ") (" + round(vx) + ", " + round(vy) + ", " + round(w) + ") Moving to shoot position: [" + round(target[0]) + ", " + round(target[1]) + ", " + round(target[2]) + "]");
                 log(shooter.getFlywheelVelocity() + ", Target: " + shooter.getTargetVelocity() + ", Min: " + vThresh );
             }
@@ -260,12 +261,11 @@ public class Robot {
                     lastTarget = 3;
                     drivetrain.stop();
                 } else if (numRings == 3 || curTime - flickTime > flickDelay) {
-                    target = new double[] {psShootPos[0], psShootPos[1], PI/2};
-                    // thetaPositions[numRings - 1]}
+//                    shooter.setTargetTheta(thetaPositions[numRings - 1]);
                     lastTarget = 3 - numRings;
                 }
                 if (!shootOverride) {
-                    setTargetPoint(new Target(target[0], target[1], target[2]).yKp(0.3).yKd(0.02));
+                    setTargetPoint(new Target(target[0], target[1], target[2]));
                 }
             }
 
@@ -274,8 +274,8 @@ public class Robot {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position and velocity low enough
                     if (((highGoal && (shootOverride || (shooter.getFlywheelVelocity() >= vThresh && isAtPoseTurret(target[0], target[1], getShootAngle()) && notMoving())))
-                            || (!highGoal && isAtPoseTurret(target[0], target[1], getShootAngle(), 0.5, 0.5, PI/35) && notMoving()))
-                           /* || curTime - flickTime > flickTimeBackup*/) {
+                            || (!highGoal && isAtPoseTurret(target[0], target[1], getShootAngle(), 0.5, 0.5, PI/150) && notMoving()))
+                            || curTime - flickTime > flickTimeBackup) {
 
                         log("In shoot Velocity/Target: " + shooter.getFlywheelVelocity() + "/" + shooter.getTargetVelocity());
                         if (!highGoal) {
@@ -335,7 +335,7 @@ public class Robot {
         // Update Position
         drivetrain.updatePose();
         if (odoCovariance != 1) {
-//             t265.sendOdometryData(vx, vy, theta, w);
+            // t265.sendOdometryData(vx, vy, theta, w);
             t265.updateCamPose();
         }
         shooter.updatePID(theta);
@@ -596,12 +596,12 @@ public class Robot {
 
     // Check if robot is at a certain point, turret at certain angle (default tolerance)
     public boolean isAtPoseTurret(double targetX, double targetY, double turretTheta) {
-        return isAtPose(targetX, targetY, turretTheta, xyTolerance, xyTolerance, thetaTolerance);
+        return isAtPose(targetX, targetY, turretTheta, xyTolerance, xyTolerance, turretTolerance);
     }
 
     // Check if robot is at a certain point, turret at certain angle (custom tolerance)
-    public boolean isAtPoseTurret(double targetX, double targetY, double turretTheta, double xTolerance, double yTolerance, double thetaTolerance) {
-        return Math.abs(x - targetX) < xTolerance && Math.abs(y - targetY) < yTolerance && Math.abs(turretGlobalTheta - turretTheta) < thetaTolerance;
+    public boolean isAtPoseTurret(double targetX, double targetY, double turretTheta, double xTolerance, double yTolerance, double turretTolerance) {
+        return Math.abs(x - targetX) < xTolerance && Math.abs(y - targetY) < yTolerance && Math.abs(turretGlobalTheta - turretTheta) < turretTolerance;
     }
 
     public boolean notMoving() {
