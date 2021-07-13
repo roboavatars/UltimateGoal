@@ -24,9 +24,9 @@ public class Constants {
     public static int POWERSHOT_VELOCITY = 1680;
 
     public static double MAG_HOME_POS = 0;
-    public static double MAG_SHOOT_POS = 0.5;
+    public static double MAG_SHOOT_POS = 0.37;
 
-    public static double FEED_HOME_POS = 0.92;
+    public static double FEED_HOME_POS = 0.93;
     public static double FEED_SHOOT_POS = 0.75;
 
     public static double FLAP_DOWN_POS = 0.55;
