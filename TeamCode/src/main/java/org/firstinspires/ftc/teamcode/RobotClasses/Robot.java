@@ -295,7 +295,7 @@ public class Robot {
                         }
 
                         if (shooter.feedHome) {
-                            shooter.feedTop();
+                            shooter.feedShoot();
                         } else {
                             shooter.feedHome();
                             shotRings.add(new Ring(x, y, turretGlobalTheta + thetaOffset, vx, vy, w, curTime));
@@ -338,10 +338,11 @@ public class Robot {
             // t265.sendOdometryData(vx, vy, theta, w);
             t265.updateCamPose();
         }
-        shooter.updatePID(theta);
+
         turretGlobalTheta = shooter.getTheta() + theta;
 
         if (tMode != NONE) {
+            shooter.updatePID(theta);
             updateTurret();
         }
 
@@ -383,13 +384,13 @@ public class Robot {
         addPacket("1 X", round(x));
         addPacket("2 Y", round(y));
         addPacket("3 Theta", round(theta));
-        addPacket("4 Shooter Velocity", shooter.getFlywheelVelocity());
-        addPacket("4 Target Velocity",  shooter.getTargetVelocity());
-        addPacket("5 numRings", numRings);
-        addPacket("6 shoot", preShoot  + " " + shoot + " " + highGoal);
-        addPacket("7 Run Time", (curTime - startTime) / 1000);
-        addPacket("8 Update Frequency (Hz)", round(1 / timeDiff));
-        addPacket("9 Pod Zeroes", drivetrain.zero1 + ", " + drivetrain.zero2 + ", " + drivetrain.zero3);
+        addPacket("4 Turret Theta", turretGlobalTheta);
+        addPacket("5 Shooter Velocity", shooter.getFlywheelVelocity());
+        addPacket("6 numRings", numRings);
+        addPacket("7 shoot", preShoot  + " " + shoot + " " + highGoal);
+        addPacket("8 Run Time", (curTime - startTime) / 1000);
+        addPacket("9 Update Frequency (Hz)", round(1 / timeDiff));
+        addPacket("Pod Zeroes", drivetrain.zero1 + ", " + drivetrain.zero2 + ", " + drivetrain.zero3);
         addPacket("offsets", round(thetaOffset) + " " + round(flapOverride) + " " + shootYOffset);
         if (!isAuto) {
             addPacket("Cycle Time", (curTime - lastCycleTime) / 1000);

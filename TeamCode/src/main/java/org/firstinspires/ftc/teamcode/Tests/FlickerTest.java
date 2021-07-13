@@ -17,7 +17,7 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 //@Disabled
 public class FlickerTest extends LinearOpMode {
     public static double homePos = Constants.FEED_HOME_POS;
-    public static double topPos = Constants.FEED_TOP_POS;
+    public static double shootPos = Constants.FEED_SHOOT_POS;
     public static int pos = 1;
     public static boolean magUp = true;
     public static boolean debug = false;
@@ -48,7 +48,7 @@ public class FlickerTest extends LinearOpMode {
                 if (pos == 1) {
                     position = homePos;
                 } else if (pos == 2) {
-                    position = topPos;
+                    position = shootPos;
                 }
                 servo.setPosition(position);
 
@@ -79,7 +79,7 @@ public class FlickerTest extends LinearOpMode {
                 if (gamepad1.b) {
                     robot.shooter.feedHome();
                 } else {
-                    robot.shooter.feedTop();
+                    robot.shooter.feedShoot();
                 }
 
                 if (gamepad1.left_trigger > 0) {

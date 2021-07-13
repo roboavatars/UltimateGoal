@@ -4,6 +4,7 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 import static java.lang.Math.PI;
@@ -50,6 +51,7 @@ public class Shooter {
 
     public Shooter(LinearOpMode op) {
         flywheelMotor = op.hardwareMap.get(DcMotorEx.class, "flywheel");
+        flywheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         turretMotor = op.hardwareMap.get(DcMotorEx.class, "turret");
         flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -135,8 +137,8 @@ public class Shooter {
         feedHome = true;
     }
 
-    public void feedTop() {
-        feedServo.setPosition(Constants.FEED_TOP_POS);
+    public void feedShoot() {
+        feedServo.setPosition(Constants.FEED_SHOOT_POS);
         feedHome = false;
     }
 

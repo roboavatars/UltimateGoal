@@ -12,6 +12,8 @@ public class Intake {
     public DcMotorEx intakeMotor2;
     private Servo blockerServo;
     private Servo stackServo;
+    private Servo bumperLeft;
+    private Servo bumperRight;
 
     private double lastIntakePow = 0;
     private double lastBlocker = 0;
@@ -26,6 +28,9 @@ public class Intake {
 
         blockerServo = op.hardwareMap.get(Servo.class, "blocker");
         stackServo = op.hardwareMap.get(Servo.class, "stackServo");
+
+        bumperLeft = op.hardwareMap.get(Servo.class, "bumperLeft");
+        bumperRight = op.hardwareMap.get(Servo.class, "bumperRight");
 
 //        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 //        intakeMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -100,4 +105,6 @@ public class Intake {
 //    public void stackDown() {
 //        stackServo.setPosition(0.98);
 //    }
+
+    public void autoBumpers() {}
 }

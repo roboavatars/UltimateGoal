@@ -64,7 +64,7 @@ public class TurretTest extends LinearOpMode {
                 turret.setPower(Math.max(-0.5, Math.min(p * turretError + d * turretErrorChange + f, 0.5)));
                 turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             } else {
-                turret.setPower(0.4 * gamepad1.left_stick_x);
+                turret.setPower(0.4 * (gamepad1.left_trigger - gamepad1.right_trigger));
                 turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
             }
 

@@ -9,21 +9,19 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import static java.lang.Math.PI;
 
-@TeleOp @Config
+@TeleOp(name = "1 Teleop")
+@Config
 public class Regression extends LinearOpMode {
 
     public int startX = 111;
     public int startY = 63;
     public double startTheta = PI/2;
 
-    private final double xyTol = 1;
-    private final double thetaTol = PI/35;
-
     private Robot robot;
     public boolean flywheelToggle = false, flywheelOn = false;
     public boolean magToggle = false, magUp = false;
 
-    public static double flywheelVelocity = Constants.HIGH_GOAL_BACK_VELOCITY;
+    public static double flywheelVelocity = 2750;
     public static double flapPos = Constants.FLAP_BACK_POS;
     public static double theta0 = 1.875;
     public static double theta1 = 1.810;
@@ -31,13 +29,11 @@ public class Regression extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-
         robot = new Robot(this, startX, startY, startTheta, false);
 
         waitForStart();
 
         while (opModeIsActive()) {
-
             if (gamepad1.left_trigger > 0) {
                 robot.intake.on();
             } else if (gamepad1.right_trigger > 0) {
@@ -62,8 +58,12 @@ public class Regression extends LinearOpMode {
                 flywheelToggle = false;
             }
 
+            if (flywheelOn) {
+                robot.shooter.setFlywheelVelocity(flywheelVelocity);
+            }
+
             if (gamepad1.right_bumper) {
-                robot.shooter.feedTop();
+                robot.shooter.feedShoot();
             } else {
                 robot.shooter.feedHome();
             }
@@ -106,16 +106,6 @@ public class Regression extends LinearOpMode {
                 robot.drivetrain.setControls(-gamepad1.left_stick_y , -gamepad1.left_stick_x , -gamepad1.right_stick_x);
             }
 
-//            if (gamepad1.right_trigger > 0) {
-//                double[] target = robot.shootTargets(robot.psShootPos[0], robot.psShootPos[1], PI / 2, 2);
-//
-//                if (!(Math.abs(robot.x - target[0]) < xyTol && Math.abs(robot.y - target[1]) < xyTol && Math.abs(robot.theta - target[2]) < thetaTol)) {
-//                    robot.setTargetPoint(target[0], target[1], target[2]);
-//                }
-//            }
-
-//            robot.drivetrain.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
-
             robot.update();
 
             Robot.log(Robot.round(robot.x) + ", " + Robot.round(robot.y) + ", " + Robot.round(robot.theta));
@@ -123,6 +113,7 @@ public class Regression extends LinearOpMode {
             telemetry.addData("Robot X", robot.x);
             telemetry.addData("Robot Y", robot.y);
             telemetry.addData("Robot Theta", robot.theta);
+            telemetry.addData("Turret Theta", robot.turretGlobalTheta);
             telemetry.addData("Shooter Velocity", robot.shooter.getFlywheelVelocity());
             telemetry.update();
         }

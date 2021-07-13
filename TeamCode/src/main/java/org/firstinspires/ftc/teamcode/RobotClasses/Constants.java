@@ -12,16 +12,22 @@ public class Constants {
     public static double STACK_HOME_POS = 0;
     public static double STACK_OUT_POS = 0.87;
 
+    public static double BUMPER_LEFT_HOME_POS = 0;
+    public static double BUMPER_LEFT_OUT_POS = 1;
+
+    public static double BUMPER_RIGHT_HOME_POS = 0;
+    public static double BUMPER_RIGHT_OUT_POS = 1;
+
     // Shooter
     public static int HIGH_GOAL_VELOCITY = 2100;
     public static int HIGH_GOAL_BACK_VELOCITY = 1980;
     public static int POWERSHOT_VELOCITY = 1680;
 
     public static double MAG_HOME_POS = 0;
-    public static double MAG_SHOOT_POS = 0.4;
+    public static double MAG_SHOOT_POS = 0.5;
 
-    public static double FEED_HOME_POS = 0.97;
-    public static double FEED_TOP_POS = 0.82;
+    public static double FEED_HOME_POS = 0.92;
+    public static double FEED_SHOOT_POS = 0.75;
 
     public static double FLAP_DOWN_POS = 0.55;
     public static double FLAP_BACK_POS = 0.723;
