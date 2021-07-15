@@ -27,7 +27,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
 
     // Rectangle
     public static int RECT_X = 0;
-    public static int RECT_Y = 150;
+    public static int RECT_Y = 130;
     public static int RECT_WIDTH = 320;
     public static int RECT_HEIGHT = 90;
 

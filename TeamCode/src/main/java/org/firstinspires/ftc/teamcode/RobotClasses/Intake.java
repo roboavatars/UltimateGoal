@@ -11,14 +11,12 @@ public class Intake {
     public DcMotorEx intakeMotor2;
     private Servo blockerServo;
     private Servo stackServo;
-    private Servo bumperLeft;
-    private Servo bumperRight;
+    private Servo bumperLR;
 
     private double lastIntakePow = 0;
     private double lastBlocker = 0;
 
     private double leftBumperPos;
-    private double rightBumperPos;
 
     public boolean on = false;
     public boolean reverse = false;
@@ -31,8 +29,7 @@ public class Intake {
         blockerServo = op.hardwareMap.get(Servo.class, "blocker");
         stackServo = op.hardwareMap.get(Servo.class, "stackServo");
 
-        bumperLeft = op.hardwareMap.get(Servo.class, "bumperLeft");
-        bumperRight = op.hardwareMap.get(Servo.class, "bumperRight");
+        bumperLR = op.hardwareMap.get(Servo.class, "bumpers");
 
 //        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 //        intakeMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -111,22 +108,16 @@ public class Intake {
     }
 
     // Bumpers
-    public void bumperLeft(double position) {
+    public void bumpersLR(double position) {
         leftBumperPos = position;
     }
 
-    public void bumperRight(double position) {
-        rightBumperPos = position;
-    }
-
     public void bumpersHome() {
-        bumperLeft(Constants.BUMPER_LEFT_HOME_POS);
-        bumperRight(Constants.BUMPER_RIGHT_HOME_POS);
+        bumpersLR(Constants.BUMPER_HOME_POS);
     }
 
     public void bumpersOut() {
-        bumperLeft(Constants.BUMPER_LEFT_OUT_POS);
-        bumperRight(Constants.BUMPER_RIGHT_OUT_POS);
+        bumpersLR(Constants.BUMPER_OUT_POS);
     }
 
     private double[] calculateCoordinates(double x, double y, double theta, double dx, double dy) {
@@ -148,29 +139,18 @@ public class Intake {
         boolean rightFront = inRange(rightFrontPos[0], rightFrontPos[1], buffer);
         boolean rightBack = inRange(rightBackPos[0], rightBackPos[1], buffer);
 
-        if (leftFront || leftBack) {
-            bumperLeft(Constants.BUMPER_LEFT_HOME_POS);
+        if (leftFront || leftBack || rightFront || rightBack) {
+            bumpersLR(Constants.BUMPER_HOME_POS);
         } else {
-            bumperLeft(Constants.BUMPER_LEFT_OUT_POS);
-        }
-
-        if (rightFront || rightBack) {
-            bumperRight(Constants.BUMPER_RIGHT_HOME_POS);
-        } else {
-            bumperRight(Constants.BUMPER_RIGHT_OUT_POS);
+            bumpersLR(Constants.BUMPER_OUT_POS);
         }
     }
 
-    public void updateLeftBumper() {
-        bumperLeft.setPosition(leftBumperPos);
-    }
-
-    public void updateRightBumper() {
-        bumperRight.setPosition(rightBumperPos);
+    public void updateLRBumpers() {
+        bumperLR.setPosition(leftBumperPos);
     }
 
     public void updateBumpers() {
-        updateLeftBumper();
-        updateRightBumper();
+        updateLRBumpers();
     }
 }

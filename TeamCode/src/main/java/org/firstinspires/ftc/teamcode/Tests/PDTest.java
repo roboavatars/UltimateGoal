@@ -1,13 +1,14 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
 import com.acmerobotics.dashboard.config.Config;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import static java.lang.Math.PI;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
 @TeleOp(name = "PD Controller Test")
 @Config
@@ -16,12 +17,13 @@ public class PDTest extends LinearOpMode {
     private static double targetX = 96;
     private static double targetY = 72;
     private static double targetTheta = PI/2;
-    public static double xKp = 0.53;
-    public static double yKp = 0.55;
-    public static double thetaKp = 2.0;
-    public static double xKd = 0.04;
-    public static double yKd = 0.04;
-    public static double thetaKd = 0.05;
+
+    public static double xKp = 0.8;
+    public static double yKp = 0.53;
+    public static double thetaKp = 8.0;
+    public static double xKd = 0.1;
+    public static double yKd = 0.06;
+    public static double thetaKd = 0.1;
 
     @Override
     public void runOpMode() {
@@ -56,13 +58,13 @@ public class PDTest extends LinearOpMode {
 
             robot.update();
 
-//            addPacket("x", robot.x);
-//            addPacket("y", robot.y);
-//            addPacket("theta", robot.theta);
+            addPacket("x", robot.x);
+            addPacket("y", robot.y);
+            addPacket("theta", robot.theta);
 //            addPacket("vx", robot.vx);
 //            addPacket("vy", robot.vy);
 //            addPacket("w", robot.w);
-//            sendPacket();
+            sendPacket();
         }
 
         robot.stop();

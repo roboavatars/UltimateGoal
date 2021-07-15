@@ -12,11 +12,8 @@ public class Constants {
     public static double STACK_HOME_POS = 0;
     public static double STACK_OUT_POS = 0.87;
 
-    public static double BUMPER_LEFT_HOME_POS = 0;
-    public static double BUMPER_LEFT_OUT_POS = 1;
-
-    public static double BUMPER_RIGHT_HOME_POS = 0;
-    public static double BUMPER_RIGHT_OUT_POS = 1;
+    public static double BUMPER_HOME_POS = 0;
+    public static double BUMPER_OUT_POS = 0.6;
 
     // Shooter
     public static int HIGH_GOAL_VELOCITY = 2100;
@@ -39,8 +36,8 @@ public class Constants {
     public static double THREE_DIST = 2.5;
 
     // Wobble
-    public static double WOBBLE_UP_POS = 0.35;
-    public static double WOBBLE_DOWN_POS = 0.88;
+    public static double WOBBLE_UP_POS = 0.6;
+    public static double WOBBLE_DOWN_POS = 0.05;
 
     public static double WOBBLE_CLAMP_POS_LEFT = 0.6;
     public static double WOBBLE_UNCLAMP_POS_LEFT = 0.2;

@@ -46,10 +46,10 @@ public class MecanumDrivetrain {
     private final double motorUpdateTolerance = 0.05;
 
     // Odometry constants
-    public static double ticksToInch1 = 0.00052704439;
-    public static double ticksToInch2 = 0.00052738561;
-    public static double ticksToInch3 = 0.00052907779;
-    public static double ODOMETRY_TRACK_WIDTH = 13.39;
+    public static double ticksToInch1 = 0.00052184780;
+    public static double ticksToInch2 = 0.00052034290;
+    public static double ticksToInch3 = 0.0005260231;
+    public static double ODOMETRY_TRACK_WIDTH = 13.3125; // cw 13.295, ccw 13.33 10 rev
     //                          13.39 5 rev         13.39 10 rev                13.395 5 rev          1.385 5 rev
     // cw:  1.56 1.56 1.57 | 1.59 1.59 1.58 1.58 | 1.59 1.58 1.53 1.55 1.56 | 1.58 1.58 1.58 1.58 | 1.55 1.54
     // ccw: 1.63 1.63 1.62 | 1.60 1.61 1.60 1.60 | 1.66 1.69 1.67 1.68 1.66 | 1.63 1.61 1.62 1.60 | 1.62 1.63
@@ -58,12 +58,12 @@ public class MecanumDrivetrain {
     private final double ODOMETRY_HEADING_THRESHOLD = PI/8;
 
     // PD controller constants
-    public final static double xKp = 0.53;
-    public final static double yKp = 0.55;
-    public final static double thetaKp = 2.0;
-    public final static double xKd = 0.04;
-    public final static double yKd = 0.04;
-    public final static double thetaKd = 0.05;
+    public final static double xKp = 0.8;
+    public final static double yKp = 0.53;
+    public final static double thetaKp = 8.0;
+    public final static double xKd = 0.1;
+    public final static double yKd = 0.06;
+    public final static double thetaKd = 0.1;
 
     // Odometry delta 0 counters
     public int zero1, zero2, zero3;
@@ -87,24 +87,15 @@ public class MecanumDrivetrain {
         motorBackRight = hardwareMap.get(DcMotorEx.class, "motorBackRight");
         motorBackLeft = hardwareMap.get(DcMotorEx.class, "motorBackLeft");
 
-//        intake = hardwareMap.get(DcMotorEx.class, "intake");
-//        intake2 = hardwareMap.get(DcMotorEx.class, "intake2");
-
         motorFrontLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
 
-//        intake.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-//        intake2.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-
         motorFrontLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorFrontRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackLeft.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
         motorBackRight.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-
-//        intake.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
-//        intake2.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         motorFrontRight.setDirection(DcMotorSimple.Direction.REVERSE);
         motorBackRight.setDirection(DcMotorSimple.Direction.REVERSE);
@@ -207,9 +198,9 @@ public class MecanumDrivetrain {
     // update position from odometry
     public void updatePose() {
         try {
-            pod1 = motorFrontRight.getCurrentPosition() * ticksToInch1;
+            pod1 = motorBackRight.getCurrentPosition() * ticksToInch1;
             pod2 = motorFrontLeft.getCurrentPosition() * -ticksToInch2;
-            pod3 = motorBackLeft.getCurrentPosition() * ticksToInch3;
+            pod3 = motorFrontRight.getCurrentPosition() * -ticksToInch3;
 
             deltaPod1 = pod1 - lastPod1;
             deltaPod2 = pod2 - lastPod2;

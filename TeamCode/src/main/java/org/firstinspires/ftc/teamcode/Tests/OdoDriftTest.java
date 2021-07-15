@@ -6,15 +6,18 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import static java.lang.Math.PI;
+import static java.lang.Math.atan2;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
-import static java.lang.Math.atan2;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 
-@TeleOp(name = "Odometry Test")
-public class OdoTest extends LinearOpMode {
+@TeleOp(name = "Odo Parametric Test")
+public class OdoDriftTest extends LinearOpMode {
+
     private boolean started;
     private double startTime;
+
+    private boolean constantHeading = true;
 
     @Override
     public void runOpMode() {
@@ -29,8 +32,8 @@ public class OdoTest extends LinearOpMode {
             }
 
             if (started) {
-                double t = (System.currentTimeMillis() - startTime) / 1000;
-                robot.setTargetPoint(87 + 24 * sin(t) * cos(t), 81 + 48 * sin(t), atan2(2 * cos(t), cos(2*t)));
+                double t = (System.currentTimeMillis() - startTime) / 2000;
+                robot.setTargetPoint(87 + 24 * sin(t) * cos(t), 81 + 48 * sin(t), constantHeading ? PI/2 : atan2(2 * cos(t), cos(2*t)));
                 if (t > 4*PI) {
                     started = false;
                 }

@@ -14,13 +14,11 @@ public class RobotReset extends LinearOpMode {
         Servo feedServo = hardwareMap.get(Servo.class, "feedServo");
         Servo blockerServo = hardwareMap.get(Servo.class, "blocker");
         Servo stackServo = hardwareMap.get(Servo.class, "stackServo");
-        Servo bumperLeft = hardwareMap.get(Servo.class, "bumperLeft");
-        Servo bumperRight = hardwareMap.get(Servo.class, "bumperRight");
+        Servo bumperLR = hardwareMap.get(Servo.class, "bumpers");
 
         waitForStart();
 
-        bumperLeft.setPosition(Constants.BUMPER_LEFT_OUT_POS);
-        bumperRight.setPosition(Constants.BUMPER_RIGHT_OUT_POS);
+        bumperLR.setPosition(Constants.BUMPER_OUT_POS);
         stackServo.setPosition(Constants.STACK_HOME_POS);
         sleep(750);
 
@@ -28,8 +26,7 @@ public class RobotReset extends LinearOpMode {
         blockerServo.setPosition(Constants.BLOCKER_HOME_POS);
         sleep(750);
 
-        bumperLeft.setPosition(Constants.BUMPER_LEFT_HOME_POS);
-        bumperRight.setPosition(Constants.BUMPER_RIGHT_HOME_POS);
+        bumperLR.setPosition(Constants.BUMPER_HOME_POS);
         sleep(500);
     }
 }
