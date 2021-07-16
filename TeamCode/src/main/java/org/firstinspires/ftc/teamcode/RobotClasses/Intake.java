@@ -49,8 +49,8 @@ public class Intake {
 
     // Intake Motors
     public void on() {
-        setPower(1);
-    }
+        intakeMotor.setPower(0.3); intakeMotor2.setPower(1);
+}
 
     public void verticalOn() {
         intakeMotor.setPower(0);
