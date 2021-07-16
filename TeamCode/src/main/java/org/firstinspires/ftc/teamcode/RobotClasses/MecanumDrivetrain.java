@@ -46,10 +46,14 @@ public class MecanumDrivetrain {
     private final double motorUpdateTolerance = 0.05;
 
     // Odometry constants
-    public static double ticksToInch1 = 0.00052184780;
-    public static double ticksToInch2 = 0.00052034290;
-    public static double ticksToInch3 = 0.0005260231;
-    public static double ODOMETRY_TRACK_WIDTH = 13.3125; // cw 13.295, ccw 13.33 10 rev
+    public static double ticksToInch1 = 0.0005218478;
+    public static double ticksToInch2 = 0.0005224701;
+    public static double ticksToInch3 = 0.0005287383;
+    public static double ODOMETRY_TRACK_WIDTH = 13.28;
+    //       1 rev                  5 rev
+    // cw:  13.28                  13.247 13.232
+    // ccw: 13.335 13.32 13.31
+
     //                          13.39 5 rev         13.39 10 rev                13.395 5 rev          1.385 5 rev
     // cw:  1.56 1.56 1.57 | 1.59 1.59 1.58 1.58 | 1.59 1.58 1.53 1.55 1.56 | 1.58 1.58 1.58 1.58 | 1.55 1.54
     // ccw: 1.63 1.63 1.62 | 1.60 1.61 1.60 1.60 | 1.66 1.69 1.67 1.68 1.66 | 1.63 1.61 1.62 1.60 | 1.62 1.63
@@ -69,9 +73,6 @@ public class MecanumDrivetrain {
     public int zero1, zero2, zero3;
 
     public boolean zeroStrafeCorrection = false;
-
-//    private DcMotorEx intake;
-//    private DcMotorEx intake2;
 
     private IMU imu;
 

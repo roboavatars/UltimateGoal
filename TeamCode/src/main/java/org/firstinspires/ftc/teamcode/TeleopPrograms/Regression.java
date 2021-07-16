@@ -21,7 +21,7 @@ public class Regression extends LinearOpMode {
     public boolean flywheelToggle = false, flywheelOn = false;
     public boolean magToggle = false, magUp = false;
 
-    public static double flywheelVelocity = 2750;
+    public static double flywheelVelocity = 1620;
     public static double flapPos = Constants.FLAP_BACK_POS;
     public static double theta0 = 1.875;
     public static double theta1 = 1.810;
@@ -47,10 +47,10 @@ public class Regression extends LinearOpMode {
             if (gamepad1.left_bumper && !flywheelToggle) {
                 flywheelToggle = true;
                 if (flywheelOn) {
-                    robot.shooter.magHome();
+//                    robot.shooter.magHome();
                     robot.shooter.flywheelOff();
                 } else {
-                    robot.shooter.magShoot();
+//                    robot.shooter.magShoot();
                     robot.shooter.setFlywheelVelocity(flywheelVelocity);
                 }
                 flywheelOn = !flywheelOn;
@@ -74,17 +74,18 @@ public class Regression extends LinearOpMode {
                 robot.intake.blockerDown();
             }
 
-            if (gamepad1.a && !magToggle) {
-                magToggle = true;
-                if (magUp) {
-                    robot.shooter.magHome();
-                } else {
-                    robot.shooter.magShoot();
-                }
-                magUp = !magUp;
-            } else if (!gamepad1.a && magToggle) {
-                magToggle = false;
-            }
+//            if (gamepad1.a && !magToggle) {
+//                magToggle = true;
+//                if (magUp) {
+//                    robot.shooter.magHome();
+//                } else {
+//                    robot.shooter.magShoot();
+//                }
+//                magUp = !magUp;
+//            } else if (!gamepad1.a && magToggle) {
+//                magToggle = false;
+//            }
+            robot.shooter.magShoot();
 
             if (gamepad1.x) {
                 robot.resetOdo(111, 63, Math.PI/2);
@@ -95,6 +96,8 @@ public class Regression extends LinearOpMode {
 //            } else if (gamepad1.dpad_down) {
 //                robot.shooter.setFlapPosition(robot.shooter.getFlapPosition() - 0.001);
 //            }
+
+            robot.intake.autoBumpers(robot.x, robot.y, robot.theta, 12);
 
             if (gamepad1.dpad_left) {
                 robot.setTargetPoint(111, 63, theta0);

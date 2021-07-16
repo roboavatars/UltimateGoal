@@ -134,15 +134,15 @@ public class Intake {
         double[] rightFrontPos = calculateCoordinates(x, y, theta, 15, 6);
         double[] rightBackPos = calculateCoordinates(x, y, theta, 15, -9);
 
-        boolean leftFront = inRange(leftFrontPos[0], leftFrontPos[1], buffer);
-        boolean leftBack = inRange(leftBackPos[0], leftBackPos[1], buffer);
-        boolean rightFront = inRange(rightFrontPos[0], rightFrontPos[1], buffer);
-        boolean rightBack = inRange(rightBackPos[0], rightBackPos[1], buffer);
+        boolean leftFront = !inRange(leftFrontPos[0], leftFrontPos[1], buffer);
+        boolean leftBack = !inRange(leftBackPos[0], leftBackPos[1], buffer);
+        boolean rightFront = !inRange(rightFrontPos[0], rightFrontPos[1], buffer);
+        boolean rightBack = !inRange(rightBackPos[0], rightBackPos[1], buffer);
 
         if (leftFront || leftBack || rightFront || rightBack) {
-            bumpersLR(Constants.BUMPER_HOME_POS);
-        } else {
             bumpersLR(Constants.BUMPER_OUT_POS);
+        } else {
+            bumpersLR(Constants.BUMPER_HOME_POS);
         }
     }
 

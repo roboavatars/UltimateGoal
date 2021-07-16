@@ -12,8 +12,8 @@ public class Constants {
     public static double STACK_HOME_POS = 0;
     public static double STACK_OUT_POS = 0.87;
 
-    public static double BUMPER_HOME_POS = 0;
-    public static double BUMPER_OUT_POS = 0.6;
+    public static double BUMPER_HOME_POS = 0.25;
+    public static double BUMPER_OUT_POS = 1.0;
 
     // Shooter
     public static int HIGH_GOAL_VELOCITY = 2100;

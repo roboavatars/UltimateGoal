@@ -33,8 +33,9 @@ public class Shooter {
     public static final double RING_FLIGHT_TIME = 0.5;
     public static final double INITIAL_ANGLE = 0.08;
 
-    public static double pFlywheel = 50;
-    public static double fFlywheel = 0;
+    public static double pFlywheel = 80;
+    public static double dFlywheel = 0;
+    public static double fFlywheel = 13;
 
     public static double pTurret = 1;
     public static double dTurret = 4.8;
@@ -52,6 +53,8 @@ public class Shooter {
     public Shooter(LinearOpMode op) {
         flywheelMotor = op.hardwareMap.get(DcMotorEx.class, "flywheel");
         flywheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        flywheelMotor.setVelocityPIDFCoefficients(pFlywheel, 0, dFlywheel, fFlywheel);
+
         turretMotor = op.hardwareMap.get(DcMotorEx.class, "turret");
         flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
@@ -70,13 +73,13 @@ public class Shooter {
     }
 
     public void updatePID(double robotTheta) {
-        targetTheta = PI - robotTheta + lockTheta;
+        targetTheta = PI/2 - robotTheta + lockTheta;
         turretTheta = turretMotor.getCurrentPosition() / TICKS_PER_RADIAN;
         turretErrorChange = targetTheta - turretTheta - turretError;
         turretError = targetTheta - turretTheta;
         turretMotor.setPower(Math.max(-0.5, Math.min(pTurret * turretError + dTurret * turretErrorChange + fTurret, 0.5)));
 
-        flywheelMotor.setVelocityPIDFCoefficients(pFlywheel, 0, 0, fFlywheel);
+        flywheelMotor.setVelocityPIDFCoefficients(pFlywheel, 0, dFlywheel, fFlywheel);
     }
 
     // Flywheel

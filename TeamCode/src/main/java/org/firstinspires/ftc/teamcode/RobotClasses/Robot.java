@@ -338,6 +338,7 @@ public class Robot {
             // t265.sendOdometryData(vx, vy, theta, w);
             t265.updateCamPose();
         }
+        intake.updateBumpers();
 
         turretGlobalTheta = shooter.getTheta() + theta;
 
@@ -392,6 +393,7 @@ public class Robot {
         addPacket("9 Update Frequency (Hz)", round(1 / timeDiff));
         addPacket("Pod Zeroes", drivetrain.zero1 + ", " + drivetrain.zero2 + ", " + drivetrain.zero3);
         addPacket("offsets", round(thetaOffset) + " " + round(flapOverride) + " " + shootYOffset);
+        addPacket("target th", getShootAngle());
         if (!isAuto) {
             addPacket("Cycle Time", (curTime - lastCycleTime) / 1000);
             addPacket("Average Cycle Time", round(cycleTotal / cycles));
