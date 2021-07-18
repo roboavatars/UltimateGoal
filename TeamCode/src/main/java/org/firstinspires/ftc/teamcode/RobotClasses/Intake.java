@@ -14,13 +14,10 @@ public class Intake {
     private Servo bumperLR;
 
     private double lastIntakePow = 0;
+    private double lastIntakePow2 = 0;
     private double lastBlocker = 0;
 
-    private double leftBumperPos;
-
-    public boolean on = false;
-    public boolean reverse = false;
-    public boolean forward = false;
+    private double bumperLRPos;
 
     public Intake(LinearOpMode op, boolean isAuto) {
         intakeMotor = op.hardwareMap.get(DcMotorEx.class, "intake");
@@ -30,9 +27,6 @@ public class Intake {
         stackServo = op.hardwareMap.get(Servo.class, "stackServo");
 
         bumperLR = op.hardwareMap.get(Servo.class, "bumpers");
-
-//        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
-//        intakeMotor2.setDirection(DcMotorSimple.Direction.REVERSE);
 
         if (!isAuto) {
             bumpersOut();
@@ -49,13 +43,11 @@ public class Intake {
 
     // Intake Motors
     public void on() {
-        intakeMotor.setPower(0.3); intakeMotor2.setPower(1);
-}
+        setPower(0.8, 1);
+    }
 
     public void verticalOn() {
-        intakeMotor.setPower(0);
-        intakeMotor2.setPower(1);
-        lastIntakePow = 2;
+        setPower(0, 1);
     }
 
     public void reverse() {
@@ -67,14 +59,18 @@ public class Intake {
     }
 
     public void setPower(double power) {
+        setPower(power, power);
+    }
+
+    public void setPower(double power, double power2) {
         if (power != lastIntakePow) {
             intakeMotor.setPower(power);
-            intakeMotor2.setPower(power);
-
-            on = power != 0;
-            forward = power > 0;
-            reverse = power < 0;
             lastIntakePow = power;
+        }
+
+        if (power2 != lastIntakePow2) {
+            intakeMotor2.setPower(power2);
+            lastIntakePow2 = power2;
         }
     }
 
@@ -109,7 +105,7 @@ public class Intake {
 
     // Bumpers
     public void bumpersLR(double position) {
-        leftBumperPos = position;
+        bumperLRPos = position;
     }
 
     public void bumpersHome() {
@@ -147,7 +143,7 @@ public class Intake {
     }
 
     public void updateLRBumpers() {
-        bumperLR.setPosition(leftBumperPos);
+        bumperLR.setPosition(bumperLRPos);
     }
 
     public void updateBumpers() {

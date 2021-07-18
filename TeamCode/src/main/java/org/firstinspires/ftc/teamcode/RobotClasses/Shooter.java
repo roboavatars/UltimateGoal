@@ -73,7 +73,9 @@ public class Shooter {
     }
 
     public void updatePID(double robotTheta) {
+        // bound between 0 and 2pi
         targetTheta = PI/2 - robotTheta + lockTheta;
+        targetTheta = turretTheta % 2 * PI;
         turretTheta = turretMotor.getCurrentPosition() / TICKS_PER_RADIAN;
         turretErrorChange = targetTheta - turretTheta - turretError;
         turretError = targetTheta - turretTheta;

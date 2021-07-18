@@ -55,7 +55,7 @@ public class TurretTest extends LinearOpMode {
         while (opModeIsActive()) {
             imu.updateHeadingUncapped();
 
-            targetTheta = PI - imu.getTheta() + a_NumFactor * PI / b_DemonFactor;
+            targetTheta = PI - imu.getTheta() + (a_NumFactor * PI / b_DemonFactor);
             turretTheta = turret.getCurrentPosition() / TICKS_PER_RADIAN;
             turretErrorChange = targetTheta - turretTheta - turretError;
             turretError = targetTheta - turretTheta;

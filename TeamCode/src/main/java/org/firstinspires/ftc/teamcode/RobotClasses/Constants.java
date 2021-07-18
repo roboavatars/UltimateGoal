@@ -7,7 +7,7 @@ public class Constants {
     // Intake
     public static double BLOCKER_HOME_POS = 0.72;
     public static double BLOCKER_UP_POS = 0.51;
-    public static double BLOCKER_DOWN_POS = 0.26;
+    public static double BLOCKER_DOWN_POS = 0.47;
 
     public static double STACK_HOME_POS = 0;
     public static double STACK_OUT_POS = 0.87;
@@ -20,8 +20,8 @@ public class Constants {
     public static int HIGH_GOAL_BACK_VELOCITY = 1980;
     public static int POWERSHOT_VELOCITY = 1680;
 
-    public static double MAG_HOME_POS = 0;
-    public static double MAG_SHOOT_POS = 0.37;
+    public static double MAG_HOME_POS = 0.45;
+    public static double MAG_SHOOT_POS = 0.95;
 
     public static double FEED_HOME_POS = 0.93;
     public static double FEED_SHOOT_POS = 0.75;
