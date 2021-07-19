@@ -26,8 +26,8 @@ public class Regression extends LinearOpMode {
     public int numRings = 0;
     public static int delay = 125;
 
-    public static double intake1Pow = 0.8;
-    public static double intake2Pow = 1;
+    public static double intakePow = 1;
+    public static double transferPow = 0.3;
 
     public static double flywheelVelocity = 1620;
     public static double flapPos = Constants.FLAP_BACK_POS;
@@ -43,7 +43,7 @@ public class Regression extends LinearOpMode {
 
         while (opModeIsActive()) {
             if (gamepad1.left_trigger > 0) {
-                robot.intake.setPower(intake1Pow, intake2Pow);
+                robot.intake.setPower(intakePow, transferPow);
             } else if (gamepad1.right_trigger > 0) {
                 robot.intake.reverse();
             } else {

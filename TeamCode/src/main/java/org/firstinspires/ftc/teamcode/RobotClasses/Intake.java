@@ -8,20 +8,20 @@ import com.qualcomm.robotcore.hardware.Servo;
 public class Intake {
 
     public DcMotorEx intakeMotor;
-    public DcMotorEx intakeMotor2;
+    public DcMotorEx transferMotor;
     private Servo blockerServo;
     private Servo stackServo;
     private Servo bumperLR;
 
     private double lastIntakePow = 0;
-    private double lastIntakePow2 = 0;
+    private double lastTransferPow = 0;
     private double lastBlocker = 0;
 
     private double bumperLRPos;
 
     public Intake(LinearOpMode op, boolean isAuto) {
         intakeMotor = op.hardwareMap.get(DcMotorEx.class, "intake");
-        intakeMotor2 = op.hardwareMap.get(DcMotorEx.class, "intake2");
+        transferMotor = op.hardwareMap.get(DcMotorEx.class, "intake2");
 
         blockerServo = op.hardwareMap.get(Servo.class, "blocker");
         stackServo = op.hardwareMap.get(Servo.class, "stackServo");
@@ -62,15 +62,15 @@ public class Intake {
         setPower(power, power);
     }
 
-    public void setPower(double power, double power2) {
-        if (power != lastIntakePow) {
-            intakeMotor.setPower(power);
-            lastIntakePow = power;
+    public void setPower(double intakePower, double transferPower) {
+        if (intakePower != lastIntakePow) {
+            intakeMotor.setPower(intakePower);
+            lastIntakePow = intakePower;
         }
 
-        if (power2 != lastIntakePow2) {
-            intakeMotor2.setPower(power2);
-            lastIntakePow2 = power2;
+        if (transferPower != lastTransferPow) {
+            transferMotor.setPower(transferPower);
+            lastTransferPow = transferPower;
         }
     }
 
