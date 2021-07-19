@@ -39,20 +39,26 @@ public class IMU {
     public void updateHeading() {
         double angle1 = imu2.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
         double angle2 = imu2.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
-        angle = (angle1 + angle2) / 2;
-        deltaHeading = angle - lastHeading;
+        deltaHeading = angle1 - lastHeading;
+        deltaHeading2 = angle2 - lastHeading2;
 
         if (deltaHeading < -PI) {
             deltaHeading += 2*PI;
         } else if (deltaHeading >= PI) {
             deltaHeading -= 2*PI;
         }
+        if (deltaHeading2 < -PI) {
+            deltaHeading2 += 2*PI;
+        } else if (deltaHeading2 >= PI) {
+            deltaHeading2 -= 2*PI;
+        }
 
-        theta = (theta + deltaHeading) % (2*PI);
+        theta = (theta + (deltaHeading + deltaHeading2) / 2) % (2*PI);
         if (theta < 0) {
             theta += 2*PI;
         }
-        lastHeading = angle;
+        lastHeading = angle1;
+        lastHeading2 = angle2;
     }
 
     public void updateHeadingUncapped() {
@@ -72,7 +78,7 @@ public class IMU {
             deltaHeading2 -= 2*PI;
         }
 
-        theta += (deltaHeading+deltaHeading2)/2;
+        theta += (deltaHeading + deltaHeading2) / 2;
         lastHeading = angle1;
         lastHeading2 = angle2;
     }

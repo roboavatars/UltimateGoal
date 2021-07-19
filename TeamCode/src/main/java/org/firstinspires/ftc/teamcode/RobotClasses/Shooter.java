@@ -37,12 +37,12 @@ public class Shooter {
     public static double dFlywheel = 0;
     public static double fFlywheel = 13;
 
-    public static double pTurret = 1;
-    public static double dTurret = 4.8;
+    public static double pTurret = 0.4;
+    public static double dTurret = 3.2;
     public static double fTurret = 0;
 
     private double targetTheta = 0;
-    private double turretTheta;
+    private double turretTheta = PI;
     private double turretError;
     private double turretErrorChange;
     private double lockTheta;
@@ -73,13 +73,11 @@ public class Shooter {
     }
 
     public void updatePID(double robotTheta) {
-
-        targetTheta = lockTheta - robotTheta + PI/2;
-        targetTheta = turretTheta % 2 * PI;
-        turretTheta = turretMotor.getCurrentPosition() / TICKS_PER_RADIAN;
+        targetTheta = (lockTheta - robotTheta + 3*PI/2) % (2*PI);
+        turretTheta = turretMotor.getCurrentPosition() / TICKS_PER_RADIAN + PI;
         turretErrorChange = targetTheta - turretTheta - turretError;
         turretError = targetTheta - turretTheta;
-        turretMotor.setPower(Math.max(-0.5, Math.min(pTurret * turretError + dTurret * turretErrorChange + fTurret, 0.5)));
+        turretMotor.setPower(Math.max(-0.4, Math.min(pTurret * turretError + dTurret * turretErrorChange + fTurret, 0.4)));
 
         flywheelMotor.setVelocityPIDFCoefficients(pFlywheel, 0, dFlywheel, fFlywheel);
     }

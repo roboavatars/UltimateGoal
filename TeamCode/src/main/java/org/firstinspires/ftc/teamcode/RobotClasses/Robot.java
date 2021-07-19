@@ -385,7 +385,7 @@ public class Robot {
         addPacket("1 X", round(x));
         addPacket("2 Y", round(y));
         addPacket("3 Theta", round(theta));
-        addPacket("4 Turret Theta", turretGlobalTheta);
+        addPacket("4 Turret Theta", turretGlobalTheta + " " + shooter.getTheta());
         addPacket("5 Shooter Velocity", shooter.getFlywheelVelocity());
         addPacket("6 numRings", numRings);
         addPacket("7 shoot", preShoot  + " " + shoot + " " + highGoal);

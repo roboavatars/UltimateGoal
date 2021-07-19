@@ -57,7 +57,7 @@ public class MecanumDrivetrain {
     //                          13.39 5 rev         13.39 10 rev                13.395 5 rev          1.385 5 rev
     // cw:  1.56 1.56 1.57 | 1.59 1.59 1.58 1.58 | 1.59 1.58 1.53 1.55 1.56 | 1.58 1.58 1.58 1.58 | 1.55 1.54
     // ccw: 1.63 1.63 1.62 | 1.60 1.61 1.60 1.60 | 1.66 1.69 1.67 1.68 1.66 | 1.63 1.61 1.62 1.60 | 1.62 1.63
-    public static double ODOMETRY_HORIZONTAL_OFFSET = -0.2;
+    public static double ODOMETRY_HORIZONTAL_OFFSET = 0.15;
 
     private final double ODOMETRY_HEADING_THRESHOLD = PI/8;
 

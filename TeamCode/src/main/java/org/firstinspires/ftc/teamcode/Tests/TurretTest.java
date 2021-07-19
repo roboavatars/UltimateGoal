@@ -24,13 +24,12 @@ public class TurretTest extends LinearOpMode {
     private IMU imu;
     private double targetTheta = 0;
 
-    public static double TICKS_PER_RADIAN = 126 / PI;
+    public static final double TICKS_PER_RADIAN = 126/PI;
     public static double a_NumFactor = 0;
     public static double b_DemonFactor = 2;
 
-    public static double p = 1;
-    public static double i = 0;
-    public static double d = 4.8;
+    public static double p = 0.4;
+    public static double d = 3.2;
     public static double f = 0;
 
     public static boolean dashTarget = true;
@@ -53,15 +52,15 @@ public class TurretTest extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            imu.updateHeadingUncapped();
+            imu.updateHeading();
 
-            targetTheta = PI - imu.getTheta() + (a_NumFactor * PI / b_DemonFactor);
-            turretTheta = turret.getCurrentPosition() / TICKS_PER_RADIAN;
+            targetTheta = (a_NumFactor * PI / b_DemonFactor - imu.getTheta() + 3*PI/2) % (2*PI);
+            turretTheta = turret.getCurrentPosition() / TICKS_PER_RADIAN + PI;
             turretErrorChange = targetTheta - turretTheta - turretError;
             turretError = targetTheta - turretTheta;
 
             if (dashTarget) {
-                turret.setPower(Math.max(-0.5, Math.min(p * turretError + d * turretErrorChange + f, 0.5)));
+                turret.setPower(Math.max(-0.4, Math.min(p * turretError + d * turretErrorChange + f, 0.4)));
                 turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
             } else {
                 turret.setPower(0.4 * (gamepad1.left_trigger - gamepad1.right_trigger));

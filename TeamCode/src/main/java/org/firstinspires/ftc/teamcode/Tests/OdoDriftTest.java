@@ -17,7 +17,7 @@ public class OdoDriftTest extends LinearOpMode {
     private boolean started;
     private double startTime;
 
-    private boolean constantHeading = true;
+    private boolean constantHeading = false;
 
     @Override
     public void runOpMode() {
