@@ -42,7 +42,7 @@ public class Shooter {
     public static double fTurret = 0;
 
     private double targetTheta = 0;
-    private double turretTheta = PI;
+    private double turretTheta;
     private double turretError;
     private double turretErrorChange;
     private double lockTheta;
@@ -76,8 +76,14 @@ public class Shooter {
     public void updatePID(double robotTheta) {
         // lockTheta - robotTheta + 3*PI/2 ==> 1.05 - 1.57 + 4.71 = 4.19
         // lockTheta - robotTheta + PI/2 ==> 1.05 - 1.57 + 1.57 = 1.05
-        targetTheta = (lockTheta - robotTheta + 3*PI/2) % (2*PI);
-        turretTheta = turretMotor.getCurrentPosition() / TICKS_PER_RADIAN + PI;
+        targetTheta = (lockTheta - robotTheta + PI/2) % (2*PI);
+        if (targetTheta < 0) {
+            targetTheta += 2*PI;
+        }
+        if (targetTheta > 3*PI/2) {
+            targetTheta -= 2*PI;
+        }
+        turretTheta = turretMotor.getCurrentPosition() / TICKS_PER_RADIAN;
         turretErrorChange = targetTheta - turretTheta - turretError;
         turretError = targetTheta - turretTheta;
         turretMotor.setPower(Math.max(-0.4, Math.min(pTurret * turretError + dTurret * turretErrorChange + fTurret, 0.4)));
@@ -123,7 +129,7 @@ public class Shooter {
     }
 
     public double getTheta() {
-        return turretMotor.getCurrentPosition() / TICKS_PER_RADIAN + PI;
+        return turretMotor.getCurrentPosition() / TICKS_PER_RADIAN;
     }
 
     // Mag

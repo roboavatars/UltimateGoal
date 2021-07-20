@@ -136,14 +136,12 @@ public class RedAutoStarterStack extends LinearOpMode {
                     }
 
                     if (ringCase == RingCase.Four) {
-                        robot.intake.stackOut();
                     }
 
                     shootHighGoal1 = true;
                     time.reset();
                 } else {
                     if (time.seconds() > 0.5 && ringCase == RingCase.Four) {
-                        robot.intake.stackOut();
                     }
                 }
             }
@@ -199,7 +197,6 @@ public class RedAutoStarterStack extends LinearOpMode {
                 }
 
                 if (time.seconds() > intakeStack2Time) {
-                    robot.intake.stackHome();
                     robot.intake.off();
 
                     robot.thetaOffset = 0;

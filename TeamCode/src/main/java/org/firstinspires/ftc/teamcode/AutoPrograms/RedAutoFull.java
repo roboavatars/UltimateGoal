@@ -182,14 +182,12 @@ public class RedAutoFull extends LinearOpMode {
                 if (!robot.preShoot && !robot.shoot && robot.numRings == 0) {
                     if (ringCase == RingCase.Four) {
                         robot.shooter.flywheelHG();
-                        robot.intake.stackOut();
                     }
 
                     shootHighGoal = true;
                     time.reset();
                 } else {
                     if (time.seconds() > 0.5 && ringCase == RingCase.Four) {
-                        robot.intake.stackOut();
                     }
                 }
             }
@@ -214,7 +212,6 @@ public class RedAutoFull extends LinearOpMode {
                     if (ringCase == RingCase.Four) {
                         robot.shootYOverride = robot.y;
                         robot.highGoalShoot(1, true);
-//                        robot.intake.stackHome();
                     }
 
                     intakeStack = true;
@@ -241,7 +238,6 @@ public class RedAutoFull extends LinearOpMode {
                     }
 
                     if (time.seconds() > intakeStack2Time) {
-                        robot.intake.stackHome();
 
                         robot.thetaOffset = 0;
                         Constants.HIGH_GOAL_VELOCITY = highGoalVelocity;

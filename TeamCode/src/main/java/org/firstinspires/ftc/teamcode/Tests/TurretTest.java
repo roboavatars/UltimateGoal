@@ -24,7 +24,7 @@ public class TurretTest extends LinearOpMode {
     private IMU imu;
     private double targetTheta = 0;
 
-    public static final double TICKS_PER_RADIAN = 126/PI;
+    public static final double TICKS_PER_RADIAN = 126 / PI;
     public static double a_NumFactor = 0;
     public static double b_DemonFactor = 2;
 
@@ -47,15 +47,21 @@ public class TurretTest extends LinearOpMode {
         turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
         imu = new IMU(PI/2, this);
-        drivetrain = new MecanumDrivetrain(this, 102, 54, PI/2);
+        drivetrain = new MecanumDrivetrain(this, 111, 63, PI/2);
 
         waitForStart();
 
         while (opModeIsActive()) {
             imu.updateHeading();
 
-            targetTheta = (a_NumFactor * PI / b_DemonFactor - imu.getTheta() + 3*PI/2) % (2*PI);
-            turretTheta = turret.getCurrentPosition() / TICKS_PER_RADIAN + PI;
+            targetTheta = (a_NumFactor * PI / b_DemonFactor - imu.getTheta() + PI/2) % (2*PI);
+            if (targetTheta < 0) {
+                targetTheta += 2*PI;
+            }
+            if (targetTheta > 3*PI/2) {
+                targetTheta -= 2*PI;
+            }
+            turretTheta = turret.getCurrentPosition() / TICKS_PER_RADIAN;
             turretErrorChange = targetTheta - turretTheta - turretError;
             turretError = targetTheta - turretTheta;
 
@@ -73,10 +79,11 @@ public class TurretTest extends LinearOpMode {
             double timeDiff = curTime - prevTime;
             prevTime = curTime;
 
-            drawRobot(102, 54, imu.getTheta(), imu.getTheta() + turretTheta, "black", "gray");
+            drawRobot(111, 63, imu.getTheta(), imu.getTheta() + turretTheta - PI/2, "black", "gray");
             addPacket("Target Theta", targetTheta);
             addPacket("Turret Theta", turretTheta);
             addPacket("Theta Error", turretError);
+            addPacket("Turret Global", imu.getTheta() + turretTheta - PI/2);
             addPacket("IMU", imu.getTheta());
             addPacket("Ticks", turret.getCurrentPosition());
             addPacket("Power", turret.getPower());

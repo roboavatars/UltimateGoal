@@ -7,12 +7,12 @@ import org.firstinspires.ftc.teamcode.OpenCV.Ring;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import static java.lang.Math.PI;
-import static java.lang.Math.sin;
 import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 import static java.lang.Math.sqrt;
+import static org.firstinspires.ftc.teamcode.RobotClasses.Shooter.TURRET_DIAMETER;
 import static org.firstinspires.ftc.teamcode.RobotClasses.Shooter.TURRET_DX;
 import static org.firstinspires.ftc.teamcode.RobotClasses.Shooter.TURRET_DY;
-import static org.firstinspires.ftc.teamcode.RobotClasses.Shooter.TURRET_DIAMETER;
 
 public class Dashboard {
 
@@ -48,9 +48,8 @@ public class Dashboard {
         double r = TURRET_DIAMETER / 2;
         packet.fieldOverlay().setFill(turretColor).fillCircle(cy - 72, 72 - cx, r);
 
-        double theta = turretTheta - PI/2;
-        double[] xcoords = {cx - r * sin(theta), cx + r*sqrt(2) * cos(theta + PI/4), cx + r*sqrt(2) * cos(theta - PI/4), cx + r * sin(theta)};
-        double[] ycoords = {cy + r * cos(theta), cy + r*sqrt(2) * sin(theta + PI/4), cy + r*sqrt(2) * sin(theta - PI/4), cy - r * cos(theta)};
+        double[] xcoords = {cx - r * sin(turretTheta), cx + r*sqrt(2) * cos(turretTheta + PI/4), cx + r*sqrt(2) * cos(turretTheta - PI/4), cx + r * sin(turretTheta)};
+        double[] ycoords = {cy + r * cos(turretTheta), cy + r*sqrt(2) * sin(turretTheta + PI/4), cy + r*sqrt(2) * sin(turretTheta - PI/4), cy - r * cos(turretTheta)};
         drawPolygon(xcoords, ycoords, turretColor);
     }
 

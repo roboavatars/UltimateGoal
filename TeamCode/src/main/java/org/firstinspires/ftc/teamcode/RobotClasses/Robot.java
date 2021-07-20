@@ -340,7 +340,7 @@ public class Robot {
         }
         intake.updateBumpers();
 
-        turretGlobalTheta = shooter.getTheta() + theta;
+        turretGlobalTheta = shooter.getTheta() + theta - PI/2;
 
         if (tMode != NONE) {
             shooter.updatePID(theta);
@@ -523,18 +523,18 @@ public class Robot {
 
         // Uses Angle Bisector for High Goal for more consistency
         if (tMode == HIGH_GOAL) {
-            double d = 8;
-            double a = Math.sqrt(Math.pow(dx + d/2, 2) + Math.pow(dy, 2));
-            double b = Math.sqrt(Math.pow(dx - d/2, 2) + Math.pow(dy, 2));
-
-            lockX += - d/2 + d * b / (a + b);
-            dx = lockY - shooterX;
+//            double d = 8;
+//            double a = Math.sqrt(Math.pow(dx + d/2, 2) + Math.pow(dy, 2));
+//            double b = Math.sqrt(Math.pow(dx - d/2, 2) + Math.pow(dy, 2));
+//
+//            lockX += - d/2 + d * b / (a + b);
+//            dx = lockY - shooterX;
             drawLine(shooterX, shooterY, lockX, lockY, "blue");
         }
 
         // Calculate Robot Angle
         double d = Math.sqrt(Math.pow(lockX - shooterX, 2) + Math.pow(lockY - shooterY, 2));
-        return Math.atan2(dy, dx) + 0.0013 * d - 0.2300;
+        return Math.atan2(dy, dx) /*+ 0.0013 * d - 0.2300*/;
     }
 
     // Set target point (velocity specification, custom Kp and Kv values)

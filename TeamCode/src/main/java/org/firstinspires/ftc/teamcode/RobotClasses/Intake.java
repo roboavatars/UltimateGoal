@@ -10,7 +10,6 @@ public class Intake {
     public DcMotorEx intakeMotor;
     public DcMotorEx transferMotor;
     private Servo blockerServo;
-    private Servo stackServo;
     private Servo bumperLR;
 
     private double lastIntakePow = 0;
@@ -21,10 +20,9 @@ public class Intake {
 
     public Intake(LinearOpMode op, boolean isAuto) {
         intakeMotor = op.hardwareMap.get(DcMotorEx.class, "intake");
-        transferMotor = op.hardwareMap.get(DcMotorEx.class, "intake2");
+        transferMotor = op.hardwareMap.get(DcMotorEx.class, "transfer");
 
         blockerServo = op.hardwareMap.get(Servo.class, "blocker");
-        stackServo = op.hardwareMap.get(Servo.class, "stackServo");
 
         bumperLR = op.hardwareMap.get(Servo.class, "bumpers");
 
@@ -35,7 +33,6 @@ public class Intake {
             bumpersHome();
             blockerHome();
         }
-        stackHome();
         updateBumpers();
 
         op.telemetry.addData("Status", "Intake initialized");
@@ -92,15 +89,6 @@ public class Intake {
             blockerServo.setPosition(position);
             lastBlocker = position;
         }
-    }
-
-    // Stack Servo
-    public void stackHome() {
-        stackServo.setPosition(Constants.STACK_HOME_POS);
-    }
-
-    public void stackOut() {
-        stackServo.setPosition(Constants.STACK_OUT_POS);
     }
 
     // Bumpers

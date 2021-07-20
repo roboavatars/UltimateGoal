@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 import static java.lang.Math.PI;
 
-@TeleOp(name = "Not Teleop")
+@TeleOp(name = "1 Not Teleop")
 @SuppressWarnings("FieldCanBeLocal")
 @Config
 public class Teleop extends LinearOpMode {

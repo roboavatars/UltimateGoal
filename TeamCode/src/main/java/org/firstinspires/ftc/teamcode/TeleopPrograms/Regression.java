@@ -18,8 +18,10 @@ public class Regression extends LinearOpMode {
     public double startTheta = PI/2;
 
     private Robot robot;
-    public boolean flywheelToggle = false, flywheelOn = false;
-    public boolean magToggle = false, magUp = false;
+    private boolean flywheelToggle = false, flywheelOn = false;
+    private boolean magToggle = false, magUp = false;
+    private boolean downToggle = false, armDown = false;
+    private boolean clampToggle = false, clamped = false;
 
     public boolean started = false;
     public double flickTime;
@@ -27,7 +29,7 @@ public class Regression extends LinearOpMode {
     public static int delay = 125;
 
     public static double intakePow = 1;
-    public static double transferPow = 0.3;
+    public static double transferPow = 0.5;
 
     public static double flywheelVelocity = 1620;
     public static double flapPos = Constants.FLAP_BACK_POS;
@@ -53,10 +55,10 @@ public class Regression extends LinearOpMode {
             if (gamepad1.left_bumper && !flywheelToggle) {
                 flywheelToggle = true;
                 if (flywheelOn) {
-//                    robot.shooter.magHome();
+                    robot.shooter.magHome();
                     robot.shooter.flywheelOff();
                 } else {
-//                    robot.shooter.magShoot();
+                    robot.shooter.magShoot();
                     robot.shooter.setFlywheelVelocity(flywheelVelocity);
                 }
                 flywheelOn = !flywheelOn;
@@ -66,18 +68,6 @@ public class Regression extends LinearOpMode {
 
             if (flywheelOn) {
                 robot.shooter.setFlywheelVelocity(flywheelVelocity);
-            }
-
-            if (gamepad1.right_bumper) {
-                robot.shooter.feedShoot();
-            } else {
-                robot.shooter.feedHome();
-            }
-
-            if (gamepad1.y) {
-                robot.intake.blockerUp();
-            } else {
-                robot.intake.blockerDown();
             }
 
             if (gamepad1.a && !magToggle) {
@@ -91,13 +81,8 @@ public class Regression extends LinearOpMode {
             } else if (!gamepad1.a && magToggle) {
                 magToggle = false;
             }
-//            robot.shooter.magShoot();
 
-            if (gamepad1.x) {
-                robot.resetOdo(111, 63, Math.PI/2);
-            }
-
-            if (gamepad1.b) {
+            if (gamepad1.right_bumper) {
                 if (!started) {
                     started = true;
                     flickTime = System.currentTimeMillis();
@@ -119,24 +104,51 @@ public class Regression extends LinearOpMode {
                 }
             }
 
-            robot.shooter.setFlapPosition(flapPos);
-//            if (gamepad1.dpad_up) {
-//                robot.shooter.setFlapPosition(robot.shooter.getFlapPosition() + 0.001);
-//            } else if (gamepad1.dpad_down) {
-//                robot.shooter.setFlapPosition(robot.shooter.getFlapPosition() - 0.001);
-//            }
+            if (gamepad1.y) {
+                robot.intake.blockerUp();
+            } else {
+                robot.intake.blockerDown();
+            }
+
+            if (gamepad1.x) {
+                robot.resetOdo(111, 63, Math.PI/2);
+            }
 
             robot.intake.autoBumpers(robot.x, robot.y, robot.theta, 12);
 
-            if (gamepad1.dpad_left) {
-                robot.setTargetPoint(111, 63, theta0);
-            } else if (gamepad1.dpad_up) {
-                robot.setTargetPoint(111, 63, theta1);
-            } else if (gamepad1.dpad_right) {
-                robot.setTargetPoint(111, 63, theta2);
-            } else {
-                robot.drivetrain.setControls(-gamepad1.left_stick_y , -gamepad1.left_stick_x , -gamepad1.right_stick_x);
+            if (gamepad1.dpad_down && !downToggle) {
+                downToggle = true;
+                if (armDown) {
+                    robot.wobbleArm.armUp();
+                } else {
+                    robot.wobbleArm.armDown();
+                }
+                armDown = !armDown;
+            } else if (!gamepad1.dpad_down && downToggle) {
+                downToggle = false;
             }
+
+            if (gamepad1.dpad_left && !clampToggle) {
+                clampToggle = true;
+                if (clamped) {
+                    robot.wobbleArm.unClamp();
+                } else {
+                    robot.wobbleArm.clamp();
+                }
+                clamped = !clamped;
+            } else if (!gamepad1.dpad_left && clampToggle) {
+                clampToggle = false;
+            }
+
+//            if (gamepad1.dpad_left) {
+//                robot.setTargetPoint(111, 63, theta0);
+//            } else if (gamepad1.dpad_up) {
+//                robot.setTargetPoint(111, 63, theta1);
+//            } else if (gamepad1.dpad_right) {
+//                robot.setTargetPoint(111, 63, theta2);
+//            } else {
+                robot.drivetrain.setControls(-gamepad1.left_stick_y , -gamepad1.left_stick_x , -gamepad1.right_stick_x);
+//            }
 
             robot.update();
 

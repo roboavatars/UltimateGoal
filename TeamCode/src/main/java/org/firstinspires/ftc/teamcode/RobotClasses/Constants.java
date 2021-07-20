@@ -9,19 +9,16 @@ public class Constants {
     public static double BLOCKER_UP_POS = 0.51;
     public static double BLOCKER_DOWN_POS = 0.47;
 
-    public static double STACK_HOME_POS = 0;
-    public static double STACK_OUT_POS = 0.87;
-
-    public static double BUMPER_HOME_POS = 0.25;
-    public static double BUMPER_OUT_POS = 1.0;
+    public static double BUMPER_HOME_POS = 0.12;
+    public static double BUMPER_OUT_POS = 1;
 
     // Shooter
     public static int HIGH_GOAL_VELOCITY = 2100;
     public static int HIGH_GOAL_BACK_VELOCITY = 1980;
     public static int POWERSHOT_VELOCITY = 1680;
 
-    public static double MAG_HOME_POS = 0.45;
-    public static double MAG_SHOOT_POS = 0.95;
+    public static double MAG_HOME_POS = 0.2;
+    public static double MAG_SHOOT_POS = 0.85;
 
     public static double FEED_HOME_POS = 0.93;
     public static double FEED_SHOOT_POS = 0.75;
@@ -36,12 +33,12 @@ public class Constants {
     public static double THREE_DIST = 2.5;
 
     // Wobble
-    public static double WOBBLE_UP_POS = 0.6;
-    public static double WOBBLE_DOWN_POS = 0.05;
+    public static double WOBBLE_UP_POS = 0.5;
+    public static double WOBBLE_DOWN_POS = 1;
 
     public static double WOBBLE_CLAMP_POS_LEFT = 0.6;
-    public static double WOBBLE_UNCLAMP_POS_LEFT = 0.2;
+    public static double WOBBLE_UNCLAMP_POS_LEFT = 0.1;
 
-    public static double WOBBLE_CLAMP_POS_RIGHT = 0.05;
-    public static double WOBBLE_UNCLAMP_POS_RIGHT = 0.5;
+    public static double WOBBLE_CLAMP_POS_RIGHT = 0.1;
+    public static double WOBBLE_UNCLAMP_POS_RIGHT = 0.7;
 }

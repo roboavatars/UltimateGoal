@@ -10,7 +10,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 @Config
 public class HardwareTest extends LinearOpMode {
     public static String motorName1 = "intake";
-    public static String motorName2 = "intake2";
+    public static String motorName2 = "transfer";
     public static String servoName1 = "leftClamp";
     public static String servoName2 = "rightClamp";
 
