@@ -74,7 +74,7 @@ public class Regression extends LinearOpMode {
                 robot.shooter.feedHome();
             }
 
-            if (gamepad2.b) {
+            if (gamepad1.y) {
                 robot.intake.blockerUp();
             } else {
                 robot.intake.blockerDown();
@@ -97,7 +97,7 @@ public class Regression extends LinearOpMode {
                 robot.resetOdo(111, 63, Math.PI/2);
             }
 
-            if (gamepad1.a) {
+            if (gamepad1.b) {
                 if (!started) {
                     started = true;
                     flickTime = System.currentTimeMillis();
