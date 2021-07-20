@@ -53,10 +53,11 @@ public class Shooter {
     public Shooter(LinearOpMode op) {
         flywheelMotor = op.hardwareMap.get(DcMotorEx.class, "flywheel");
         flywheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
+        flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         flywheelMotor.setVelocityPIDFCoefficients(pFlywheel, 0, dFlywheel, fFlywheel);
 
         turretMotor = op.hardwareMap.get(DcMotorEx.class, "turret");
-        flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        turretMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
@@ -73,6 +74,8 @@ public class Shooter {
     }
 
     public void updatePID(double robotTheta) {
+        // lockTheta - robotTheta + 3*PI/2 ==> 1.05 - 1.57 + 4.71 = 4.19
+        // lockTheta - robotTheta + PI/2 ==> 1.05 - 1.57 + 1.57 = 1.05
         targetTheta = (lockTheta - robotTheta + 3*PI/2) % (2*PI);
         turretTheta = turretMotor.getCurrentPosition() / TICKS_PER_RADIAN + PI;
         turretErrorChange = targetTheta - turretTheta - turretError;
@@ -120,7 +123,7 @@ public class Shooter {
     }
 
     public double getTheta() {
-        return turretTheta;
+        return turretMotor.getCurrentPosition() / TICKS_PER_RADIAN + PI;
     }
 
     // Mag
