@@ -3,6 +3,23 @@ package org.firstinspires.ftc.teamcode.AutoPrograms.Blue;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
+import com.qualcomm.robotcore.util.ElapsedTime;
+
+import org.firstinspires.ftc.teamcode.OpenCV.Ring;
+import org.firstinspires.ftc.teamcode.OpenCV.StackHeight.StackHeightPipeline.RingCase;
+import org.firstinspires.ftc.teamcode.OpenCV.Vision;
+import org.firstinspires.ftc.teamcode.Pathing.Path;
+import org.firstinspires.ftc.teamcode.Pathing.Pose;
+import org.firstinspires.ftc.teamcode.Pathing.Target;
+import org.firstinspires.ftc.teamcode.Pathing.Waypoint;
+import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
+import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+
+import static java.lang.Math.PI;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 
 @Autonomous(name = "Blue Auto Full", preselectTeleOp = "1 Teleop", group = "Blue")
 @Disabled
