@@ -20,6 +20,10 @@ public class WobbleArm {
         op.telemetry.addData("Status", "Wobble Arm initialized");
     }
 
+    public void armInside() {
+        setArmPosition(Constants.WOBBLE_INSIDE_POS);
+    }
+
     public void armUp() {
         setArmPosition(Constants.WOBBLE_UP_POS);
     }

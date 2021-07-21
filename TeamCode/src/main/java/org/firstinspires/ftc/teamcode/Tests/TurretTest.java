@@ -61,6 +61,7 @@ public class TurretTest extends LinearOpMode {
             if (targetTheta > 3*PI/2) {
                 targetTheta -= 2*PI;
             }
+            targetTheta = Math.min(Math.max(targetTheta, 0), PI);
             turretTheta = turret.getCurrentPosition() / TICKS_PER_RADIAN;
             turretErrorChange = targetTheta - turretTheta - turretError;
             turretError = targetTheta - turretTheta;

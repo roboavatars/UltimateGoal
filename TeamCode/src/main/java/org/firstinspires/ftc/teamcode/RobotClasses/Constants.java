@@ -33,6 +33,7 @@ public class Constants {
     public static double THREE_DIST = 2.5;
 
     // Wobble
+    public static double WOBBLE_INSIDE_POS = 0;
     public static double WOBBLE_UP_POS = 0.5;
     public static double WOBBLE_DOWN_POS = 1;
 
