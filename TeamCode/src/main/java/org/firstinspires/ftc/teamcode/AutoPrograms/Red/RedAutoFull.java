@@ -1,7 +1,6 @@
-package org.firstinspires.ftc.teamcode.AutoPrograms;
+package org.firstinspires.ftc.teamcode.AutoPrograms.Red;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -21,9 +20,8 @@ import java.util.Arrays;
 import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 
-@Autonomous(name = "Blue Auto Full", preselectTeleOp = "1 Teleop", group = "Blue")
-@Disabled
-public class BlueAutoFull extends LinearOpMode {
+@Autonomous(name = "Red Auto Full", preselectTeleOp = "1 Teleop", group = "Red")
+public class RedAutoFull extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -44,7 +42,7 @@ public class BlueAutoFull extends LinearOpMode {
             park on line
         */
 
-        /*Robot robot = new Robot(this, 114, 9, PI/2, true);
+        Robot robot = new Robot(this, 114, 9, PI/2, true);
         robot.logger.startLogging(true);
 
         Vision detector = new Vision(this, Vision.Pipeline.StackHeight);
@@ -184,14 +182,12 @@ public class BlueAutoFull extends LinearOpMode {
                 if (!robot.preShoot && !robot.shoot && robot.numRings == 0) {
                     if (ringCase == RingCase.Four) {
                         robot.shooter.flywheelHG();
-                        robot.intake.stackOut();
                     }
 
                     shootHighGoal = true;
                     time.reset();
                 } else {
                     if (time.seconds() > 0.5 && ringCase == RingCase.Four) {
-                        robot.intake.stackOut();
                     }
                 }
             }
@@ -216,7 +212,6 @@ public class BlueAutoFull extends LinearOpMode {
                     if (ringCase == RingCase.Four) {
                         robot.shootYOverride = robot.y;
                         robot.highGoalShoot(1, true);
-//                        robot.intake.stackHome();
                     }
 
                     intakeStack = true;
@@ -243,7 +238,6 @@ public class BlueAutoFull extends LinearOpMode {
                     }
 
                     if (time.seconds() > intakeStack2Time) {
-                        robot.intake.stackHome();
 
                         robot.thetaOffset = 0;
                         Constants.HIGH_GOAL_VELOCITY = highGoalVelocity;
@@ -280,7 +274,7 @@ public class BlueAutoFull extends LinearOpMode {
                             }
                         }
 
-                        *//*if (!sweep) {
+                        /*if (!sweep) {
                             ArrayList<Waypoint> ringWaypoints = new ArrayList<>();
                             ringWaypoints.add(new Waypoint(robot.x, robot.y, robot.theta, 50, 60, 0, 0));
 
@@ -329,7 +323,7 @@ public class BlueAutoFull extends LinearOpMode {
                                 ringWaypoints.add(new Waypoint(ringPos[0], Math.min(maxY, ringPos[1]), ringIntakeTheta[2], 30, 10, 0, ringTime));
                             }
                             ringPath = new Path(new ArrayList<>(ringWaypoints));
-                        } else {*//*
+                        } else {*/
                         ringTime = 5.0;
                         ArrayList<Waypoint> ringWaypoints = new ArrayList<>();
                         ringWaypoints.add(new Waypoint(robot.x, robot.y, robot.theta, 60, 60, 0, 0));
@@ -619,6 +613,6 @@ public class BlueAutoFull extends LinearOpMode {
         robot.stop();
         try {
             detector.stop();
-        } catch (Exception ignore) {}*/
+        } catch (Exception ignore) {}
     }
 }
