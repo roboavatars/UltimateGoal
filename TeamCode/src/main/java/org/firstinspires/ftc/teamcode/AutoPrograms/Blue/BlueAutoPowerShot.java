@@ -1,25 +1,12 @@
-package org.firstinspires.ftc.teamcode.AutoPrograms;
+package org.firstinspires.ftc.teamcode.AutoPrograms.Blue;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
-import com.qualcomm.robotcore.util.ElapsedTime;
 
-import org.firstinspires.ftc.teamcode.OpenCV.Ring;
-import org.firstinspires.ftc.teamcode.OpenCV.StackHeight.StackHeightPipeline.RingCase;
-import org.firstinspires.ftc.teamcode.OpenCV.Vision;
-import org.firstinspires.ftc.teamcode.Pathing.Path;
-import org.firstinspires.ftc.teamcode.Pathing.Pose;
-import org.firstinspires.ftc.teamcode.Pathing.Waypoint;
-import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-
-import static java.lang.Math.PI;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
-
-@Autonomous(name = "Red Auto Power Shot", preselectTeleOp = "1 Teleop", group = "Red")
-public class RedAutoPowerShot extends LinearOpMode {
+@Autonomous(name = "Blue Auto Power Shot", preselectTeleOp = "1 Teleop", group = "Blue")
+@Disabled
+public class BlueAutoPowerShot extends LinearOpMode {
 
     @Override
     public void runOpMode() {
@@ -34,7 +21,7 @@ public class RedAutoPowerShot extends LinearOpMode {
             park on line
         */
 
-        Robot robot = new Robot(this, 90, 9, PI/2, true);
+        /*Robot robot = new Robot(this, 90, 9, PI/2, true);
         robot.logger.startLogging(true);
 
         Vision detector = new Vision(this, Vision.Pipeline.StackHeight);
@@ -254,6 +241,6 @@ public class RedAutoPowerShot extends LinearOpMode {
         robot.stop();
         try {
             detector.stop();
-        } catch (Exception ignore) {}
+        } catch (Exception ignore) {}*/
     }
 }
