@@ -18,6 +18,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import static java.lang.Math.PI;
+import static java.lang.Math.abs;
 import static java.lang.Math.cos;
 import static java.lang.Math.sin;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
@@ -29,29 +30,13 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.HIGH_GOAL;
 import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.NONE;
-import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.PS_C;
 import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.PS_L;
+import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.PS_C;
 import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.PS_R;
 
 @Config
 @SuppressWarnings("FieldCanBeLocal")
 public class Robot {
-
-    /*
-    heres a basic list of stuff that needs to be done:
-    1. spend the first hour fixing odo
-    basically i did a 20 rotation test in both directions to adjust the imu drift, i added a imu drift compensation variable that u can tune
-    try to get it under 5 degrees in 20 rotations
-
-    2. spend the third hour working on shooter regression
-    this is arguably the most important item on the list btw
-
-    3. for the fourth hour, its time to get started on teleop
-    i havent implemented ps code, so u need to do that. i also soft capped the turret to 0 to pi. also u might wanna tune the turret pid by decreasing the p a little bit. also the wg arm can fold inside the robot, i started the implementation but u need to complete it
-
-    4. spend the second hour doing auto
-    dont waste too much time on this but basically get all the paths "working". basically the robot shud attempt at all the tasks and not do anything too stupid. u only have 60 minutes for 6 paths, so theres not much time to tune
-     */
 
     // Robot Classes
     public MecanumDrivetrain drivetrain;
@@ -296,7 +281,7 @@ public class Robot {
 
                         log("In shoot Velocity/Target: " + shooter.getFlywheelVelocity() + "/" + shooter.getTargetVelocity());
                         if (!highGoal) {
-                            log("PS pos: " + round(x) + ", " + round(y) + ", " + round(theta) + ", time: " + (curTime - flickTime > flickTimeBackup) + /*", xy: " + isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/35) + */", turret: " + isAtPoseTurret(shootTargetTheta, PI/150)/*(Math.abs(theta - target[2]) < PI/150)*/);
+                            log("PS pos: " + round(x) + ", " + round(y) + ", " + round(theta) + ", time: " + (curTime - flickTime > flickTimeBackup) + /*", xy: " + isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/35) + */", turret: " + isAtPoseTurret(shootTargetTheta, PI/150)/*(abs(theta - target[2]) < PI/150)*/);
                         }
 
                         if (numRings == 3) {
@@ -552,8 +537,8 @@ public class Robot {
     }
 
     public double calculateShootTheta() {
-        double shooterX = x + (turretMode != NONE && 0.5 < vx ? vx : 0) * Shooter.RING_FLIGHT_TIME + Shooter.TURRET_DX * Math.sin(theta) + Shooter.TURRET_DY * cos(theta);
-        double shooterY = y + (turretMode != NONE && 0.5 < vy ? vy : 0) * Shooter.RING_FLIGHT_TIME - Shooter.TURRET_DX * Math.cos(theta) + Shooter.TURRET_DY * sin(theta);
+        double shooterX = x + (turretMode != NONE && 0.5 < abs(vx) ? vx : 0) * Shooter.RING_FLIGHT_TIME + Shooter.TURRET_DX * sin(theta) + Shooter.TURRET_DY * cos(theta);
+        double shooterY = y + (turretMode != NONE && 0.5 < abs(vy) ? vy : 0) * Shooter.RING_FLIGHT_TIME - Shooter.TURRET_DX * cos(theta) + Shooter.TURRET_DY * sin(theta);
         double dx = lockX - shooterX;
         double dy = lockY - shooterY;
 
@@ -583,8 +568,8 @@ public class Robot {
 
         // Picking the Smaller Distance to Rotate
         double thetaControl;
-        if (Math.abs(theta - thetaTarget) > PI) {
-            thetaControl = Math.abs(theta - thetaTarget) / (theta - thetaTarget) * (Math.abs(theta - thetaTarget) - 2*PI);
+        if (abs(theta - thetaTarget) > PI) {
+            thetaControl = abs(theta - thetaTarget) / (theta - thetaTarget) * (abs(theta - thetaTarget) - 2*PI);
         } else {
             thetaControl = theta - thetaTarget;
         }
@@ -627,10 +612,10 @@ public class Robot {
 
     // Check if robot is at a certain point/angle (custom tolerance)
     public boolean isAtPose(double targetX, double targetY, double xTolerance, double yTolerance) {
-        return Math.abs(x - targetX) < xTolerance && Math.abs(y - targetY) < yTolerance;
+        return abs(x - targetX) < xTolerance && abs(y - targetY) < yTolerance;
     }
     public boolean isAtPose(double targetX, double targetY, double targetTheta, double xTolerance, double yTolerance, double thetaTolerance) {
-        return Math.abs(x - targetX) < xTolerance && Math.abs(y - targetY) < yTolerance && Math.abs(theta - targetTheta) < thetaTolerance;
+        return abs(x - targetX) < xTolerance && abs(y - targetY) < yTolerance && abs(theta - targetTheta) < thetaTolerance;
     }
 
     // Check if robot is at a certain point, turret at certain angle (default tolerance)
@@ -640,15 +625,15 @@ public class Robot {
 
     // Check if robot is at a certain point, turret at certain angle (custom tolerance)
     public boolean isAtPoseTurret(double targetX, double targetY, double turretTheta, double xTolerance, double yTolerance, double turretTolerance) {
-        return Math.abs(x - targetX) < xTolerance && Math.abs(y - targetY) < yTolerance && Math.abs(turretGlobalTheta - turretTheta) < turretTolerance;
+        return abs(x - targetX) < xTolerance && abs(y - targetY) < yTolerance && abs(turretGlobalTheta - turretTheta) < turretTolerance;
     }
 
     public boolean isAtPoseTurret(double turretTheta, double turretTolerance) {
-        return Math.abs(turretGlobalTheta - turretTheta) < turretTolerance;
+        return abs(turretGlobalTheta - turretTheta) < turretTolerance;
     }
 
     public boolean isAtPoseTurret(double turretTheta) {
-        return Math.abs(turretGlobalTheta - turretTheta) < turretTolerance;
+        return abs(turretGlobalTheta - turretTheta) < turretTolerance;
     }
 
     public boolean notMoving() {
@@ -659,7 +644,7 @@ public class Robot {
     }
 
     public boolean notMoving(double xyThreshold, double thetaThreshold) {
-        return (Math.hypot(vx, vy) < xyThreshold && Math.abs(w) < thetaThreshold);
+        return (Math.hypot(vx, vy) < xyThreshold && abs(w) < thetaThreshold);
     }
 
     // Logging

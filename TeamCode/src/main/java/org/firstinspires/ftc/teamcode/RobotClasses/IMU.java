@@ -14,7 +14,6 @@ import static java.lang.Math.PI;
 public class IMU {
     private BNO055IMU imu;
     private BNO055IMU imu2;
-    private double angle;
     private double theta;
     private double lastHeading;
     private double lastHeading2;
