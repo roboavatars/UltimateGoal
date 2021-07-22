@@ -116,19 +116,24 @@ public class Regression extends LinearOpMode {
 
             robot.intake.autoBumpers(robot.x, robot.y, robot.theta, 12);
 
-            if (gamepad1.dpad_down && !downToggle) {
+
+            if (gamepad2.dpad_down && !downToggle) {
                 downToggle = true;
                 if (armDown) {
+                    if (gamepad2.left_trigger > 0){
+                        robot.intake.bumpersHome();
+                    }
                     robot.wobbleArm.armUp();
                 } else {
                     robot.wobbleArm.armDown();
+                    robot.intake.bumpersOut();
                 }
                 armDown = !armDown;
-            } else if (!gamepad1.dpad_down && downToggle) {
+            } else if (!gamepad2.dpad_down && downToggle) {
                 downToggle = false;
             }
 
-            if (gamepad1.dpad_left && !clampToggle) {
+            if (gamepad2.dpad_left && !clampToggle) {
                 clampToggle = true;
                 if (clamped) {
                     robot.wobbleArm.unClamp();
@@ -136,7 +141,7 @@ public class Regression extends LinearOpMode {
                     robot.wobbleArm.clamp();
                 }
                 clamped = !clamped;
-            } else if (!gamepad1.dpad_left && clampToggle) {
+            } else if (!gamepad2.dpad_left && clampToggle) {
                 clampToggle = false;
             }
 

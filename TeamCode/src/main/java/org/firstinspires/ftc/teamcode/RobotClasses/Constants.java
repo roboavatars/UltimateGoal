@@ -21,7 +21,7 @@ public class Constants {
     public static double MAG_SHOOT_POS = 0.85;
 
     public static double FEED_HOME_POS = 0.93;
-    public static double FEED_SHOOT_POS = 0.75;
+    public static double FEED_SHOOT_POS = 0.60;
 
     public static double FLAP_DOWN_POS = 0.55;
     public static double FLAP_BACK_POS = 0.723;

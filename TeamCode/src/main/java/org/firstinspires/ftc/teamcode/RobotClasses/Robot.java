@@ -83,7 +83,7 @@ public class Robot {
     public static double flickTimeBackup = 1000;
     public static int highGoalDelay = 125;
     public static int psDelay = 250;
-    public static double flickDelay = 250;
+    public static double flickDelay = 320;
 
     // Motion Variables
     public double x, y, theta, vx, vy, w, turretGlobalTheta;
