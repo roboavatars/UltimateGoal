@@ -13,7 +13,7 @@ import java.util.Arrays;
 
 import static java.lang.Math.PI;
 
-@TeleOp(name = "1 Not Teleop")
+@TeleOp(name = "3 Not Teleop")
 @SuppressWarnings("FieldCanBeLocal")
 @Config
 public class Teleop extends LinearOpMode {
@@ -79,6 +79,7 @@ public class Teleop extends LinearOpMode {
         }
 
         robot.logger.startLogging(false);
+        robot.wobbleArm.clamp();
         robot.wobbleArm.armUp();
         robot.setLockMode(Robot.TurretMode.HIGH_GOAL);
 

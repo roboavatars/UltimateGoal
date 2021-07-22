@@ -16,8 +16,13 @@ public class WobbleArm {
         rightClampServo = op.hardwareMap.get(Servo.class, "rightClamp");
 
         armUp();
+        clamp();
 
         op.telemetry.addData("Status", "Wobble Arm initialized");
+    }
+
+    public void armInside() {
+        setArmPosition(Constants.WOBBLE_INSIDE_POS);
     }
 
     public void armUp() {
