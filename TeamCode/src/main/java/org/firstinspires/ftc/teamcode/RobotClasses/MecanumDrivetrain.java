@@ -46,9 +46,9 @@ public class MecanumDrivetrain {
     private final double motorUpdateTolerance = 0.05;
 
     // Odometry constants
-    public static double ticksToInch1 = 0.0005284372; // 0.0005256242;
-    public static double ticksToInch2 = 0.0005284372; // 0.0005242664;
-    public static double ticksToInch3 = 0.0005284372; // 0.0005287383;
+    public static double ticksToInch1 = 0.0005268504; // 0.0005256242;
+    public static double ticksToInch2 = 0.0005268504; // 0.0005242664;
+    public static double ticksToInch3 = 0.0005292873; // 0.0005287383;
     public static double ODOMETRY_TRACK_WIDTH = 13.28;
     //       1 rev                  5 rev
     // cw:  13.28                  13.247 13.232
@@ -62,26 +62,31 @@ public class MecanumDrivetrain {
     private final double ODOMETRY_HEADING_THRESHOLD = PI/8;
 
     // PD controller constants
-    public final static double xKp = 0.8;
-    public final static double yKp = 0.53;
-    public final static double thetaKp = 8.0;
-    public final static double xKd = 0.1;
-    public final static double yKd = 0.06;
-    public final static double thetaKd = 0.1;
+    public final static double xKp = 0.6;
+    public final static double yKp = 0.55;
+    public final static double thetaKp = 3.0;
+    public final static double xKd = 0.05;
+    public final static double yKd = 0.05;
+    public final static double thetaKd = 0.07;
 
     // Odometry delta 0 counters
     public int zero1, zero2, zero3;
 
     public boolean zeroStrafeCorrection = false;
 
-    private IMU imu;
+    public double lastHeading;
+
+//    private IMU imu;
+    private T265 t265;
 
     // Constructor
     public MecanumDrivetrain(LinearOpMode opMode, double initialX, double initialY, double initialTheta) {
         this.opMode = opMode;
         HardwareMap hardwareMap = opMode.hardwareMap;
 
-        imu = new IMU(initialTheta, opMode);
+//        imu = new IMU(initialTheta, opMode);
+        t265 = new T265(opMode, initialX, initialY, initialTheta);
+        t265.startCam();
 
         motorFrontRight = hardwareMap.get(DcMotorEx.class, "motorFrontRight");
         motorFrontLeft = hardwareMap.get(DcMotorEx.class, "motorFrontLeft");
@@ -112,7 +117,7 @@ public class MecanumDrivetrain {
         x = newX;
         y = newY;
         theta = newTheta;
-        imu.resetHeading(newTheta);
+//        imu.resetHeading(newTheta);
     }
 
     // robot centric movement
@@ -207,12 +212,15 @@ public class MecanumDrivetrain {
             deltaPod2 = pod2 - lastPod2;
             deltaPod3 = pod3 - lastPod3;
 
-//            deltaHeading = (deltaPod2 - deltaPod1) / ODOMETRY_TRACK_WIDTH;
-//
+            t265.updateCamPose();
+
+            theta = t265.getTheta() % (2*PI);
+            deltaHeading = theta - lastHeading;
+//            deltaPod1 = deltaPod2 - deltaHeading * ODOMETRY_TRACK_WIDTH;
+
 //            imu.updateHeading();
 //            theta = imu.getTheta() % (2*PI);
 //            deltaHeading = imu.getDeltaHeading();
-
 //            deltaPod1 = deltaPod2 - deltaHeading * ODOMETRY_TRACK_WIDTH;
 
             if (!(deltaPod1 == 0 && deltaPod2 == 0 && deltaPod3 == 0)) {
@@ -230,7 +238,7 @@ public class MecanumDrivetrain {
                 }
             }
 
-            deltaHeading = (deltaPod2 - deltaPod1) / ODOMETRY_TRACK_WIDTH;
+//            deltaHeading = (deltaPod2 - deltaPod1) / ODOMETRY_TRACK_WIDTH;
 
             double localX = (deltaPod1 + deltaPod2) / 2;
             double localY = deltaPod3 - deltaHeading * ODOMETRY_HORIZONTAL_OFFSET;
@@ -248,13 +256,14 @@ public class MecanumDrivetrain {
                         - localY * Math.sin(theta) + localX * Math.cos(theta)) / deltaHeading;
             }
 
-            theta = startTheta + (pod2 - pod1) / ODOMETRY_TRACK_WIDTH;
-            theta = theta % (2*PI);
-            if (theta < 0) theta += 2*PI;
+//            theta = startTheta + (pod2 - pod1) / ODOMETRY_TRACK_WIDTH;
+//            theta = theta % (2*PI);
+//            if (theta < 0) theta += 2*PI;
 
             lastPod1 = pod1;
             lastPod2 = pod2;
             lastPod3 = pod3;
+            lastHeading = theta;
         } catch (Exception e) {
             e.printStackTrace();
         }

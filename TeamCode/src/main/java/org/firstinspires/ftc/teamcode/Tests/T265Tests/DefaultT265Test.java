@@ -4,7 +4,6 @@ import com.arcrobotics.ftclib.geometry.Pose2d;
 import com.arcrobotics.ftclib.geometry.Rotation2d;
 import com.arcrobotics.ftclib.geometry.Transform2d;
 import com.arcrobotics.ftclib.geometry.Translation2d;
-import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.spartronics4915.lib.T265Camera;
@@ -12,12 +11,11 @@ import com.spartronics4915.lib.T265Camera;
 import org.firstinspires.ftc.teamcode.RobotClasses.MecanumDrivetrain;
 
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawField;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawDrivetrain;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawField;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
 @TeleOp(name = "Basic T265 Test")
-@Disabled
 public class DefaultT265Test extends LinearOpMode {
     private static T265Camera slamra;
 

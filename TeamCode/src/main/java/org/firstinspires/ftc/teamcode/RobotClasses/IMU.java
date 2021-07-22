@@ -21,7 +21,7 @@ public class IMU {
     private double deltaHeading = 0;
     private double deltaHeading2 = 0;
 
-    public static double IMU_DRIFT_COMPENSATION = 1.0018416;
+    public static double IMU_DRIFT_COMPENSATION = 1;
 
     public IMU(double startTheta, LinearOpMode op) {
         imu = op.hardwareMap.get(BNO055IMU.class, "imu");
@@ -35,13 +35,13 @@ public class IMU {
         }
 
         theta = startTheta;
-        double lastHeading1 = imu2.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+        double lastHeading1 = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
         double lastHeading2 = imu2.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
         lastHeading = (lastHeading1 + lastHeading2) / 2;
     }
 
     public void updateHeading() {
-        double angle1 = IMU_DRIFT_COMPENSATION * imu2.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+        double angle1 = IMU_DRIFT_COMPENSATION * imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
         double angle2 = IMU_DRIFT_COMPENSATION * imu2.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
         deltaHeading = angle1 - lastHeading;
         deltaHeading2 = angle2 - lastHeading2;
@@ -66,7 +66,7 @@ public class IMU {
     }
 
     public void updateHeadingUncapped() {
-        double angle1 = imu2.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+        double angle1 = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
         double angle2 = imu2.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
         deltaHeading = angle1 - lastHeading;
         deltaHeading2 = angle2 - lastHeading2;
@@ -88,7 +88,7 @@ public class IMU {
     }
 
     public void resetHeading(double newTheta) {
-        double lastHeading1 = imu2.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
+        double lastHeading1 = imu.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
         double lastHeading2 = imu2.getAngularOrientation(AxesReference.INTRINSIC, AxesOrder.ZYX, AngleUnit.RADIANS).firstAngle;
         lastHeading = (lastHeading1 + lastHeading2) / 2;
         theta = newTheta;

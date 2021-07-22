@@ -10,13 +10,18 @@ public class WobbleArm {
     private Servo leftClampServo;
     private Servo rightClampServo;
 
-    public WobbleArm(LinearOpMode op) {
+    public WobbleArm(LinearOpMode op, boolean isAuto) {
         armServo = op.hardwareMap.get(Servo.class, "wobbleServo");
         leftClampServo = op.hardwareMap.get(Servo.class, "leftClamp");
         rightClampServo = op.hardwareMap.get(Servo.class, "rightClamp");
 
-        armUp();
-        clamp();
+//        if (isAuto) {
+            armUp();
+            clamp();
+//        } else {
+//            armInside();
+//            clawIn();
+//        }
 
         op.telemetry.addData("Status", "Wobble Arm initialized");
     }
@@ -43,6 +48,10 @@ public class WobbleArm {
 
     public void unClamp() {
         setClampPosition(Constants.WOBBLE_UNCLAMP_POS_LEFT, Constants.WOBBLE_UNCLAMP_POS_RIGHT);
+    }
+
+    public void clawIn() {
+        setClampPosition(Constants.WOBBLE_HOME_POS_LEFT, Constants.WOBBLE_HOME_POS_RIGHT);
     }
 
     public void setClampPosition(double leftClampPosition, double rightClampPosition) {

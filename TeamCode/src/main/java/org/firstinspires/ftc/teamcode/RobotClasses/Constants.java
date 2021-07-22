@@ -39,7 +39,9 @@ public class Constants {
 
     public static double WOBBLE_CLAMP_POS_LEFT = 0.6;
     public static double WOBBLE_UNCLAMP_POS_LEFT = 0.1;
+    public static double WOBBLE_HOME_POS_LEFT = 0.9;
 
     public static double WOBBLE_CLAMP_POS_RIGHT = 0.1;
     public static double WOBBLE_UNCLAMP_POS_RIGHT = 0.7;
+    public static double WOBBLE_HOME_POS_RIGHT = 0.25;
 }

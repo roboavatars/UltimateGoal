@@ -27,15 +27,31 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawLine;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRing;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
-import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.PS_L;
-import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.PS_C;
-import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.PS_R;
 import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.HIGH_GOAL;
 import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.NONE;
+import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.PS_C;
+import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.PS_L;
+import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.PS_R;
 
 @Config
 @SuppressWarnings("FieldCanBeLocal")
 public class Robot {
+
+    /*
+    heres a basic list of stuff that needs to be done:
+    1. spend the first hour fixing odo
+    basically i did a 20 rotation test in both directions to adjust the imu drift, i added a imu drift compensation variable that u can tune
+    try to get it under 5 degrees in 20 rotations
+
+    2. spend the third hour working on shooter regression
+    this is arguably the most important item on the list btw
+
+    3. for the fourth hour, its time to get started on teleop
+    i havent implemented ps code, so u need to do that. i also soft capped the turret to 0 to pi. also u might wanna tune the turret pid by decreasing the p a little bit. also the wg arm can fold inside the robot, i started the implementation but u need to complete it
+
+    4. spend the second hour doing auto
+    dont waste too much time on this but basically get all the paths "working". basically the robot shud attempt at all the tasks and not do anything too stupid. u only have 60 minutes for 6 paths, so theres not much time to tune
+     */
 
     // Robot Classes
     public MecanumDrivetrain drivetrain;
@@ -135,7 +151,7 @@ public class Robot {
         drivetrain = new MecanumDrivetrain(op, x, y, theta);
         intake = new Intake(op, isAuto);
         shooter = new Shooter(op);
-        wobbleArm = new WobbleArm(op);
+        wobbleArm = new WobbleArm(op, isAuto);
         logger = new Logger();
         try {
             t265 = new T265(op, x, y, theta);
