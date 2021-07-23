@@ -5,12 +5,12 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 public class Constants {
     // Intake
-    public static double BLOCKER_HOME_POS = 0.72;
+    public static double BLOCKER_HOME_POS = 0.9;
     public static double BLOCKER_UP_POS = 0.51;
     public static double BLOCKER_DOWN_POS = 0.47;
 
-    public static double BUMPER_HOME_POS = 0.14;
-    public static double BUMPER_OUT_POS = 1;
+    public static double BUMPER_OUT_POS = 0.14;
+    public static double BUMPER_HOME_POS = 1;
 
     // Shooter
     public static int HIGH_GOAL_VELOCITY = 1620;
@@ -37,11 +37,11 @@ public class Constants {
     public static double WOBBLE_UP_POS = 0.5;
     public static double WOBBLE_DOWN_POS = 1;
 
-    public static double WOBBLE_CLAMP_POS_LEFT = 0.1;
-    public static double WOBBLE_UNCLAMP_POS_LEFT = 0.6;
+    public static double WOBBLE_UNCLAMP_POS_LEFT = 0.1;
+    public static double WOBBLE_CLAMP_POS_LEFT = 0.6;
     public static double WOBBLE_HOME_POS_LEFT = 0.9;
 
-    public static double WOBBLE_CLAMP_POS_RIGHT = 0.7;
-    public static double WOBBLE_UNCLAMP_POS_RIGHT = 0.1;
+    public static double WOBBLE_UNCLAMP_POS_RIGHT = 0.7;
+    public static double WOBBLE_CLAMP_POS_RIGHT = 0.1;
     public static double WOBBLE_HOME_POS_RIGHT = 0.25;
 }

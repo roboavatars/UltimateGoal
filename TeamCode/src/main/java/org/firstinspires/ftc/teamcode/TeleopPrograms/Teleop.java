@@ -13,13 +13,13 @@ import java.util.Arrays;
 
 import static java.lang.Math.PI;
 
-@TeleOp(name = "3 Not Teleop")
+@TeleOp(name = "1 Teleop")
 @SuppressWarnings("FieldCanBeLocal")
 @Config
 public class Teleop extends LinearOpMode {
 
     // Backup Starting Position
-    private final int startX = 111;
+    private final int startX = 87;
     private final int startY = 63;
     private final double startTheta = PI/2;
 
@@ -115,7 +115,7 @@ public class Teleop extends LinearOpMode {
 
             // Rev Up Flywheel for High Goal
             if (gamepad2.y) {
-                robot.shooter.flywheelHG();
+                robot.shooter.flywheelHG(robot.hgDist);
             }
 
             // Wobble Arm In / Up / Down
@@ -190,7 +190,7 @@ public class Teleop extends LinearOpMode {
 
             // Reset Odometry
             if (gamepad1.x) {
-                robot.resetOdo(111, 63, PI/2);
+                robot.resetOdo(87, 63, PI/2);
                 robot.shootYOffset = 0;
                 robot.flapOverride = 0;
             }

@@ -52,12 +52,12 @@ public class RedAutoPowerShot extends LinearOpMode {
         boolean park = false;
 
         // Segment Times
-        double goToPowerShotsTime = 2;
-        double deliverWobbleTime = 2;
-        double goToBounceBackTime = 2;
-        double bounceBackTime = 5;
+        double goToPowerShotsTime = 1.5;
+        double deliverWobbleTime = 2.0;
+        double goToBounceBackTime = 2.0;
+        double bounceBackTime = 4.0;
         double goToBounceShootTime = 2;
-        double parkTime = 2;
+        double parkTime = 1.5;
 
         // Paths
         Waypoint[] goToPowerShotsWaypoints = new Waypoint[] {
@@ -80,13 +80,14 @@ public class RedAutoPowerShot extends LinearOpMode {
         waitForStart();
 
         robot.drivetrain.updateThetaError();
+        robot.intake.blockerUp();
 
         // Determine Ring Case
         RingCase ringCase = detector.getStackPipe().getModeResult();
         Robot.log("Ring case: " + ringCase);
 
         // Customize Pathing Depending on Ring Case
-        double[][] wobbleDelivery = {{115, 85, PI/2}, {90, 100, PI/2}, {125, 130, 2*PI/3}};
+        double[][] wobbleDelivery = {{111, 85, PI/2}, {87, 100, PI/2}, {121, 125, 2*PI/3}};
         double[] wobbleCor;
         if (ringCase == RingCase.Zero) {
             wobbleCor = wobbleDelivery[0];
@@ -110,12 +111,10 @@ public class RedAutoPowerShot extends LinearOpMode {
                 Pose curPose = goToPowerShotsPath.getRobotPose(curTime);
                 robot.setTargetPoint(curPose);
 
-//                robot.shooter.flywheelPS();
-                robot.shooter.flywheelHG();
+                robot.shooter.flywheelPS();
 
                 if (time.seconds() > goToPowerShotsTime) {
-//                    robot.powerShotShoot();
-                    robot.highGoalShoot();
+                    robot.powerShotShoot();
 
                     goToPowerShots = true;
                     time.reset();
@@ -125,6 +124,8 @@ public class RedAutoPowerShot extends LinearOpMode {
             // Shoot Power Shots
             else if (!shootPowerShots) {
                 if (!robot.preShoot && !robot.shoot && robot.numRings == 0) {
+                    robot.intake.bumpersOut();
+
                     Waypoint[] deliverWobbleWaypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, robot.theta, 40, 30, 0, 0),
                             new Waypoint(wobbleCor[0], wobbleCor[1], wobbleCor[2], 5, -30, 0, deliverWobbleTime),
@@ -141,18 +142,21 @@ public class RedAutoPowerShot extends LinearOpMode {
                 double curTime = Math.min(time.seconds(), deliverWobbleTime);
                 robot.setTargetPoint(deliverWobblePath.getRobotPose(curTime));
 
-                if ((!reachedDeposit && robot.isAtPose(wobbleCor[0], wobbleCor[1], wobbleCor[2])) || time.seconds() > deliverWobbleTime) {
+                if ((!reachedDeposit && robot.isAtPose(wobbleCor[0], wobbleCor[1], wobbleCor[2]) && robot.notMoving()) || time.seconds() > deliverWobbleTime + 1) {
                     robot.wobbleArm.armDown();
+                    depositReachTime = curTime;
                 }
 
-                if ((!reachedDeposit && robot.isAtPose(wobbleCor[0], wobbleCor[1], wobbleCor[2]) && robot.notMoving()) || time.seconds() > deliverWobbleTime + 1) {
+                if ((!reachedDeposit && depositReachTime > 0.75) || time.seconds() > deliverWobbleTime + 2.5) {
                     reachedDeposit = true;
                     depositReachTime = curTime;
                     robot.wobbleArm.unClamp();
                 }
 
-                if ((reachedDeposit && time.seconds() > depositReachTime + 1) || time.seconds() > deliverWobbleTime + 3) {
+                if ((reachedDeposit && time.seconds() > depositReachTime + 1.5) || time.seconds() > deliverWobbleTime + 4) {
                     robot.wobbleArm.armUp();
+                    robot.intake.blockerHome();
+                    robot.intake.bumpersHome();
 
                     Waypoint[] goToBounceBackWaypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, robot.theta,  10, 5, 0, 0),
@@ -174,14 +178,14 @@ public class RedAutoPowerShot extends LinearOpMode {
                 if (time.seconds() > goToBounceBackTime || ringCase == RingCase.Four) {
                     Waypoint[] bounceBackWaypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, PI, 60, 60, 0, 0),
-                            new Waypoint(92, 130, PI, 30, 20, 0, 2.75),
-                            new Waypoint(82, 131, PI, 20, 5, 0, bounceBackTime),
+                            new Waypoint(87, 129, PI, 30, 20, 0, 3.0),
+                            new Waypoint(82, 129, PI, 20, 5, 0, bounceBackTime),
                     };
                     bounceBackPath = new Path(new ArrayList<>(Arrays.asList(bounceBackWaypoints)));
 
                     Waypoint[] bounceBackThWaypoints = new Waypoint[] {
-                            new Waypoint(robot.theta, 0, 0, 0, 0, 0, 0),
-                            new Waypoint(3*PI/4, 0, 0, 0, 0, 0, 2.75),
+                            new Waypoint(3*PI/4, 0, 0, 0, 0, 0, 0),
+                            new Waypoint(3*PI/4, 0, 0, 0, 0, 0, 3.0),
                             new Waypoint(PI/2, 0, 0, 0, 0, 0, bounceBackTime),
                     };
                     bounceBackThPath = new Path(new ArrayList<>(Arrays.asList(bounceBackThWaypoints)));
@@ -208,7 +212,8 @@ public class RedAutoPowerShot extends LinearOpMode {
                     goToBounceShootPath = new Path(new ArrayList<>(Arrays.asList(goToBounceShootWaypoints)));
 
                     robot.intake.off();
-                    robot.shooter.flywheelHG();
+                    robot.intake.blockerUp();
+                    robot.shooter.flywheelHG(robot.hgDist);
 
                     intakeBounceBacks = true;
                     time.reset();
@@ -233,8 +238,8 @@ public class RedAutoPowerShot extends LinearOpMode {
             else if (!shootBounceBacks) {
                 if (!robot.preShoot && !robot.shoot && robot.numRings == 0) {
                     Waypoint[] parkWaypoints = new Waypoint[] {
-                            new Waypoint(robot.x, robot.y, robot.theta, 40, 30, 0, 0),
-                            new Waypoint(85, 85, PI/2, 5, -30, 0, parkTime),
+                            new Waypoint(robot.x, robot.y, robot.theta, 20, 20, 0, 0),
+                            new Waypoint(85, 85, PI/2, 5, 0, 0, parkTime),
                     };
                     parkPath = new Path(new ArrayList<>(Arrays.asList(parkWaypoints)));
 

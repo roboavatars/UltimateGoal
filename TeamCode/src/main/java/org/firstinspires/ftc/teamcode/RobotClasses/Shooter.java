@@ -39,10 +39,10 @@ public class Shooter {
     public static double dFlywheel = 0;
     public static double fFlywheel = 13;
 
-    public static double pTurret = 0.4;
-    public static double dTurret = 2.8;
+    public static double pTurret = 2.25;
+    public static double dTurret = 6;
     public static double fTurret = 0;
-    public static double initialTheta = 0;
+    public static double initialTheta = PI/2;
 
     private double targetTheta = 0;
     private double turretTheta;
@@ -50,8 +50,12 @@ public class Shooter {
     private double turretErrorChange;
     private double lockTheta;
 
-    private static final double TICKS_PER_RADIAN = 126 / PI;
+    private static final double TICKS_PER_RADIAN = 466.2 / PI;
     private double targetVelocity = 0;
+
+    private int count = 0;
+    private final int currentCheckInterval = 2000;
+    private boolean stalling = false;
 
     public Shooter(LinearOpMode op) {
         flywheelMotor = op.hardwareMap.get(DcMotorEx.class, "flywheel");
@@ -60,9 +64,8 @@ public class Shooter {
         flywheelMotor.setVelocityPIDFCoefficients(pFlywheel, 0, dFlywheel, fFlywheel);
 
         turretMotor = op.hardwareMap.get(DcMotorEx.class, "turret");
-        turretMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        turretMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
         flapServo = op.hardwareMap.get(Servo.class, "flapServo");
         magServo = op.hardwareMap.get(Servo.class, "magServo");
@@ -88,13 +91,23 @@ public class Shooter {
         turretTheta = getTheta();
         turretErrorChange = targetTheta - turretTheta - turretError;
         turretError = targetTheta - turretTheta;
-        if (turretMotor.getCurrent(CurrentUnit.MILLIAMPS) > 9000) {
-            turretMotor.setPower(0);
-        } else {
-            turretMotor.setPower(Math.max(-0.4, Math.min(pTurret * turretError + dTurret * turretErrorChange + fTurret, 0.4)));
+
+        if (count % currentCheckInterval == 0) {
+            if (turretMotor.getCurrent(CurrentUnit.MILLIAMPS) > 9000) {
+                stalling = true;
+                turretMotor.setPower(0);
+                Robot.log("Turret motor stall detected!");
+            } else {
+                stalling = false;
+            }
+        } else if (!stalling) {
+            turretMotor.setPower(pTurret * turretError + dTurret * turretErrorChange + fTurret);
         }
 
-        flywheelMotor.setVelocityPIDFCoefficients(pFlywheel, 0, dFlywheel, fFlywheel);
+        if (stalling) {
+            Robot.log("Turret motor stalling!!!");
+        }
+        count++;
     }
 
     // Flywheel

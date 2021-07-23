@@ -4,13 +4,12 @@ import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
-import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 
-@TeleOp(name = "1 Teleop")
+@TeleOp(name = "2 Regression")
 @Config
 public class Regression extends LinearOpMode {
 
@@ -34,7 +33,6 @@ public class Regression extends LinearOpMode {
     public static double transferPow = 0.5;
 
     public static double flywheelVelocity = 1450;
-    public static double flapPos = Constants.FLAP_BACK_POS;
     public static double theta0 = 1.671;
     public static double theta1 = 1.600;
     public static double theta2 = 1.498;
@@ -59,7 +57,7 @@ public class Regression extends LinearOpMode {
                 robot.intake.off();
             }
 
-            /*if (gamepad1.left_bumper && !flywheelToggle) {
+            if (gamepad1.left_bumper && !flywheelToggle) {
                 flywheelToggle = true;
                 if (flywheelOn) {
                     robot.shooter.magHome();
@@ -87,27 +85,17 @@ public class Regression extends LinearOpMode {
                 magUp = !magUp;
             } else if (!gamepad1.a && magToggle) {
                 magToggle = false;
-            }*/
-
-            if (gamepad1.a) {
-                robot.cancelShoot();
-            }
-
-            if (gamepad1.b) {
-                robot.shooter.flywheelHG(robot.hgDist);
             }
 
             if (gamepad1.right_bumper) {
-//                robot.powerShotShoot();
-                robot.highGoalShoot();
-//                if (!started) {
-//                    started = true;
-//                    flickTime = System.currentTimeMillis();
-//                    numRings = 3;
-//                }
+                if (!started) {
+                    started = true;
+                    flickTime = System.currentTimeMillis();
+                    numRings = 3;
+                }
             }
 
-            /*if (started && System.currentTimeMillis() - flickTime > delay && numRings > 0) {
+            if (started && System.currentTimeMillis() - flickTime > delay && numRings > 0) {
                 if (robot.shooter.feedHome) {
                     robot.shooter.feedShoot();
                 } else {
@@ -119,7 +107,7 @@ public class Regression extends LinearOpMode {
                 if (numRings == 0) {
                     started = false;
                 }
-            }*/
+            }
 
             if (gamepad1.y) {
                 robot.intake.blockerUp();

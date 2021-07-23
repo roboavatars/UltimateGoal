@@ -5,9 +5,7 @@ import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.RobotClasses.MecanumDrivetrain;
 
 import static java.lang.Math.PI;
@@ -23,12 +21,13 @@ public class TurretTest extends LinearOpMode {
     private DcMotorEx turret;
     private double targetTheta = 0;
 
-    public static final double TICKS_PER_RADIAN = 126 / PI;
+    public static final double TICKS_PER_RADIAN = 466.2 / PI;
     public static double a_NumFactor = 0;
     public static double b_DemonFactor = 2;
+    public static double initialTheta = 0;
 
-    public static double p = 0.4;
-    public static double d = 2.8;
+    public static double p = 6;
+    public static double d = 2.25;
     public static double f = 0;
 
     public static boolean dashTarget = true;
@@ -41,18 +40,17 @@ public class TurretTest extends LinearOpMode {
     @Override
     public void runOpMode() {
         turret = hardwareMap.get(DcMotorEx.class, "turret");
-        turret.setDirection(DcMotorSimple.Direction.REVERSE);
         turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
-        turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+        turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        drivetrain = new MecanumDrivetrain(this, 111, 63, PI/2);
+        drivetrain = new MecanumDrivetrain(this, 87, 63, PI/2);
 
         waitForStart();
 
         while (opModeIsActive()) {
             drivetrain.updatePose();
 
-            targetTheta = (a_NumFactor * PI / b_DemonFactor - drivetrain.theta + PI/2) % (2*PI);
+            targetTheta = ((a_NumFactor * PI / b_DemonFactor) - drivetrain.theta + PI/2) % (2*PI);
             if (targetTheta < 0) {
                 targetTheta += 2*PI;
             }
@@ -60,16 +58,14 @@ public class TurretTest extends LinearOpMode {
                 targetTheta -= 2*PI;
             }
             targetTheta = Math.min(Math.max(targetTheta, 0), PI);
-            turretTheta = turret.getCurrentPosition() / TICKS_PER_RADIAN;
+            turretTheta = turret.getCurrentPosition() / TICKS_PER_RADIAN + initialTheta;
             turretErrorChange = targetTheta - turretTheta - turretError;
             turretError = targetTheta - turretTheta;
 
             if (dashTarget) {
-                turret.setPower(Math.max(-0.4, Math.min(p * turretError + d * turretErrorChange + f, 0.4)));
-                turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
+                turret.setPower(p * turretError + d * turretErrorChange + f);
             } else {
-                turret.setPower(0.4 * (gamepad1.left_trigger - gamepad1.right_trigger));
-                turret.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
+                turret.setPower(gamepad1.left_trigger - gamepad1.right_trigger);
             }
 
             drivetrain.setControls(-gamepad1.left_stick_y * 0.7, -gamepad1.left_stick_x * 0.7, -gamepad1.right_stick_x * 0.7);
@@ -78,11 +74,10 @@ public class TurretTest extends LinearOpMode {
             double timeDiff = curTime - prevTime;
             prevTime = curTime;
 
-            drawRobot(111, 63, drivetrain.theta, drivetrain.theta + turretTheta - PI/2, "black", "gray");
+            drawRobot(drivetrain.x, drivetrain.y, drivetrain.theta, drivetrain.theta + turretTheta - PI/2, "black", "gray");
             addPacket("Target Theta", targetTheta);
             addPacket("Turret Theta", turretTheta);
             addPacket("Theta Error", turretError);
-            addPacket("Current", turret.getCurrent(CurrentUnit.MILLIAMPS));
             addPacket("Turret Global", drivetrain.theta + turretTheta - PI/2);
             addPacket("IMU Theta", drivetrain.theta);
             addPacket("Ticks", turret.getCurrentPosition());

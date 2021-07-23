@@ -137,6 +137,8 @@ public class T265 {
         updateCamPose();
         camInitTheta = theta;
         thetaError = startTheta - camInitTheta;
+        Robot.log("Initial T265 pos: " + camInitTheta);
+        Robot.log("Initial T265 error: " + thetaError);
     }
 
     public void resetTheta() {

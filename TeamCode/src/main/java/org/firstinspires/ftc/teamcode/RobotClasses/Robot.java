@@ -253,7 +253,6 @@ public class Robot {
             if (numRings > 0) {
                 if (highGoal) {
                     lastTarget = 3;
-                    drivetrain.stop();
                 } else if (numRings == 3 || curTime - flickTime > flickDelay) {
                     setLockMode(numRings-1);
                     lastTarget = numRings-1;
@@ -281,10 +280,6 @@ public class Robot {
                             log("Feed ring 3");
                         }
 
-                        if (isAuto && !highGoal) {
-                            drivetrain.stop();
-                        }
-
                         if (shooter.feedHome) {
                             shooter.feedShoot();
                         } else {
@@ -309,6 +304,10 @@ public class Robot {
                     shooter.magHome();
                     shoot = false;
                     shootOverride = false;
+
+                    if (!highGoal) {
+                        setLockMode(HIGH_GOAL);
+                    }
 
                     log("In shoot Velocity/Target: --------------------");
                     log("Shoot done");
@@ -369,8 +368,6 @@ public class Robot {
 
         profile(7);
 
-        // gobuilda 5.2
-
         // Dashboard Telemetry
         if (startVoltTooLow) {
             addPacket("0", "Starting Battery Voltage < 12.4!!!!");
@@ -386,6 +383,7 @@ public class Robot {
         addPacket("9 Update Frequency (Hz)", round(1 / timeDiff));
         addPacket("Pod Zeroes", drivetrain.zero1 + ", " + drivetrain.zero2 + ", " + drivetrain.zero3);
         addPacket("offsets", round(thetaOffset) + " " + round(flapOverride) + " " + shootYOffset);
+        addPacket("ms", round(timeDiff * 1000));
         if (!isAuto) {
             addPacket("Cycle Time", (curTime - lastCycleTime) / 1000);
             addPacket("Average Cycle Time", round(cycleTotal / cycles));
@@ -478,6 +476,7 @@ public class Robot {
             numRingsPreset = 3;
             startShootTime = curTime;
             flapPos = Constants.FLAP_DOWN_POS;
+            drivetrain.stop();
             setLockMode(PS_R);
             log("Powershot shoot initiated");
         }
@@ -634,7 +633,7 @@ public class Robot {
 
     public boolean notMoving() {
         if (isAuto || !highGoal) {
-            return notMoving(3.0, 0.3);
+            return notMoving(3.0, 0.2);
         }
         return true;
     }
