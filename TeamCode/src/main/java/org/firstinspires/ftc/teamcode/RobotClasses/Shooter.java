@@ -102,6 +102,10 @@ public class Shooter {
         setFlywheelVelocity(Constants.HIGH_GOAL_VELOCITY);
     }
 
+    public void flywheelHG(double d) {
+        setFlywheelVelocity(3*d + 1320);
+    }
+
     public void flywheelPS() {
         setFlywheelVelocity(Constants.POWERSHOT_VELOCITY);
     }

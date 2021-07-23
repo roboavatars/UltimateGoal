@@ -139,6 +139,10 @@ public class T265 {
         thetaError = startTheta - camInitTheta;
     }
 
+    public void resetTheta() {
+        thetaError = startTheta - theta;
+    }
+
     public double getInitTheta() {
         return camInitTheta;
     }

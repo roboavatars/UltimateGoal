@@ -44,7 +44,7 @@ public class Regression extends LinearOpMode {
         robot = new Robot(this, startX, startY, startTheta, false);
         robot.logger.startLogging(false);
 
-//        robot.setLockMode(Robot.TurretMode.PS_R);
+        robot.setLockMode(Robot.TurretMode.HIGH_GOAL);
 
         waitForStart();
 
@@ -59,7 +59,7 @@ public class Regression extends LinearOpMode {
                 robot.intake.off();
             }
 
-            if (gamepad1.left_bumper && !flywheelToggle) {
+            /*if (gamepad1.left_bumper && !flywheelToggle) {
                 flywheelToggle = true;
                 if (flywheelOn) {
                     robot.shooter.magHome();
@@ -87,11 +87,19 @@ public class Regression extends LinearOpMode {
                 magUp = !magUp;
             } else if (!gamepad1.a && magToggle) {
                 magToggle = false;
+            }*/
+
+            if (gamepad1.a) {
+                robot.cancelShoot();
+            }
+
+            if (gamepad1.b) {
+                robot.shooter.flywheelHG(robot.hgDist);
             }
 
             if (gamepad1.right_bumper) {
-                robot.powerShotShoot();
-//                robot.highGoalShoot();
+//                robot.powerShotShoot();
+                robot.highGoalShoot();
 //                if (!started) {
 //                    started = true;
 //                    flickTime = System.currentTimeMillis();
@@ -99,7 +107,7 @@ public class Regression extends LinearOpMode {
 //                }
             }
 
-            if (started && System.currentTimeMillis() - flickTime > delay && numRings > 0) {
+            /*if (started && System.currentTimeMillis() - flickTime > delay && numRings > 0) {
                 if (robot.shooter.feedHome) {
                     robot.shooter.feedShoot();
                 } else {
@@ -111,7 +119,7 @@ public class Regression extends LinearOpMode {
                 if (numRings == 0) {
                     started = false;
                 }
-            }
+            }*/
 
             if (gamepad1.y) {
                 robot.intake.blockerUp();
@@ -120,7 +128,7 @@ public class Regression extends LinearOpMode {
             }
 
             if (gamepad1.x) {
-                robot.resetOdo(111, 63, Math.PI/2);
+                robot.resetOdo(87, 63, Math.PI/2);
             }
 
             if (gamepad2.dpad_up && !inToggle) {
@@ -192,12 +200,10 @@ public class Regression extends LinearOpMode {
                 robot.drivetrain.setControls(-gamepad1.left_stick_y , -gamepad1.left_stick_x , -gamepad1.right_stick_x);
             }
 
-            addPacket("d", Math.sqrt(Math.pow(robot.x - 108, 2) + Math.pow(144 - robot.y, 2)));
+            addPacket("d", robot.hgDist);
             addPacket("Theta Error", robot.drivetrain.getThetaError());
-            addPacket("Sussy Error", robot.drivetrain.getInitTheta());
+            addPacket("Init Theta", robot.drivetrain.getInitTheta());
             robot.update();
-
-            Robot.log(Robot.round(robot.x) + ", " + Robot.round(robot.y) + ", " + Robot.round(robot.theta));
 
             telemetry.addData("Robot X", robot.x);
             telemetry.addData("Robot Y", robot.y);

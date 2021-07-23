@@ -117,6 +117,7 @@ public class MecanumDrivetrain {
         x = newX;
         y = newY;
         theta = newTheta;
+        t265.resetTheta();
 //        imu.resetHeading(newTheta);
     }
 
