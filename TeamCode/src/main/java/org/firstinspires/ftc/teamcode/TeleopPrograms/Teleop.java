@@ -115,7 +115,7 @@ public class Teleop extends LinearOpMode {
 
             // Rev Up Flywheel for High Goal
             if (gamepad2.y) {
-                robot.shooter.flywheelHG(robot.hgDist);
+                robot.shooter.setFlywheelVelocity(robot.calcHGVelocity());
             }
 
             // Wobble Arm In / Up / Down

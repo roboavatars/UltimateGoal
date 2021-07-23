@@ -186,9 +186,8 @@ public class Robot {
 
             // Set flywheel velocity based on what we want to shoot
             if (highGoal) {
-                shooter.flywheelHG(hgDist);
-//                shooter.flywheelHG();
-                vThresh = 3 * (int)hgDist + 1225;
+                shooter.setFlywheelVelocity(calcHGVelocity());
+                vThresh = calcHGVelocity() - 100;
             } else {
                 shooter.flywheelPS();
                 vThresh = Constants.POWERSHOT_VELOCITY - 50;
@@ -552,6 +551,10 @@ public class Robot {
         // Calculate Robot Angle
 //        double d = Math.sqrt(Math.pow(lockX - shooterX, 2) + Math.pow(lockY - shooterY, 2));
         return Math.atan2(dy, dx)/* + 0.0013 * d - 0.2300*/;
+    }
+
+    public int calcHGVelocity() {
+        return (int) (1905 - 7.68*hgDist + 0.049*Math.pow(hgDist, 2));
     }
 
     // Set target point (velocity specification, custom Kp and Kv values)

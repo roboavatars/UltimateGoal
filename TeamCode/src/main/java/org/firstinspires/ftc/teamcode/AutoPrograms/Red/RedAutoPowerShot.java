@@ -213,7 +213,7 @@ public class RedAutoPowerShot extends LinearOpMode {
 
                     robot.intake.off();
                     robot.intake.blockerUp();
-                    robot.shooter.flywheelHG(robot.hgDist);
+                    robot.shooter.setFlywheelVelocity(robot.calcHGVelocity());
 
                     intakeBounceBacks = true;
                     time.reset();
