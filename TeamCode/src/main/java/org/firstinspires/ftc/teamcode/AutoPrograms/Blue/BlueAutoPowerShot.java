@@ -35,7 +35,7 @@ public class BlueAutoPowerShot extends LinearOpMode {
             park on line
         */
 
-        Robot robot = new Robot(this, 90, 9, PI/2, true);
+        Robot robot = new Robot(this, 54, 9, PI/2, true);
         robot.logger.startLogging(true);
 
         Vision detector = new Vision(this, Vision.Pipeline.StackHeight);
@@ -61,8 +61,8 @@ public class BlueAutoPowerShot extends LinearOpMode {
 
         // Paths
         Waypoint[] goToPowerShotsWaypoints = new Waypoint[] {
-                new Waypoint(90, 9, PI/2, 20, 30, 0, 0),
-                new Waypoint(87, 63, PI/2, 5, -30, 0, goToPowerShotsTime),
+                new Waypoint(54, 9, PI/2, 20, 30, 0, 0),
+                new Waypoint(57, 63, PI/2, 5, -30, 0, goToPowerShotsTime),
         };
         Path goToPowerShotsPath = new Path(new ArrayList<>(Arrays.asList(goToPowerShotsWaypoints)));
         Path deliverWobblePath = null;
@@ -86,7 +86,7 @@ public class BlueAutoPowerShot extends LinearOpMode {
         Robot.log("Ring case: " + ringCase);
 
         // Customize Pathing Depending on Ring Case
-        double[][] wobbleDelivery = {{115, 85, PI/2}, {90, 100, PI/2}, {125, 130, 2*PI/3}};
+        double[][] wobbleDelivery = {{29, 85, PI/2}, {54, 100, PI/2}, {19, 130, 2*PI/3}};
         double[] wobbleCor;
         if (ringCase == RingCase.Zero) {
             wobbleCor = wobbleDelivery[0];
@@ -174,8 +174,8 @@ public class BlueAutoPowerShot extends LinearOpMode {
                 if (time.seconds() > goToBounceBackTime || ringCase == RingCase.Four) {
                     Waypoint[] bounceBackWaypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, PI, 60, 60, 0, 0),
-                            new Waypoint(92, 130, PI, 30, 20, 0, 2.75),
-                            new Waypoint(82, 131, PI, 20, 5, 0, bounceBackTime),
+                            new Waypoint(52, 130, PI, 30, 20, 0, 2.75),
+                            new Waypoint(62, 131, PI, 20, 5, 0, bounceBackTime),
                     };
                     bounceBackPath = new Path(new ArrayList<>(Arrays.asList(bounceBackWaypoints)));
 
@@ -203,7 +203,7 @@ public class BlueAutoPowerShot extends LinearOpMode {
                 if (time.seconds() > bounceBackTime) {
                     Waypoint[] goToBounceShootWaypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, robot.theta, -40, -30, 0, 0),
-                            new Waypoint(85, 63, PI/2, -5, 20, 0, goToBounceShootTime),
+                            new Waypoint(59, 63, PI/2, -5, 20, 0, goToBounceShootTime),
                     };
                     goToBounceShootPath = new Path(new ArrayList<>(Arrays.asList(goToBounceShootWaypoints)));
 
@@ -234,7 +234,7 @@ public class BlueAutoPowerShot extends LinearOpMode {
                 if (!robot.preShoot && !robot.shoot && robot.numRings == 0) {
                     Waypoint[] parkWaypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, robot.theta, 40, 30, 0, 0),
-                            new Waypoint(85, 85, PI/2, 5, -30, 0, parkTime),
+                            new Waypoint(59, 85, PI/2, 5, -30, 0, parkTime),
                     };
                     parkPath = new Path(new ArrayList<>(Arrays.asList(parkWaypoints)));
 

@@ -37,7 +37,7 @@ public class BlueAutoStarterStack extends LinearOpMode {
             park on line
         */
 
-        Robot robot = new Robot(this, 114, 9, PI/2, true);
+        Robot robot = new Robot(this, 30, 9, PI/2, true);
         robot.logger.startLogging(true);
 
         Vision detector = new Vision(this, Vision.Pipeline.StackHeight);
@@ -62,8 +62,8 @@ public class BlueAutoStarterStack extends LinearOpMode {
 
         // Paths
         Waypoint[] goToStackWaypoints = new Waypoint[] {
-                new Waypoint(114, 9, PI/2, 30, 30, 0, 0),
-                new Waypoint(110, 32, PI/2, 5, -30, 0, goToStackTime),
+                new Waypoint(30, 9, PI/2, 30, 30, 0, 0),
+                new Waypoint(34, 32, PI/2, 5, -30, 0, goToStackTime),
         };
         Path goToStackPath = new Path(new ArrayList<>(Arrays.asList(goToStackWaypoints)));
         Path deliverWobblePath = null;
@@ -85,7 +85,7 @@ public class BlueAutoStarterStack extends LinearOpMode {
         Robot.log("Ring case: " + ringCase);
 
         // Customize Pathing Depending on Ring Case
-        double[][] wobbleDelivery = {{130, 70, 5*PI/6}, {108, 93, 5*PI/6}, {126, 119, 2*PI/3}};
+        double[][] wobbleDelivery = {{14, 70, 5*PI/6}, {36, 93, 5*PI/6}, {18, 119, 2*PI/3}};
         double[] wobbleCor;
         if (ringCase == RingCase.Zero) {
             wobbleCor = wobbleDelivery[0];
@@ -147,16 +147,16 @@ public class BlueAutoStarterStack extends LinearOpMode {
                         robot.intake.setPower(-0.5);
                     } else if (knockStack) {
                         robot.intake.on();
-                        robot.setTargetPoint(new Target(110, Math.min(36 + 4.5 * time.seconds(), 41), PI/2).thetaW0(PI/2).thetaKp(3.0));
-                    } else if (robot.isAtPose(110, 36, PI/2, 0.5, 0.5, PI/35) && robot.notMoving()) {
+                        robot.setTargetPoint(new Target(34, Math.min(36 + 4.5 * time.seconds(), 41), PI/2).thetaW0(PI/2).thetaKp(3.0));
+                    } else if (robot.isAtPose(34, 36, PI/2, 0.5, 0.5, PI/35) && robot.notMoving()) {
                         robot.drivetrain.stop();
                         knockStack = true;
                     } else {
-                        robot.setTargetPoint(110, 36, PI/2);
+                        robot.setTargetPoint(34, 36, PI/2);
                     }
                 } else {
                     robot.intake.on();
-                    robot.setTargetPoint(110, 36, PI/2);
+                    robot.setTargetPoint(34, 36, PI/2);
                 }
 
                 if (time.seconds() > intakeStackTime) {
@@ -180,9 +180,9 @@ public class BlueAutoStarterStack extends LinearOpMode {
             // Intake Fourth Ring from Stack
             else if (!intakeStack2) {
                 if (time.seconds() < 1.5) {
-                    robot.setTargetPoint(new Target(110, Math.min(41 + 12 * time.seconds(), 63), PI/2).thetaW0(PI/2).thetaKp(3.0));
+                    robot.setTargetPoint(new Target(34, Math.min(41 + 12 * time.seconds(), 63), PI/2).thetaW0(PI/2).thetaKp(3.0));
                 } else {
-                    robot.setTargetPoint(110, 63, PI/2);
+                    robot.setTargetPoint(34, 63, PI/2);
                 }
 
                 if (time.seconds() > intakeStack2Time - 1) {
@@ -239,18 +239,18 @@ public class BlueAutoStarterStack extends LinearOpMode {
                     if (ringCase == RingCase.Zero) {
                         parkWaypoints = new Waypoint[] {
                                 new Waypoint(robot.x, robot.y, robot.theta, 20, 20, 0, 0),
-                                new Waypoint(robot.x - 15, robot.y + 4, PI, 5, 5, 0, 0.75),
-                                new Waypoint(110, 85, PI/2, 20, 10, 0, parkTime),
+                                new Waypoint(robot.x + 15, robot.y + 4, PI, 5, 5, 0, 0.75),
+                                new Waypoint(34, 85, PI/2, 20, 10, 0, parkTime),
                         };
                     } else if (ringCase == RingCase.One) {
                         parkWaypoints = new Waypoint[] {
                                 new Waypoint(robot.x, robot.y, robot.theta, -20, -10, 0, 0),
-                                new Waypoint(113, 85, PI/2, -20, -5, 0, parkTime),
+                                new Waypoint(31, 85, PI/2, -20, -5, 0, parkTime),
                         };
                     } else {
                         parkWaypoints = new Waypoint[] {
                                 new Waypoint(robot.x, robot.y, robot.theta, -50, -40, 0, 0),
-                                new Waypoint(113, 85, PI/2, -30, -10, 0, parkTime),
+                                new Waypoint(31, 85, PI/2, -30, -10, 0, parkTime),
                         };
                     }
                     parkPath = new Path(new ArrayList<>(Arrays.asList(parkWaypoints)));

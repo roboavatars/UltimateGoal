@@ -42,7 +42,7 @@ public class BlueAutoFull extends LinearOpMode {
             park on line
         */
 
-        Robot robot = new Robot(this, 114, 9, PI/2, true);
+        Robot robot = new Robot(this, 30, 9, PI/2, true);
         robot.logger.startLogging(true);
 
         Vision detector = new Vision(this, Vision.Pipeline.StackHeight);
@@ -79,8 +79,8 @@ public class BlueAutoFull extends LinearOpMode {
 
         // Paths
         Waypoint[] goToStackWaypoints = new Waypoint[] {
-                new Waypoint(114, 9, PI/2, 30, 30, 0, 0),
-                new Waypoint(109, 32, PI/2, 5, -30, 0, goToStackTime),
+                new Waypoint(30, 9, PI/2, 30, 30, 0, 0),
+                new Waypoint(35, 32, PI/2, 5, -30, 0, goToStackTime),
         };
         Path goToStackPath = new Path(new ArrayList<>(Arrays.asList(goToStackWaypoints)));
         Path deliverWobblePath = null;
@@ -111,8 +111,8 @@ public class BlueAutoFull extends LinearOpMode {
         RingCase ringCase = detector.getStackPipe().getModeResult();
         Robot.log("Ring case: " + ringCase);
 
-        double[][] wobbleDelivery = {{121, 93}, {97, 114}, {124.5, 127}};
-        double[][] wobble2Delivery = {{116, 83}, {92, 110}, {115.5, 127.5}};
+        double[][] wobbleDelivery = {{23, 93}, {47, 114}, {19.5, 127}};
+        double[][] wobble2Delivery = {{28, 83}, {52, 110}, {28.5, 127.5}};
         double[] wobbleCor;
         double[] wobble2Cor;
         if (ringCase == RingCase.Zero) {
@@ -121,8 +121,8 @@ public class BlueAutoFull extends LinearOpMode {
 
             goToStackTime = 1.75;
             goToStackWaypoints = new Waypoint[] {
-                    new Waypoint(114, 9, PI/2, 40, 50, 0, 0),
-                    new Waypoint(111, 63, PI/2, 30, 20, 0, goToStackTime),
+                    new Waypoint(30, 9, PI/2, 40, 50, 0, 0),
+                    new Waypoint(33, 63, PI/2, 30, 20, 0, goToStackTime),
             };
             goToStackPath = new Path(new ArrayList<>(Arrays.asList(goToStackWaypoints)));
 
@@ -198,12 +198,12 @@ public class BlueAutoFull extends LinearOpMode {
                         robot.intake.setPower(-0.5);
                     } else if (knockStack) {
                         robot.intake.on();
-                        robot.setTargetPoint(new Target(110, Math.min(36 + 4.5 * time.seconds(), 41), PI/2).thetaW0(PI/2).thetaKp(3.0));
-                    } else if (robot.isAtPose(110, 36, PI/2, 0.5, 0.5, PI/35) && robot.notMoving()) {
+                        robot.setTargetPoint(new Target(34, Math.min(36 + 4.5 * time.seconds(), 41), PI/2).thetaW0(PI/2).thetaKp(3.0));
+                    } else if (robot.isAtPose(34, 36, PI/2, 0.5, 0.5, PI/35) && robot.notMoving()) {
                         robot.drivetrain.stop();
                         knockStack = true;
                     } else {
-                        robot.setTargetPoint(110, 36, PI/2);
+                        robot.setTargetPoint(34, 36, PI/2);
                     }
                 }
 
@@ -227,9 +227,9 @@ public class BlueAutoFull extends LinearOpMode {
                     }
 
                     if (time.seconds() < 1.5) {
-                        robot.setTargetPoint(new Target(109, Math.min(41 + 12 * time.seconds(), 63), PI/2).thetaW0(PI/2).thetaKp(3.0));
+                        robot.setTargetPoint(new Target(35, Math.min(41 + 12 * time.seconds(), 63), PI/2).thetaW0(PI/2).thetaKp(3.0));
                     } else {
-                        robot.setTargetPoint(111, 63, PI/2);
+                        robot.setTargetPoint(33, 63, PI/2);
                     }
 
                     if (time.seconds() > intakeStack2Time - 1) {
@@ -266,7 +266,7 @@ public class BlueAutoFull extends LinearOpMode {
                         sweep = true;
                         Ring closestRing = null;
                         for (Ring ring : rings) {
-                            if (72 < ring.getX() && 96 < ring.getY() && ring.getY() < 124) {
+                            if (ring.getX() < 72 && 96 < ring.getY() && ring.getY() < 124) {
                                 sweep = false;
                                 closestRing = ring.clone();
                                 break;
@@ -329,9 +329,9 @@ public class BlueAutoFull extends LinearOpMode {
                         if (!sweep) {
                             ringWaypoints.add(new Waypoint(closestRing.getX(), closestRing.getY(), closestRing.driveToRing(robot.x, robot.y)[2], 40, 30, 0, 1.25));
                         }
-                        ringWaypoints.add(new Waypoint(sweep ? 62 : 72, 124, 0, 40, 30, 0, sweep ? 2.0 : 2.25));
-                        ringWaypoints.add(new Waypoint(116, 124, 0, 40, 30, 0, 3.75));
-                        ringWaypoints.add(new Waypoint(ringCase == RingCase.Four ? wobbleDelivery[2][0] : 122, wobbleDelivery[2][1], 0, 40, 5, 0, ringTime));
+                        ringWaypoints.add(new Waypoint(sweep ? 82 : 72, 124, 0, 40, 30, 0, sweep ? 2.0 : 2.25));
+                        ringWaypoints.add(new Waypoint(28, 124, 0, 40, 30, 0, 3.75));
+                        ringWaypoints.add(new Waypoint(ringCase == RingCase.Four ? wobbleDelivery[2][0] : 22, wobbleDelivery[2][1], 0, 40, 5, 0, ringTime));
                         ringPath = new Path(ringWaypoints);
 //                        }
 
@@ -358,7 +358,7 @@ public class BlueAutoFull extends LinearOpMode {
 //                } else {
                 if (time.seconds() < (sweep ? 2.0 : 2.25)) {
                     robot.setTargetPoint(ringPath.getRobotPose(Math.min(time.seconds(), ringTime)));
-                } else if (robot.x < 100) {
+                } else if (44 < robot.x) {
                     robot.setTargetPoint(new Target(ringPath.getRobotPose(Math.min(time.seconds(), ringTime))).thetaW0(PI/6).thetaKp(3.5).yKp(0.45));
                 } else {
                     robot.setTargetPoint(ringPath.getRobotPose(Math.min(time.seconds(), ringTime)), PI/2, 0);
@@ -386,7 +386,7 @@ public class BlueAutoFull extends LinearOpMode {
             else if (!deliverWobble) {
                 double curTime = Math.min(time.seconds(), deliverWobbleTime);
                 Pose curPose = deliverWobblePath.getRobotPose(curTime);
-                if (ringCase == RingCase.Four && robot.x > wobbleCor[0] - 4) {
+                if (ringCase == RingCase.Four && robot.x < wobbleCor[0] + 4) {
                     robot.setTargetPoint(wobbleCor[0], wobbleCor[1], 7*PI/12);
                 } else {
                     robot.setTargetPoint(new Target(curPose).thetaW0(ringCase != RingCase.Four ? curPose.theta + PI : PI/2));
@@ -411,8 +411,8 @@ public class BlueAutoFull extends LinearOpMode {
 
                     Waypoint[] intakeWobble2Waypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, robot.theta, -30, -50, 0, 0),
-                            new Waypoint(78, 21.75, PI/2, -0.1, 60, 0, 2.5),
-                            new Waypoint(85.5, 21.75, PI/2, -0.1, -0.1, 0, intakeWobble2Time),
+                            new Waypoint(66, 21.75, PI/2, -0.1, 60, 0, 2.5),
+                            new Waypoint(58.5, 21.75, PI/2, -0.1, -0.1, 0, intakeWobble2Time),
                     };
                     intakeWobble2Path = new Path(new ArrayList<>(Arrays.asList(intakeWobble2Waypoints)));
 
@@ -447,7 +447,7 @@ public class BlueAutoFull extends LinearOpMode {
 
                     Waypoint[] goToHighShootWaypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, robot.theta, 40, 40, 0, 0),
-                            new Waypoint(88, 61, PI/2, 30, 30, 0, goToHighShootTime),
+                            new Waypoint(56, 61, PI/2, 30, 30, 0, goToHighShootTime),
                     };
                     goToHighShootPath = new Path(new ArrayList<>(Arrays.asList(goToHighShootWaypoints)));
 
@@ -541,17 +541,17 @@ public class BlueAutoFull extends LinearOpMode {
                         parkWaypoints = new Waypoint[] {
                                 new Waypoint(robot.x, robot.y, robot.theta, -30, -30, 0, 0),
                                 new Waypoint(robot.x, robot.y - 15, PI/2, -10, 0, 0, 0.75),
-                                new Waypoint(85, 90, PI/3, 20, 20, 0, parkTime),
+                                new Waypoint(59, 90, PI/3, 20, 20, 0, parkTime),
                         };
                     } else if (ringCase == RingCase.One) {
                         parkWaypoints = new Waypoint[] {
                                 new Waypoint(robot.x, robot.y, robot.theta, -30, -30, 0, 0),
-                                new Waypoint(90, 85, PI/2, -10, 0, 0, parkTime),
+                                new Waypoint(54, 85, PI/2, -10, 0, 0, parkTime),
                         };
                     } else {
                         parkWaypoints = new Waypoint[] {
                                 new Waypoint(robot.x, robot.y, robot.theta, -50, -60, 0, 0),
-                                new Waypoint(104, 88, PI/2, -30, -30, 0, parkTime),
+                                new Waypoint(40, 88, PI/2, -30, -30, 0, parkTime),
                         };
                     }
                     parkPath = new Path(new ArrayList<>(Arrays.asList(parkWaypoints)));
