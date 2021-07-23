@@ -30,8 +30,8 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.HIGH_GOAL;
 import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.NONE;
-import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.PS_L;
 import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.PS_C;
+import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.PS_L;
 import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.PS_R;
 
 @Config
@@ -43,7 +43,6 @@ public class Robot {
     public Intake intake;
     public WobbleArm wobbleArm;
     public Shooter shooter;
-    public T265 t265;
     public Logger logger;
 
     private ElapsedTime profiler;
@@ -56,9 +55,6 @@ public class Robot {
     private final double xyTolerance = 1;
     private final double thetaTolerance = PI/35;
     private final double turretTolerance = PI/150;
-
-    private double odoCovariance = 1;
-    private boolean useT265 = false;
 
     // State Variables
     private final boolean isAuto;
@@ -85,9 +81,9 @@ public class Robot {
     public double shootDelay;
     private int vThresh;
     public static double flickTimeBackup = 1000;
-    public static int highGoalDelay = 125;
-    public static int psDelay = 250;
-    public static double flickDelay = 320;
+    public static int highGoalDelay = 200;
+    public static int psDelay = 300;
+    public static double flickDelay = 100;
 
     // Motion Variables
     public double x, y, theta, vx, vy, w, turretGlobalTheta;
@@ -109,14 +105,14 @@ public class Robot {
     private double lockX, lockY;
     private TurretMode turretMode = NONE;
 
-    public enum TurretMode {PS_L, PS_C, PS_R, HIGH_GOAL, NONE};
+    public enum TurretMode {PS_L, PS_C, PS_R, HIGH_GOAL, NONE}
 
     // Powershot Debug Variables
     public final double[] psShootPos = new double[] {87, 63};
-    public static double theta0 = 1.905;
-    public static double theta1 = 1.815;
-    public static double theta2 = 1.73;
-    public static double[] thetaPositions = {theta2, theta1, theta0};
+    public static double theta0 = 1.671;
+    public static double theta1 = 1.590;
+    public static double theta2 = 1.498;
+    public static double[] thetaPositions = {theta0, theta1, theta2};
 
     // Ring State Variables
     public ArrayList<Ring> shotRings = new ArrayList<>();
@@ -138,14 +134,6 @@ public class Robot {
         shooter = new Shooter(op);
         wobbleArm = new WobbleArm(op, isAuto);
         logger = new Logger();
-        try {
-            t265 = new T265(op, x, y, theta);
-            t265.startCam();
-        } catch (Exception ex) {
-            log("Camera error");
-            ex.printStackTrace();
-            useT265 = false;
-        }
 
         profiler = new ElapsedTime();
 
@@ -168,17 +156,11 @@ public class Robot {
     // Stop logger and t265
     public void stop() {
         logger.stopLogging();
-        if (useT265) {
-            t265.stopCam();
-        }
     }
 
     // Reset Odometry
     public void resetOdo(double x, double y, double theta) {
         drivetrain.resetOdo(x, y, theta);
-        if (useT265) {
-            t265.setCameraPose(x, y, theta);
-        }
     }
 
     public void update() {
@@ -187,7 +169,7 @@ public class Robot {
         curTime = System.currentTimeMillis();
 
         // Powershot Debug
-        thetaPositions = new double[] {theta2, theta1, theta0};
+        thetaPositions = new double[] {theta0, theta1, theta2};
 
         // Track time after start
         if (firstLoop) {
@@ -225,7 +207,7 @@ public class Robot {
 //            }
 
             // Start auto-feed when mag is up, velocity is high enough, and robot is at position
-            if (preShootOverride || (shooter.getFlywheelVelocity() >= vThresh && isAtPoseTurret(shootTargetTheta, PI/35)/*isAtPoseTurret(target[0], target[1], getShootAngle()) && notMoving()*/)) {
+            if (preShootOverride || (shooter.getFlywheelVelocity() >= vThresh && isAtPoseTurret(shootTargetTheta)/*isAtPoseTurret(target[0], target[1], getShootAngle()) && notMoving()*/)) {
                 if (highGoal) {
                     shootDelay = highGoalDelay;
                     vThresh = Constants.HIGH_GOAL_VELOCITY - 75;
@@ -248,7 +230,7 @@ public class Robot {
                 if (!isAuto && highGoal) {
                     cancelShoot();
                 } else {
-                    log("PS: vel: " + (vThresh <= shooter.getFlywheelVelocity())  + ", pose: " + isAtPoseTurret(shootTargetTheta, PI/35)/*isAtPose(target[0], target[1], target[2] - (highGoal ? thetaOffset : 0), 1, 1, PI/35) + ", v: " + notMoving()*/);
+                    log("PS: vel: " + (vThresh <= shooter.getFlywheelVelocity())  + ", pose: " + isAtPoseTurret(shootTargetTheta)/*isAtPose(target[0], target[1], target[2] - (highGoal ? thetaOffset : 0), 1, 1, PI/35) + ", v: " + notMoving()*/);
                     preShootOverride = true;
                 }
                 log("Preshoot Timed Out");
@@ -265,23 +247,22 @@ public class Robot {
                     lastTarget = 3;
                     drivetrain.stop();
                 } else if (numRings == 3 || curTime - flickTime > flickDelay) {
-                    setLockMode(3 - numRings);
-                    lastTarget = 3 - numRings;
+                    setLockMode(numRings-1);
+                    lastTarget = numRings-1;
                 }
-                shooter.setTargetTheta(calculateShootTheta());
             }
 
             // Auto feed rings
             if (curTime - shootTime > shootDelay) {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position and velocity low enough
-                    if (((highGoal && (shootOverride || (shooter.getFlywheelVelocity() >= vThresh && isAtPoseTurret(shootTargetTheta)/*isAtPoseTurret(target[0], target[1], getShootAngle()) && notMoving()*/)))
-                            || (!highGoal && isAtPoseTurret(shootTargetTheta, PI/150)/*isAtPoseTurret(target[0], target[1], getShootAngle(), 0.5, 0.5, PI/150) && notMoving()*/))
-                            || curTime - flickTime > flickTimeBackup) {
+                    if (((highGoal && (shootOverride || (shooter.getFlywheelVelocity() >= vThresh && isAtPoseTurret(shootTargetTheta) && turretNotMoving()/*isAtPoseTurret(target[0], target[1], getShootAngle()) && notMoving()*/)))
+                            || (!highGoal && isAtPoseTurret(shootTargetTheta, PI/100) && turretNotMoving()/*isAtPoseTurret(target[0], target[1], getShootAngle(), 0.5, 0.5, PI/150) && notMoving()*/))
+                            /*|| curTime - flickTime > flickTimeBackup*/ || !shooter.feedHome) {
 
                         log("In shoot Velocity/Target: " + shooter.getFlywheelVelocity() + "/" + shooter.getTargetVelocity());
                         if (!highGoal) {
-                            log("PS pos: " + round(x) + ", " + round(y) + ", " + round(theta) + ", time: " + (curTime - flickTime > flickTimeBackup) + /*", xy: " + isAtPose(target[0], target[1], target[2], 0.5, 0.5, PI/35) + */", turret: " + isAtPoseTurret(shootTargetTheta, PI/150)/*(abs(theta - target[2]) < PI/150)*/);
+                            log("PS pos: " + turretGlobalTheta);
                         }
 
                         if (numRings == 3) {
@@ -336,10 +317,6 @@ public class Robot {
 
         // Update Position
         drivetrain.updatePose();
-        if (odoCovariance != 1) {
-            // t265.sendOdometryData(vx, vy, theta, w);
-            t265.updateCamPose();
-        }
         intake.updateBumpers();
 
         turretGlobalTheta = shooter.getTheta() + theta - PI/2;
@@ -353,15 +330,9 @@ public class Robot {
 
         // Calculate Motion Info
         double timeDiff = curTime / 1000 - prevTime;
-        if (useT265) {
-            x = odoCovariance * drivetrain.x + (1 - odoCovariance) * t265.getX();
-            y = odoCovariance * drivetrain.y + (1 - odoCovariance) * t265.getY();
-            theta = odoCovariance * drivetrain.theta + (1 - odoCovariance) * t265.getTheta();
-        } else {
-            x = drivetrain.x;
-            y = drivetrain.y;
-            theta = drivetrain.theta;
-        }
+        x = drivetrain.x;
+        y = drivetrain.y;
+        theta = drivetrain.theta;
         vx = (x - prevX) / timeDiff; vy = (y - prevY) / timeDiff; w = (theta - prevTheta) / timeDiff;
         ax = (vx - prevVx) / timeDiff; ay = (vy - prevVy) / timeDiff; a = (w - prevW) / timeDiff;
 
@@ -387,15 +358,14 @@ public class Robot {
         addPacket("1 X", round(x));
         addPacket("2 Y", round(y));
         addPacket("3 Theta", round(theta));
-        addPacket("4 Turret Theta", turretGlobalTheta + " " + shooter.getTheta());
+        addPacket("4 Turret Theta", turretGlobalTheta + " " + shooter.getTheta() + " " + shooter.getTurretVelocity());
         addPacket("5 Shooter Velocity", shooter.getFlywheelVelocity());
         addPacket("6 numRings", numRings);
-        addPacket("7 shoot", preShoot  + " " + shoot + " " + highGoal);
+        addPacket("7 shoot", preShoot  + " " + shoot + " " + highGoal + " " + turretMode.name() + " " + shootTargetTheta);
         addPacket("8 Run Time", (curTime - startTime) / 1000);
         addPacket("9 Update Frequency (Hz)", round(1 / timeDiff));
         addPacket("Pod Zeroes", drivetrain.zero1 + ", " + drivetrain.zero2 + ", " + drivetrain.zero3);
         addPacket("offsets", round(thetaOffset) + " " + round(flapOverride) + " " + shootYOffset);
-        addPacket("target th", shootTargetTheta);
         if (!isAuto) {
             addPacket("Cycle Time", (curTime - lastCycleTime) / 1000);
             addPacket("Average Cycle Time", round(cycleTotal / cycles));
@@ -415,7 +385,7 @@ public class Robot {
             Ring ring = shotRings.get(shotRingCount);
             ring.updatePose(curTime);
             double[] ringCoords = ring.getAbsCoords();
-            if (48 < ringCoords[0] && ringCoords[0] < 144 && 0 < ringCoords[1] && ringCoords[1] < 144) {
+            if (0 < ringCoords[0] && ringCoords[0] < 144 && 0 < ringCoords[1] && ringCoords[1] < 144) {
                 shotRingCount++;
                 drawRing(ring);
             } else {
@@ -462,6 +432,10 @@ public class Robot {
                 flapPos = Constants.FLAP_DOWN_POS;
             }
 
+            if (isAuto) {
+                drivetrain.stop();
+            }
+
             setLockMode(HIGH_GOAL);
 
 //            double shootY = 56 + shootYOffset;
@@ -484,8 +458,7 @@ public class Robot {
             numRingsPreset = 3;
             startShootTime = curTime;
             flapPos = Constants.FLAP_DOWN_POS;
-            setLockMode(PS_L);
-            shootTargetTheta = calculateShootTheta();
+            setLockMode(PS_R);
             log("Powershot shoot initiated");
         }
     }
@@ -502,8 +475,7 @@ public class Robot {
     }
 
     public void setLockMode(TurretMode lockMode) {
-        turretMode = lockMode;
-        setLock(shootXCor[lockMode.ordinal()], shootYCor);
+        setLockMode(lockMode.ordinal());
     }
 
     public void setLockMode(int lockMode) {
@@ -515,11 +487,10 @@ public class Robot {
             turretMode = PS_R;
         } else if (lockMode == 3) {
             turretMode = HIGH_GOAL;
+            setLock(shootXCor[lockMode], shootYCor);
         } else {
-            lockMode = 4;
             turretMode = NONE;
         }
-        setLock(shootXCor[lockMode], shootYCor);
     }
 
     public void setLock(double x, double y) {
@@ -533,7 +504,12 @@ public class Robot {
            power3- (91.5,144,24)
            high goal- (108,144,35.5) */
 
-        shooter.setTargetTheta(calculateShootTheta() - thetaOffset);
+        if (turretMode == HIGH_GOAL) {
+            shooter.setTargetTheta(calculateShootTheta() - thetaOffset);
+        } else if (turretMode != NONE) {
+            shooter.setTargetTheta(thetaPositions[turretMode.ordinal()]);
+            shootTargetTheta = thetaPositions[turretMode.ordinal()];
+        }
     }
 
     public double calculateShootTheta() {
@@ -645,6 +621,10 @@ public class Robot {
 
     public boolean notMoving(double xyThreshold, double thetaThreshold) {
         return (Math.hypot(vx, vy) < xyThreshold && abs(w) < thetaThreshold);
+    }
+
+    public boolean turretNotMoving() {
+        return shooter.getTurretVelocity() < 0.1;
     }
 
     // Logging

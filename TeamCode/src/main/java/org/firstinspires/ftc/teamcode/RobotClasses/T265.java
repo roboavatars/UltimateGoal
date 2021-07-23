@@ -27,6 +27,9 @@ public class T265 {
 
     // State Variables
     private double x, y, theta;
+    private double startTheta;
+    private double thetaError = 0;
+    private double camInitTheta;
     public int confidence = 0;
 
     @SuppressLint("SdCardPath")
@@ -39,6 +42,8 @@ public class T265 {
         if (!file.exists() || file.length() == 0) {
             isEmpty = true;
         }
+
+        this.startTheta = startTheta;
 
         Robot.log(isEmpty ? "T265 Localization Map Not Found" : "Found T265 Localization Map");
         Robot.log(t265Cam == null ? "Instantiating new T265" : "Using static T265");
@@ -54,7 +59,13 @@ public class T265 {
     }
 
     public void startCam() {
-        t265Cam.start();
+        if (!t265Cam.isStarted()) {
+            t265Cam.start();
+            updateCamPose();
+        } else {
+            stopCam();
+            startCam();
+        }
     }
 
     public void exportMap() {
@@ -102,6 +113,10 @@ public class T265 {
         }
     }
 
+    public double getThetaError() {
+        return thetaError;
+    }
+
     public double getX() {
         return x;
     }
@@ -110,8 +125,22 @@ public class T265 {
         return y;
     }
 
-    public double getTheta() {
+    public double getRawTheta() {
         return theta;
+    }
+
+    public double getTheta() {
+        return theta + thetaError;
+    }
+
+    public void makeSureT265IsGood() {
+        updateCamPose();
+        camInitTheta = theta;
+        thetaError = startTheta - camInitTheta;
+    }
+
+    public double getInitTheta() {
+        return camInitTheta;
     }
 
     public String confidenceColor() {

@@ -201,6 +201,22 @@ public class MecanumDrivetrain {
         setGlobalControls(0, 0, 0);
     }
 
+    public double getRawTheta() {
+        return t265.getRawTheta();
+    }
+
+    public double getThetaError() {
+        return t265.getThetaError();
+    }
+
+    public double getInitTheta() {
+        return t265.getInitTheta();
+    }
+
+    public void updateThetaError() {
+        t265.makeSureT265IsGood();
+    }
+
     // update position from odometry
     public void updatePose() {
         try {

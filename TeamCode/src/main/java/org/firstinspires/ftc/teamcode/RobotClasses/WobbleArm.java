@@ -15,13 +15,13 @@ public class WobbleArm {
         leftClampServo = op.hardwareMap.get(Servo.class, "leftClamp");
         rightClampServo = op.hardwareMap.get(Servo.class, "rightClamp");
 
-//        if (isAuto) {
+        if (isAuto) {
             armUp();
             clamp();
-//        } else {
-//            armInside();
-//            clawIn();
-//        }
+        } else {
+            armDown();
+            clawIn();
+        }
 
         op.telemetry.addData("Status", "Wobble Arm initialized");
     }

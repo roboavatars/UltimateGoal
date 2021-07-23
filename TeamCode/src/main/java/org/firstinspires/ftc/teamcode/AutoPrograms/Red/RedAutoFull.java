@@ -105,6 +105,8 @@ public class RedAutoFull extends LinearOpMode {
 
         waitForStart();
 
+        robot.drivetrain.updateThetaError();
+
         // Wobble coordinates based on ring case
         RingCase ringCase = detector.getStackPipe().getModeResult();
         Robot.log("Ring case: " + ringCase);
@@ -186,9 +188,6 @@ public class RedAutoFull extends LinearOpMode {
 
                     shootHighGoal = true;
                     time.reset();
-                } else {
-                    if (time.seconds() > 0.5 && ringCase == RingCase.Four) {
-                    }
                 }
             }
 

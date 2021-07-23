@@ -7,7 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 
-import org.firstinspires.ftc.teamcode.RobotClasses.IMU;
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 import org.firstinspires.ftc.teamcode.RobotClasses.MecanumDrivetrain;
 
 import static java.lang.Math.PI;
@@ -21,7 +21,6 @@ public class TurretTest extends LinearOpMode {
 
     private MecanumDrivetrain drivetrain;
     private DcMotorEx turret;
-    private IMU imu;
     private double targetTheta = 0;
 
     public static final double TICKS_PER_RADIAN = 126 / PI;
@@ -29,7 +28,7 @@ public class TurretTest extends LinearOpMode {
     public static double b_DemonFactor = 2;
 
     public static double p = 0.4;
-    public static double d = 3.2;
+    public static double d = 2.8;
     public static double f = 0;
 
     public static boolean dashTarget = true;
@@ -46,15 +45,14 @@ public class TurretTest extends LinearOpMode {
         turret.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turret.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
 
-        imu = new IMU(PI/2, this);
         drivetrain = new MecanumDrivetrain(this, 111, 63, PI/2);
 
         waitForStart();
 
         while (opModeIsActive()) {
-            imu.updateHeading();
+            drivetrain.updatePose();
 
-            targetTheta = (a_NumFactor * PI / b_DemonFactor - imu.getTheta() + PI/2) % (2*PI);
+            targetTheta = (a_NumFactor * PI / b_DemonFactor - drivetrain.theta + PI/2) % (2*PI);
             if (targetTheta < 0) {
                 targetTheta += 2*PI;
             }
@@ -80,12 +78,13 @@ public class TurretTest extends LinearOpMode {
             double timeDiff = curTime - prevTime;
             prevTime = curTime;
 
-            drawRobot(111, 63, imu.getTheta(), imu.getTheta() + turretTheta - PI/2, "black", "gray");
+            drawRobot(111, 63, drivetrain.theta, drivetrain.theta + turretTheta - PI/2, "black", "gray");
             addPacket("Target Theta", targetTheta);
             addPacket("Turret Theta", turretTheta);
             addPacket("Theta Error", turretError);
-            addPacket("Turret Global", imu.getTheta() + turretTheta - PI/2);
-            addPacket("IMU", imu.getTheta());
+            addPacket("Current", turret.getCurrent(CurrentUnit.MILLIAMPS));
+            addPacket("Turret Global", drivetrain.theta + turretTheta - PI/2);
+            addPacket("IMU Theta", drivetrain.theta);
             addPacket("Ticks", turret.getCurrentPosition());
             addPacket("Power", turret.getPower());
             addPacket("Update Frequency (Hz)", 1 / timeDiff);
@@ -94,7 +93,7 @@ public class TurretTest extends LinearOpMode {
             telemetry.addData("Target Theta", targetTheta);
             telemetry.addData("Turret Theta", turretTheta);
             telemetry.addData("Theta Error", turretError);
-            telemetry.addData("IMU", imu.getTheta());
+            telemetry.addData("IMU", drivetrain.theta);
             telemetry.addData("Ticks", turret.getCurrentPosition());
             telemetry.addData("Power", turret.getPower());
             telemetry.update();

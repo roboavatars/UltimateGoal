@@ -7,6 +7,8 @@ import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
+import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
+
 import static java.lang.Math.PI;
 
 @SuppressWarnings("FieldCanBeLocal")
@@ -38,7 +40,7 @@ public class Shooter {
     public static double fFlywheel = 13;
 
     public static double pTurret = 0.4;
-    public static double dTurret = 3.2;
+    public static double dTurret = 2.8;
     public static double fTurret = 0;
     public static double initialTheta = 0;
 
@@ -86,7 +88,11 @@ public class Shooter {
         turretTheta = getTheta();
         turretErrorChange = targetTheta - turretTheta - turretError;
         turretError = targetTheta - turretTheta;
-        turretMotor.setPower(Math.max(-0.4, Math.min(pTurret * turretError + dTurret * turretErrorChange + fTurret, 0.4)));
+        if (turretMotor.getCurrent(CurrentUnit.MILLIAMPS) > 9000) {
+            turretMotor.setPower(0);
+        } else {
+            turretMotor.setPower(Math.max(-0.4, Math.min(pTurret * turretError + dTurret * turretErrorChange + fTurret, 0.4)));
+        }
 
         flywheelMotor.setVelocityPIDFCoefficients(pFlywheel, 0, dFlywheel, fFlywheel);
     }
@@ -130,6 +136,10 @@ public class Shooter {
 
     public double getTheta() {
         return turretMotor.getCurrentPosition() / TICKS_PER_RADIAN + initialTheta;
+    }
+
+    public double getTurretVelocity() {
+        return turretMotor.getVelocity();
     }
 
     // Mag

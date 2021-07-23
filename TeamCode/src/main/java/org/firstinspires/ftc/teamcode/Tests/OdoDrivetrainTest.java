@@ -7,8 +7,8 @@ import org.firstinspires.ftc.teamcode.RobotClasses.MecanumDrivetrain;
 
 import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawField;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawDrivetrain;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawField;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
 @TeleOp(name = "Odometry / Drivetrain Test")
@@ -20,6 +20,8 @@ public class OdoDrivetrainTest extends LinearOpMode {
         MecanumDrivetrain dt = new MecanumDrivetrain(this, 90, 9, PI/2);
 
         waitForStart();
+
+        dt.updateThetaError();
 
         while(opModeIsActive()) {
             dt.setControls(-gamepad1.left_stick_y, -gamepad1.left_stick_x, -gamepad1.right_stick_x);
@@ -53,6 +55,10 @@ public class OdoDrivetrainTest extends LinearOpMode {
             addPacket("1 zeros", dt.zero1);
             addPacket("2 zeros", dt.zero2);
             addPacket("3 zeros", dt.zero3);
+
+            addPacket("cam raw", dt.getRawTheta());
+            addPacket("cam init", dt.getInitTheta());
+            addPacket("cam error", dt.getThetaError());
             sendPacket();
 
             telemetry.addData("X: ", x);

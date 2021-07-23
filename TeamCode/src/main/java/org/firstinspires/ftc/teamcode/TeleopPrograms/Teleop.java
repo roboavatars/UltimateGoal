@@ -85,6 +85,8 @@ public class Teleop extends LinearOpMode {
 
         waitForStart();
 
+        robot.drivetrain.updateThetaError();
+
         while (opModeIsActive()) {
             // Intake On / Rev / Off
             if (gamepad1.right_trigger > 0 && gamepad2.right_trigger == 0) {

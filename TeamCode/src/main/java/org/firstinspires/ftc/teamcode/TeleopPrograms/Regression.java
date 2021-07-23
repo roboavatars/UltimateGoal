@@ -14,7 +14,7 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 @Config
 public class Regression extends LinearOpMode {
 
-    public int startX = 111;
+    public int startX = 87;
     public int startY = 63;
     public double startTheta = PI/2;
 
@@ -28,24 +28,27 @@ public class Regression extends LinearOpMode {
     public boolean started = false;
     public double flickTime;
     public int numRings = 0;
-    public static int delay = 125;
+    public static int delay = 300;
 
     public static double intakePow = 1;
     public static double transferPow = 0.5;
 
-    public static double flywheelVelocity = 1620;
+    public static double flywheelVelocity = 1450;
     public static double flapPos = Constants.FLAP_BACK_POS;
-    public static double theta0 = 1.875;
-    public static double theta1 = 1.810;
-    public static double theta2 = 1.725;
+    public static double theta0 = 1.671;
+    public static double theta1 = 1.600;
+    public static double theta2 = 1.498;
 
     @Override
     public void runOpMode() {
         robot = new Robot(this, startX, startY, startTheta, false);
+        robot.logger.startLogging(false);
 
-//        robot.setLockMode(Robot.TurretMode.HIGH_GOAL);
+//        robot.setLockMode(Robot.TurretMode.PS_R);
 
         waitForStart();
+
+        robot.drivetrain.updateThetaError();
 
         while (opModeIsActive()) {
             if (gamepad1.left_trigger > 0) {
@@ -87,12 +90,13 @@ public class Regression extends LinearOpMode {
             }
 
             if (gamepad1.right_bumper) {
+                robot.powerShotShoot();
 //                robot.highGoalShoot();
-                if (!started) {
-                    started = true;
-                    flickTime = System.currentTimeMillis();
-                    numRings = 3;
-                }
+//                if (!started) {
+//                    started = true;
+//                    flickTime = System.currentTimeMillis();
+//                    numRings = 3;
+//                }
             }
 
             if (started && System.currentTimeMillis() - flickTime > delay && numRings > 0) {
@@ -172,17 +176,25 @@ public class Regression extends LinearOpMode {
                 clampToggle = false;
             }
 
-//            if (gamepad1.dpad_left) {
-//                robot.setTargetPoint(111, 63, theta0);
-//            } else if (gamepad1.dpad_up) {
-//                robot.setTargetPoint(111, 63, theta1);
-//            } else if (gamepad1.dpad_right) {
-//                robot.setTargetPoint(111, 63, theta2);
-//            } else {
+            if (gamepad2.dpad_left) {
+                robot.thetaOffset -= 0.005;
+            } else if (gamepad2.dpad_right) {
+                robot.thetaOffset += 0.005;
+            }
+
+            if (gamepad1.dpad_left) {
+                robot.setLockMode(Robot.TurretMode.PS_L);
+            } else if (gamepad1.dpad_up) {
+                robot.setLockMode(Robot.TurretMode.PS_C);
+            } else if (gamepad1.dpad_right) {
+                robot.setLockMode(Robot.TurretMode.PS_R);
+            } else {
                 robot.drivetrain.setControls(-gamepad1.left_stick_y , -gamepad1.left_stick_x , -gamepad1.right_stick_x);
-//            }
+            }
 
             addPacket("d", Math.sqrt(Math.pow(robot.x - 108, 2) + Math.pow(144 - robot.y, 2)));
+            addPacket("Theta Error", robot.drivetrain.getThetaError());
+            addPacket("Sussy Error", robot.drivetrain.getInitTheta());
             robot.update();
 
             Robot.log(Robot.round(robot.x) + ", " + Robot.round(robot.y) + ", " + Robot.round(robot.theta));

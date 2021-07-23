@@ -78,6 +78,8 @@ public class RedAutoStarterStack extends LinearOpMode {
 
         waitForStart();
 
+        robot.drivetrain.updateThetaError();
+
         // Determine Ring Case
         RingCase ringCase = detector.getStackPipe().getModeResult();
         Robot.log("Ring case: " + ringCase);
