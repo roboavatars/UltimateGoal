@@ -13,7 +13,7 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
-@TeleOp(name = "0 Turret Test")
+@TeleOp(name = "Turret Test")
 @Config
 public class TurretTest extends LinearOpMode {
 
@@ -26,8 +26,8 @@ public class TurretTest extends LinearOpMode {
     public static double b_DemonFactor = 2;
     public static double initialTheta = 0;
 
-    public static double p = 6;
-    public static double d = 2.25;
+    public static double p = 2.25;
+    public static double d = 5.5;
     public static double f = 0;
 
     public static boolean dashTarget = true;

@@ -19,7 +19,7 @@ import java.util.Arrays;
 import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 
-@Autonomous(name = "Red Auto Power Shot", preselectTeleOp = "1 Teleop", group = "Red")
+@Autonomous(name = "0 Red Auto Power Shot", preselectTeleOp = "1 Teleop", group = "Red")
 public class RedAutoPowerShot extends LinearOpMode {
 
     @Override
@@ -35,7 +35,7 @@ public class RedAutoPowerShot extends LinearOpMode {
             park on line
         */
 
-        Robot robot = new Robot(this, 90, 9, PI/2, true);
+        Robot robot = new Robot(this, 90, 9, PI/2, true, true);
         robot.logger.startLogging(true);
 
         Vision detector = new Vision(this, Vision.Pipeline.StackHeight);
@@ -73,7 +73,7 @@ public class RedAutoPowerShot extends LinearOpMode {
         Path parkPath = null;
 
         // Other Variables
-        boolean reachedDeposit = false;
+        int depositState = 0;
         double depositReachTime = 0;
         ArrayList<Ring> rings;
 
@@ -112,6 +112,7 @@ public class RedAutoPowerShot extends LinearOpMode {
                 robot.setTargetPoint(curPose);
 
                 robot.shooter.flywheelPS();
+                robot.wobbleArm.armUp();
 
                 if (time.seconds() > goToPowerShotsTime) {
                     robot.powerShotShoot();
@@ -142,18 +143,19 @@ public class RedAutoPowerShot extends LinearOpMode {
                 double curTime = Math.min(time.seconds(), deliverWobbleTime);
                 robot.setTargetPoint(deliverWobblePath.getRobotPose(curTime));
 
-                if ((!reachedDeposit && robot.isAtPose(wobbleCor[0], wobbleCor[1], wobbleCor[2]) && robot.notMoving()) || time.seconds() > deliverWobbleTime + 1) {
+                if ((depositState == 0 && robot.isAtPose(wobbleCor[0], wobbleCor[1], wobbleCor[2]) && robot.notMoving()) || time.seconds() > deliverWobbleTime + 1) {
                     robot.wobbleArm.armDown();
-                    depositReachTime = curTime;
+                    depositReachTime = time.seconds();
+                    depositState = 1;
                 }
 
-                if ((!reachedDeposit && depositReachTime > 0.75) || time.seconds() > deliverWobbleTime + 2.5) {
-                    reachedDeposit = true;
-                    depositReachTime = curTime;
+                if ((depositState == 1 && time.seconds() > depositReachTime + 0.75) || time.seconds() > deliverWobbleTime + 2.5) {
+                    depositState = 2;
+                    depositReachTime = time.seconds();
                     robot.wobbleArm.unClamp();
                 }
 
-                if ((reachedDeposit && time.seconds() > depositReachTime + 1.5) || time.seconds() > deliverWobbleTime + 4) {
+                if ((depositState == 2 && time.seconds() > depositReachTime + 1.5) || time.seconds() > deliverWobbleTime + 4) {
                     robot.wobbleArm.armUp();
                     robot.intake.blockerHome();
                     robot.intake.bumpersHome();
@@ -239,7 +241,7 @@ public class RedAutoPowerShot extends LinearOpMode {
                 if (!robot.preShoot && !robot.shoot && robot.numRings == 0) {
                     Waypoint[] parkWaypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, robot.theta, 20, 20, 0, 0),
-                            new Waypoint(85, 85, PI/2, 5, 0, 0, parkTime),
+                            new Waypoint(87, 85, PI/2, 5, 0, 0, parkTime),
                     };
                     parkPath = new Path(new ArrayList<>(Arrays.asList(parkWaypoints)));
 

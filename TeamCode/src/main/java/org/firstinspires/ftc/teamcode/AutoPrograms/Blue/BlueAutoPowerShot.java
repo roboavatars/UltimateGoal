@@ -35,7 +35,7 @@ public class BlueAutoPowerShot extends LinearOpMode {
             park on line
         */
 
-        Robot robot = new Robot(this, 54, 9, PI/2, true);
+        Robot robot = new Robot(this, 54, 9, PI/2, true, false);
         robot.logger.startLogging(true);
 
         Vision detector = new Vision(this, Vision.Pipeline.StackHeight);

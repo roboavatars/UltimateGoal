@@ -26,7 +26,7 @@ public class Teleop extends LinearOpMode {
     private Robot robot;
 
     public static boolean robotCentric = true;
-    public static boolean useAutoPos = false;
+    public static boolean useAutoPos = true;
 
     // Control Gains
     private double xyGain = 1;
@@ -70,7 +70,7 @@ public class Teleop extends LinearOpMode {
             double[] initialPosition = Logger.readPos();
             telemetry.addData("Starting Position", Arrays.toString(initialPosition));
             telemetry.update();
-            robot = new Robot(this, initialPosition[0], initialPosition[1], initialPosition[2], false);
+            robot = new Robot(this, initialPosition[0], initialPosition[1], initialPosition[2], initialPosition[3], false, true);
         } else {
             robot = new Robot(this, startX, startY, startTheta, false);
         }
@@ -86,9 +86,9 @@ public class Teleop extends LinearOpMode {
 
         while (opModeIsActive()) {
             // Intake On / Rev / Off
-            if (gamepad1.left_trigger > 0) {
+            if (gamepad1.right_trigger > 0) {
                 robot.intake.on();
-            } else if (gamepad1.right_trigger > 0) {
+            } else if (gamepad1.left_trigger > 0) {
                 robot.intake.reverse();
             } else {
                 robot.intake.off();
@@ -102,11 +102,11 @@ public class Teleop extends LinearOpMode {
             }
 
             // Ring Blocker
-            if (gamepad2.a) {
-                robot.intake.blockerUp();
-            } else {
-                robot.intake.blockerDown();
-            }
+//            if (gamepad2.a) {
+//                robot.intake.blockerUp();
+//            } else {
+//                robot.intake.blockerDown();
+//            }
 
             // Stop Shoot Sequence
             if (gamepad2.b) {
@@ -119,20 +119,20 @@ public class Teleop extends LinearOpMode {
             }
 
             // Wobble Arm In / Up / Down
-            if (gamepad2.x && !inToggle) {
-                inToggle = true;
-                if (armIn) {
-                    robot.wobbleArm.armUp();
-                    robot.wobbleArm.unClamp();
-                } else {
-                    robot.wobbleArm.armInside();
-                    robot.wobbleArm.clawIn();
-                    armDown = false;
-                }
-                armIn = !armIn;
-            } else if (!gamepad2.x && inToggle) {
-                inToggle = false;
-            }
+//            if (gamepad2.x && !inToggle) {
+//                inToggle = true;
+//                if (armIn) {
+//                    robot.wobbleArm.armUp();
+//                    robot.wobbleArm.unClamp();
+//                } else {
+//                    robot.wobbleArm.armInside();
+//                    robot.wobbleArm.clawIn();
+//                    armDown = false;
+//                }
+//                armIn = !armIn;
+//            } else if (!gamepad2.x && inToggle) {
+//                inToggle = false;
+//            }
 
             if (gamepad2.right_bumper && !downToggle) {
                 downToggle = true;
@@ -150,15 +150,22 @@ public class Teleop extends LinearOpMode {
                 downToggle = false;
             }
 
-            if (armIn) {
+//            if (armIn) {
+//                robot.intake.autoBumpers(robot.x, robot.y, robot.theta, 12);
+//            } else {
+//                if (armDown) {
+//                    robot.intake.bumpersOut();
+//                } else {
+//                    robot.intake.bumpersHome();
+//                }
+//            }
+            if (!armDown) {
                 robot.intake.autoBumpers(robot.x, robot.y, robot.theta, 12);
             } else {
-                if (armDown) {
-                    robot.intake.bumpersOut();
-                } else {
-                    robot.intake.bumpersHome();
-                }
+                robot.intake.bumpersOut();
             }
+
+            robot.intake.autoBlocker(robot.x, robot.y, robot.theta, 18);
 
             // Wobble Clamp / Unclamp
             if (gamepad2.left_bumper && !clampToggle) {
@@ -191,6 +198,7 @@ public class Teleop extends LinearOpMode {
             // Reset Odometry
             if (gamepad1.x) {
                 robot.resetOdo(87, 63, PI/2);
+                robot.thetaOffset = 0;
                 robot.shootYOffset = 0;
                 robot.flapOverride = 0;
             }
@@ -211,9 +219,9 @@ public class Teleop extends LinearOpMode {
 
             // Change Shooting Theta Offset to Compensate for Odometry Drift
             if (gamepad2.dpad_left) {
-                robot.thetaOffset -= 0.005;
+                robot.thetaOffset -= 0.003;
             } else if (gamepad2.dpad_right) {
-                robot.thetaOffset += 0.005;
+                robot.thetaOffset += 0.003;
             }
 
             // Change Flap Angle

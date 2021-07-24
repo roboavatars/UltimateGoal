@@ -40,9 +40,9 @@ public class Shooter {
     public static double fFlywheel = 13;
 
     public static double pTurret = 2.25;
-    public static double dTurret = 6;
+    public static double dTurret = 5.5;
     public static double fTurret = 0;
-    public static double initialTheta = PI/2;
+    public double initialTheta;
 
     private double targetTheta = 0;
     private double turretTheta;
@@ -57,7 +57,9 @@ public class Shooter {
     private final int currentCheckInterval = 2000;
     private boolean stalling = false;
 
-    public Shooter(LinearOpMode op) {
+    public Shooter(LinearOpMode op, double initialTheta) {
+        this.initialTheta = initialTheta;
+
         flywheelMotor = op.hardwareMap.get(DcMotorEx.class, "flywheel");
         flywheelMotor.setDirection(DcMotorSimple.Direction.REVERSE);
         flywheelMotor.setMode(DcMotor.RunMode.RUN_USING_ENCODER);

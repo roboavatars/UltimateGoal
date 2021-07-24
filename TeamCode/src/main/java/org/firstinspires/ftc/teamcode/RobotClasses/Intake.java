@@ -2,6 +2,7 @@ package org.firstinspires.ftc.teamcode.RobotClasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
+import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 
 @SuppressWarnings("FieldCanBeLocal")
@@ -24,6 +25,7 @@ public class Intake {
     public Intake(LinearOpMode op, boolean isAuto) {
         intakeMotor = op.hardwareMap.get(DcMotorEx.class, "intake");
         transferMotor = op.hardwareMap.get(DcMotorEx.class, "transfer");
+        intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         blockerServo = op.hardwareMap.get(Servo.class, "blocker");
 
@@ -130,6 +132,20 @@ public class Intake {
             bumpersLR(Constants.BUMPER_OUT_POS);
         } else {
             bumpersLR(Constants.BUMPER_HOME_POS);
+        }
+    }
+
+    public void autoBlocker(double x, double y, double theta, double buffer) {
+        double[] frontLeftPos = calculateCoordinates(x, y, theta, -9, 15);
+        double[] frontBackPos = calculateCoordinates(x, y, theta, 9, 15);
+
+        boolean frontLeft = !inRange(frontLeftPos[0], frontLeftPos[1], buffer);
+        boolean frontRight = !inRange(frontBackPos[0], frontBackPos[1], buffer);
+
+        if (frontLeft || frontRight) {
+            blockerHome();
+        } else {
+            blockerDown();
         }
     }
 

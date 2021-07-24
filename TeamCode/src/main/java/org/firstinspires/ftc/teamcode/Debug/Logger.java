@@ -25,6 +25,7 @@ public class Logger extends Thread {
     private SimpleDateFormat df;
     private double timeSinceSt;
     private double x, y, theta;
+    private double turretTheta;
     private double vx, vy, w;
     private double ax, ay, alpha;
     private int numRings;
@@ -41,7 +42,7 @@ public class Logger extends Thread {
             File robotDataLog = new File(getLogName(true));
             fileWriter = new FileWriter(robotDataLog);
             fileWriter.write("# " + (isAuto ? "Auto" : "Teleop") + "\n");
-            fileWriter.write("Timestamp,SinceStart,X,Y,Theta,VelocityX,VelocityY,VelocityTheta,AccelX,AccelY,AccelTheta,NumRings,MagHome,FeedHome,LastTarget,Cycles,AvgCycle\n");
+            fileWriter.write("Timestamp,SinceStart,X,Y,Theta,TurretTheta,VelocityX,VelocityY,VelocityTheta,AccelX,AccelY,AccelTheta,NumRings,MagHome,FeedHome,LastTarget,Cycles,AvgCycle\n");
             logCounter = 0;
             writeCounter = 0;
             start();
@@ -86,7 +87,7 @@ public class Logger extends Thread {
         while (!isInterrupted()) {
             if (writeCounter < logCounter) {
                 try {
-                    fileWriter.write(df.format(new Date()) + "," + timeSinceSt + "," + x + "," + y + "," + theta + "," + vx + "," + vy + "," + w + "," + ax + "," + ay + "," + alpha + "," + numRings + "," + magHome + "," + feedHome + "," + lastTarget + "," + numCycles + "," + avgCycleTime + "\n");
+                    fileWriter.write(df.format(new Date()) + "," + timeSinceSt + "," + x + "," + y + "," + theta + "," + turretTheta + "," + vx + "," + vy + "," + w + "," + ax + "," + ay + "," + alpha + "," + numRings + "," + magHome + "," + feedHome + "," + lastTarget + "," + numCycles + "," + avgCycleTime + "\n");
                     writeCounter++;
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -99,10 +100,11 @@ public class Logger extends Thread {
      * Saves log data
      */
     @SuppressLint("SimpleDateFormat")
-    public void logData(double timeSinceSt, double x, double y, double theta, double vx, double vy, double w, double ax, double ay, double alpha, int numRings, boolean magHome, boolean feedHome, int lastTarget, int numCycles, double avgCycleTime) {
+    public void logData(double timeSinceSt, double x, double y, double theta, double turretTheta, double vx, double vy, double w, double ax, double ay, double alpha, int numRings, boolean magHome, boolean feedHome, int lastTarget, int numCycles, double avgCycleTime) {
         df = new SimpleDateFormat("HH:mm:ss.SSS");
         this.timeSinceSt = timeSinceSt;
         this.x = x; this.y = y; this.theta = theta;
+        this.turretTheta = turretTheta;
         this.vx = vx; this.vy = vy; this.w = w;
         this.ax = ax; this.ay = ay; this.alpha = alpha;
         this.numRings = numRings;
@@ -130,13 +132,13 @@ public class Logger extends Thread {
      * Reads position from last written file
      */
     public static double[] readPos() {
-        double[] robotPos = new double[] {0, 0, 0};
+        double[] robotPos = new double[] {0, 0, 0, 0};
 
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(getLogName(false)));
             List<String> lines = bufferedReader.lines().collect(Collectors.toList());
             String[] data = lines.get(lines.size() - 2).split(",");
-            robotPos = new double[] {Double.parseDouble(data[2]), Double.parseDouble(data[3]), Double.parseDouble(data[4])};
+            robotPos = new double[] {Double.parseDouble(data[2]), Double.parseDouble(data[3]), Double.parseDouble(data[4]), Double.parseDouble(data[5])};
 
             bufferedReader.close();
             Robot.log("Starting At " + Arrays.toString(robotPos));

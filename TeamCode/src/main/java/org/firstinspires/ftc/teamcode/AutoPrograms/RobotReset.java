@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 
-@Autonomous(name = "2 Robot Reset")
+@Autonomous(name = "3 Robot Reset")
 public class RobotReset extends LinearOpMode {
 
     @Override
@@ -19,11 +19,13 @@ public class RobotReset extends LinearOpMode {
         waitForStart();
 
         feedServo.setPosition(Constants.FEED_HOME_POS);
-        blockerServo.setPosition(Constants.BLOCKER_HOME_POS);
         wobbleServo.setPosition(Constants.WOBBLE_UP_POS);
-        sleep(1000);
+        sleep(750);
+
+        blockerServo.setPosition(Constants.BLOCKER_HOME_POS);
+        sleep(750);
 
         bumperLR.setPosition(Constants.BUMPER_HOME_POS);
-        sleep(2000);
+        sleep(1500);
     }
 }
