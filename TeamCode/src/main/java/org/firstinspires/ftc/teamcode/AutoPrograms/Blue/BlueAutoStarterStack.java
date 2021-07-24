@@ -159,12 +159,12 @@ public class BlueAutoStarterStack extends LinearOpMode {
                         robot.intake.setPower(-0.5);
                     } else if (knockStack) {
                         robot.intake.on();
-                        robot.setTargetPoint(new Target(34, Math.min(36 + 4.5 * time.seconds(), 41), PI/2).thetaW0(PI/2).thetaKp(3.0));
-                    } else if (robot.isAtPose(34, 36, PI/2, 0.5, 0.5, PI/35) && robot.notMoving()) {
+                        robot.setTargetPoint(new Target(34, Math.min(38 + 4.5 * time.seconds(), 41), PI/2).thetaW0(PI/2).thetaKp(3.0));
+                    } else if (robot.isAtPose(34, 38, PI/2, 0.5, 0.5, PI/35) && robot.notMoving()) {
                         robot.drivetrain.stop();
                         knockStack = true;
                     } else {
-                        robot.setTargetPoint(34, 36, PI/2);
+                        robot.setTargetPoint(34, 38, PI/2);
                     }
                 } else {
                     robot.intake.on();

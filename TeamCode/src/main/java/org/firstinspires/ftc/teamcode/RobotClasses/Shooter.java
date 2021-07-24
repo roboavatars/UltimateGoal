@@ -84,7 +84,7 @@ public class Shooter {
         if (targetTheta > 3*PI/2) {
             targetTheta -= 2*PI;
         }
-        targetTheta = Math.min(Math.max(targetTheta, 0), PI);
+        targetTheta = Math.min(Math.max(targetTheta, -PI/4), 7*PI/6);
         turretTheta = getTheta();
         turretErrorChange = targetTheta - turretTheta - turretError;
         turretError = targetTheta - turretTheta;
