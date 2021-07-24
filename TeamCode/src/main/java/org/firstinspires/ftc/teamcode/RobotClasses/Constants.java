@@ -20,28 +20,23 @@ public class Constants {
     public static double MAG_HOME_POS = 0.43;
     public static double MAG_SHOOT_POS = 0.85;
 
-    public static double FEED_HOME_POS = 0.93;
-    public static double FEED_SHOOT_POS = 0.65;
+    public static double FEED_HOME_POS = 0.86;
+    public static double FEED_SHOOT_POS = 0.58;
 
     public static double FLAP_DOWN_POS = 0.55;
     public static double FLAP_BACK_POS = 0.723;
     public static double FLAP_UP_POS = 0.735;
 
-    public static double ZERO_DIST = 4.4;
-    public static double ONE_DIST = 3.9;
-    public static double TWO_DIST = 3.3;
-    public static double THREE_DIST = 2.5;
-
     // Wobble
     public static double WOBBLE_INSIDE_POS = 0;
     public static double WOBBLE_UP_POS = 0.5;
-    public static double WOBBLE_DOWN_POS = 0.9;
+    public static double WOBBLE_DOWN_POS = 1;
 
     public static double WOBBLE_UNCLAMP_POS_LEFT = 0.1;
-    public static double WOBBLE_CLAMP_POS_LEFT = 0.65;
-    public static double WOBBLE_HOME_POS_LEFT = 0.9;
+    public static double WOBBLE_CLAMP_POS_LEFT = 0.6;
+    public static double WOBBLE_HOME_POS_LEFT = 1;
 
-    public static double WOBBLE_UNCLAMP_POS_RIGHT = 0.7;
-    public static double WOBBLE_CLAMP_POS_RIGHT = 0.05;
-    public static double WOBBLE_HOME_POS_RIGHT = 0.25;
+    public static double WOBBLE_UNCLAMP_POS_RIGHT = 0.6;
+    public static double WOBBLE_CLAMP_POS_RIGHT = 0;
+    public static double WOBBLE_HOME_POS_RIGHT = 0.1;
 }

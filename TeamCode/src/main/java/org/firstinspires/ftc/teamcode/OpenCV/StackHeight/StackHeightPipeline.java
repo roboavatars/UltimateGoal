@@ -129,7 +129,6 @@ public class StackHeightPipeline extends OpenCvPipeline {
         int zero = Collections.frequency(list, RingCase.Zero);
         int one = Collections.frequency(list, RingCase.One);
         int four = Collections.frequency(list, RingCase.Four);
-        log("zero: " + zero + ", one: " + one + ", four: " + four);
         if (one > zero && one > four) {
             return RingCase.One;
         } else if (four > zero && four > one) {

@@ -21,10 +21,6 @@ public class Shooter {
     private Servo feedServo;
     private Servo flapServo;
 
-//    private DistanceSensor ringSensor;
-//    public boolean sensorBroken = true;
-//    private int numRings = 3;
-
     public boolean magHome = true;
     public boolean feedHome = true;
 
@@ -72,7 +68,6 @@ public class Shooter {
         flapServo = op.hardwareMap.get(Servo.class, "flapServo");
         magServo = op.hardwareMap.get(Servo.class, "magServo");
         feedServo = op.hardwareMap.get(Servo.class, "feedServo");
-//        ringSensor = op.hardwareMap.get(DistanceSensor.class, "ringSensor");
 
         flapDown();
         feedHome();
@@ -195,30 +190,4 @@ public class Shooter {
     public void flapUp() {
         flapServo.setPosition(Constants.FLAP_UP_POS);
     }
-
-    /*public double getDistance() {
-        double distance = ringSensor.getDistance(DistanceUnit.INCH);
-//        sensorBroken = distance > 6;
-        return distance;
-    }
-
-    public int getNumRings() {
-        double dist = getDistance();
-        int tempRings;
-        if (dist > Constants.ZERO_DIST) {
-            tempRings = 0;
-        } else if (dist > Constants.ONE_DIST) {
-            tempRings = 1;
-        } else if (dist > Constants.TWO_DIST) {
-            tempRings = 2;
-        } else {
-            tempRings = 3;
-        }
-
-        if (tempRings != 3 || numRings >= 2) {
-            numRings = tempRings;
-        }
-
-        return numRings;
-    }*/
 }

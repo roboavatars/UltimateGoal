@@ -22,7 +22,6 @@ public class Regression extends LinearOpMode {
     private boolean magToggle = false, magUp = false;
     private boolean downToggle = false, armDown = false;
     private boolean clampToggle = false, clamped = false;
-    private boolean inToggle = false, armIn = false;
 
     public boolean started = false;
     public double flickTime;
@@ -47,6 +46,7 @@ public class Regression extends LinearOpMode {
         waitForStart();
 
         robot.drivetrain.updateThetaError();
+        robot.wobbleArm.armUp();
 
         while (opModeIsActive()) {
             if (gamepad1.left_trigger > 0) {
@@ -119,45 +119,22 @@ public class Regression extends LinearOpMode {
                 robot.resetOdo(87, 63, Math.PI/2);
             }
 
-            if (gamepad2.dpad_up && !inToggle) {
-                inToggle = true;
-                if (armIn) {
-                    robot.wobbleArm.armUp();
-                    robot.wobbleArm.unClamp();
-                } else {
-                    robot.wobbleArm.armInside();
-                    robot.wobbleArm.clawIn();
-                    armDown = false;
-                }
-                armIn = !armIn;
-            } else if (!gamepad2.dpad_up && inToggle) {
-                inToggle = false;
-            }
-
             if (gamepad2.dpad_down && !downToggle) {
                 downToggle = true;
                 if (armDown) {
                     robot.wobbleArm.armUp();
                 } else {
                     robot.wobbleArm.armDown();
-                    if (armIn) {
-                        robot.wobbleArm.unClamp();
-                        armIn = false;
-                    }
                 }
                 armDown = !armDown;
             } else if (!gamepad2.dpad_down && downToggle) {
                 downToggle = false;
             }
 
-            if (armIn) {
+            if (!armDown) {
                 robot.intake.autoBumpers(robot.x, robot.y, robot.theta, 12);
             } else {
-                if (armDown) {
-                    robot.intake.bumpersOut();
-                } else {
-                    robot.intake.bumpersHome();
-                }
+                robot.intake.bumpersOut();
             }
 
             if (gamepad2.dpad_left && !clampToggle) {

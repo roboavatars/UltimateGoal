@@ -223,7 +223,7 @@ public class Robot {
 //            }
 
             // Start auto-feed when mag is up, velocity is high enough, and robot is at position
-            if (preShootOverride || (/*curTime - startShootTime > 1000 && */shooter.getFlywheelVelocity() >= vThresh && isAtPoseTurret(shootTargetTheta)/*isAtPoseTurret(target[0], target[1], getShootAngle()) && notMoving()*/)) {
+            if (preShootOverride || (curTime - startShootTime > 1000 && shooter.getFlywheelVelocity() >= vThresh && isAtPoseTurret(shootTargetTheta)/*&& y < 70 */)) {
                 if (highGoal) {
                     shootDelay = highGoalDelay;
                 } else {
@@ -248,7 +248,7 @@ public class Robot {
             }
 
             // If robot does not converge or mag gets stuck
-            if (curTime - startShootTime > (isAuto ? 2500 : 3000)) {
+            if (curTime - startShootTime > (isAuto ? 2500 : 4000)) {
                 if (!isAuto && highGoal) {
 //                    cancelShoot();
                 } else {
@@ -587,7 +587,7 @@ public class Robot {
     }
 
     public int calcHGVelocity() {
-        return (int) (1905 - 7.68 * hgDist + 0.049 * Math.pow(hgDist, 2));
+        return (int) (1458 + 2 * hgDist);
     }
 
     // Set target point (velocity specification, custom Kp and Kv values)

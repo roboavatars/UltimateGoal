@@ -9,9 +9,9 @@ import org.firstinspires.ftc.teamcode.OpenCV.StackHeight.StackHeightPipeline.Rin
 import org.firstinspires.ftc.teamcode.OpenCV.Vision;
 import org.firstinspires.ftc.teamcode.Pathing.Path;
 import org.firstinspires.ftc.teamcode.Pathing.Pose;
+import org.firstinspires.ftc.teamcode.Pathing.Spline;
 import org.firstinspires.ftc.teamcode.Pathing.Target;
 import org.firstinspires.ftc.teamcode.Pathing.Waypoint;
-import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import java.util.ArrayList;
@@ -55,7 +55,7 @@ public class BlueAutoStarterStack extends LinearOpMode {
 
         // Segment Times
         double goToStackTime = 1.0;
-        double intakeStackTime = 2.0;
+        double intakeStackTime = 2.25;
         double intakeStack2Time = 2.25;
         double deliverWobbleTime = 1.75;
         double parkTime = 1.5;
@@ -67,31 +67,37 @@ public class BlueAutoStarterStack extends LinearOpMode {
         };
         Path goToStackPath = new Path(new ArrayList<>(Arrays.asList(goToStackWaypoints)));
         Path deliverWobblePath = null;
+        Spline deliverWobbleTh = null;
         Path parkPath = null;
 
         // Other variables
-        final int highGoalVelocity = Constants.HIGH_GOAL_VELOCITY;
         boolean knockStack = false;
-        boolean reachedDeposit = false;
+        int depositState = 0;
         double depositReachTime = 0;
         ArrayList<Ring> rings;
 
         waitForStart();
 
         robot.drivetrain.updateThetaError();
+        robot.wobbleArm.armUp();
 
         // Determine Ring Case
         RingCase ringCase = detector.getStackPipe().getModeResult();
         Robot.log("Ring case: " + ringCase);
 
         // Customize Pathing Depending on Ring Case
-        double[][] wobbleDelivery = {{14, 70, 5*PI/6}, {36, 93, 5*PI/6}, {18, 119, 2*PI/3}};
+        double[][] wobbleDelivery = {{21, 65, 3*PI/4}, {40, 85, 5*PI/6}, {23, 118, 2*PI/3}};
         double[] wobbleCor;
         if (ringCase == RingCase.Zero) {
             wobbleCor = wobbleDelivery[0];
             intakeStack = true;
             shoot1Ring = true;
             intakeStack2 = true;
+            goToStackWaypoints = new Waypoint[] {
+                    new Waypoint(30, 9, PI/2, 30, 30, 0, 0),
+                    new Waypoint(26, 45, PI/2, 5, -30, 0, goToStackTime),
+            };
+            goToStackPath = new Path(new ArrayList<>(Arrays.asList(goToStackWaypoints)));
         } else if (ringCase == RingCase.One) {
             wobbleCor = wobbleDelivery[1];
             intakeStack2 = true;
@@ -117,11 +123,17 @@ public class BlueAutoStarterStack extends LinearOpMode {
                     robot.intake.blockerDown();
                 }
 
-                robot.shooter.flywheelHG();
+                if (ringCase == RingCase.Four || time.seconds() > goToStackTime + 3.5) {
+                    robot.shooter.setFlywheelVelocity(robot.calcHGVelocity());
+                }
 
-                if (time.seconds() > goToStackTime) {
+                if ((ringCase == RingCase.Four && time.seconds() > goToStackTime) || (ringCase != RingCase.Four && time.seconds() > goToStackTime + 5)) {
                     robot.shootYOverride = 32;
                     robot.highGoalShoot(4, true);
+
+                    if (ringCase == RingCase.Zero) {
+                        robot.intake.bumpersOut();
+                    }
 
                     goToStack = true;
                     time.reset();
@@ -132,7 +144,7 @@ public class BlueAutoStarterStack extends LinearOpMode {
             else if (!shootHighGoal1) {
                 if (!robot.preShoot && !robot.shoot && robot.numRings == 0) {
                     if (ringCase != RingCase.Zero) {
-                        robot.shooter.flywheelHG();
+                        robot.shooter.setFlywheelVelocity(robot.calcHGVelocity());
                     }
 
                     shootHighGoal1 = true;
@@ -156,7 +168,7 @@ public class BlueAutoStarterStack extends LinearOpMode {
                     }
                 } else {
                     robot.intake.on();
-                    robot.setTargetPoint(34, 36, PI/2);
+                    robot.setTargetPoint(34, 41, PI/2);
                 }
 
                 if (time.seconds() > intakeStackTime) {
@@ -171,7 +183,11 @@ public class BlueAutoStarterStack extends LinearOpMode {
             // Shoot 1 Ring in High Goal
             else if (!shoot1Ring) {
                 if (!robot.preShoot && !robot.shoot && robot.numRings == 0) {
-                    robot.intake.on();
+                    if (ringCase == RingCase.Four) {
+                        robot.intake.on();
+                    } else {
+                        robot.intake.bumpersOut();
+                    }
                     shoot1Ring = true;
                     time.reset();
                 }
@@ -186,17 +202,13 @@ public class BlueAutoStarterStack extends LinearOpMode {
                 }
 
                 if (time.seconds() > intakeStack2Time - 1) {
-                    robot.shooter.flywheelHG();
+                    robot.shooter.setFlywheelVelocity(robot.calcHGVelocity());
                 }
 
                 if (time.seconds() > intakeStack2Time) {
 
-                    // REMOVE after distance based velocity added
-                    robot.thetaOffset = 0;
-                    Constants.HIGH_GOAL_VELOCITY = highGoalVelocity;
-                    //
-
                     robot.highGoalShoot();
+                    robot.intake.bumpersOut();
 
                     intakeStack2 = true;
                     time.reset();
@@ -207,10 +219,11 @@ public class BlueAutoStarterStack extends LinearOpMode {
             else if (!shootHighGoal2) {
                 if (!robot.preShoot && !robot.shoot && robot.numRings == 0) {
                     Waypoint[] deliverWobbleWaypoints = new Waypoint[] {
-                            new Waypoint(robot.x, robot.y, robot.theta, 40, 30, 0, 0),
-                            new Waypoint(wobbleCor[0], wobbleCor[1], wobbleCor[2], 5, -30, 0, deliverWobbleTime),
+                                new Waypoint(robot.x, robot.y, robot.theta, 20, 20, 0, 0),
+                                new Waypoint(wobbleCor[0], wobbleCor[1], PI/2, 5, 0, 0, deliverWobbleTime),
                     };
                     deliverWobblePath = new Path(new ArrayList<>(Arrays.asList(deliverWobbleWaypoints)));
+                    deliverWobbleTh = new Spline(robot.theta, 0, 0, wobbleCor[2], 0, 0, deliverWobbleTime);
 
                     shootHighGoal2 = true;
                     time.reset();
@@ -220,37 +233,41 @@ public class BlueAutoStarterStack extends LinearOpMode {
             // Deliver Wobble Goal
             else if (!deliverWobble) {
                 double curTime = Math.min(time.seconds(), deliverWobbleTime);
-                robot.setTargetPoint(deliverWobblePath.getRobotPose(curTime));
+                Pose curPose = deliverWobblePath.getRobotPose(curTime);
+                robot.setTargetPoint(new Target(curPose).theta(deliverWobbleTh.position(curTime)));
 
-                if ((!reachedDeposit && robot.isAtPose(wobbleCor[0], wobbleCor[1], wobbleCor[2])) || time.seconds() > deliverWobbleTime) {
+                if (depositState == 0 && (robot.isAtPose(wobbleCor[0], wobbleCor[1], wobbleCor[2]) && robot.notMoving() || time.seconds() > deliverWobbleTime + 1)) {
                     robot.wobbleArm.armDown();
+                    depositReachTime = time.seconds();
+                    depositState = 1;
                 }
 
-                if ((!reachedDeposit && robot.isAtPose(wobbleCor[0], wobbleCor[1], wobbleCor[2]) && robot.notMoving()) || time.seconds() > deliverWobbleTime + 0.5) {
-                    reachedDeposit = true;
-                    depositReachTime = curTime;
+                if (depositState == 1 && (time.seconds() > depositReachTime + 1 || time.seconds() > deliverWobbleTime + 2.5)) {
+                    depositState = 2;
+                    depositReachTime = time.seconds();
                     robot.wobbleArm.unClamp();
                 }
 
-                if ((reachedDeposit && time.seconds() > depositReachTime + 0.5) || time.seconds() > deliverWobbleTime + 1) {
+                if (depositState == 2 && (time.seconds() > depositReachTime + 0.75 || time.seconds() > deliverWobbleTime + 4)) {
                     robot.wobbleArm.armUp();
+                    robot.intake.bumpersHome();
 
                     Waypoint[] parkWaypoints;
                     if (ringCase == RingCase.Zero) {
                         parkWaypoints = new Waypoint[] {
                                 new Waypoint(robot.x, robot.y, robot.theta, 20, 20, 0, 0),
                                 new Waypoint(robot.x + 15, robot.y + 4, PI, 5, 5, 0, 0.75),
-                                new Waypoint(34, 85, PI/2, 20, 10, 0, parkTime),
+                                new Waypoint(37, 82, PI/2, 20, 10, 0, parkTime),
                         };
                     } else if (ringCase == RingCase.One) {
                         parkWaypoints = new Waypoint[] {
-                                new Waypoint(robot.x, robot.y, robot.theta, -20, -10, 0, 0),
-                                new Waypoint(31, 85, PI/2, -20, -5, 0, parkTime),
+                                new Waypoint(robot.x, robot.y, robot.theta, -10, -5, 0, 0),
+                                new Waypoint(34, 80, PI/2, -10, -5, 0, parkTime),
                         };
                     } else {
                         parkWaypoints = new Waypoint[] {
                                 new Waypoint(robot.x, robot.y, robot.theta, -50, -40, 0, 0),
-                                new Waypoint(31, 85, PI/2, -30, -10, 0, parkTime),
+                                new Waypoint(24, 82, PI/2, -30, -10, 0, parkTime),
                         };
                     }
                     parkPath = new Path(new ArrayList<>(Arrays.asList(parkWaypoints)));
@@ -275,9 +292,6 @@ public class BlueAutoStarterStack extends LinearOpMode {
 
             else {
                 robot.drivetrain.stop();
-                if (robot.notMoving() || (System.currentTimeMillis() - robot.startTime) >= 30000) {
-                    break;
-                }
             }
 
             addPacket("Ring Case", ringCase);
