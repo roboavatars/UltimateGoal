@@ -20,7 +20,7 @@ import java.util.Arrays;
 import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 
-@Autonomous(name = "0 Red Auto Starter Stack", preselectTeleOp = "1 Teleop", group = "Red")
+@Autonomous(name = "Red Auto Starter Stack", preselectTeleOp = "1 Teleop", group = "Red")
 public class RedAutoStarterStack extends LinearOpMode {
 
     @Override
@@ -80,6 +80,7 @@ public class RedAutoStarterStack extends LinearOpMode {
 
         robot.drivetrain.updateThetaError();
         robot.wobbleArm.armUp();
+        robot.setLockMode(Robot.TurretMode.HIGH_GOAL);
 
         // Determine Ring Case
         RingCase ringCase = detector.getStackPipe().getModeResult();
@@ -256,7 +257,7 @@ public class RedAutoStarterStack extends LinearOpMode {
                     if (ringCase == RingCase.Zero) {
                         parkWaypoints = new Waypoint[] {
                                 new Waypoint(robot.x, robot.y, robot.theta, 20, 20, 0, 0),
-                                new Waypoint(robot.x - 15, robot.y + 4, PI, 5, 5, 0, 0.75),
+                                new Waypoint(robot.x - 15, robot.y + 4, 0, 5, 5, 0, 0.75),
                                 new Waypoint(107, 82, PI/2, 20, 10, 0, parkTime),
                         };
                     } else if (ringCase == RingCase.One) {

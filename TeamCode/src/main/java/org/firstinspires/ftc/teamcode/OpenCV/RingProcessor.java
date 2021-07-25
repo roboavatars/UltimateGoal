@@ -20,7 +20,7 @@ public class RingProcessor {
     public static double minCb = 80;
     public static double maxY = 255;
     public static double maxCr = 170;
-    public static double maxCb = 125;
+    public static double maxCb = 120;
 
 //    ycrcb -> (0, 0, 80), (255, 170, 125)
 //    lab -> a+b: a(0-170) b(160-255)

@@ -14,7 +14,7 @@ public class Intake {
     private Servo bumperLR;
 
     public static double intakePow = 1;
-    public static double transferPow = 0.5;
+    public static double transferPow = 0.6;
 
     private double lastIntakePow = 0;
     private double lastTransferPow = 0;
@@ -81,8 +81,8 @@ public class Intake {
         setBlocker(Constants.BLOCKER_HOME_POS);
     }
 
-    public void blockerUp() {
-        setBlocker(Constants.BLOCKER_UP_POS);
+    public void blockerVert() {
+        setBlocker(Constants.BLOCKER_VERTICAL_POS);
     }
 
     public void blockerDown() {

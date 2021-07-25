@@ -105,7 +105,7 @@ public class Teleop extends LinearOpMode {
 
             // Ring Blocker
 //            if (gamepad2.a) {
-//                robot.intake.blockerUp();
+//                robot.intake.blockerVert();
 //            } else {
 //                robot.intake.blockerDown();
 //            }

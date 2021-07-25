@@ -490,7 +490,7 @@ public class RedAutoFull extends LinearOpMode {
                     robot.thetaOffset = 0;
 
                     if (ringCase == RingCase.Four) {
-                        robot.intake.blockerUp();
+                        robot.intake.blockerVert();
                     }
 
                     Waypoint[] deliverWobble2Waypoints;

@@ -59,7 +59,7 @@ public class FlickerTest extends LinearOpMode {
                 }
             } else {
                 if (gamepad1.a) {
-                    robot.intake.blockerUp();
+                    robot.intake.blockerVert();
                 } else {
                     robot.intake.blockerDown();
                 }

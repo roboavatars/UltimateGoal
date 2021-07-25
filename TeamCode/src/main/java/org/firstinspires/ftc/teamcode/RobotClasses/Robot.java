@@ -404,7 +404,7 @@ public class Robot {
         addPacket("4 Turret Theta", round(turretGlobalTheta) + " " + round(shootTargetTheta) + " " + round(shooter.getTheta()) + " " + shooter.getTurretVelocity());
         addPacket("5 Shooter Velocity", shooter.getFlywheelVelocity() + " " + vThresh);
         addPacket("6 numRings", numRings);
-        addPacket("7 shoot", preShoot  + " " + shoot + " " + highGoal + " " + turretMode.name() + " " + shootTargetTheta);
+        addPacket("7 shoot", preShoot  + " " + shoot + " " + highGoal + " " + turretMode.name() + " " + round(shootTargetTheta));
         addPacket("8 Run Time", (curTime - startTime) / 1000);
         addPacket("9 Update Frequency (Hz)", round(1 / timeDiff));
         addPacket("Pod Zeroes", drivetrain.zero1 + ", " + drivetrain.zero2 + ", " + drivetrain.zero3);

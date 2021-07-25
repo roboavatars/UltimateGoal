@@ -41,7 +41,7 @@ public class Logger extends Thread {
         try {
             File robotDataLog = new File(getLogName(true));
             fileWriter = new FileWriter(robotDataLog);
-            fileWriter.write("# " + (isAuto ? "Auto" : "Teleop") + "\n" + (isRed ? "Red" : "Blue") + "\n");
+            fileWriter.write("# " + (isAuto ? "Auto" : "Teleop") + "\n# " + (isRed ? "Red" : "Blue") + "\n");
             fileWriter.write("Timestamp,SinceStart,X,Y,Theta,TurretTheta,VelocityX,VelocityY,VelocityTheta,AccelX,AccelY,AccelTheta,NumRings,MagHome,FeedHome,LastTarget,Cycles,AvgCycle\n");
             logCounter = 0;
             writeCounter = 0;

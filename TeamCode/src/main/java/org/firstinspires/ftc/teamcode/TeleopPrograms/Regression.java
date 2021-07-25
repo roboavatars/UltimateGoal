@@ -110,7 +110,7 @@ public class Regression extends LinearOpMode {
             }
 
             if (gamepad1.y) {
-                robot.intake.blockerUp();
+                robot.intake.blockerVert();
             } else {
                 robot.intake.blockerDown();
             }

@@ -80,7 +80,7 @@ public class RedAutoPowerShot extends LinearOpMode {
         waitForStart();
 
         robot.drivetrain.updateThetaError();
-        robot.intake.blockerUp();
+        robot.intake.blockerVert();
         robot.wobbleArm.armUp();
 
         // Determine Ring Case
@@ -207,14 +207,14 @@ public class RedAutoPowerShot extends LinearOpMode {
                 robot.setTargetPoint(new Target(curPose).theta(theta));
 
                 if (time.seconds() > bounceBackTime) {
+
+                    robot.setLockMode(Robot.TurretMode.HIGH_GOAL);
+
                     Waypoint[] goToBounceShootWaypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, robot.theta, -40, -30, 0, 0),
                             new Waypoint(85, 63, PI/2, -5, 20, 0, goToBounceShootTime),
                     };
                     goToBounceShootPath = new Path(new ArrayList<>(Arrays.asList(goToBounceShootWaypoints)));
-
-                    robot.intake.off();
-                    robot.shooter.setFlywheelVelocity(robot.calcHGVelocity());
 
                     intakeBounceBacks = true;
                     time.reset();
@@ -226,6 +226,11 @@ public class RedAutoPowerShot extends LinearOpMode {
                 double curTime = Math.min(time.seconds(), goToBounceShootTime);
                 Pose curPose = goToBounceShootPath.getRobotPose(curTime);
                 robot.setTargetPoint(curPose.x, curPose.y, curPose.theta + PI);
+
+                if (time.seconds() > goToBounceBackTime/2) {
+                    robot.intake.off();
+                    robot.shooter.setFlywheelVelocity(robot.calcHGVelocity());
+                }
 
                 if (time.seconds() > goToBounceShootTime) {
                     robot.highGoalShoot();
