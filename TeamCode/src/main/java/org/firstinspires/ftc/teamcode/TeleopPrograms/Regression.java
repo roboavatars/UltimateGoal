@@ -39,7 +39,7 @@ public class Regression extends LinearOpMode {
     @Override
     public void runOpMode() {
         robot = new Robot(this, startX, startY, startTheta, false);
-        robot.logger.startLogging(false);
+        robot.logger.startLogging(false, true);
 
         robot.setLockMode(Robot.TurretMode.HIGH_GOAL);
 

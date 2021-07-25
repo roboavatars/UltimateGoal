@@ -38,7 +38,7 @@ public class RedAutoStarterStack extends LinearOpMode {
         */
 
         Robot robot = new Robot(this, 114, 9, PI/2, true, true);
-        robot.logger.startLogging(true);
+        robot.logger.startLogging(true, true);
 
         Vision detector = new Vision(this, Vision.Pipeline.StackHeight);
         detector.start();

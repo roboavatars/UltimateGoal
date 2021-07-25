@@ -37,11 +37,11 @@ public class Logger extends Thread {
     /**
      * Creates a new file and writes initial rows
      */
-    public void startLogging(boolean isAuto) {
+    public void startLogging(boolean isAuto, boolean isRed) {
         try {
             File robotDataLog = new File(getLogName(true));
             fileWriter = new FileWriter(robotDataLog);
-            fileWriter.write("# " + (isAuto ? "Auto" : "Teleop") + "\n");
+            fileWriter.write("# " + (isAuto ? "Auto" : "Teleop") + "\n" + (isRed ? "Red" : "Blue") + "\n");
             fileWriter.write("Timestamp,SinceStart,X,Y,Theta,TurretTheta,VelocityX,VelocityY,VelocityTheta,AccelX,AccelY,AccelTheta,NumRings,MagHome,FeedHome,LastTarget,Cycles,AvgCycle\n");
             logCounter = 0;
             writeCounter = 0;
@@ -137,8 +137,9 @@ public class Logger extends Thread {
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(getLogName(false)));
             List<String> lines = bufferedReader.lines().collect(Collectors.toList());
+            int isRed = lines.get(1).contains("Red") ? 1 : 0;
             String[] data = lines.get(lines.size() - 2).split(",");
-            robotPos = new double[] {Double.parseDouble(data[2]), Double.parseDouble(data[3]), Double.parseDouble(data[4]), Double.parseDouble(data[5])};
+            robotPos = new double[] {isRed, Double.parseDouble(data[2]), Double.parseDouble(data[3]), Double.parseDouble(data[4]), Double.parseDouble(data[5])};
 
             bufferedReader.close();
             Robot.log("Starting At " + Arrays.toString(robotPos));

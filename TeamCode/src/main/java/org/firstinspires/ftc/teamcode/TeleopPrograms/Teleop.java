@@ -67,15 +67,16 @@ public class Teleop extends LinearOpMode {
     @Override
     public void runOpMode() {
         if (useAutoPos) {
-            double[] initialPosition = Logger.readPos();
-            telemetry.addData("Starting Position", Arrays.toString(initialPosition));
+            double[] initialData = Logger.readPos();
+            telemetry.addData("Starting Position", Arrays.toString(initialData));
             telemetry.update();
-            robot = new Robot(this, initialPosition[0], initialPosition[1], initialPosition[2], initialPosition[3], false, true);
+            robot = new Robot(this, initialData[1], initialData[2], initialData[3], initialData[4], false, initialData[0] == 1);
+            robot.logger.startLogging(false, initialData[0] == 1);
         } else {
             robot = new Robot(this, startX, startY, startTheta, false);
+            robot.logger.startLogging(false, true);
         }
 
-        robot.logger.startLogging(false);
         robot.wobbleArm.clamp();
         robot.wobbleArm.armUp();
 

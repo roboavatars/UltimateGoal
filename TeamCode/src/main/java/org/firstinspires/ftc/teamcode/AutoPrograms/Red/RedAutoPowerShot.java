@@ -36,7 +36,7 @@ public class RedAutoPowerShot extends LinearOpMode {
         */
 
         Robot robot = new Robot(this, 90, 9, PI/2, true, true);
-        robot.logger.startLogging(true);
+        robot.logger.startLogging(true, true);
 
         Vision detector = new Vision(this, Vision.Pipeline.StackHeight);
         detector.start();
