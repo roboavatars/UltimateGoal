@@ -2,16 +2,17 @@ package org.firstinspires.ftc.teamcode.RobotClasses;
 
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.ServoImplEx;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class WobbleArm {
 
-    private Servo armServo;
+    private ServoImplEx armServo;
     private Servo leftClampServo;
     private Servo rightClampServo;
 
     public WobbleArm(LinearOpMode op, boolean isAuto) {
-        armServo = op.hardwareMap.get(Servo.class, "wobbleServo");
+        armServo = op.hardwareMap.get(ServoImplEx.class, "wobbleServo");
         leftClampServo = op.hardwareMap.get(Servo.class, "leftClamp");
         rightClampServo = op.hardwareMap.get(Servo.class, "rightClamp");
 

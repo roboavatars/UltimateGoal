@@ -78,6 +78,7 @@ public class Teleop extends LinearOpMode {
         robot.logger.startLogging(false);
         robot.wobbleArm.clamp();
         robot.wobbleArm.armUp();
+
         robot.setLockMode(Robot.TurretMode.HIGH_GOAL);
 
         waitForStart();

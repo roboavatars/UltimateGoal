@@ -17,10 +17,10 @@ public class RingProcessor {
     // CV Thresholds
     public static double minY = 0;
     public static double minCr = 0;
-    public static double minCb = 90; // 80
+    public static double minCb = 80;
     public static double maxY = 255;
     public static double maxCr = 170;
-    public static double maxCb = 110; // 125
+    public static double maxCb = 125;
 
 //    ycrcb -> (0, 0, 80), (255, 170, 125)
 //    lab -> a+b: a(0-170) b(160-255)

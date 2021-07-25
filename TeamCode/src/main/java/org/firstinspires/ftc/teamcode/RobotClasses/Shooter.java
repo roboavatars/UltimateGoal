@@ -77,6 +77,10 @@ public class Shooter {
     }
 
     public void updatePID(double robotTheta) {
+        if (lockTheta == Double.MAX_VALUE) {
+            turretMotor.setPower(0);
+            return;
+        }
         targetTheta = (lockTheta - robotTheta + PI/2) % (2*PI);
         if (targetTheta < 0) {
             targetTheta += 2*PI;
