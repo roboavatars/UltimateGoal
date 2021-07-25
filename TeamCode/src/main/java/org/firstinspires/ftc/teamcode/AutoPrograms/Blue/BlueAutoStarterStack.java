@@ -77,7 +77,11 @@ public class BlueAutoStarterStack extends LinearOpMode {
         double depositReachTime = 0;
         ArrayList<Ring> rings;
 
-        waitForStart();
+        double startTime = System.currentTimeMillis();
+        while (!opModeIsActive()) {
+            telemetry.addData("Init Time", (System.currentTimeMillis() - startTime) / 1000);
+            telemetry.update();
+        }
 
         robot.drivetrain.updateThetaError();
         robot.wobbleArm.armUp();
@@ -122,7 +126,7 @@ public class BlueAutoStarterStack extends LinearOpMode {
                 robot.setTargetPoint(curPose);
 
                 if (ringCase != RingCase.Zero && time.seconds() > 0.4) {
-                    robot.intake.blockerDown();
+                    robot.intake.setBlocker(0.3);
                 }
 
                 if (ringCase == RingCase.Four || time.seconds() > goToStackTime + 3.5) {
@@ -209,7 +213,6 @@ public class BlueAutoStarterStack extends LinearOpMode {
                 }
 
                 if (time.seconds() > intakeStack2Time) {
-
                     robot.highGoalShoot();
                     robot.intake.bumpersOut();
 
@@ -271,7 +274,6 @@ public class BlueAutoStarterStack extends LinearOpMode {
                 robot.setTargetPoint(curPose.x, curPose.y, curPose.theta + PI);
 
                 if (time.seconds() > wobbleBackTime || ringCase == RingCase.One) {
-
                     Waypoint[] parkWaypoints;
                     if (ringCase == RingCase.Zero) {
                         parkWaypoints = new Waypoint[] {
@@ -297,7 +299,7 @@ public class BlueAutoStarterStack extends LinearOpMode {
                 }
             }
 
-                // Park
+            // Park
             else if (!park) {
                 double curTime = Math.min(time.seconds(), parkTime);
                 Pose curPose = parkPath.getRobotPose(curTime);

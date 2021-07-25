@@ -76,7 +76,11 @@ public class RedAutoStarterStack extends LinearOpMode {
         double depositReachTime = 0;
         ArrayList<Ring> rings;
 
-        waitForStart();
+        double startTime = System.currentTimeMillis();
+        while (!opModeIsActive()) {
+            telemetry.addData("Init Time", (System.currentTimeMillis() - startTime) / 1000);
+            telemetry.update();
+        }
 
         robot.drivetrain.updateThetaError();
         robot.wobbleArm.armUp();

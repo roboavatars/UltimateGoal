@@ -77,7 +77,11 @@ public class RedAutoPowerShot extends LinearOpMode {
         double depositReachTime = 0;
         ArrayList<Ring> rings;
 
-        waitForStart();
+        double startTime = System.currentTimeMillis();
+        while (!opModeIsActive()) {
+            telemetry.addData("Init Time", (System.currentTimeMillis() - startTime) / 1000);
+            telemetry.update();
+        }
 
         robot.drivetrain.updateThetaError();
         robot.intake.blockerVert();
@@ -207,7 +211,6 @@ public class RedAutoPowerShot extends LinearOpMode {
                 robot.setTargetPoint(new Target(curPose).theta(theta));
 
                 if (time.seconds() > bounceBackTime) {
-
                     robot.setLockMode(Robot.TurretMode.HIGH_GOAL);
 
                     Waypoint[] goToBounceShootWaypoints = new Waypoint[] {
@@ -227,7 +230,7 @@ public class RedAutoPowerShot extends LinearOpMode {
                 Pose curPose = goToBounceShootPath.getRobotPose(curTime);
                 robot.setTargetPoint(curPose.x, curPose.y, curPose.theta + PI);
 
-                if (time.seconds() > goToBounceBackTime/2) {
+                if (time.seconds() > goToBounceBackTime / 2) {
                     robot.intake.off();
                     robot.shooter.setFlywheelVelocity(robot.calcHGVelocity());
                 }

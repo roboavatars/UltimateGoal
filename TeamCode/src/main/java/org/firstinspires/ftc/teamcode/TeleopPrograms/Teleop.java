@@ -52,7 +52,7 @@ public class Teleop extends LinearOpMode {
     Gamepad 2
     A - Blocker Up
     B - Cancel Shoot
-    X- Wobble in
+    X- Move Turret to Reset
     Y - Pre-Rev Flywheel for High Goal
     Dpad Left - Decrease Theta Offset
     Dpad Right - Increase Theta Offset
@@ -82,7 +82,11 @@ public class Teleop extends LinearOpMode {
 
         robot.setLockMode(Robot.TurretMode.HIGH_GOAL);
 
-        waitForStart();
+        double startTime = System.currentTimeMillis();
+        while (!opModeIsActive()) {
+            telemetry.addData("Init Time", (System.currentTimeMillis() - startTime) / 1000);
+            telemetry.update();
+        }
 
         robot.drivetrain.updateThetaError();
 
@@ -118,6 +122,15 @@ public class Teleop extends LinearOpMode {
             // Rev Up Flywheel for High Goal
             if (gamepad2.y) {
                 robot.shooter.setFlywheelVelocity(robot.calcHGVelocity());
+            }
+
+            // Turret Reset
+            if (gamepad2.x) {
+                robot.turretReset = true;
+                if (robot.shooter.limitSwitchOn()) {
+                    robot.turretReset = false;
+
+                }
             }
 
             // Wobble Arm In / Up / Down

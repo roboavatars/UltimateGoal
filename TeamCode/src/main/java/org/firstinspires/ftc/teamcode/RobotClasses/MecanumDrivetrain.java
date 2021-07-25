@@ -26,6 +26,7 @@ public class MecanumDrivetrain {
     // Tracking X/Y/Theta
     public double x, y, theta, startTheta;
     private double deltaHeading = 0;
+    public double commandedW;
 
     // Odometry
     public double pod1 = 0;
@@ -123,6 +124,8 @@ public class MecanumDrivetrain {
 
     // robot centric movement
     public void setControls(double xdot, double ydot, double w) {
+        commandedW = w;
+
         double FRpower, FLpower, BRpower, BLpower;
 
         if (!zeroStrafeCorrection) {

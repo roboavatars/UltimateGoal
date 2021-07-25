@@ -82,14 +82,17 @@ public class BlueAutoPowerShot extends LinearOpMode {
         double depositReachTime = 0;
         ArrayList<Ring> rings;
 
-        waitForStart();
+        double startTime = System.currentTimeMillis();
+        while (!opModeIsActive()) {
+            telemetry.addData("Init Time", (System.currentTimeMillis() - startTime) / 1000);
+            telemetry.update();
+        }
 
         robot.drivetrain.updateThetaError();
         robot.wobbleArm.armUp();
 
         // Determine Ring Case
         RingCase ringCase = RingCase.Zero;
-        Robot.log("Ring case: " + ringCase);
 
         // Customize Pathing Depending on Ring Case
         double[][] wobbleDelivery = {{17, 68, PI}, {19, 105, PI/2}, {15, 116, PI}};
@@ -109,7 +112,6 @@ public class BlueAutoPowerShot extends LinearOpMode {
                 }
 
                 if (time.seconds() > alignTime) {
-
                     ringCase = detector.getStackPipe().getModeResult();
                     Robot.log("Ring case: " + ringCase);
 

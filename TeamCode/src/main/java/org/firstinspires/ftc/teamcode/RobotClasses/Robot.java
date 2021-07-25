@@ -98,6 +98,7 @@ public class Robot {
     private final double[] shootXCorB = {67.5, 60, 52.5, 36};
     private final double shootYCor = 150;
     private double shootTargetTheta;
+    public boolean turretReset;
 
     public double shootYOverride = 0;
     public double shootYOffset = 0;
@@ -365,7 +366,11 @@ public class Robot {
         profile(4);
 
         if (turretMode != NONE) {
-            shooter.updatePID(theta);
+            if (turretReset) {
+                shooter.setTurretPower(0.1);
+            } else {
+                shooter.updateTurret(theta, drivetrain.commandedW);
+            }
             updateTurret();
         }
 
@@ -585,7 +590,7 @@ public class Robot {
     }
 
     public int calcHGVelocity() {
-        return (int) (1458 + 2 * hgDist);
+        return (int) (1450 + 2 * hgDist);
     }
 
     public int calcMGVelocity() {

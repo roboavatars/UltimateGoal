@@ -6,6 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
+import com.qualcomm.robotcore.hardware.TouchSensor;
 
 import org.firstinspires.ftc.robotcore.external.navigation.CurrentUnit;
 
@@ -20,6 +21,7 @@ public class Shooter {
     private Servo magServo;
     private Servo feedServo;
     private Servo flapServo;
+    private TouchSensor limitSwitch;
 
     public boolean magHome = true;
     public boolean feedHome = true;
@@ -30,6 +32,7 @@ public class Shooter {
     public static final double RING_SPEED = 150;
     public static final double RING_FLIGHT_TIME = 0.5;
     public static final double INITIAL_ANGLE = 0.08;
+    public static final double RESET_ANGLE = 0;
 
     public static double pFlywheel = 80;
     public static double dFlywheel = 0;
@@ -37,7 +40,7 @@ public class Shooter {
 
     public static double pTurret = 2.25;
     public static double dTurret = 5.5;
-    public static double fTurret = 0;
+    public static double fTurret = -0.31;
     public double initialTheta;
 
     private double targetTheta = 0;
@@ -46,7 +49,7 @@ public class Shooter {
     private double turretErrorChange;
     private double lockTheta;
 
-    private static final double TICKS_PER_RADIAN = 466.2 / PI;
+    private static final double TICKS_PER_RADIAN = 414.4 / PI;
     private double targetVelocity = 0;
 
     private int count = 0;
@@ -69,46 +72,13 @@ public class Shooter {
         magServo = op.hardwareMap.get(Servo.class, "magServo");
         feedServo = op.hardwareMap.get(Servo.class, "feedServo");
 
+        limitSwitch = op.hardwareMap.get(TouchSensor.class, "limitSwitch");
+
         flapDown();
         feedHome();
         magHome();
 
         op.telemetry.addData("Status", "Shooter initialized");
-    }
-
-    public void updatePID(double robotTheta) {
-        if (lockTheta == Double.MAX_VALUE) {
-            turretMotor.setPower(0);
-            return;
-        }
-        targetTheta = (lockTheta - robotTheta + PI/2) % (2*PI);
-        if (targetTheta < 0) {
-            targetTheta += 2*PI;
-        }
-        if (targetTheta > 3*PI/2) {
-            targetTheta -= 2*PI;
-        }
-        targetTheta = Math.min(Math.max(targetTheta, -PI/4), 7*PI/6);
-        turretTheta = getTheta();
-        turretErrorChange = targetTheta - turretTheta - turretError;
-        turretError = targetTheta - turretTheta;
-
-        if (count % currentCheckInterval == 0) {
-            if (turretMotor.getCurrent(CurrentUnit.MILLIAMPS) > 9000) {
-                stalling = true;
-                turretMotor.setPower(0);
-                Robot.log("Turret motor stall detected!");
-            } else {
-                stalling = false;
-            }
-        } else if (!stalling) {
-            turretMotor.setPower(pTurret * turretError + dTurret * turretErrorChange + fTurret);
-        }
-
-        if (stalling) {
-            Robot.log("Turret motor stalling!!!");
-        }
-        count++;
     }
 
     // Flywheel
@@ -140,6 +110,64 @@ public class Shooter {
     }
 
     // Turret
+    public void updateTurret(double robotTheta, double commandedW) {
+        if (lockTheta == Double.MAX_VALUE) {
+            turretMotor.setPower(0);
+            return;
+        }
+        targetTheta = (lockTheta - robotTheta + PI/2) % (2*PI);
+        if (targetTheta < 0) {
+            targetTheta += 2*PI;
+        }
+        if (targetTheta > 3*PI/2) {
+            targetTheta -= 2*PI;
+        }
+        targetTheta = Math.min(Math.max(targetTheta, -PI/4), 7*PI/6);
+        turretTheta = getTheta();
+        turretErrorChange = targetTheta - turretTheta - turretError;
+        turretError = targetTheta - turretTheta;
+
+        if (count % currentCheckInterval == 0) {
+            if (turretMotor.getCurrent(CurrentUnit.MILLIAMPS) > 9000) {
+                stalling = true;
+                turretMotor.setPower(0);
+                Robot.log("Turret motor stall detected!");
+            } else {
+                stalling = false;
+            }
+        } else if (!stalling) {
+            turretMotor.setPower(Math.max(Math.min(fTurret * commandedW + pTurret * turretError + dTurret * turretErrorChange, 0.3), -0.3));
+        }
+
+        if (stalling) {
+            Robot.log("Turret motor stalling!!!");
+        }
+        count++;
+    }
+
+    public void resetTurret() {
+        initialTheta -= RESET_ANGLE;
+    }
+
+    public void setTurretPower(double power) {
+        if (count % currentCheckInterval == 0) {
+            if (turretMotor.getCurrent(CurrentUnit.MILLIAMPS) > 9000) {
+                stalling = true;
+                turretMotor.setPower(0);
+                Robot.log("Turret motor stall detected!");
+            } else {
+                stalling = false;
+            }
+        } else if (!stalling) {
+            turretMotor.setPower(Math.max(Math.min(power, 0.3), -0.3));
+        }
+
+        if (stalling) {
+            Robot.log("Turret motor stalling!!!");
+        }
+        count++;
+    }
+
     public void setTargetTheta(double theta) {
         lockTheta = theta;
     }
@@ -193,5 +221,10 @@ public class Shooter {
 
     public void flapUp() {
         flapServo.setPosition(Constants.FLAP_UP_POS);
+    }
+
+    // Limit Switch
+    public boolean limitSwitchOn() {
+        return limitSwitch.isPressed();
     }
 }

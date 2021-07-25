@@ -21,14 +21,14 @@ public class TurretTest extends LinearOpMode {
     private DcMotorEx turret;
     private double targetTheta = 0;
 
-    public static final double TICKS_PER_RADIAN = 466.2 / PI;
-    public static double a_NumFactor = 0;
+    public static final double TICKS_PER_RADIAN = 414.4 / PI;
+    public static double a_NumFactor = 1;
     public static double b_DemonFactor = 2;
-    public static double initialTheta = 0;
+    public static double initialTheta = PI/2;
 
     public static double p = 2.25;
     public static double d = 5.5;
-    public static double f = 0;
+    public static double f = -0.31;
 
     public static boolean dashTarget = true;
 
@@ -47,6 +47,8 @@ public class TurretTest extends LinearOpMode {
 
         waitForStart();
 
+        drivetrain.updateThetaError();
+
         while (opModeIsActive()) {
             drivetrain.updatePose();
 
@@ -63,7 +65,7 @@ public class TurretTest extends LinearOpMode {
             turretError = targetTheta - turretTheta;
 
             if (dashTarget) {
-                turret.setPower(p * turretError + d * turretErrorChange + f);
+                turret.setPower(Math.max(Math.min(f * drivetrain.commandedW + p * turretError + d * turretErrorChange, 0.3), -0.3));
             } else {
                 turret.setPower(gamepad1.left_trigger - gamepad1.right_trigger);
             }

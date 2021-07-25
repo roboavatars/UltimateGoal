@@ -9,7 +9,6 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
 @TeleOp()
 public class AlignTest extends LinearOpMode {
-
     private TouchSensor limitSwitch;
     private boolean aligned = false;
 
