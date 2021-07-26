@@ -134,7 +134,7 @@ public class RedAutoStarterStack extends LinearOpMode {
 
                 if ((ringCase == RingCase.Four && time.seconds() > goToStackTime) || (ringCase != RingCase.Four && time.seconds() > goToStackTime + 5)) {
                     robot.shootYOverride = 32;
-                    robot.highGoalShoot(4, true);
+                    robot.highGoalShoot(4);
 
                     if (ringCase == RingCase.Zero) {
                         robot.intake.bumpersOut();
@@ -164,21 +164,21 @@ public class RedAutoStarterStack extends LinearOpMode {
                         robot.intake.setPower(-0.5);
                     } else if (knockStack) {
                         robot.intake.on();
-                        robot.setTargetPoint(new Target(110, Math.min(38 + 4.5 * time.seconds(), 43), PI/2).thetaW0(PI/2).thetaKp(3.0));
-                    } else if (robot.isAtPose(110, 38, PI/2, 0.5, 0.5, PI/35) && robot.notMoving()) {
+                        robot.setTargetPoint(new Target(108, Math.min(40 + 2 * time.seconds(), 53), PI/2).thetaW0(PI/2).thetaKp(3.0));
+                    } else if (robot.isAtPose(108, 45, PI/2, 0.5, 0.5, PI/35) && robot.notMoving()) {
                         robot.drivetrain.stop();
                         knockStack = true;
                     } else {
-                        robot.setTargetPoint(110, 38, PI/2);
+                        robot.setTargetPoint(108, 45, PI/2);
                     }
                 } else {
                     robot.intake.on();
-                    robot.setTargetPoint(110, 41, PI/2);
+                    robot.setTargetPoint(108, 42, PI/2);
                 }
 
                 if (time.seconds() > intakeStackTime) {
                     robot.shootYOverride = robot.y;
-                    robot.highGoalShoot(2, true);
+                    robot.highGoalShoot(2);
 
                     intakeStack = true;
                     time.reset();
@@ -201,9 +201,9 @@ public class RedAutoStarterStack extends LinearOpMode {
             // Intake Fourth Ring from Stack
             else if (!intakeStack2) {
                 if (time.seconds() < 1.5) {
-                    robot.setTargetPoint(new Target(110, Math.min(41 + 12 * time.seconds(), 63), PI/2).thetaW0(PI/2).thetaKp(3.0));
+                    robot.setTargetPoint(new Target(108, Math.min(53 + 3 * time.seconds(), 63), PI/2).thetaW0(PI/2).thetaKp(3.0));
                 } else {
-                    robot.setTargetPoint(110, 63, PI/2);
+                    robot.setTargetPoint(108, 63, PI/2);
                 }
 
                 if (time.seconds() > intakeStack2Time - 1) {

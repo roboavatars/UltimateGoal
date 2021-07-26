@@ -17,10 +17,10 @@ public class WobbleArm {
         rightClampServo = op.hardwareMap.get(Servo.class, "rightClamp");
 
         if (isAuto) {
-            setArmPosition(0.3);
+            setArmPosition(0.8);
             clamp();
         } else {
-            armDown();
+            armInside();
             clawIn();
         }
 

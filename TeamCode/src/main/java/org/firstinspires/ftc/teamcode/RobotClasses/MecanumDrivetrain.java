@@ -111,6 +111,7 @@ public class MecanumDrivetrain {
         y = initialY;
         startTheta = initialTheta;
         theta = initialTheta;
+        lastHeading = theta;
     }
 
     // reset odometry
@@ -236,6 +237,11 @@ public class MecanumDrivetrain {
 
             theta = t265.getTheta() % (2*PI);
             deltaHeading = theta - lastHeading;
+
+            if (Math.abs(deltaHeading) > PI/4) {
+                t265.thetaError += deltaHeading;
+                Robot.log("T265 Disaster averted :-)");
+            }
 //            deltaPod1 = deltaPod2 - deltaHeading * ODOMETRY_TRACK_WIDTH;
 
 //            imu.updateHeading();

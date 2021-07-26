@@ -11,7 +11,6 @@ import org.firstinspires.ftc.teamcode.Pathing.Path;
 import org.firstinspires.ftc.teamcode.Pathing.Pose;
 import org.firstinspires.ftc.teamcode.Pathing.Target;
 import org.firstinspires.ftc.teamcode.Pathing.Waypoint;
-import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import java.util.ArrayList;
@@ -91,8 +90,6 @@ public class RedAutoFull extends LinearOpMode {
         Path parkPath = null;
 
         // Other variables
-        final int highGoalVelocity = Constants.HIGH_GOAL_VELOCITY;
-        final double flapUpPosition = Constants.FLAP_UP_POS;
         boolean knockStack = false;
         boolean shot1Ring = false;
         boolean psFinish = false;
@@ -162,8 +159,6 @@ public class RedAutoFull extends LinearOpMode {
                 }
 
                 if (ringCase != RingCase.Zero) {
-                    Constants.HIGH_GOAL_VELOCITY = Constants.HIGH_GOAL_BACK_VELOCITY;
-                    Constants.FLAP_UP_POS = Constants.FLAP_BACK_POS;
                     robot.shooter.flywheelHG();
                 } else {
                     robot.shooter.flywheelPS();
@@ -173,7 +168,7 @@ public class RedAutoFull extends LinearOpMode {
                     if (ringCase != RingCase.Zero) {
                         robot.shootYOverride = 28;
                         robot.thetaOffset = 0.08;
-                        robot.highGoalShoot(ringCase == RingCase.Four ? 4 : 1, true);
+                        robot.highGoalShoot(ringCase == RingCase.Four ? 4 : 1);
                     } else {
                         robot.powerShotShoot();
                     }
@@ -214,7 +209,7 @@ public class RedAutoFull extends LinearOpMode {
                 if (time.seconds() > intakeStackTime || ringCase == RingCase.One) {
                     if (ringCase == RingCase.Four) {
                         robot.shootYOverride = robot.y;
-                        robot.highGoalShoot(1, true);
+                        robot.highGoalShoot(1);
                     }
 
                     intakeStack = true;
@@ -243,8 +238,6 @@ public class RedAutoFull extends LinearOpMode {
                     if (time.seconds() > intakeStack2Time) {
 
                         robot.thetaOffset = 0;
-                        Constants.HIGH_GOAL_VELOCITY = highGoalVelocity;
-                        Constants.FLAP_UP_POS = flapUpPosition;
                         robot.wobbleArm.armUp();
                         robot.powerShotShoot();
 

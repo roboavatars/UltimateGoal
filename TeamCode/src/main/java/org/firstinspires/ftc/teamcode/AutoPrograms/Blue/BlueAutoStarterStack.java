@@ -126,7 +126,7 @@ public class BlueAutoStarterStack extends LinearOpMode {
                 robot.setTargetPoint(curPose);
 
                 if (ringCase != RingCase.Zero && time.seconds() > 0.4) {
-                    robot.intake.setBlocker(0.3);
+                    robot.intake.blockerDown();
                 }
 
                 if (ringCase == RingCase.Four || time.seconds() > goToStackTime + 3.5) {
@@ -135,7 +135,7 @@ public class BlueAutoStarterStack extends LinearOpMode {
 
                 if ((ringCase == RingCase.Four && time.seconds() > goToStackTime) || (ringCase != RingCase.Four && time.seconds() > goToStackTime + 5)) {
                     robot.shootYOverride = 32;
-                    robot.highGoalShoot(4, true);
+                    robot.highGoalShoot(4);
 
                     if (ringCase == RingCase.Zero) {
                         robot.intake.bumpersOut();
@@ -165,13 +165,12 @@ public class BlueAutoStarterStack extends LinearOpMode {
                         robot.intake.setPower(-0.5);
                     } else if (knockStack) {
                         robot.intake.on();
-                        robot.setTargetPoint(new Target(36, Math.min(38 + 2 * time.seconds(), 42), PI/2).thetaW0(PI/2).thetaKp(3.0));
-                    } else if (robot.isAtPose(36, 38, PI/2, 0.5, 0.5, PI/35) && robot.notMoving()) {
+                        robot.setTargetPoint(new Target(36, Math.min(40 + 2 * time.seconds(), 53), PI/2).thetaW0(PI/2).thetaKp(3.0));
+                    } else if (robot.isAtPose(36, 45, PI/2, 0.5, 0.5, PI/35) && robot.notMoving()) {
                         robot.drivetrain.stop();
                         knockStack = true;
                     } else {
-                        robot.intake.setPower(-0.75);
-                        robot.setTargetPoint(36, 38, PI/2);
+                        robot.setTargetPoint(36, 45, PI/2);
                     }
                 } else {
                     robot.intake.on();
@@ -180,7 +179,7 @@ public class BlueAutoStarterStack extends LinearOpMode {
 
                 if (time.seconds() > intakeStackTime) {
                     robot.shootYOverride = robot.y;
-                    robot.highGoalShoot(2, true);
+                    robot.highGoalShoot(2);
 
                     intakeStack = true;
                     time.reset();
@@ -203,7 +202,7 @@ public class BlueAutoStarterStack extends LinearOpMode {
             // Intake Fourth Ring from Stack
             else if (!intakeStack2) {
                 if (time.seconds() < 1.5) {
-                    robot.setTargetPoint(new Target(36, Math.min(42 + 12 * time.seconds(), 63), PI/2).thetaW0(PI/2).thetaKp(3.0));
+                    robot.setTargetPoint(new Target(36, Math.min(53 + 3 * time.seconds(), 63), PI/2).thetaW0(PI/2).thetaKp(3.0));
                 } else {
                     robot.setTargetPoint(36, 63, PI/2);
                 }
@@ -232,6 +231,7 @@ public class BlueAutoStarterStack extends LinearOpMode {
 
                     shootHighGoal2 = true;
                     time.reset();
+                    break;
                 }
             }
 

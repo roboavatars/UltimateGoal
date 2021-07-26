@@ -19,7 +19,7 @@ import java.util.Arrays;
 import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 
-@Autonomous(name = "Blue Auto Power Shot", preselectTeleOp = "1 Teleop", group = "Blue")
+@Autonomous(name = "0 Blue Auto Power Shot", preselectTeleOp = "1 Teleop", group = "Blue")
 public class BlueAutoPowerShot extends LinearOpMode {
 
     @Override

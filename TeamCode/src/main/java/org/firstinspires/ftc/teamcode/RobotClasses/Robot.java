@@ -68,6 +68,7 @@ public class Robot {
     public boolean preShootOverride = false;
     public boolean shootOverride = false;
     public boolean shoot = false;
+    public boolean moveWobbleOut = false;
     public int lastTarget = -1;
 
     public int cycles = 0;
@@ -82,8 +83,10 @@ public class Robot {
     public double flickTime;
     public double shootDelay;
     private int vThresh;
+    public double wobbleTime;
+    public static double preShootTimeBackup = 3000;
     public static double flickTimeBackup = 1000;
-    public static int highGoalDelay = 150;
+    public static int highGoalDelay = 100;
     public static int psDelay = 300;
     public static double flickDelay = 100;
 
@@ -101,9 +104,7 @@ public class Robot {
     public boolean turretReset;
 
     public double shootYOverride = 0;
-    public double shootYOffset = 0;
-    public double flapPos = Constants.FLAP_DOWN_POS;
-    public double flapOverride = 0;
+    public double velocityFactor = 0.98;
     public int numRingsPreset = 3;
     public double thetaOffset = 0;
 
@@ -218,7 +219,7 @@ public class Robot {
                     v = calcMGVelocity();
                 }
                 shooter.setFlywheelVelocity(v);
-                vThresh = v - 70;
+                vThresh = v - 100;
             } else {
                 shooter.flywheelPS();
                 vThresh = Constants.POWERSHOT_VELOCITY - 50;
@@ -232,7 +233,7 @@ public class Robot {
             }
 
             // Start auto-feed when mag is up, velocity is high enough, and robot is at position
-            if (preShootOverride || (curTime - startShootTime > 1000 && shooter.getFlywheelVelocity() >= vThresh && isAtPoseTurret(shootTargetTheta))) {
+            if (preShootOverride || (curTime - startShootTime > 500 && shooter.getFlywheelVelocity() >= vThresh && isAtPoseTurret(shootTargetTheta))) {
                 if (highGoal) {
                     shootDelay = highGoalDelay;
                 } else {
@@ -248,6 +249,9 @@ public class Robot {
                 log("Ready to shoot " + (highGoal ? "high goal" : "powershot") + ", velocity: " + shooter.getFlywheelVelocity());
                 log("Pre shoot time: " +  (curTime - startShootTime) + " ms");
             } else {
+                if (curTime - startShootTime <= 500) {
+                    log("Preshoot waiting for mag up delay");
+                }
                 if (shooter.getFlywheelVelocity() < vThresh) {
                     log("Preshoot waiting for shooter v: " + shooter.getFlywheelVelocity() + "/" + vThresh);
                 }
@@ -257,7 +261,7 @@ public class Robot {
             }
 
             // If robot does not converge or mag gets stuck
-            if (curTime - startShootTime > (isAuto ? 2500 : 4000) && y < 72) {
+            if (curTime - startShootTime > preShootTimeBackup && y < 72) {
                 if (isAuto || !highGoal) {
                     log("PS: vel: " + (vThresh <= shooter.getFlywheelVelocity())  + ", pose: " + isAtPoseTurret(shootTargetTheta));
                     preShootOverride = true;
@@ -274,6 +278,14 @@ public class Robot {
             if (numRings > 0) {
                 if (highGoal) {
                     lastTarget = 3;
+                    int v;
+                    if (turretMode == HIGH_GOAL) {
+                        v = calcHGVelocity();
+                    } else {
+                        v = calcMGVelocity();
+                    }
+                    shooter.setFlywheelVelocity(v);
+                    vThresh = v - 100;
                 } else if (numRings == 3 || curTime - flickTime > flickDelay) {
                     setLockMode(numRings - 1);
                     lastTarget = numRings - 1;
@@ -346,8 +358,6 @@ public class Robot {
             }
         }
 
-        shooter.setFlapPosition(flapPos + flapOverride);
-
         profile(3);
 
         // Update Position
@@ -368,10 +378,20 @@ public class Robot {
         if (turretMode != NONE) {
             if (turretReset) {
                 shooter.setTurretPower(0.1);
+            } else if (moveWobbleOut) {
+                shooter.setTurretTheta(PI/2);
             } else {
                 shooter.updateTurret(theta, drivetrain.commandedW);
             }
             updateTurret();
+        }
+
+        if (moveWobbleOut && System.currentTimeMillis() - wobbleTime > 2000) {
+            moveWobbleOut = false;
+        } else if (moveWobbleOut && System.currentTimeMillis() - wobbleTime > 1500) {
+            wobbleArm.unClamp();
+        } else if (moveWobbleOut && System.currentTimeMillis() - wobbleTime > 750) {
+            wobbleArm.armDown();
         }
 
         profile(5);
@@ -413,7 +433,7 @@ public class Robot {
         addPacket("8 Run Time", (curTime - startTime) / 1000);
         addPacket("9 Update Frequency (Hz)", round(1 / timeDiff));
         addPacket("Pod Zeroes", drivetrain.zero1 + ", " + drivetrain.zero2 + ", " + drivetrain.zero3);
-        addPacket("offsets", round(thetaOffset) + " " + round(flapOverride) + " " + shootYOffset);
+        addPacket("offsets", round(thetaOffset) + " " + velocityFactor);
         addPacket("ms", round(timeDiff * 1000));
         if (!isAuto) {
             addPacket("Cycle Time", (curTime - lastCycleTime) / 1000);
@@ -454,19 +474,11 @@ public class Robot {
     }
 
     public void highGoalShoot() {
-        highGoalShoot(3, true);
-    }
-
-    public void highGoalShoot(boolean useFlap) {
-        highGoalShoot(3, useFlap);
-    }
-
-    public void highGoalShoot(int numRings) {
-        highGoalShoot(numRings, true);
+        highGoalShoot(3);
     }
 
     // Set variables for high goal shoot
-    public void highGoalShoot(int numRings, boolean useFlap) {
+    public void highGoalShoot(int numRings) {
         if (!preShoot && !shoot) {
             preShoot = true;
             highGoal = true;
@@ -475,11 +487,6 @@ public class Robot {
                 log("Shooting with " + numRings + " rings");
             }
             startShootTime = curTime;
-            if (useFlap) {
-                flapPos = Constants.FLAP_UP_POS;
-            } else {
-                flapPos = Constants.FLAP_DOWN_POS;
-            }
 
             if (isAuto) {
                 drivetrain.stop();
@@ -497,7 +504,6 @@ public class Robot {
             highGoal = false;
             numRingsPreset = 3;
             startShootTime = curTime;
-            flapPos = Constants.FLAP_DOWN_POS;
             drivetrain.stop();
             setLockMode(PS_R);
             log("Powershot shoot initiated");
@@ -590,11 +596,11 @@ public class Robot {
     }
 
     public int calcHGVelocity() {
-        return (int) (1450 + 2 * hgDist);
+        return (int) (velocityFactor*(1450 + 2 * hgDist));
     }
 
     public int calcMGVelocity() {
-        return (int) (1007 + 4.78 * mgDist);
+        return (int) (1010 + 4.78 * mgDist);
     }
 
     // Set target point (velocity specification, custom Kp and Kv values)
@@ -695,7 +701,7 @@ public class Robot {
     }
 
     private void profile(int num) {
-        Log.w("profiler", num + ": " + profiler.milliseconds());
+//        Log.w("profiler", num + ": " + profiler.milliseconds());
     }
 
     @SuppressLint("DefaultLocale")

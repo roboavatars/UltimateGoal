@@ -28,7 +28,7 @@ public class T265 {
     // State Variables
     private double x, y, theta;
     private double startTheta;
-    private double thetaError = 0;
+    public double thetaError = 0;
     private double camInitTheta;
     public int confidence = 0;
 

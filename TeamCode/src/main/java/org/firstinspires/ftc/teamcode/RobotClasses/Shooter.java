@@ -20,7 +20,6 @@ public class Shooter {
     public DcMotorEx turretMotor;
     private Servo magServo;
     private Servo feedServo;
-    private Servo flapServo;
     private TouchSensor limitSwitch;
 
     public boolean magHome = true;
@@ -68,13 +67,11 @@ public class Shooter {
         turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
         turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
 
-        flapServo = op.hardwareMap.get(Servo.class, "flapServo");
         magServo = op.hardwareMap.get(Servo.class, "magServo");
         feedServo = op.hardwareMap.get(Servo.class, "feedServo");
 
         limitSwitch = op.hardwareMap.get(TouchSensor.class, "limitSwitch");
 
-        flapDown();
         feedHome();
         magHome();
 
@@ -95,7 +92,7 @@ public class Shooter {
     }
 
     public void setFlywheelVelocity(double velocity) {
-        if (velocity != targetVelocity) {
+        if (Math.abs(velocity - targetVelocity) >= 10) {
             flywheelMotor.setVelocity(velocity);
             targetVelocity = velocity;
         }
@@ -168,6 +165,26 @@ public class Shooter {
         count++;
     }
 
+    public void setTurretTheta(double theta) {
+        targetTheta = Math.min(Math.max(theta, -PI/4), 7*PI/6);
+        turretTheta = getTheta();
+        turretErrorChange = targetTheta - turretTheta - turretError;
+        turretError = targetTheta - turretTheta;
+
+        if (count % currentCheckInterval == 0) {
+            if (turretMotor.getCurrent(CurrentUnit.MILLIAMPS) > 9000) {
+                stalling = true;
+                turretMotor.setPower(0);
+                Robot.log("Turret motor stall detected!");
+            } else {
+                stalling = false;
+            }
+        } else if (!stalling) {
+            turretMotor.setPower(Math.max(Math.min(pTurret * turretError + dTurret * turretErrorChange, 0.3), -0.3));
+        }
+        count++;
+    }
+
     public void setTargetTheta(double theta) {
         lockTheta = theta;
     }
@@ -204,23 +221,6 @@ public class Shooter {
     public void feedShoot() {
         feedServo.setPosition(Constants.FEED_SHOOT_POS);
         feedHome = false;
-    }
-
-    // Flap
-    public void setFlapPosition(double position) {
-        flapServo.setPosition(position);
-    }
-
-    public double getFlapPosition() {
-        return flapServo.getPosition();
-    }
-
-    public void flapDown() {
-        flapServo.setPosition(Constants.FLAP_DOWN_POS);
-    }
-
-    public void flapUp() {
-        flapServo.setPosition(Constants.FLAP_UP_POS);
     }
 
     // Limit Switch
