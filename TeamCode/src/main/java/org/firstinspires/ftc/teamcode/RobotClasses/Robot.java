@@ -257,7 +257,7 @@ public class Robot {
                     log("Preshoot waiting for shooter v: " + shooter.getFlywheelVelocity() + "/" + vThresh);
                 }
                 if (!isAtPoseTurret(shootTargetTheta)) {
-                    log("Preshoot waiting for turret pos: " + shooter.getTheta() + "/" + shootTargetTheta);
+                    log("Preshoot waiting for turret pos: " + turretGlobalTheta + "/" + shootTargetTheta);
                 }
             }
 
@@ -327,10 +327,13 @@ public class Robot {
                             log("Shoot waiting for shooter v: " + shooter.getFlywheelVelocity() + "/" + vThresh);
                         }
                         if (!isAtPoseTurret(shootTargetTheta)) {
-                            log("Shoot waiting for turret pos: " + shooter.getTheta() + "/" + shootTargetTheta);
+                            log("Shoot waiting for turret pos: " + turretGlobalTheta + "/" + shootTargetTheta);
                         }
                         if (!highGoal && !turretNotMoving()) {
                             log("Shoot waiting for turret v: " + shooter.getTurretVelocity());
+                        }
+                        if (y >= 72) {
+                            log("Y >= 72");
                         }
                     }
                 } else {
