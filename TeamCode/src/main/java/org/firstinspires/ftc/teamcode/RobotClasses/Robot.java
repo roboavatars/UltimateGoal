@@ -20,6 +20,7 @@ import java.util.List;
 import static java.lang.Math.PI;
 import static java.lang.Math.abs;
 import static java.lang.Math.cos;
+import static java.lang.Math.hypot;
 import static java.lang.Math.sin;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawDrivetrain;
@@ -68,7 +69,7 @@ public class Robot {
     public boolean preShootOverride = false;
     public boolean shootOverride = false;
     public boolean shoot = false;
-    public boolean moveWobbleOut = false;
+    public int moveWobbleOut = 0;
     public int lastTarget = -1;
 
     public int cycles = 0;
@@ -84,7 +85,7 @@ public class Robot {
     public double shootDelay;
     private int vThresh;
     public double wobbleTime;
-    public static double preShootTimeBackup = 3000;
+    public static double preShootTimeBackup = 4000;
     public static double flickTimeBackup = 1000;
     public static int highGoalDelay = 100;
     public static int psDelay = 300;
@@ -219,7 +220,7 @@ public class Robot {
                     v = calcMGVelocity();
                 }
                 shooter.setFlywheelVelocity(v);
-                vThresh = v - 100;
+                vThresh = v - 150;
             } else {
                 shooter.flywheelPS();
                 vThresh = Constants.POWERSHOT_VELOCITY - 50;
@@ -250,7 +251,7 @@ public class Robot {
                 log("Pre shoot time: " +  (curTime - startShootTime) + " ms");
             } else {
                 if (curTime - startShootTime <= 500) {
-                    log("Preshoot waiting for mag up delay");
+                    log("Preshoot waiting for mag up");
                 }
                 if (shooter.getFlywheelVelocity() < vThresh) {
                     log("Preshoot waiting for shooter v: " + shooter.getFlywheelVelocity() + "/" + vThresh);
@@ -262,7 +263,7 @@ public class Robot {
 
             // If robot does not converge or mag gets stuck
             if (curTime - startShootTime > preShootTimeBackup && y < 72) {
-                if (isAuto || !highGoal) {
+                if (highGoal) {
                     log("PS: vel: " + (vThresh <= shooter.getFlywheelVelocity())  + ", pose: " + isAtPoseTurret(shootTargetTheta));
                     preShootOverride = true;
                 }
@@ -285,7 +286,7 @@ public class Robot {
                         v = calcMGVelocity();
                     }
                     shooter.setFlywheelVelocity(v);
-                    vThresh = v - 100;
+                    vThresh = v - 150;
                 } else if (numRings == 3 || curTime - flickTime > flickDelay) {
                     setLockMode(numRings - 1);
                     lastTarget = numRings - 1;
@@ -364,11 +365,11 @@ public class Robot {
         drivetrain.updatePose();
         intake.updateBumpers();
         if (isRed) {
-            hgDist = Math.sqrt(Math.pow(x - 108, 2) + Math.pow(144 - y, 2));
-            mgDist = Math.sqrt(Math.pow(x - 36, 2) + Math.pow(144 - y, 2));
+            hgDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - 108, 144 - vy * Shooter.RING_FLIGHT_TIME - y);
+            mgDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - 36, 144 - vy * Shooter.RING_FLIGHT_TIME - y);
         } else {
-            hgDist = Math.sqrt(Math.pow(x - 36, 2) + Math.pow(144 - y, 2));
-            mgDist = Math.sqrt(Math.pow(x - 108, 2) + Math.pow(144 - y, 2));
+            hgDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - 36, 144 - vy * Shooter.RING_FLIGHT_TIME - y);
+            mgDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - 108, 144 - vy * Shooter.RING_FLIGHT_TIME - y);
         }
 
         turretGlobalTheta = shooter.getTheta() + theta - PI/2;
@@ -378,19 +379,27 @@ public class Robot {
         if (turretMode != NONE) {
             if (turretReset) {
                 shooter.setTurretPower(0.1);
-            } else if (moveWobbleOut) {
-                shooter.setTurretTheta(PI/2);
+                if (shooter.limitSwitchOn()) {
+                    shooter.resetTurret();
+                    turretReset = false;
+                }
+            } else if (moveWobbleOut == 1) {
+                shooter.setTurretTheta(PI/2, drivetrain.commandedW);
+                if (abs(shooter.getTheta() - PI/2) > turretTolerance) {
+                    wobbleTime = curTime;
+                    moveWobbleOut = 2;
+                }
             } else {
                 shooter.updateTurret(theta, drivetrain.commandedW);
             }
             updateTurret();
         }
 
-        if (moveWobbleOut && System.currentTimeMillis() - wobbleTime > 2000) {
-            moveWobbleOut = false;
-        } else if (moveWobbleOut && System.currentTimeMillis() - wobbleTime > 1500) {
+        if (moveWobbleOut == 2 && System.currentTimeMillis() - wobbleTime > 2000) {
+            moveWobbleOut = 0;
+        } else if (moveWobbleOut == 2 && System.currentTimeMillis() - wobbleTime > 1500) {
             wobbleArm.unClamp();
-        } else if (moveWobbleOut && System.currentTimeMillis() - wobbleTime > 750) {
+        } else if (moveWobbleOut == 2 && System.currentTimeMillis() - wobbleTime > 750) {
             wobbleArm.armDown();
         }
 
@@ -596,11 +605,19 @@ public class Robot {
     }
 
     public int calcHGVelocity() {
-        return (int) (velocityFactor*(1450 + 2 * hgDist));
+        if (y < 70) {
+            return (int) (velocityFactor * (1450 + 2 * hgDist));
+        } else {
+            return (int) (velocityFactor * 1610);
+        }
     }
 
     public int calcMGVelocity() {
-        return (int) (1010 + 4.78 * mgDist);
+        if (y < 70) {
+            return (int) (velocityFactor * (1010 + 4.78 * mgDist));
+        } else {
+            return (int) (velocityFactor * 1400);
+        }
     }
 
     // Set target point (velocity specification, custom Kp and Kv values)
@@ -688,7 +705,7 @@ public class Robot {
     }
 
     public boolean notMoving(double xyThreshold, double thetaThreshold) {
-        return (Math.hypot(vx, vy) < xyThreshold && abs(w) < thetaThreshold);
+        return (hypot(vx, vy) < xyThreshold && abs(w) < thetaThreshold);
     }
 
     public boolean turretNotMoving() {

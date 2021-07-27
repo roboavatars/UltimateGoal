@@ -28,7 +28,7 @@ public class TurretTest extends LinearOpMode {
 
     public static double p = 2.25;
     public static double d = 5.5;
-    public static double f = -0.31;
+    public static double f = -0.3;
 
     public static boolean dashTarget = true;
 

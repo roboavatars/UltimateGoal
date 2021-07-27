@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpenCV.RingLocator;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -18,6 +19,7 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawPoint;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRing;
 
 @TeleOp(name = "Auto Ring Detection Test")
+@Disabled
 public class AutoRingDetectionTest extends LinearOpMode {
 
     private Robot robot;

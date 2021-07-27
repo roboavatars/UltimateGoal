@@ -13,9 +13,6 @@ public class Intake {
     private Servo blockerServo;
     private Servo bumperLR;
 
-    public static double intakePow = 1;
-    public static double transferPow = 0.6;
-
     private double lastIntakePow = 0;
     private double lastTransferPow = 0;
     private double lastBlocker = 0;
@@ -45,7 +42,7 @@ public class Intake {
 
     // Intake Motors
     public void on() {
-        setPower(intakePow, transferPow);
+        setPower(Constants.INTAKE_POWER, Constants.TRANSFER_POWER);
     }
 
     public void verticalOn() {

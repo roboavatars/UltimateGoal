@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.OpenCV.RingLocator;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -9,9 +10,14 @@ import org.firstinspires.ftc.teamcode.RobotClasses.MecanumDrivetrain;
 import java.util.ArrayList;
 
 import static java.lang.Math.PI;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.*;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawDrivetrain;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawField;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRing;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
 @TeleOp(name = "Ring Locator Pipeline Test")
+@Disabled
 public class RingLocatorTest extends LinearOpMode {
 
     private RingLocator detector;

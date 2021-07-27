@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -12,7 +13,8 @@ import static java.lang.Math.sin;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 
 @TeleOp(name = "Odo Parametric Test")
-public class OdoDriftTest extends LinearOpMode {
+@Disabled
+public class OdoParametricTest extends LinearOpMode {
 
     private boolean started;
     private double startTime;

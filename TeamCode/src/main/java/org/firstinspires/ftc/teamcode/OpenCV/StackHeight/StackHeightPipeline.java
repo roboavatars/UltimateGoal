@@ -41,6 +41,8 @@ public class StackHeightPipeline extends OpenCvPipeline {
     public static double FOUR_MIN = 0.5;
     public static double FOUR_AREA = 1000;
 
+    public static int RETURN_IMAGE = 2;
+
     // Results
     private double[] result = new double[3];
     private RingCase ringCase = RingCase.Zero;
@@ -50,6 +52,7 @@ public class StackHeightPipeline extends OpenCvPipeline {
     // Image Processing Mats
     private RingProcessor processor;
     private Mat processed = new Mat();
+    private Mat mask = new Mat();
 
     public StackHeightPipeline() {
         processor = new RingProcessor("height");
@@ -61,7 +64,9 @@ public class StackHeightPipeline extends OpenCvPipeline {
         // Process Image
         processor.saveMatToDisk("raw.jpg", input);
         input = new Mat(input, new Rect(RECT_X, RECT_Y, RECT_WIDTH, RECT_HEIGHT));
-        processed = processor.processFrame(input)[0];
+        Mat[] mats = processor.processFrame(input);
+        processed = mats[0];
+        mask = mats[1];
 
         // Find Contours
         List<MatOfPoint> contours = new ArrayList<>();
@@ -113,7 +118,13 @@ public class StackHeightPipeline extends OpenCvPipeline {
         results[cycles % 5] = ringCase;
         cycles++;
 
-        return input;
+        if (RETURN_IMAGE == 0) {
+            return processed;
+        } else if (RETURN_IMAGE == 1) {
+            return mask;
+        } else {
+            return input;
+        }
     }
 
     public double[] getRawResult() {

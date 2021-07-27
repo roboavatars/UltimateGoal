@@ -26,7 +26,7 @@ public class Teleop extends LinearOpMode {
     private Robot robot;
 
     public static boolean robotCentric = true;
-    public static boolean useAutoPos = false;
+    public static boolean useAutoPos = true;
 
     // Control Gains
     private double xyGain = 1;
@@ -48,7 +48,6 @@ public class Teleop extends LinearOpMode {
     Right Trigger - Intake On
 
     Gamepad 2
-    A - Blocker Up
     B - Cancel Shoot
     X- Move Turret to Reset
     Y - Pre-Rev Flywheel for High Goal
@@ -102,13 +101,6 @@ public class Teleop extends LinearOpMode {
                 robot.powerShotShoot();
             }
 
-            // Ring Blocker
-//            if (gamepad2.a) {
-//                robot.intake.blockerVert();
-//            } else {
-//                robot.intake.blockerDown();
-//            }
-
             // Stop Shoot Sequence
             if (gamepad2.b) {
                 robot.cancelShoot();
@@ -121,7 +113,7 @@ public class Teleop extends LinearOpMode {
 
             // Turret Reset
             if (gamepad2.x) {
-                robot.turretReset = !robot.shooter.limitSwitchOn();
+                robot.turretReset = true;
             }
 
             // Wobble Arm In / Up / Down
@@ -150,7 +142,7 @@ public class Teleop extends LinearOpMode {
                     }
                     armDown = !armDown;
                 } else {
-                    robot.moveWobbleOut = true;
+                    robot.moveWobbleOut = 1;
                     robot.wobbleTime = System.currentTimeMillis();
                     armIn = false;
                     armDown = true;
@@ -184,7 +176,7 @@ public class Teleop extends LinearOpMode {
                 clampToggle = false;
             }
 
-            // Override Shoots in Case it is Taking Too Long
+            // Overrides Shoot in Case it is Taking Too Long
             if (gamepad2.left_trigger > 0) {
                 robot.preShootOverride = true;
                 robot.shootOverride = true;

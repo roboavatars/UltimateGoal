@@ -56,7 +56,7 @@ public class RedAutoStarterStack extends LinearOpMode {
         // Segment Times
         double goToStackTime = 1.0;
         double intakeStackTime = 2.25;
-        double intakeStack2Time = 2.25;
+        double intakeStack2Time = 5.5;
         double deliverWobbleTime = 1.75;
         double parkTime = 1.5;
 
@@ -124,10 +124,6 @@ public class RedAutoStarterStack extends LinearOpMode {
                 Pose curPose = goToStackPath.getRobotPose(curTime);
                 robot.setTargetPoint(curPose);
 
-                if (ringCase != RingCase.Zero && time.seconds() > 0.4) {
-                    robot.intake.blockerDown();
-                }
-
                 if (ringCase == RingCase.Four || time.seconds() > goToStackTime + 3.5) {
                     robot.shooter.setFlywheelVelocity(robot.calcHGVelocity());
                 }
@@ -164,7 +160,7 @@ public class RedAutoStarterStack extends LinearOpMode {
                         robot.intake.setPower(-0.5);
                     } else if (knockStack) {
                         robot.intake.on();
-                        robot.setTargetPoint(new Target(108, Math.min(40 + 2 * time.seconds(), 53), PI/2).thetaW0(PI/2).thetaKp(3.0));
+                        robot.setTargetPoint(new Target(108, Math.min(40 + 4 * time.seconds(), 50), PI/2).thetaW0(PI/2).thetaKp(3.0));
                     } else if (robot.isAtPose(108, 45, PI/2, 0.5, 0.5, PI/35) && robot.notMoving()) {
                         robot.drivetrain.stop();
                         knockStack = true;
@@ -200,8 +196,8 @@ public class RedAutoStarterStack extends LinearOpMode {
 
             // Intake Fourth Ring from Stack
             else if (!intakeStack2) {
-                if (time.seconds() < 1.5) {
-                    robot.setTargetPoint(new Target(108, Math.min(53 + 3 * time.seconds(), 63), PI/2).thetaW0(PI/2).thetaKp(3.0));
+                if (time.seconds() < 4.5) {
+                    robot.setTargetPoint(new Target(108, Math.min(50 + 3 * time.seconds(), 63), PI/2).thetaW0(PI/2).thetaKp(3.0));
                 } else {
                     robot.setTargetPoint(108, 63, PI/2);
                 }

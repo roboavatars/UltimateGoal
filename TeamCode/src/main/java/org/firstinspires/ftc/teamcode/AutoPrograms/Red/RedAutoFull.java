@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.AutoPrograms.Red;
 
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -20,6 +21,7 @@ import static java.lang.Math.PI;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 
 @Autonomous(name = "Red Auto Full", preselectTeleOp = "1 Teleop", group = "Red")
+@Disabled
 public class RedAutoFull extends LinearOpMode {
 
     @Override

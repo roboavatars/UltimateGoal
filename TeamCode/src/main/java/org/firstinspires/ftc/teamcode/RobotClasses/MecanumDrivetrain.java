@@ -25,6 +25,7 @@ public class MecanumDrivetrain {
 
     // Tracking X/Y/Theta
     public double x, y, theta, startTheta;
+    private double lastRawHeading = 0;
     private double deltaHeading = 0;
     public double commandedW;
 
@@ -238,10 +239,11 @@ public class MecanumDrivetrain {
             theta = t265.getTheta() % (2*PI);
             deltaHeading = theta - lastHeading;
 
-            if (Math.abs(deltaHeading) > PI/4) {
+            if (Math.abs(t265.getTheta() - lastRawHeading) > PI/4) {
                 t265.thetaError += deltaHeading;
-                Robot.log("T265 Disaster averted :-)");
+                Robot.log("T265 Disaster Averted " + deltaHeading);
             }
+            lastRawHeading = t265.getTheta();
 //            deltaPod1 = deltaPod2 - deltaHeading * ODOMETRY_TRACK_WIDTH;
 
 //            imu.updateHeading();

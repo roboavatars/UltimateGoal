@@ -12,6 +12,9 @@ public class Constants {
     public static double BUMPER_OUT_POS = 0;
     public static double BUMPER_HOME_POS = 1;
 
+    public static double INTAKE_POWER = 1;
+    public static double TRANSFER_POWER = 0.6;
+
     // Shooter
     public static int HIGH_GOAL_VELOCITY = 1620;
     public static int POWERSHOT_VELOCITY = 1450;
@@ -20,7 +23,7 @@ public class Constants {
     public static double MAG_SHOOT_POS = 0.85;
 
     public static double FEED_HOME_POS = 0.86;
-    public static double FEED_SHOOT_POS = 0.58;
+    public static double FEED_SHOOT_POS = 0.73;
 
     // Wobble
     public static double WOBBLE_INSIDE_POS = 0.95;

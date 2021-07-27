@@ -29,9 +29,8 @@ public class Shooter {
     public static final double TURRET_DY = -4;
     public static final double TURRET_DIAMETER = 8.5;
     public static final double RING_SPEED = 150;
-    public static final double RING_FLIGHT_TIME = 0.5;
-    public static final double INITIAL_ANGLE = 0.08;
-    public static final double RESET_ANGLE = 0;
+    public static double RING_FLIGHT_TIME = 0.4;
+    public static double RESET_ANGLE = 7*PI/6;
 
     public static double pFlywheel = 80;
     public static double dFlywheel = 0;
@@ -39,7 +38,7 @@ public class Shooter {
 
     public static double pTurret = 2.25;
     public static double dTurret = 5.5;
-    public static double fTurret = -0.31;
+    public static double fTurret = -0.3;
     public double initialTheta;
 
     private double targetTheta = 0;
@@ -119,31 +118,17 @@ public class Shooter {
         if (targetTheta > 3*PI/2) {
             targetTheta -= 2*PI;
         }
-        targetTheta = Math.min(Math.max(targetTheta, -PI/4), 7*PI/6);
+
+        setTurretTheta(targetTheta, commandedW);
+    }
+
+    public void setTurretTheta(double theta, double commandedW) {
+        targetTheta = Math.min(Math.max(theta, -PI/4), 7*PI/6);
         turretTheta = getTheta();
         turretErrorChange = targetTheta - turretTheta - turretError;
         turretError = targetTheta - turretTheta;
 
-        if (count % currentCheckInterval == 0) {
-            if (turretMotor.getCurrent(CurrentUnit.MILLIAMPS) > 9000) {
-                stalling = true;
-                turretMotor.setPower(0);
-                Robot.log("Turret motor stall detected!");
-            } else {
-                stalling = false;
-            }
-        } else if (!stalling) {
-            turretMotor.setPower(Math.max(Math.min(fTurret * commandedW + pTurret * turretError + dTurret * turretErrorChange, 0.3), -0.3));
-        }
-
-        if (stalling) {
-            Robot.log("Turret motor stalling!!!");
-        }
-        count++;
-    }
-
-    public void resetTurret() {
-        initialTheta -= RESET_ANGLE;
+        setTurretPower(fTurret * commandedW + pTurret * turretError + dTurret * turretErrorChange);
     }
 
     public void setTurretPower(double power) {
@@ -160,29 +145,13 @@ public class Shooter {
         }
 
         if (stalling) {
-            Robot.log("Turret motor stalling!!!");
+            Robot.log("Turret motor stalling!");
         }
         count++;
     }
 
-    public void setTurretTheta(double theta) {
-        targetTheta = Math.min(Math.max(theta, -PI/4), 7*PI/6);
-        turretTheta = getTheta();
-        turretErrorChange = targetTheta - turretTheta - turretError;
-        turretError = targetTheta - turretTheta;
-
-        if (count % currentCheckInterval == 0) {
-            if (turretMotor.getCurrent(CurrentUnit.MILLIAMPS) > 9000) {
-                stalling = true;
-                turretMotor.setPower(0);
-                Robot.log("Turret motor stall detected!");
-            } else {
-                stalling = false;
-            }
-        } else if (!stalling) {
-            turretMotor.setPower(Math.max(Math.min(pTurret * turretError + dTurret * turretErrorChange, 0.3), -0.3));
-        }
-        count++;
+    public void resetTurret() {
+        initialTheta = RESET_ANGLE - turretMotor.getCurrentPosition() / TICKS_PER_RADIAN;
     }
 
     public void setTargetTheta(double theta) {

@@ -7,13 +7,12 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Shooter;
 import java.util.ArrayList;
 import java.util.Comparator;
 
+import static java.lang.Math.cos;
+import static java.lang.Math.sin;
 import static org.firstinspires.ftc.teamcode.OpenCV.RingLocator.RingLocator.maxX;
 import static org.firstinspires.ftc.teamcode.OpenCV.RingLocator.RingLocator.maxY;
 import static org.firstinspires.ftc.teamcode.OpenCV.RingLocator.RingLocator.minX;
 import static org.firstinspires.ftc.teamcode.OpenCV.RingLocator.RingLocator.minY;
-
-import static java.lang.Math.sin;
-import static java.lang.Math.cos;
 
 public class Ring {
     private double relX;
@@ -45,8 +44,8 @@ public class Ring {
         this.startY = startY - Shooter.TURRET_DX * cos(theta) + Shooter.TURRET_DY * sin(theta);
         this.absX = this.startX;
         this.absY = this.startY;
-        this.vx = vx - Shooter.TURRET_DX * omega * sin(theta) - Shooter.TURRET_DY * omega * cos(theta) + Shooter.RING_SPEED * cos(theta + Shooter.INITIAL_ANGLE);
-        this.vy = vy + Shooter.TURRET_DX * omega * cos(theta) - Shooter.TURRET_DY * omega * sin(theta) + Shooter.RING_SPEED * sin(theta + Shooter.INITIAL_ANGLE);
+        this.vx = vx - Shooter.TURRET_DX * omega * sin(theta) - Shooter.TURRET_DY * omega * cos(theta) + Shooter.RING_SPEED * cos(theta);
+        this.vy = vy + Shooter.TURRET_DX * omega * cos(theta) - Shooter.TURRET_DY * omega * sin(theta) + Shooter.RING_SPEED * sin(theta);
         this.startTime = startTime;
     }
 
