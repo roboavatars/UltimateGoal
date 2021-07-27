@@ -97,7 +97,7 @@ public class Robot {
     public double startTime;
 
     // Shooter Variables
-    public double hgDist, mgDist;
+    public double targetDist;
     private final double[] shootXCorR = {76.5, 84, 91.5, 108};
     private final double[] shootXCorB = {67.5, 60, 52.5, 36};
     private final double shootYCor = 150;
@@ -191,21 +191,24 @@ public class Robot {
         thetaPositionsR = new double[] {theta0R, theta1R, theta2R};
         thetaPositionsB = new double[] {theta0B, theta1B, theta2B};
 
+        double hgDist = Math.hypot(x - (isRed ? 108 : 36), 144 - y);
+
         // Track time after start
         if (firstLoop) {
             startTime = curTime;
             lastCycleTime = curTime;
             firstLoop = false;
+            targetDist = hgDist;
         }
 
         profile(1);
 
-        if (!isAuto) {
-            if (hgDist >= 100 && turretMode == HIGH_GOAL) {
-                setLockMode(MID_GOAL);
-            } else if (hgDist < 100 && turretMode == MID_GOAL) {
-                setLockMode(HIGH_GOAL);
-            }
+        if (hgDist >= 100 && turretMode == HIGH_GOAL) {
+            setLockMode(MID_GOAL);
+            targetDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - (isRed ? 36 : 108), 144 - vy * Shooter.RING_FLIGHT_TIME - y);
+        } else if (hgDist < 100 && turretMode == MID_GOAL) {
+            setLockMode(HIGH_GOAL);
+            targetDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - (isRed ? 108 : 36), 144 - vy * Shooter.RING_FLIGHT_TIME - y);
         }
 
         // Pre-shoot tasks: Turn on flywheel, move robot to shooting position, mag up, start auto-feed once ready
@@ -220,7 +223,7 @@ public class Robot {
                     v = calcMGVelocity();
                 }
                 shooter.setFlywheelVelocity(v);
-                vThresh = v - 150;
+                vThresh = v - 100;
             } else {
                 shooter.flywheelPS();
                 vThresh = Constants.POWERSHOT_VELOCITY - 30;
@@ -286,7 +289,7 @@ public class Robot {
                         v = calcMGVelocity();
                     }
                     shooter.setFlywheelVelocity(v);
-                    vThresh = v - 150;
+                    vThresh = v - 100;
                 } else if (numRings == 3 || curTime - flickTime > flickDelay) {
                     setLockMode(numRings - 1);
                     lastTarget = numRings - 1;
@@ -342,7 +345,7 @@ public class Robot {
                     shoot = false;
                     shootOverride = false;
 
-                    if (!highGoal) {
+                    if (!highGoal && hgDist < 100) {
                         setLockMode(HIGH_GOAL);
                     }
 
@@ -367,13 +370,6 @@ public class Robot {
         // Update Position
         drivetrain.updatePose();
         intake.updateBumpers();
-        if (isRed) {
-            hgDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - 108, 144 - vy * Shooter.RING_FLIGHT_TIME - y);
-            mgDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - 36, 144 - vy * Shooter.RING_FLIGHT_TIME - y);
-        } else {
-            hgDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - 36, 144 - vy * Shooter.RING_FLIGHT_TIME - y);
-            mgDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - 108, 144 - vy * Shooter.RING_FLIGHT_TIME - y);
-        }
 
         turretGlobalTheta = shooter.getTheta() + theta - PI/2;
 
@@ -381,18 +377,16 @@ public class Robot {
 
         if (turretMode != NONE) {
             if (turretReset) {
-                shooter.setTurretPower(0.1);
+                shooter.setTurretPower(0.2);
                 if (shooter.limitSwitchOn()) {
                     shooter.resetTurret();
                     turretReset = false;
                 }
-            } else if (moveWobbleOut == 1) {
+            } else if (moveWobbleOut == 1 || moveWobbleOut == 2) {
                 shooter.setTurretTheta(PI/2, drivetrain.commandedW);
-                if (abs(shooter.getTheta() - PI/2) > turretTolerance) {
+                if (abs(shooter.getTheta() - PI/2) < turretTolerance && moveWobbleOut == 1) {
                     wobbleTime = curTime;
-                    if (!isAuto) {
-                        moveWobbleOut = 2;
-                    }
+                    if (!isAuto) moveWobbleOut = 2;
                 }
             } else {
                 shooter.updateTurret(theta, drivetrain.commandedW);
@@ -400,20 +394,13 @@ public class Robot {
             updateTurret();
         }
 
-        if (moveWobbleOut == 2 && System.currentTimeMillis() - wobbleTime > 2000) {
+        if (moveWobbleOut == 3 && System.currentTimeMillis() - wobbleTime > 2750) {
             moveWobbleOut = 0;
+        } else if (moveWobbleOut == 2 && System.currentTimeMillis() - wobbleTime > 2250) {
+            wobbleArm.unClamp();
+            moveWobbleOut = 3;
         } else if (moveWobbleOut == 2 && System.currentTimeMillis() - wobbleTime > 1500) {
-            if (wobbleArm.clamped) {
-                wobbleArm.unClamp();
-            } else {
-                wobbleArm.clamp();
-            }
-        } else if (moveWobbleOut == 2 && System.currentTimeMillis() - wobbleTime > 750) {
-            if (wobbleArm.armDown) {
-                wobbleArm.armUp();
-            } else {
-                wobbleArm.armDown();
-            }
+            wobbleArm.armDown();
         }
 
         profile(5);
@@ -455,7 +442,7 @@ public class Robot {
         addPacket("8 Run Time", (curTime - startTime) / 1000);
         addPacket("9 Update Frequency (Hz)", round(1 / timeDiff));
         addPacket("Pod Zeroes", drivetrain.zero1 + ", " + drivetrain.zero2 + ", " + drivetrain.zero3);
-        addPacket("offsets", round(thetaOffset) + " " + velocityFactor);
+        addPacket("regression", round(thetaOffset) + " " + round(targetDist));
         addPacket("ms", round(timeDiff * 1000));
         if (!isAuto) {
             addPacket("Cycle Time", (curTime - lastCycleTime) / 1000);
@@ -614,32 +601,32 @@ public class Robot {
         double dy = lockY - shooterY;
 
         // Uses Angle Bisector for High Goal for more consistency
-        if (turretMode == HIGH_GOAL) {
+        /*if (turretMode == HIGH_GOAL) {
             double d = 8;
             double a = Math.sqrt(Math.pow(dx + d/2, 2) + Math.pow(dy, 2));
             double b = Math.sqrt(Math.pow(dx - d/2, 2) + Math.pow(dy, 2));
 
             lockX += - d/2 + d * b / (a + b);
             dx = lockY - shooterX;
-        }
+        }*/
 
         drawLine(shooterX, shooterY, lockX, lockY, "blue");
-        return Math.atan2(dy, dx);
+        return Math.atan2(dy, dx) - (-0.000515 * Math.pow(targetDist, 2) + 0.0906 * targetDist - 3.88);
     }
 
     public int calcHGVelocity() {
         if (y < 70) {
-            return (int) (velocityFactor * (1450 + 2 * hgDist));
+            return (int) (velocityFactor * (1457 + 1.83 * targetDist));
         } else {
-            return (int) (velocityFactor * 1610);
+            return (int) (velocityFactor * 1585);
         }
     }
 
     public int calcMGVelocity() {
         if (y < 70) {
-            return (int) (velocityFactor * (1010 + 4.78 * mgDist));
+            return (int) (velocityFactor * (1049 + 4.31 * targetDist));
         } else {
-            return (int) (velocityFactor * 1400);
+            return (int) (velocityFactor * 1350);
         }
     }
 

@@ -26,7 +26,7 @@ public class Teleop extends LinearOpMode {
     private Robot robot;
 
     public static boolean robotCentric = true;
-    public static boolean useAutoPos = true;
+    public static boolean useAutoPos = false;
 
     // Control Gains
     private double xyGain = 1;
@@ -76,11 +76,7 @@ public class Teleop extends LinearOpMode {
 
         robot.setLockMode(Robot.TurretMode.HIGH_GOAL);
 
-        double startTime = System.currentTimeMillis();
-        while (!opModeIsActive()) {
-            telemetry.addData("Init Time", (System.currentTimeMillis() - startTime) / 1000);
-            telemetry.update();
-        }
+        waitForStart();
 
         robot.drivetrain.updateThetaError();
 
@@ -133,7 +129,7 @@ public class Teleop extends LinearOpMode {
 //            }
 
             if (gamepad2.right_bumper && !downToggle) {
-                if (armIn) {
+                if (!armIn) {
                     downToggle = true;
                     if (armDown) {
                         robot.wobbleArm.armUp();
@@ -165,13 +161,15 @@ public class Teleop extends LinearOpMode {
 
             // Wobble Clamp / Unclamp
             if (gamepad2.left_bumper && !clampToggle) {
-                clampToggle = true;
-                if (clamped) {
-                    robot.wobbleArm.unClamp();
-                } else {
-                    robot.wobbleArm.clamp();
+                if (!armIn) {
+                    clampToggle = true;
+                    if (clamped) {
+                        robot.wobbleArm.unClamp();
+                    } else {
+                        robot.wobbleArm.clamp();
+                    }
+                    clamped = !clamped;
                 }
-                clamped = !clamped;
             } else if (!gamepad2.left_bumper && clampToggle) {
                 clampToggle = false;
             }

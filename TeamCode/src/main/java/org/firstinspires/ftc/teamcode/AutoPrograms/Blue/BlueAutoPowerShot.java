@@ -82,11 +82,7 @@ public class BlueAutoPowerShot extends LinearOpMode {
         double depositReachTime = 0;
         ArrayList<Ring> rings;
 
-        double startTime = System.currentTimeMillis();
-        while (!opModeIsActive()) {
-            telemetry.addData("Init Time", (System.currentTimeMillis() - startTime) / 1000);
-            telemetry.update();
-        }
+        waitForStart();
 
         robot.drivetrain.updateThetaError();
         robot.wobbleArm.armUp();

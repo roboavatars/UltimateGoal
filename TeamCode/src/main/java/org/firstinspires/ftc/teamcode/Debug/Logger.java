@@ -132,7 +132,7 @@ public class Logger extends Thread {
      * Reads position from last written file
      */
     public static double[] readPos() {
-        double[] robotPos = new double[] {1, 0, 0, 0, 0};
+        double[] robotPos = new double[] {1, 0, 0, 0, Math.PI/2};
 
         try {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(getLogName(false)));

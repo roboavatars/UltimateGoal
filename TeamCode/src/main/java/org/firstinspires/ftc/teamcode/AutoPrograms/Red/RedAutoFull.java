@@ -102,11 +102,7 @@ public class RedAutoFull extends LinearOpMode {
         double[] ringIntakeTheta = new double[3];
         ArrayList<Ring> rings;
 
-        double startTime = System.currentTimeMillis();
-        while (!opModeIsActive()) {
-            telemetry.addData("Init Time", (System.currentTimeMillis() - startTime) / 1000);
-            telemetry.update();
-        }
+        waitForStart();
 
         robot.drivetrain.updateThetaError();
 

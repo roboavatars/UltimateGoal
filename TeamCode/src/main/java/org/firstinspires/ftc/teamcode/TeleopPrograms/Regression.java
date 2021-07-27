@@ -46,7 +46,6 @@ public class Regression extends LinearOpMode {
         waitForStart();
 
         robot.drivetrain.updateThetaError();
-        robot.wobbleArm.armUp();
 
         while (opModeIsActive()) {
             if (gamepad1.left_trigger > 0) {
@@ -149,9 +148,9 @@ public class Regression extends LinearOpMode {
                 clampToggle = false;
             }
 
-            if (gamepad2.dpad_left) {
+            if (gamepad1.dpad_left) {
                 robot.thetaOffset -= 0.005;
-            } else if (gamepad2.dpad_right) {
+            } else if (gamepad1.dpad_right) {
                 robot.thetaOffset += 0.005;
             }
 
@@ -165,7 +164,7 @@ public class Regression extends LinearOpMode {
                 robot.drivetrain.setControls(-gamepad1.left_stick_y , -gamepad1.left_stick_x , -gamepad1.right_stick_x);
             }
 
-            addPacket("d", robot.hgDist);
+            addPacket("d", robot.targetDist);
             addPacket("Theta Error", robot.drivetrain.getThetaError());
             addPacket("Init Theta", robot.drivetrain.getInitTheta());
             robot.update();

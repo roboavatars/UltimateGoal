@@ -151,7 +151,9 @@ public class Shooter {
     }
 
     public void resetTurret() {
-        initialTheta = RESET_ANGLE - turretMotor.getCurrentPosition() / TICKS_PER_RADIAN;
+        initialTheta = RESET_ANGLE;
+        turretMotor.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER);
+        turretMotor.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER);
     }
 
     public void setTargetTheta(double theta) {

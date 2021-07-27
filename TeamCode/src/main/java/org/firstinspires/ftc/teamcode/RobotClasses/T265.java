@@ -143,6 +143,8 @@ public class T265 {
 
     public void resetTheta() {
         thetaError = startTheta - theta;
+        Robot.log("T265 pos: " + theta);
+        Robot.log("T265 error: " + thetaError);
     }
 
     public double getInitTheta() {

@@ -6,9 +6,6 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorEx;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
-import com.qualcomm.robotcore.hardware.Servo;
-
-import org.firstinspires.ftc.teamcode.RobotClasses.Constants;
 
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
@@ -22,7 +19,6 @@ public class ShooterTest extends LinearOpMode {
     public static double p = 80;
     public static double d = 0;
     public static double f = 13;
-//    public static double pidThresh = 100;
     public static int velocity = 1700;
     public static boolean on = true;
 
@@ -32,7 +28,7 @@ public class ShooterTest extends LinearOpMode {
         shooter.setMode(DcMotor.RunMode.RUN_USING_ENCODER);
         shooter.setDirection(DcMotorSimple.Direction.REVERSE);
 
-        Servo mag = hardwareMap.get(Servo.class, "magServo");
+//        Servo mag = hardwareMap.get(Servo.class, "magServo");
 
         waitForStart();
 
@@ -45,13 +41,7 @@ public class ShooterTest extends LinearOpMode {
                 shooter.setPower(0);
             }
 
-            mag.setPosition(Constants.MAG_SHOOT_POS);
-
-//            if (Math.abs(velocity - shooter.getVelocity()) > pidThresh) {
-//                shooter.setVelocityPIDFCoefficients(p1, 0, 0, f1);
-//            } else {
-//                shooter.setVelocityPIDFCoefficients(p2, 0, 0, f2);
-//            }
+//            mag.setPosition(Constants.MAG_SHOOT_POS);
 
             addPacket("Velocity", shooter.getVelocity());
             addPacket("Position", shooter.getCurrentPosition());
