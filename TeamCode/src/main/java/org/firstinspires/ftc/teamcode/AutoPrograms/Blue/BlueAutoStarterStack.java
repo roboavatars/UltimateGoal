@@ -249,7 +249,8 @@ public class BlueAutoStarterStack extends LinearOpMode {
                 }
 
                 if (depositState == 2 && (time.seconds() > depositReachTime + 0.75 || time.seconds() > deliverWobbleTime + 4)) {
-                    robot.wobbleArm.armUp();
+                    robot.wobbleArm.armInside();
+                    robot.wobbleArm.clawIn();
                     robot.intake.bumpersHome();
 
                     Waypoint[] wobbleBackWaypoints = new Waypoint[] {

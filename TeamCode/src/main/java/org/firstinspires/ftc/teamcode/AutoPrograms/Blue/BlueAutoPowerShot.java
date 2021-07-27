@@ -182,9 +182,18 @@ public class BlueAutoPowerShot extends LinearOpMode {
                 }
 
                 if (depositState == 2 && (time.seconds() > depositReachTime + 0.75 || time.seconds() > deliverWobbleTime + 4)) {
-                    robot.wobbleArm.armUp();
-                    robot.intake.blockerHome();
+                    robot.wobbleArm.armInside();
+                    robot.wobbleArm.clawIn();
                     robot.intake.bumpersHome();
+                    robot.moveWobbleOut = 1;
+                    depositReachTime = time.seconds();
+                    depositState = 3;
+                }
+
+                if (depositState == 3 && (time.seconds() > depositReachTime + 1.5 || time.seconds() > deliverWobbleTime + 6)) {
+
+                    robot.intake.blockerHome();
+                    robot.moveWobbleOut = 0;
 
                     Waypoint[] wobbleBackWaypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, robot.theta,  -20, -10, 0, 0),
@@ -251,6 +260,7 @@ public class BlueAutoPowerShot extends LinearOpMode {
 
                 if (time.seconds() > bounceBackTime) {
                     robot.setLockMode(Robot.TurretMode.HIGH_GOAL);
+                    robot.intake.blockerHome();
 
                     Waypoint[] goToBounceShootWaypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, robot.theta, -40, -30, 0, 0),

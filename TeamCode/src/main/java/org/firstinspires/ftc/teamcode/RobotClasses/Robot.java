@@ -390,7 +390,9 @@ public class Robot {
                 shooter.setTurretTheta(PI/2, drivetrain.commandedW);
                 if (abs(shooter.getTheta() - PI/2) > turretTolerance) {
                     wobbleTime = curTime;
-                    moveWobbleOut = 2;
+                    if (!isAuto) {
+                        moveWobbleOut = 2;
+                    }
                 }
             } else {
                 shooter.updateTurret(theta, drivetrain.commandedW);
