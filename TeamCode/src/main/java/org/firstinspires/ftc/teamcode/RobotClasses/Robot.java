@@ -119,9 +119,9 @@ public class Robot {
     public static double theta1R = 1.590;
     public static double theta2R = 1.498;
     public static double[] thetaPositionsR = {theta0R, theta1R, theta2R};
-    public static double theta0B = PI - theta0R;
-    public static double theta1B = PI - theta1R;
-    public static double theta2B = PI - theta2R;
+    public static double theta0B = 1.471;
+    public static double theta1B = 1.552;
+    public static double theta2B = 1.644;
     public static double[] thetaPositionsB = {theta0B, theta1B, theta2B};
 
     // Ring State Variables
@@ -223,7 +223,7 @@ public class Robot {
                 vThresh = v - 150;
             } else {
                 shooter.flywheelPS();
-                vThresh = Constants.POWERSHOT_VELOCITY - 50;
+                vThresh = Constants.POWERSHOT_VELOCITY - 30;
             }
 
             // Turn off intake and put mag up
@@ -234,7 +234,7 @@ public class Robot {
             }
 
             // Start auto-feed when mag is up, velocity is high enough, and robot is at position
-            if (preShootOverride || (curTime - startShootTime > 500 && shooter.getFlywheelVelocity() >= vThresh && isAtPoseTurret(shootTargetTheta))) {
+            if (preShootOverride || (curTime - startShootTime > 600 && shooter.getFlywheelVelocity() >= vThresh && isAtPoseTurret(shootTargetTheta))) {
                 if (highGoal) {
                     shootDelay = highGoalDelay;
                 } else {
@@ -250,7 +250,7 @@ public class Robot {
                 log("Ready to shoot " + (highGoal ? "high goal" : "powershot") + ", velocity: " + shooter.getFlywheelVelocity());
                 log("Pre shoot time: " +  (curTime - startShootTime) + " ms");
             } else {
-                if (curTime - startShootTime <= 500) {
+                if (curTime - startShootTime <= 600) {
                     log("Preshoot waiting for mag up");
                 }
                 if (shooter.getFlywheelVelocity() < vThresh) {
@@ -401,9 +401,17 @@ public class Robot {
         if (moveWobbleOut == 2 && System.currentTimeMillis() - wobbleTime > 2000) {
             moveWobbleOut = 0;
         } else if (moveWobbleOut == 2 && System.currentTimeMillis() - wobbleTime > 1500) {
-            wobbleArm.unClamp();
+            if (wobbleArm.clamped) {
+                wobbleArm.unClamp();
+            } else {
+                wobbleArm.clamp();
+            }
         } else if (moveWobbleOut == 2 && System.currentTimeMillis() - wobbleTime > 750) {
-            wobbleArm.armDown();
+            if (wobbleArm.armDown) {
+                wobbleArm.armUp();
+            } else {
+                wobbleArm.armDown();
+            }
         }
 
         profile(5);
@@ -602,6 +610,16 @@ public class Robot {
         double shooterY = y + (turretMode != NONE && 0.5 < abs(vy) ? vy : 0) * Shooter.RING_FLIGHT_TIME - Shooter.TURRET_DX * cos(theta) + Shooter.TURRET_DY * sin(theta);
         double dx = lockX - shooterX;
         double dy = lockY - shooterY;
+
+        // Uses Angle Bisector for High Goal for more consistency
+        if (turretMode == HIGH_GOAL) {
+            double d = 8;
+            double a = Math.sqrt(Math.pow(dx + d/2, 2) + Math.pow(dy, 2));
+            double b = Math.sqrt(Math.pow(dx - d/2, 2) + Math.pow(dy, 2));
+
+            lockX += - d/2 + d * b / (a + b);
+            dx = lockY - shooterX;
+        }
 
         drawLine(shooterX, shooterY, lockX, lockY, "blue");
         return Math.atan2(dy, dx);

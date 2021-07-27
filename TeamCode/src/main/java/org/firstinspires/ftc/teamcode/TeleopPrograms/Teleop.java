@@ -26,7 +26,7 @@ public class Teleop extends LinearOpMode {
     private Robot robot;
 
     public static boolean robotCentric = true;
-    public static boolean useAutoPos = false;
+    public static boolean useAutoPos = true;
 
     // Control Gains
     private double xyGain = 1;

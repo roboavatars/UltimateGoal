@@ -9,15 +9,15 @@ public class Constants {
     public static double BLOCKER_VERTICAL_POS = 0.51;
     public static double BLOCKER_DOWN_POS = 0.45;
 
-    public static double BUMPER_OUT_POS = 0;
-    public static double BUMPER_HOME_POS = 1;
+    public static double BUMPER_OUT_POS = 1;
+    public static double BUMPER_HOME_POS = 0;
 
     public static double INTAKE_POWER = 1;
     public static double TRANSFER_POWER = 0.6;
 
     // Shooter
     public static int HIGH_GOAL_VELOCITY = 1620;
-    public static int POWERSHOT_VELOCITY = 1450;
+    public static int POWERSHOT_VELOCITY = 1430;
 
     public static double MAG_HOME_POS = 0.43;
     public static double MAG_SHOOT_POS = 0.85;
