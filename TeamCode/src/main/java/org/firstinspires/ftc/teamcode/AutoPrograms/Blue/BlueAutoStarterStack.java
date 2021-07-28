@@ -43,6 +43,7 @@ public class BlueAutoStarterStack extends LinearOpMode {
         detector.start();
 
         // Segments
+        boolean align = false;
         boolean goToStack = false;
         boolean shootHighGoal1 = false;
         boolean intakeStack = false;
@@ -76,11 +77,13 @@ public class BlueAutoStarterStack extends LinearOpMode {
         int depositState = 0;
         double depositReachTime = 0;
         ArrayList<Ring> rings;
+        boolean resetCalled = false;
 
         waitForStart();
 
         robot.drivetrain.updateThetaError();
         robot.wobbleArm.armUp();
+        robot.intake.blockerDown();
         robot.setLockMode(Robot.TurretMode.HIGH_GOAL);
 
         // Determine Ring Case
@@ -115,8 +118,22 @@ public class BlueAutoStarterStack extends LinearOpMode {
             rings = detector.getRingPipe().getRings(robot.x, robot.y, robot.theta);
             robot.ringPos = rings;
 
+            if (!align) {
+                robot.setTargetPoint(30, 17, PI/2);
+
+               if (time.seconds() > 0.75 && !resetCalled) {
+                    robot.turretReset = true;
+                    resetCalled = true;
+               }
+
+               if (time.seconds() > 1.5) {
+                   align = true;
+                   time.reset();
+               }
+            }
+
             // Go to Starter Stack
-            if (!goToStack) {
+            else if (!goToStack) {
                 double curTime = Math.min(time.seconds(), goToStackTime);
                 Pose curPose = goToStackPath.getRobotPose(curTime);
                 robot.setTargetPoint(curPose);
@@ -153,11 +170,11 @@ public class BlueAutoStarterStack extends LinearOpMode {
             // Intake Rings from Starter Stack
             else if (!intakeStack) {
                 if (ringCase == RingCase.Four) {
-                    if (time.seconds() > intakeStackTime - 0.25) {
+                    if (time.seconds() > intakeStackTime - 0.5) {
                         robot.intake.setPower(-0.5);
                     } else if (knockStack) {
                         robot.intake.on();
-                        robot.setTargetPoint(new Target(36, Math.min(40 + 4 * time.seconds(), 50), PI/2).thetaW0(PI/2).thetaKp(3.0));
+                        robot.setTargetPoint(new Target(36, Math.min(40 + 3 * time.seconds(), 46), PI/2).thetaW0(PI/2).thetaKp(3.0));
                     } else if (robot.isAtPose(36, 45, PI/2, 0.5, 0.5, PI/35) && robot.notMoving()) {
                         robot.drivetrain.stop();
                         knockStack = true;
@@ -194,7 +211,7 @@ public class BlueAutoStarterStack extends LinearOpMode {
             // Intake Fourth Ring from Stack
             else if (!intakeStack2) {
                 if (time.seconds() < 4.5) {
-                    robot.setTargetPoint(new Target(36, Math.min(50 + 3 * time.seconds(), 63), PI/2).thetaW0(PI/2).thetaKp(3.0));
+                    robot.setTargetPoint(new Target(36, Math.min(47 + 3 * time.seconds(), 63), PI/2).thetaW0(PI/2).thetaKp(3.0));
                 } else {
                     robot.setTargetPoint(36, 63, PI/2);
                 }
@@ -204,6 +221,7 @@ public class BlueAutoStarterStack extends LinearOpMode {
                 }
 
                 if (time.seconds() > intakeStack2Time) {
+
                     robot.highGoalShoot();
                     robot.intake.bumpersOut();
 
@@ -248,6 +266,15 @@ public class BlueAutoStarterStack extends LinearOpMode {
                     robot.wobbleArm.armInside();
                     robot.wobbleArm.clawIn();
                     robot.intake.bumpersHome();
+                    robot.moveWobbleOut = 1;
+                    depositReachTime = time.seconds();
+                    depositState = 3;
+                }
+
+                if (depositState == 3 && (time.seconds() > depositReachTime + 1.5 || time.seconds() > deliverWobbleTime + 6)) {
+
+                    robot.intake.blockerHome();
+                    robot.moveWobbleOut = 0;
 
                     Waypoint[] wobbleBackWaypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, robot.theta,  -20, -10, 0, 0),

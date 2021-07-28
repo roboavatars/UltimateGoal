@@ -54,7 +54,6 @@ public class BlueAutoPowerShot extends LinearOpMode {
         boolean park = false;
 
         // Segment Times
-        double alignTime = 1.0;
         double goToPowerShotsTime = 1.5;
         double deliverWobbleTime = 2.0;
         double wobbleBackTime = 1.0;
@@ -81,6 +80,7 @@ public class BlueAutoPowerShot extends LinearOpMode {
         int depositState = 0;
         double depositReachTime = 0;
         ArrayList<Ring> rings;
+        boolean resetCalled = false;
 
         waitForStart();
 
@@ -91,8 +91,10 @@ public class BlueAutoPowerShot extends LinearOpMode {
         RingCase ringCase = RingCase.Zero;
 
         // Customize Pathing Depending on Ring Case
-        double[][] wobbleDelivery = {{17, 68, PI}, {19, 105, PI/2}, {15, 116, PI}};
+        double[][] wobbleDelivery = {{17, 68, PI}, {19, 104, PI/2}, {15, 116, PI}};
         double[] wobbleCor = wobbleDelivery[0];
+
+        robot.setLockMode(Robot.TurretMode.PS_R);
 
         ElapsedTime time = new ElapsedTime();
 
@@ -101,13 +103,14 @@ public class BlueAutoPowerShot extends LinearOpMode {
             robot.ringPos = rings;
 
             if (!align) {
-                robot.setTargetPoint(54, 13, 2*PI/3);
+                robot.setTargetPoint(54, 17, 2*PI/3);
 
-                if (robot.isAtPose(54, 13, 2*PI/3, 2, 2, PI/35)) {
-                    Robot.log("Reached pos: " + time.seconds());
+                if (time.seconds() > 0.5 && !resetCalled) {
+                    robot.turretReset = true;
+                    resetCalled = true;
                 }
 
-                if (time.seconds() > alignTime) {
+                if (time.seconds() > 1.5) {
                     ringCase = detector.getStackPipe().getModeResult();
                     Robot.log("Ring case: " + ringCase);
 
@@ -136,7 +139,7 @@ public class BlueAutoPowerShot extends LinearOpMode {
 
                 robot.shooter.flywheelPS();
 
-                if (time.seconds() > goToPowerShotsTime) {
+                if (time.seconds() > goToPowerShotsTime && robot.isAtPose(57, 63) && robot.notMoving()) {
                     robot.powerShotShoot();
 
                     goToPowerShots = true;

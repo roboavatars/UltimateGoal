@@ -119,8 +119,7 @@ public class MecanumDrivetrain {
     public void resetOdo(double newX, double newY, double newTheta) {
         x = newX;
         y = newY;
-        theta = newTheta;
-        t265.resetTheta();
+        t265.resetTheta(newTheta);
 //        imu.resetHeading(newTheta);
     }
 
@@ -244,7 +243,7 @@ public class MecanumDrivetrain {
 
             if (Math.abs(t265.getTheta() - lastRawHeading) > PI/4) {
                 t265.thetaError += deltaHeading;
-                Robot.log("T265 Disaster Averted " + deltaHeading);
+                Robot.log("T265 Disaster Averted " + t265.getTheta() + " " + lastRawHeading + " " + deltaHeading + " " + t265.thetaError);
             }
             lastRawHeading = t265.getTheta();
 //            deltaPod1 = deltaPod2 - deltaHeading * ODOMETRY_TRACK_WIDTH;

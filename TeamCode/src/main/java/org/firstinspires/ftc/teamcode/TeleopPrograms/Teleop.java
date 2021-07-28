@@ -12,7 +12,6 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 import java.util.Arrays;
 
 import static java.lang.Math.PI;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 
 @TeleOp(name = "1 Teleop")
 @SuppressWarnings("FieldCanBeLocal")
@@ -118,21 +117,6 @@ public class Teleop extends LinearOpMode {
             }
 
             // Wobble Arm In / Up / Down
-//            if (gamepad2.x && !inToggle) {
-//                inToggle = true;
-//                if (armIn) {
-//                    robot.wobbleArm.armUp();
-//                    robot.wobbleArm.unClamp();
-//                } else {
-//                    robot.wobbleArm.armInside();
-//                    robot.wobbleArm.clawIn();
-//                    armDown = false;
-//                }
-//                armIn = !armIn;
-//            } else if (!gamepad2.x && inToggle) {
-//                inToggle = false;
-//            }
-
             if (gamepad2.right_bumper && !downToggle) {
                 if (!armIn) {
                     downToggle = true;
@@ -196,16 +180,16 @@ public class Teleop extends LinearOpMode {
 
             // Reset Odometry
             if (gamepad1.x) {
-                robot.resetOdo(87, 63, PI/2);
-                robot.thetaOffset = 0;
-                robot.velocityFactor = 0.98;
+                robot.resetOdo(robot.isRed ? 87 : 57, 63, PI/2);
+                robot.thetaOffset = 0.03;
+                robot.velocityFactor = 0.96;
             }
 
             // Change Shooting Theta Offset to Compensate for Odometry Drift
             if (gamepad2.dpad_left) {
-                robot.thetaOffset -= 0.003;
+                robot.thetaOffset -= 0.005;
             } else if (gamepad2.dpad_right) {
-                robot.thetaOffset += 0.003;
+                robot.thetaOffset += 0.005;
             }
 
             // Change Velocity Scaling
@@ -216,21 +200,11 @@ public class Teleop extends LinearOpMode {
             }
 
             // Drivetrain Controls
-//            if (robotCentric) {
-            if (robot.shootY > 65 && robot.shoot && robot.y > 65) {
-                double vx = -gamepad1.left_stick_y * xyGain;
-                double vy = -gamepad1.left_stick_x * xyGain;
-                double xdot = vx * Math.cos(robot.theta) - vy * Math.sin(robot.theta);
-                double ydot = (vy * Math.cos(robot.theta) + vx * Math.sin(robot.theta)) + (robot.vy < 0 ? -robot.vy / (45 * (robot.y - 65)) : 0);
-                robot.drivetrain.setGlobalControls(xdot, ydot, -gamepad1.right_stick_x * wGain);
-                addPacket("status", "inside thing");
-            } else {
+            if (robotCentric) {
                 robot.drivetrain.setControls(-gamepad1.left_stick_y * xyGain, -gamepad1.left_stick_x * xyGain, -gamepad1.right_stick_x * wGain);
-                addPacket("status", "outside thing");
+            } else {
+                robot.drivetrain.setGlobalControls(gamepad1.left_stick_y * xyGain, gamepad1.left_stick_x * xyGain, -gamepad1.right_stick_x * wGain);
             }
-//            } else {
-//                robot.drivetrain.setGlobalControls(gamepad1.left_stick_y * xyGain, gamepad1.left_stick_x * xyGain, -gamepad1.right_stick_x * wGain);
-//            }
 
             // Update Robot
             robot.update();

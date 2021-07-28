@@ -44,6 +44,7 @@ public class RedAutoStarterStack extends LinearOpMode {
         detector.start();
 
         // Segments
+        boolean align = false;
         boolean goToStack = false;
         boolean shootHighGoal1 = false;
         boolean intakeStack = false;
@@ -54,7 +55,7 @@ public class RedAutoStarterStack extends LinearOpMode {
         boolean park = false;
 
         // Segment Times
-        double goToStackTime = 1.0;
+        double goToStackTime = 1.5;
         double intakeStackTime = 3.0;
         double intakeStack2Time = 5.5;
         double deliverWobbleTime = 1.75;
@@ -75,6 +76,7 @@ public class RedAutoStarterStack extends LinearOpMode {
         int depositState = 0;
         double depositReachTime = 0;
         ArrayList<Ring> rings;
+        boolean resetCalled = false;
 
         waitForStart();
 
@@ -115,8 +117,22 @@ public class RedAutoStarterStack extends LinearOpMode {
             rings = detector.getRingPipe().getRings(robot.x, robot.y, robot.theta);
             robot.ringPos = rings;
 
+            if (!align) {
+                robot.setTargetPoint(114, 17, PI/2);
+
+                if (time.seconds() > 0.5 && !resetCalled) {
+                    robot.turretReset = true;
+                    resetCalled = true;
+                }
+
+                if (time.seconds() > 2) {
+                    align = true;
+                    time.reset();
+                }
+            }
+
             // Go to Starter Stack
-            if (!goToStack) {
+            else if (!goToStack) {
                 double curTime = Math.min(time.seconds(), goToStackTime);
                 Pose curPose = goToStackPath.getRobotPose(curTime);
                 robot.setTargetPoint(curPose);
@@ -157,7 +173,7 @@ public class RedAutoStarterStack extends LinearOpMode {
                         robot.intake.setPower(-0.5);
                     } else if (knockStack) {
                         robot.intake.on();
-                        robot.setTargetPoint(new Target(108, Math.min(40 + 3 * time.seconds(), 47), PI/2).thetaW0(PI/2).thetaKp(3.0));
+                        robot.setTargetPoint(new Target(108, Math.min(40 + 3 * time.seconds(), 46), PI/2).thetaW0(PI/2).thetaKp(3.0));
                     } else if (robot.isAtPose(108, 45, PI/2, 0.5, 0.5, PI/35) && robot.notMoving()) {
                         robot.drivetrain.stop();
                         knockStack = true;
@@ -250,6 +266,15 @@ public class RedAutoStarterStack extends LinearOpMode {
                     robot.wobbleArm.armInside();
                     robot.wobbleArm.clawIn();
                     robot.intake.bumpersHome();
+                    robot.moveWobbleOut = 1;
+                    depositReachTime = time.seconds();
+                    depositState = 3;
+                }
+
+                if (depositState == 3 && (time.seconds() > depositReachTime + 1.5 || time.seconds() > deliverWobbleTime + 6)) {
+
+                    robot.intake.blockerHome();
+                    robot.moveWobbleOut = 0;
 
                     Waypoint[] parkWaypoints;
                     if (ringCase == RingCase.Zero) {

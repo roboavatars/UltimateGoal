@@ -60,7 +60,7 @@ public class Robot {
 
     // State Variables
     private final boolean isAuto;
-    private final boolean isRed;
+    public final boolean isRed;
     private boolean firstLoop = true;
     private int loopCounter = 0;
     public int numRings = 0;
@@ -86,7 +86,7 @@ public class Robot {
     private int vThresh;
     public double wobbleTime;
     public static double preShootTimeBackup = 4000;
-    public static double flickTimeBackup = 1000;
+    public static double flickTimeBackup = 1500;
     public static int highGoalDelay = 100;
     public static int psDelay = 300;
     public static double flickDelay = 100;
@@ -105,9 +105,9 @@ public class Robot {
     public boolean turretReset;
 
     public double shootYOverride = 0;
-    public double velocityFactor = 0.98;
+    public double velocityFactor = 0.96;
     public int numRingsPreset = 3;
-    public double thetaOffset = 0;
+    public double thetaOffset = 0.03;
     public double shootY = 0;
 
     private double lockX, lockY;
@@ -204,19 +204,21 @@ public class Robot {
 
         profile(1);
 
-        if (turretMode == HIGH_GOAL) {
-            if (hgDist >= 100) {
-                setLockMode(MID_GOAL);
-                targetDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - (isRed ? 36 : 108), 144 - vy * Shooter.RING_FLIGHT_TIME - y);
-            } else {
-                targetDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - (isRed ? 108 : 36), 144 - vy * Shooter.RING_FLIGHT_TIME - y);
-            }
-        } else if (turretMode == MID_GOAL) {
-            if (hgDist < 100) {
-                setLockMode(HIGH_GOAL);
-                targetDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - (isRed ? 108 : 36), 144 - vy * Shooter.RING_FLIGHT_TIME - y);
-            } else {
-                targetDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - (isRed ? 36 : 108), 144 - vy * Shooter.RING_FLIGHT_TIME - y);
+        if (!isAuto) {
+            if (turretMode == HIGH_GOAL) {
+                if (hgDist >= 100) {
+                    setLockMode(MID_GOAL);
+                    targetDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - (isRed ? 36 : 108), 144 - vy * Shooter.RING_FLIGHT_TIME - y);
+                } else {
+                    targetDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - (isRed ? 108 : 36), 144 - vy * Shooter.RING_FLIGHT_TIME - y);
+                }
+            } else if (turretMode == MID_GOAL) {
+                if (hgDist < 100) {
+                    setLockMode(HIGH_GOAL);
+                    targetDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - (isRed ? 108 : 36), 144 - vy * Shooter.RING_FLIGHT_TIME - y);
+                } else {
+                    targetDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - (isRed ? 36 : 108), 144 - vy * Shooter.RING_FLIGHT_TIME - y);
+                }
             }
         }
 
@@ -313,17 +315,22 @@ public class Robot {
                             || (!highGoal && isAtPoseTurret(shootTargetTheta, PI/100) && turretNotMoving() && y < 72))
                             || (isAuto && curTime - flickTime > flickTimeBackup) || !shooter.feedHome) {
 
-                        log("In shoot Velocity/Target: " + shooter.getFlywheelVelocity() + "/" + shooter.getTargetVelocity());
-                        if (!highGoal) {
-                            log("PS pos: " + turretGlobalTheta);
-                        }
+                        if (shooter.feedHome) {
+                            log("In shoot Velocity/Target: " + shooter.getFlywheelVelocity() + "/" + shooter.getTargetVelocity());
+                            if (!highGoal) {
+                                log("PS pos: " + turretGlobalTheta);
+                            }
+                            if (isAuto && curTime - flickTime > flickTimeBackup) {
+                                log("Shoot time backup");
+                            }
 
-                        if (numRings == 3) {
-                            log("Feed ring 1");
-                        } else if (numRings == 2) {
-                            log("Feed ring 2");
-                        } else if (numRings == 1) {
-                            log("Feed ring 3");
+                            if (numRings == 3) {
+                                log("Feed ring 1");
+                            } else if (numRings == 2) {
+                                log("Feed ring 2");
+                            } else if (numRings == 1) {
+                                log("Feed ring 3");
+                            }
                         }
 
                         if (shooter.feedHome) {
@@ -451,7 +458,7 @@ public class Robot {
         addPacket("8 Run Time", (curTime - startTime) / 1000);
         addPacket("9 Update Frequency (Hz)", round(1 / timeDiff));
         addPacket("Pod Zeroes", drivetrain.zero1 + ", " + drivetrain.zero2 + ", " + drivetrain.zero3);
-        addPacket("regression", round(thetaOffset) + " " + round(targetDist));
+        addPacket("regression", round(thetaOffset) + " " + velocityFactor + " " + round(targetDist));
         addPacket("ms", round(timeDiff * 1000));
         if (!isAuto) {
             addPacket("Cycle Time", (curTime - lastCycleTime) / 1000);

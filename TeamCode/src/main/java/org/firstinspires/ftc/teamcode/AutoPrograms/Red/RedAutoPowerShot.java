@@ -42,6 +42,7 @@ public class RedAutoPowerShot extends LinearOpMode {
         detector.start();
 
         // Segments
+        boolean align = false;
         boolean goToPowerShots = false;
         boolean shootPowerShots = false;
         boolean deliverWobble = false;
@@ -76,6 +77,7 @@ public class RedAutoPowerShot extends LinearOpMode {
         int depositState = 0;
         double depositReachTime = 0;
         ArrayList<Ring> rings;
+        boolean resetCalled = false;
 
         waitForStart();
 
@@ -99,6 +101,7 @@ public class RedAutoPowerShot extends LinearOpMode {
         }
 
         detector.setPipeline(Vision.Pipeline.RingLocator);
+        robot.setLockMode(Robot.TurretMode.PS_R);
 
         ElapsedTime time = new ElapsedTime();
 
@@ -106,15 +109,29 @@ public class RedAutoPowerShot extends LinearOpMode {
             rings = detector.getRingPipe().getRings(robot.x, robot.y, robot.theta);
             robot.ringPos = rings;
 
+            if (!align) {
+                robot.setTargetPoint(90, 17, PI/2);
+
+                if (time.seconds() > 0.5 && !resetCalled) {
+                    robot.turretReset = true;
+                    resetCalled = true;
+                }
+
+                if (time.seconds() > 2) {
+                    align = true;
+                    time.reset();
+                }
+            }
+
             // Go to Power Shots
-            if (!goToPowerShots) {
+            else if (!goToPowerShots) {
                 double curTime = Math.min(time.seconds(), goToPowerShotsTime);
                 Pose curPose = goToPowerShotsPath.getRobotPose(curTime);
                 robot.setTargetPoint(curPose);
 
                 robot.shooter.flywheelPS();
 
-                if (time.seconds() > goToPowerShotsTime && robot.isAtPose(87, 63)) {
+                if (time.seconds() > goToPowerShotsTime && robot.isAtPose(87, 63) && robot.notMoving()) {
                     robot.powerShotShoot();
 
                     goToPowerShots = true;

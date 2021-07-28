@@ -138,7 +138,7 @@ public class Logger extends Thread {
             BufferedReader bufferedReader = new BufferedReader(new FileReader(getLogName(false)));
             List<String> lines = bufferedReader.lines().collect(Collectors.toList());
             int isRed = lines.get(1).contains("Red") ? 1 : 0;
-            String[] data = lines.get(lines.size() - 2).split(",");
+            String[] data = lines.get(lines.size() - 3).split(",");
             robotPos = new double[] {isRed, Double.parseDouble(data[2]), Double.parseDouble(data[3]), Double.parseDouble(data[4]), Double.parseDouble(data[5])};
 
             bufferedReader.close();
