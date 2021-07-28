@@ -23,6 +23,9 @@ public class Teleop extends LinearOpMode {
     private final int startY = 63;
     private final double startTheta = PI/2;
 
+    public static int highGoal1 = 1570;
+    public static int highGoal2 = 1640;
+
     private Robot robot;
 
     public static boolean robotCentric = true;
@@ -42,6 +45,8 @@ public class Teleop extends LinearOpMode {
     Gamepad 1
     Left stick/Right Stick - Drivetrain Controls
     X - Reset Odo
+    Dpad Up - High Goal 1
+    Dpad Down - High Goal 2
     Left Bumper - High Goal Shoot
     Right Bumper - Powershot Shoot
     Left Trigger - Intake Reverse
@@ -99,6 +104,10 @@ public class Teleop extends LinearOpMode {
                 robot.highGoalShoot();
             } else if (gamepad1.right_bumper) {
                 robot.powerShotShoot();
+            } else if (gamepad1.dpad_up) {
+                robot.highGoalShoot(3, highGoal1);
+            } else if (gamepad1.dpad_down) {
+                robot.highGoalShoot(3, highGoal2);
             }
 
             // Stop Shoot Sequence

@@ -109,6 +109,7 @@ public class Robot {
     public int numRingsPreset = 3;
     public double thetaOffset = 0.03;
     public double shootY = 0;
+    public int flywheelVelocitySetting = 0;
 
     private double lockX, lockY;
     private TurretMode turretMode = NONE;
@@ -227,12 +228,12 @@ public class Robot {
 
             // Set flywheel velocity based on what we want to shoot
             if (highGoal) {
-                int v;
-                if (turretMode == HIGH_GOAL) {
-                    v = calcHGVelocity();
-                } else {
-                    v = calcMGVelocity();
-                }
+                int v = flywheelVelocitySetting;
+//                if (turretMode == HIGH_GOAL) {
+//                    v = calcHGVelocity();
+//                } else {
+//                    v = calcMGVelocity();
+//                }
                 shooter.setFlywheelVelocity(v);
                 vThresh = v - 100;
             } else {
@@ -293,12 +294,12 @@ public class Robot {
             if (numRings > 0) {
                 if (highGoal) {
                     lastTarget = 3;
-                    int v;
-                    if (turretMode == HIGH_GOAL) {
-                        v = calcHGVelocity();
-                    } else {
-                        v = calcMGVelocity();
-                    }
+                    int v = flywheelVelocitySetting;
+//                    if (turretMode == HIGH_GOAL) {
+//                        v = calcHGVelocity();
+//                    } else {
+//                        v = calcMGVelocity();
+//                    }
                     shooter.setFlywheelVelocity(v);
                     vThresh = v - 100;
                 } else if (numRings == 3 || curTime - flickTime > flickDelay) {
@@ -360,6 +361,7 @@ public class Robot {
                     shooter.magHome();
                     shoot = false;
                     shootOverride = false;
+                    flywheelVelocitySetting = 0;
 
                     if (!highGoal && hgDist <= 100) {
                         setLockMode(HIGH_GOAL);
@@ -502,13 +504,18 @@ public class Robot {
         highGoalShoot(3);
     }
 
-    // Set variables for high goal shoot
     public void highGoalShoot(int numRings) {
+        highGoalShoot(numRings, calcHGVelocity());
+    }
+
+    // Set variables for high goal shoot
+    public void highGoalShoot(int numRings, int flywheelVelocity) {
         if (!preShoot && !shoot) {
             preShoot = true;
             highGoal = true;
             numRingsPreset = numRings;
             shootY = y;
+            flywheelVelocitySetting = flywheelVelocity;
             if (numRings != 3) {
                 log("Shooting with " + numRings + " rings");
             }
