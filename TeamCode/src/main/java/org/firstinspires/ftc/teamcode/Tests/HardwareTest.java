@@ -16,10 +16,10 @@ public class HardwareTest extends LinearOpMode {
 
     public static double motor1Power = 0;
     public static double motor2Power = 0;
-    public static double servo1Home = 0.2;
-    public static double servo1Out = 0.6;
-    public static double servo2Home = 0.5;
-    public static double servo2Out = 0.05;
+    public static double servo1Home = 1;
+    public static double servo1Out = 0.3;
+    public static double servo2Home = 0.1;
+    public static double servo2Out = 0.6;
 
     public static boolean home = true;
 

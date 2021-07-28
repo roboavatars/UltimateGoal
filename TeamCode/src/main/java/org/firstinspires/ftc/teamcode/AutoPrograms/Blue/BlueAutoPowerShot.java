@@ -138,8 +138,9 @@ public class BlueAutoPowerShot extends LinearOpMode {
                 robot.setTargetPoint(curPose);
 
                 robot.shooter.flywheelPS();
+                robot.setLockMode(Robot.TurretMode.PS_L);
 
-                if (time.seconds() > goToPowerShotsTime && robot.isAtPose(57, 63) && robot.notMoving()) {
+                if (time.seconds() > goToPowerShotsTime && robot.isAtPoseXY(57, 63, 0.5) && robot.notMoving()) {
                     robot.powerShotShoot();
 
                     goToPowerShots = true;
@@ -190,7 +191,6 @@ public class BlueAutoPowerShot extends LinearOpMode {
                 }
 
                 if (depositState == 3 && (time.seconds() > depositReachTime + 1.5 || time.seconds() > deliverWobbleTime + 6)) {
-
                     robot.intake.blockerHome();
                     robot.moveWobbleOut = 0;
 

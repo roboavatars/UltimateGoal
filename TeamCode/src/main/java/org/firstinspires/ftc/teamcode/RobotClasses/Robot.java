@@ -112,7 +112,7 @@ public class Robot {
     public int flywheelVelocitySetting = 0;
 
     private double lockX, lockY;
-    private TurretMode turretMode = NONE;
+    public TurretMode turretMode = NONE;
 
     public enum TurretMode {PS_L, PS_C, PS_R, HIGH_GOAL, MID_GOAL, NONE}
 
@@ -121,9 +121,9 @@ public class Robot {
     public static double theta1R = 1.590;
     public static double theta2R = 1.498;
     public static double[] thetaPositionsR = {theta0R, theta1R, theta2R};
-    public static double theta0B = 1.471;
-    public static double theta1B = 1.552;
-    public static double theta2B = 1.644;
+    public static double theta0B = 1.385;
+    public static double theta1B = 1.466;
+    public static double theta2B = 1.557;
     public static double[] thetaPositionsB = {theta0B, theta1B, theta2B};
 
     // Ring State Variables
@@ -207,14 +207,14 @@ public class Robot {
 
         if (!isAuto) {
             if (turretMode == HIGH_GOAL) {
-                if (hgDist >= 100) {
+                if (hgDist > 110 || (isRed && x < 57 || !isRed && x > 87)) {
                     setLockMode(MID_GOAL);
                     targetDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - (isRed ? 36 : 108), 144 - vy * Shooter.RING_FLIGHT_TIME - y);
                 } else {
                     targetDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - (isRed ? 108 : 36), 144 - vy * Shooter.RING_FLIGHT_TIME - y);
                 }
             } else if (turretMode == MID_GOAL) {
-                if (hgDist < 100) {
+                if (hgDist < 110  && (isRed && x > 57 || !isRed && x < 87)) {
                     setLockMode(HIGH_GOAL);
                     targetDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - (isRed ? 108 : 36), 144 - vy * Shooter.RING_FLIGHT_TIME - y);
                 } else {
@@ -363,7 +363,7 @@ public class Robot {
                     shootOverride = false;
                     flywheelVelocitySetting = 0;
 
-                    if (!highGoal && hgDist <= 100) {
+                    if (!highGoal && hgDist <= 110) {
                         setLockMode(HIGH_GOAL);
                     }
 
@@ -505,7 +505,7 @@ public class Robot {
     }
 
     public void highGoalShoot(int numRings) {
-        highGoalShoot(numRings, calcHGVelocity());
+        highGoalShoot(numRings, turretMode == HIGH_GOAL ? calcHGVelocity() : calcMGVelocity());
     }
 
     // Set variables for high goal shoot
@@ -714,14 +714,9 @@ public class Robot {
         return abs(x - targetX) < xTolerance && abs(y - targetY) < yTolerance && abs(theta - targetTheta) < thetaTolerance;
     }
 
-    // Check if robot is at a certain point, turret at certain angle (default tolerance)
-    public boolean isAtPoseTurret(double targetX, double targetY, double turretTheta) {
-        return isAtPose(targetX, targetY, turretTheta, xyTolerance, xyTolerance, turretTolerance);
-    }
-
-    // Check if robot is at a certain point, turret at certain angle (custom tolerance)
-    public boolean isAtPoseTurret(double targetX, double targetY, double turretTheta, double xTolerance, double yTolerance, double turretTolerance) {
-        return abs(x - targetX) < xTolerance && abs(y - targetY) < yTolerance && abs(turretGlobalTheta - turretTheta) < turretTolerance;
+    // Check if robot x/y is at a certain point
+    public boolean isAtPoseXY(double targetX, double targetY, double xyTolerance) {
+        return abs(x - targetX) < xyTolerance && abs(y - targetY) < xyTolerance;
     }
 
     public boolean isAtPoseTurret(double turretTheta, double turretTolerance) {

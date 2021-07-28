@@ -140,9 +140,9 @@ public class Intake {
         boolean frontRight = !inRange(frontBackPos[0], frontBackPos[1], buffer);
 
         if (frontLeft || frontRight) {
-            blockerHome();
-        } else {
             blockerDown();
+        } else {
+            blockerHome();
         }
     }
 

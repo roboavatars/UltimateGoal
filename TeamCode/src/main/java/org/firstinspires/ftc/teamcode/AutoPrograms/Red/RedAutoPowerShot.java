@@ -182,7 +182,6 @@ public class RedAutoPowerShot extends LinearOpMode {
                 }
 
                 if (depositState == 3 && (time.seconds() > depositReachTime + 1.5 || time.seconds() > deliverWobbleTime + 6)) {
-
                     robot.intake.blockerHome();
                     robot.moveWobbleOut = 0;
 

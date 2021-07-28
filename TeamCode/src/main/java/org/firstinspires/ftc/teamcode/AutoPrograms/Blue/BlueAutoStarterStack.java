@@ -64,7 +64,7 @@ public class BlueAutoStarterStack extends LinearOpMode {
 
         // Paths
         Waypoint[] goToStackWaypoints = new Waypoint[] {
-                new Waypoint(30, 9, PI/2, 20, 20, 0, 0),
+                new Waypoint(30, 17, PI/2, 20, 20, 0, 0),
                 new Waypoint(36, 32, PI/2, 5, -10, 0, goToStackTime),
         };
         Path goToStackPath = new Path(new ArrayList<>(Arrays.asList(goToStackWaypoints)));
@@ -99,7 +99,7 @@ public class BlueAutoStarterStack extends LinearOpMode {
             shoot1Ring = true;
             intakeStack2 = true;
             goToStackWaypoints = new Waypoint[] {
-                    new Waypoint(30, 9, PI/2, 30, 30, 0, 0),
+                    new Waypoint(30, 17, PI/2, 30, 30, 0, 0),
                     new Waypoint(26, 45, PI/2, 5, -30, 0, goToStackTime),
             };
             goToStackPath = new Path(new ArrayList<>(Arrays.asList(goToStackWaypoints)));

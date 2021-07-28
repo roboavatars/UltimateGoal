@@ -1,6 +1,7 @@
 package org.firstinspires.ftc.teamcode.Tests;
 
 import com.acmerobotics.dashboard.config.Config;
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
@@ -12,6 +13,7 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
 
 @TeleOp(name = "PD Controller Test")
 @Config
+@Disabled
 public class PDTest extends LinearOpMode {
     private Robot robot;
     private static double targetX = 96;

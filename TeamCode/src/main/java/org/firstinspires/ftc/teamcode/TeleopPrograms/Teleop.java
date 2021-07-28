@@ -12,6 +12,7 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 import java.util.Arrays;
 
 import static java.lang.Math.PI;
+import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.HIGH_GOAL;
 
 @TeleOp(name = "1 Teleop")
 @SuppressWarnings("FieldCanBeLocal")
@@ -23,13 +24,16 @@ public class Teleop extends LinearOpMode {
     private final int startY = 63;
     private final double startTheta = PI/2;
 
-    public static int highGoal1 = 1570;
-    public static int highGoal2 = 1640;
+    public static int highGoalClose = 1570;
+    public static int highGoalFar = 1640;
+    public static int midGoalClose = 1450;
+    public static int midGoalFar = 1550;
 
     private Robot robot;
 
     public static boolean robotCentric = true;
     public static boolean useAutoPos = true;
+    public static boolean isRed = true;
 
     // Control Gains
     private double xyGain = 1;
@@ -75,8 +79,8 @@ public class Teleop extends LinearOpMode {
             robot = new Robot(this, initialData[1], initialData[2], initialData[3], initialData[4], false, initialData[0] == 1);
             robot.logger.startLogging(false, initialData[0] == 1);
         } else {
-            robot = new Robot(this, startX, startY, startTheta, false);
-            robot.logger.startLogging(false, true);
+            robot = new Robot(this, (isRed ? startX : 144 - startX), startY, startTheta, false, isRed);
+            robot.logger.startLogging(false, isRed);
         }
 
         robot.setLockMode(Robot.TurretMode.HIGH_GOAL);
@@ -105,9 +109,9 @@ public class Teleop extends LinearOpMode {
             } else if (gamepad1.right_bumper) {
                 robot.powerShotShoot();
             } else if (gamepad1.dpad_up) {
-                robot.highGoalShoot(3, highGoal1);
+                robot.highGoalShoot(3, robot.turretMode == HIGH_GOAL ? highGoalClose : midGoalClose);
             } else if (gamepad1.dpad_down) {
-                robot.highGoalShoot(3, highGoal2);
+                robot.highGoalShoot(3, robot.turretMode == HIGH_GOAL ? highGoalFar : midGoalFar);
             }
 
             // Stop Shoot Sequence
@@ -212,7 +216,7 @@ public class Teleop extends LinearOpMode {
             if (robotCentric) {
                 robot.drivetrain.setControls(-gamepad1.left_stick_y * xyGain, -gamepad1.left_stick_x * xyGain, -gamepad1.right_stick_x * wGain);
             } else {
-                robot.drivetrain.setGlobalControls(gamepad1.left_stick_y * xyGain, gamepad1.left_stick_x * xyGain, -gamepad1.right_stick_x * wGain);
+                robot.drivetrain.setGlobalControls((isRed ? 1 : -1) * gamepad1.left_stick_y * xyGain, (isRed ? 1 : -1) * gamepad1.left_stick_x * xyGain, -gamepad1.right_stick_x * wGain);
             }
 
             // Update Robot
