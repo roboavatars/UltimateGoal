@@ -108,6 +108,7 @@ public class Robot {
     public double velocityFactor = 0.98;
     public int numRingsPreset = 3;
     public double thetaOffset = 0;
+    public double shootY = 0;
 
     private double lockX, lockY;
     private TurretMode turretMode = NONE;
@@ -203,12 +204,20 @@ public class Robot {
 
         profile(1);
 
-        if (hgDist >= 100 && turretMode == HIGH_GOAL) {
-            setLockMode(MID_GOAL);
-            targetDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - (isRed ? 36 : 108), 144 - vy * Shooter.RING_FLIGHT_TIME - y);
-        } else if (hgDist < 100 && turretMode == MID_GOAL) {
-            setLockMode(HIGH_GOAL);
-            targetDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - (isRed ? 108 : 36), 144 - vy * Shooter.RING_FLIGHT_TIME - y);
+        if (turretMode == HIGH_GOAL) {
+            if (hgDist >= 100) {
+                setLockMode(MID_GOAL);
+                targetDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - (isRed ? 36 : 108), 144 - vy * Shooter.RING_FLIGHT_TIME - y);
+            } else {
+                targetDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - (isRed ? 108 : 36), 144 - vy * Shooter.RING_FLIGHT_TIME - y);
+            }
+        } else if (turretMode == MID_GOAL) {
+            if (hgDist < 100) {
+                setLockMode(HIGH_GOAL);
+                targetDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - (isRed ? 108 : 36), 144 - vy * Shooter.RING_FLIGHT_TIME - y);
+            } else {
+                targetDist = hypot(x + vx * Shooter.RING_FLIGHT_TIME - (isRed ? 36 : 108), 144 - vy * Shooter.RING_FLIGHT_TIME - y);
+            }
         }
 
         // Pre-shoot tasks: Turn on flywheel, move robot to shooting position, mag up, start auto-feed once ready
@@ -336,7 +345,7 @@ public class Robot {
                             log("Shoot waiting for turret v: " + shooter.getTurretVelocity());
                         }
                         if (y >= 72) {
-                            log("Y >= 72");
+                            log("y >= 72");
                         }
                     }
                 } else {
@@ -345,7 +354,7 @@ public class Robot {
                     shoot = false;
                     shootOverride = false;
 
-                    if (!highGoal && hgDist < 100) {
+                    if (!highGoal && hgDist <= 100) {
                         setLockMode(HIGH_GOAL);
                     }
 
@@ -492,6 +501,7 @@ public class Robot {
             preShoot = true;
             highGoal = true;
             numRingsPreset = numRings;
+            shootY = y;
             if (numRings != 3) {
                 log("Shooting with " + numRings + " rings");
             }
@@ -512,6 +522,7 @@ public class Robot {
             preShoot = true;
             highGoal = false;
             numRingsPreset = 3;
+            shootY = y;
             startShootTime = curTime;
             drivetrain.stop();
             setLockMode(PS_R);
@@ -611,7 +622,7 @@ public class Robot {
         }*/
 
         drawLine(shooterX, shooterY, lockX, lockY, "blue");
-        return Math.atan2(dy, dx) - (-0.000515 * Math.pow(targetDist, 2) + 0.0906 * targetDist - 3.88);
+        return Math.atan2(dy, dx) - Math.min(Math.max(-0.000515 * Math.pow(targetDist, 2) + 0.0906 * targetDist - 3.88, -0.2), 0.2);
     }
 
     public int calcHGVelocity() {

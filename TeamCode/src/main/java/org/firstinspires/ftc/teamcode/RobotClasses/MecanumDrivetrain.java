@@ -21,7 +21,7 @@ public class MecanumDrivetrain {
     private DcMotorEx motorBackLeft;
 
     // OpMode
-    private LinearOpMode opMode;
+    private LinearOpMode op;
 
     // Tracking X/Y/Theta
     public double x, y, theta, startTheta;
@@ -82,12 +82,12 @@ public class MecanumDrivetrain {
     private T265 t265;
 
     // Constructor
-    public MecanumDrivetrain(LinearOpMode opMode, double initialX, double initialY, double initialTheta) {
-        this.opMode = opMode;
-        HardwareMap hardwareMap = opMode.hardwareMap;
+    public MecanumDrivetrain(LinearOpMode op, double initialX, double initialY, double initialTheta) {
+        this.op = op;
+        HardwareMap hardwareMap = op.hardwareMap;
 
-//        imu = new IMU(initialTheta, opMode);
-        t265 = new T265(opMode, initialX, initialY, initialTheta);
+//        imu = new IMU(initialTheta, op);
+        t265 = new T265(op, initialX, initialY, initialTheta);
         t265.startCam();
 
         motorFrontRight = hardwareMap.get(DcMotorEx.class, "motorFrontRight");
@@ -237,6 +237,9 @@ public class MecanumDrivetrain {
             t265.updateCamPose();
 
             theta = t265.getTheta() % (2*PI);
+            if (theta < 0) {
+                theta += 2*PI;
+            }
             deltaHeading = theta - lastHeading;
 
             if (Math.abs(t265.getTheta() - lastRawHeading) > PI/4) {

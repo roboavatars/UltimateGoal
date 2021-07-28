@@ -123,10 +123,10 @@ public class Shooter {
     }
 
     public void setTurretTheta(double theta, double commandedW) {
-        targetTheta = Math.min(Math.max(theta, -PI/4), 7*PI/6);
+        double clippedTargetTheta = Math.min(Math.max(theta, -PI/4), 7*PI/6);
         turretTheta = getTheta();
-        turretErrorChange = targetTheta - turretTheta - turretError;
-        turretError = targetTheta - turretTheta;
+        turretErrorChange = clippedTargetTheta - turretTheta - turretError;
+        turretError = clippedTargetTheta - turretTheta;
 
         setTurretPower(fTurret * commandedW + pTurret * turretError + dTurret * turretErrorChange);
     }

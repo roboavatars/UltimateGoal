@@ -3,15 +3,14 @@ package org.firstinspires.ftc.teamcode.RobotClasses;
 import com.acmerobotics.dashboard.config.Config;
 
 @Config
-public class
-Constants {
+public class Constants {
     // Intake
     public static double BLOCKER_HOME_POS = 0.9;
     public static double BLOCKER_VERTICAL_POS = 0.51;
     public static double BLOCKER_DOWN_POS = 0.45;
 
-    public static double BUMPER_OUT_POS = 1;
-    public static double BUMPER_HOME_POS = 0;
+    public static double BUMPER_OUT_POS = 0.1;
+    public static double BUMPER_HOME_POS = 1;
 
     public static double INTAKE_POWER = 1;
     public static double TRANSFER_POWER = 0.6;
