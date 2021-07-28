@@ -221,7 +221,7 @@ public class Teleop extends LinearOpMode {
                 double vx = -gamepad1.left_stick_y * xyGain;
                 double vy = -gamepad1.left_stick_x * xyGain;
                 double xdot = vx * Math.cos(robot.theta) - vy * Math.sin(robot.theta);
-                double ydot = vy * Math.cos(robot.theta) + vx * Math.sin(robot.theta) + (robot.vy < 0 ? robot.y / (10 * (robot.y - 65)) : 0);
+                double ydot = (vy * Math.cos(robot.theta) + vx * Math.sin(robot.theta)) + (robot.vy < 0 ? -robot.vy / (45 * (robot.y - 65)) : 0);
                 robot.drivetrain.setGlobalControls(xdot, ydot, -gamepad1.right_stick_x * wGain);
                 addPacket("status", "inside thing");
             } else {

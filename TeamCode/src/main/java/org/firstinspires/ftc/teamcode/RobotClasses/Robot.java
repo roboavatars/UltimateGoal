@@ -622,7 +622,7 @@ public class Robot {
         }*/
 
         drawLine(shooterX, shooterY, lockX, lockY, "blue");
-        return Math.atan2(dy, dx) - Math.min(Math.max(-0.000515 * Math.pow(targetDist, 2) + 0.0906 * targetDist - 3.88, -0.2), 0.2);
+        return Math.atan2(dy, dx);// - Math.min(Math.max(-0.000515 * Math.pow(targetDist, 2) + 0.0906 * targetDist - 3.88, -0.2), 0.2);
     }
 
     public int calcHGVelocity() {
