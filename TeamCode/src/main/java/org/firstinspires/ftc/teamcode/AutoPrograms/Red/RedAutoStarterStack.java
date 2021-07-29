@@ -148,6 +148,8 @@ public class RedAutoStarterStack extends LinearOpMode {
 
                     if (ringCase == RingCase.Zero) {
                         robot.intake.bumpersOut();
+                    } else {
+                        robot.intake.blockerVert();
                     }
 
                     goToStack = true;

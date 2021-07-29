@@ -84,6 +84,7 @@ public class Teleop extends LinearOpMode {
         }
 
         robot.setLockMode(Robot.TurretMode.HIGH_GOAL);
+        robot.velocityFactor = 0.96;
 
         double startTime = System.currentTimeMillis();
         while (!opModeIsActive()) {

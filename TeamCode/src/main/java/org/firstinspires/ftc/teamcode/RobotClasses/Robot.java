@@ -105,7 +105,7 @@ public class Robot {
     public boolean turretReset;
 
     public double shootYOverride = 0;
-    public double velocityFactor = 0.96;
+    public double velocityFactor = 1;
     public int numRingsPreset = 3;
     public double thetaOffset = 0.03;
     public double shootY = 0;

@@ -25,7 +25,6 @@ public class Intake {
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         blockerServo = op.hardwareMap.get(Servo.class, "blocker");
-
         bumperLR = op.hardwareMap.get(Servo.class, "bumpers");
 
         if (!isAuto) {
