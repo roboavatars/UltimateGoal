@@ -153,7 +153,7 @@ public class RedAutoFull extends LinearOpMode {
                 robot.setTargetPoint(new Target(goToStackPath.getRobotPose(Math.min(time.seconds(), goToStackTime))).thetaW0(PI/2).xKp(0.5).thetaKp(2.5));
 
                 if (time.seconds() > 0.4) {
-                    robot.intake.blockerDown();
+                    robot.intake.blockerVert();
                 }
 
                 if (ringCase != RingCase.Zero) {
@@ -437,7 +437,7 @@ public class RedAutoFull extends LinearOpMode {
                 if (time.seconds() > intakeWobble2Time + 0.5) {
                     robot.shooter.flywheelHG();
                     if (ringCase == RingCase.Four) {
-                        robot.intake.blockerDown();
+                        robot.intake.blockerVert();
                     }
 
                     Waypoint[] goToHighShootWaypoints = new Waypoint[] {

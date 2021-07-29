@@ -30,7 +30,7 @@ public class Intake {
 
         if (!isAuto) {
             bumpersOut();
-            blockerDown();
+            blockerVert();
         } else {
             bumpersHome();
             blockerHome();
@@ -80,10 +80,6 @@ public class Intake {
 
     public void blockerVert() {
         setBlocker(Constants.BLOCKER_VERTICAL_POS);
-    }
-
-    public void blockerDown() {
-        setBlocker(Constants.BLOCKER_DOWN_POS);
     }
 
     public void setBlocker(double position) {
@@ -140,7 +136,7 @@ public class Intake {
         boolean frontRight = !inRange(frontBackPos[0], frontBackPos[1], buffer);
 
         if (frontLeft || frontRight) {
-            blockerDown();
+            blockerVert();
         } else {
             blockerHome();
         }

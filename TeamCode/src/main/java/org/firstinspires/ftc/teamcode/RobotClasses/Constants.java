@@ -5,9 +5,8 @@ import com.acmerobotics.dashboard.config.Config;
 @Config
 public class Constants {
     // Intake
-    public static double BLOCKER_HOME_POS = 0.3;
-    public static double BLOCKER_VERTICAL_POS = 0.6;
-    public static double BLOCKER_DOWN_POS = 0.66;
+    public static double BLOCKER_HOME_POS = 0.4;
+    public static double BLOCKER_VERTICAL_POS = 0.68;
 
     public static double BUMPER_OUT_POS = 0.1;
     public static double BUMPER_HOME_POS = 1;

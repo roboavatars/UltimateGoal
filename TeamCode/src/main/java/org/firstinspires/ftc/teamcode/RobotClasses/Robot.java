@@ -229,11 +229,6 @@ public class Robot {
             // Set flywheel velocity based on what we want to shoot
             if (highGoal) {
                 int v = flywheelVelocitySetting;
-//                if (turretMode == HIGH_GOAL) {
-//                    v = calcHGVelocity();
-//                } else {
-//                    v = calcMGVelocity();
-//                }
                 shooter.setFlywheelVelocity(v);
                 vThresh = v - 100;
             } else {
@@ -295,11 +290,6 @@ public class Robot {
                 if (highGoal) {
                     lastTarget = 3;
                     int v = flywheelVelocitySetting;
-//                    if (turretMode == HIGH_GOAL) {
-//                        v = calcHGVelocity();
-//                    } else {
-//                        v = calcMGVelocity();
-//                    }
                     shooter.setFlywheelVelocity(v);
                     vThresh = v - 100;
                 } else if (numRings == 3 || curTime - flickTime > flickDelay) {

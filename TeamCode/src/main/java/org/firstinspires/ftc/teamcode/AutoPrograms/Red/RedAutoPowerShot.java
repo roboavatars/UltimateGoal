@@ -62,7 +62,7 @@ public class RedAutoPowerShot extends LinearOpMode {
 
         // Paths
         Waypoint[] goToPowerShotsWaypoints = new Waypoint[] {
-                new Waypoint(90, 9, PI/2, 20, 15, 0, 0),
+                new Waypoint(90, 17, PI/2, 20, 15, 0, 0),
                 new Waypoint(87, 63, PI/2, 5, -20, 0, goToPowerShotsTime),
         };
         Path goToPowerShotsPath = new Path(new ArrayList<>(Arrays.asList(goToPowerShotsWaypoints)));
@@ -254,7 +254,7 @@ public class RedAutoPowerShot extends LinearOpMode {
 
                 if (time.seconds() > goToBounceBackTime / 2) {
                     robot.intake.off();
-                    robot.shooter.setFlywheelVelocity(robot.calcHGVelocity());
+                    robot.shooter.setFlywheelVelocity(1550);
                     robot.intake.blockerVert();
                 }
 

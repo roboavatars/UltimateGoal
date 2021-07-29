@@ -22,6 +22,8 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 @Autonomous(name = "Blue Auto Power Shot", preselectTeleOp = "1 Teleop", group = "Blue")
 public class BlueAutoPowerShot extends LinearOpMode {
 
+    // get chicken from inside!
+
     @Override
     public void runOpMode() {
         /*
@@ -64,7 +66,7 @@ public class BlueAutoPowerShot extends LinearOpMode {
 
         // Paths
         Waypoint[] goToPowerShotsWaypoints = new Waypoint[] {
-                new Waypoint(54, 9, PI/2, 20, 20, 0, 0),
+                new Waypoint(54, 17, PI/2, 20, 20, 0, 0),
                 new Waypoint(57, 63, PI/2, 5, -20, 0, goToPowerShotsTime),
         };
         Path goToPowerShotsPath = new Path(new ArrayList<>(Arrays.asList(goToPowerShotsWaypoints)));
@@ -280,7 +282,7 @@ public class BlueAutoPowerShot extends LinearOpMode {
 
                 if (time.seconds() > goToBounceBackTime/2) {
                     robot.intake.off();
-                    robot.shooter.setFlywheelVelocity(robot.calcHGVelocity());
+                    robot.shooter.setFlywheelVelocity(1550);
                 }
 
                 if (time.seconds() > goToBounceShootTime) {
