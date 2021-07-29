@@ -145,7 +145,7 @@ public class BlueAutoStarterStack extends LinearOpMode {
                 if (((ringCase == RingCase.Four && time.seconds() > goToStackTime) || (ringCase != RingCase.Four && time.seconds() > goToStackTime + 5))
                         && robot.isAtPose(36, 32, PI/2, 20, 20, PI/35) && robot.notMoving()) {
                     robot.shootYOverride = 32;
-                    robot.highGoalShoot(4);
+                    robot.highGoalShoot(4, 1640);
 
                     if (ringCase == RingCase.Zero) {
                         robot.intake.bumpersOut();
@@ -189,7 +189,7 @@ public class BlueAutoStarterStack extends LinearOpMode {
 
                 if (time.seconds() > intakeStackTime) {
                     robot.shootYOverride = robot.y;
-                    robot.highGoalShoot(2);
+                    robot.highGoalShoot(2, 1640);
 
                     intakeStack = true;
                     time.reset();
@@ -222,8 +222,7 @@ public class BlueAutoStarterStack extends LinearOpMode {
                 }
 
                 if (time.seconds() > intakeStack2Time) {
-
-                    robot.highGoalShoot();
+                    robot.highGoalShoot(3, 1550);
                     robot.intake.bumpersOut();
 
                     intakeStack2 = true;

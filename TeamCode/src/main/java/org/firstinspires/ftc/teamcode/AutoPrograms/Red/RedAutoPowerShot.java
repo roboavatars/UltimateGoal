@@ -259,7 +259,7 @@ public class RedAutoPowerShot extends LinearOpMode {
                 }
 
                 if (time.seconds() > goToBounceShootTime) {
-                    robot.highGoalShoot();
+                    robot.highGoalShoot(3, 1550);
 
                     goToBounceShoot = true;
                     time.reset();

@@ -200,9 +200,9 @@ public class Teleop extends LinearOpMode {
 
             // Change Shooting Theta Offset to Compensate for Odometry Drift
             if (gamepad2.dpad_left) {
-                robot.thetaOffset -= 0.005;
+                robot.thetaOffset -= 0.006;
             } else if (gamepad2.dpad_right) {
-                robot.thetaOffset += 0.005;
+                robot.thetaOffset += 0.006;
             }
 
             // Change Velocity Scaling

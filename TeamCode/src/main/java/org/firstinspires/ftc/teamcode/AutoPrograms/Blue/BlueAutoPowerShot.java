@@ -22,8 +22,6 @@ import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 @Autonomous(name = "Blue Auto Power Shot", preselectTeleOp = "1 Teleop", group = "Blue")
 public class BlueAutoPowerShot extends LinearOpMode {
 
-    // get chicken from inside!
-
     @Override
     public void runOpMode() {
         /*
@@ -286,7 +284,7 @@ public class BlueAutoPowerShot extends LinearOpMode {
                 }
 
                 if (time.seconds() > goToBounceShootTime) {
-                    robot.highGoalShoot();
+                    robot.highGoalShoot(3, 1550);
 
                     goToBounceShoot = true;
                     time.reset();

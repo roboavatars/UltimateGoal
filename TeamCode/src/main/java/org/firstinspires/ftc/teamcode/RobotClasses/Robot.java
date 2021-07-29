@@ -228,7 +228,7 @@ public class Robot {
 
             // Set flywheel velocity based on what we want to shoot
             if (highGoal) {
-                int v = flywheelVelocitySetting;
+                int v = (int) (flywheelVelocitySetting * velocityFactor);
                 shooter.setFlywheelVelocity(v);
                 vThresh = v - 100;
             } else {
@@ -289,7 +289,7 @@ public class Robot {
             if (numRings > 0) {
                 if (highGoal) {
                     lastTarget = 3;
-                    int v = flywheelVelocitySetting;
+                    int v = (int) (flywheelVelocitySetting * velocityFactor);
                     shooter.setFlywheelVelocity(v);
                     vThresh = v - 100;
                 } else if (numRings == 3 || curTime - flickTime > flickDelay) {
@@ -505,7 +505,7 @@ public class Robot {
             highGoal = true;
             numRingsPreset = numRings;
             shootY = y;
-            flywheelVelocitySetting = flywheelVelocity;
+            flywheelVelocitySetting = (int) (flywheelVelocity * velocityFactor);
             if (numRings != 3) {
                 log("Shooting with " + numRings + " rings");
             }
