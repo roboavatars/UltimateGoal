@@ -1,13 +1,13 @@
 package org.firstinspires.ftc.teamcode.TeleopPrograms;
 
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
+import static java.lang.Math.PI;
+
 import com.acmerobotics.dashboard.config.Config;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
-
-import static java.lang.Math.PI;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 
 @TeleOp(name = "2 Regression")
 @Config
@@ -131,7 +131,7 @@ public class Regression extends LinearOpMode {
             }
 
             if (!armDown) {
-                robot.intake.autoBumpers(robot.x, robot.y, robot.theta, 12);
+                robot.intake.autoBumpers(robot.x, robot.y, robot.theta, 12, false);
             } else {
                 robot.intake.bumpersOut();
             }

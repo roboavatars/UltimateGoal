@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.AutoPrograms.Red;
 
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
+import static java.lang.Math.PI;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -15,9 +18,6 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import static java.lang.Math.PI;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 
 @Autonomous(name = "Red Auto Power Shot", preselectTeleOp = "1 Teleop", group = "Red")
 public class RedAutoPowerShot extends LinearOpMode {
@@ -71,6 +71,7 @@ public class RedAutoPowerShot extends LinearOpMode {
         Path bounceBackPath = null;
         Path bounceBackThPath = null;
         Path goToBounceShootPath = null;
+        Path goToBounceShootThPath = null;
         Path parkPath = null;
 
         // Other Variables
@@ -90,12 +91,13 @@ public class RedAutoPowerShot extends LinearOpMode {
         Robot.log("Ring case: " + ringCase);
 
         // Customize Pathing Depending on Ring Case
-        double[][] wobbleDelivery = {{109, 86, PI/2}, {84, 102, PI/2}, {119, 126, 5*PI/8}};
+        double[][] wobbleDelivery = {{109, 86, PI/2}, {84, 102, PI/2}, {114, 121, 5*PI/8}};
         double[] wobbleCor;
         if (ringCase == RingCase.Zero) {
             wobbleCor = wobbleDelivery[0];
         } else if (ringCase == RingCase.One) {
             wobbleCor = wobbleDelivery[1];
+            goToBounceShootTime = 4;
         } else {
             wobbleCor = wobbleDelivery[2];
         }
@@ -185,11 +187,19 @@ public class RedAutoPowerShot extends LinearOpMode {
                     robot.intake.blockerHome();
                     robot.moveWobbleOut = 0;
 
-                    Waypoint[] goToBounceBackWaypoints = new Waypoint[] {
-                            new Waypoint(robot.x, robot.y, robot.theta,  10, 5, 0, 0),
-                            new Waypoint(robot.x, robot.y + 10, robot.theta, 10, 5, 0, 0.5),
-                            new Waypoint(wobbleDelivery[2][0], wobbleDelivery[2][1], 3*PI/4, 5, 5, 0, goToBounceBackTime),
-                    };
+                    Waypoint[] goToBounceBackWaypoints;
+                    if (ringCase == RingCase.One) {
+                        goToBounceBackWaypoints = new Waypoint[] {
+                                new Waypoint(robot.x, robot.y, robot.theta,  10, 5, 0, 0),
+                                new Waypoint(85, 129, PI/4, 5, 5, 0, goToBounceBackTime),
+                        };
+                    } else {
+                        goToBounceBackWaypoints = new Waypoint[] {
+                                new Waypoint(robot.x, robot.y, robot.theta,  10, 5, 0, 0),
+                                new Waypoint(robot.x, robot.y + 10, robot.theta, 10, 5, 0, 0.5),
+                                new Waypoint(wobbleDelivery[2][0], wobbleDelivery[2][1], 3*PI/4, 5, 5, 0, goToBounceBackTime),
+                        };
+                    }
                     goToBounceBackPath = new Path(new ArrayList<>(Arrays.asList(goToBounceBackWaypoints)));
 
                     deliverWobble = true;
@@ -205,19 +215,35 @@ public class RedAutoPowerShot extends LinearOpMode {
                 robot.intake.on();
 
                 if (time.seconds() > goToBounceBackTime || ringCase == RingCase.Four) {
+                    Waypoint[] bounceBackWaypoints;
+                    Waypoint[] bounceBackThWaypoints;
+                    if (ringCase == RingCase.One) {
+                        bounceBackWaypoints = new Waypoint[] {
+                                new Waypoint(robot.x, robot.y, PI, 15, 5, 0, 0),
+                                new Waypoint(109, 129, PI, 10, 0, 0, 3.0),
+                                new Waypoint(114, 129, PI, 1, -10, 0, bounceBackTime),
+                        };
+                        bounceBackPath = new Path(new ArrayList<>(Arrays.asList(bounceBackWaypoints)));
 
-                    Waypoint[] bounceBackWaypoints = new Waypoint[] {
-                            new Waypoint(robot.x, robot.y, PI, 60, 60, 0, 0),
-                            new Waypoint(87, 129, PI, 30, 20, 0, 3.0),
-                            new Waypoint(82, 129, PI, 20, 5, 0, bounceBackTime),
-                    };
-                    bounceBackPath = new Path(new ArrayList<>(Arrays.asList(bounceBackWaypoints)));
+                        bounceBackThWaypoints = new Waypoint[] {
+                                new Waypoint(PI/4, 0, 0, 0, 0, 0, 0),
+                                new Waypoint(PI/4, 0, 0, 0, 0, 0, 3.0),
+                                new Waypoint(PI/4, 0, 0, 0, 0, 0, bounceBackTime),
+                        };
+                    } else {
+                        bounceBackWaypoints = new Waypoint[] {
+                                new Waypoint(robot.x, robot.y, PI, 60, 60, 0, 0),
+                                new Waypoint(87, 129, PI, 30, 20, 0, 3.0),
+                                new Waypoint(82, 129, PI, 20, 5, 0, bounceBackTime),
+                        };
+                        bounceBackPath = new Path(new ArrayList<>(Arrays.asList(bounceBackWaypoints)));
 
-                    Waypoint[] bounceBackThWaypoints = new Waypoint[] {
-                            new Waypoint(3*PI/4, 0, 0, 0, 0, 0, 0),
-                            new Waypoint(3*PI/4, 0, 0, 0, 0, 0, 3.0),
-                            new Waypoint(PI/2, 0, 0, 0, 0, 0, bounceBackTime),
-                    };
+                        bounceBackThWaypoints = new Waypoint[] {
+                                new Waypoint(3*PI/4, 0, 0, 0, 0, 0, 0),
+                                new Waypoint(3*PI/4, 0, 0, 0, 0, 0, 3.0),
+                                new Waypoint(PI/2, 0, 0, 0, 0, 0, bounceBackTime),
+                        };
+                    }
                     bounceBackThPath = new Path(new ArrayList<>(Arrays.asList(bounceBackThWaypoints)));
 
                     goToBounceBacks = true;
@@ -235,11 +261,33 @@ public class RedAutoPowerShot extends LinearOpMode {
                 if (time.seconds() > bounceBackTime) {
                     robot.setLockMode(Robot.TurretMode.HIGH_GOAL);
 
-                    Waypoint[] goToBounceShootWaypoints = new Waypoint[] {
-                            new Waypoint(robot.x, robot.y, robot.theta, -40, -30, 0, 0),
-                            new Waypoint(85, 63, PI/2, -5, 20, 0, goToBounceShootTime),
-                    };
+                    Waypoint[] goToBounceShootWaypoints;
+                    Waypoint[] goToBounceShootThWaypoints;
+                    if (ringCase == RingCase.One) {
+                        goToBounceShootWaypoints = new Waypoint[] {
+                                new Waypoint(robot.x, robot.y, PI,  10, 5, 0, 0),
+                                new Waypoint(85, 129, PI, 5, 5, 0, 2.0),
+                                new Waypoint(85, 63, PI, 5, 5, 0, goToBounceShootTime),
+                        };
+
+                        goToBounceShootThWaypoints = new Waypoint[] {
+                                new Waypoint(PI/4, 0, 0, 0, 0, 0, 0),
+                                new Waypoint(PI/4, 0, 0, 0, 0, 0, 2.0),
+                                new Waypoint(PI/2, 0, 0, 0, 0, 0, goToBounceShootTime),
+                        };
+                    } else {
+                        goToBounceShootWaypoints = new Waypoint[] {
+                                new Waypoint(robot.x, robot.y, robot.theta, -40, -30, 0, 0),
+                                new Waypoint(85, 63, PI/2, -5, 20, 0, goToBounceShootTime),
+                        };
+
+                        goToBounceShootThWaypoints = new Waypoint[] {
+                                new Waypoint(robot.theta, 0, 0, 0, 0, 0, 0),
+                                new Waypoint(PI/2, 0, 0, 0, 0, 0, goToBounceShootTime),
+                        };
+                    }
                     goToBounceShootPath = new Path(new ArrayList<>(Arrays.asList(goToBounceShootWaypoints)));
+                    goToBounceShootThPath = new Path(new ArrayList<>(Arrays.asList(goToBounceShootThWaypoints)));
 
                     intakeBounceBacks = true;
                     time.reset();
@@ -250,7 +298,8 @@ public class RedAutoPowerShot extends LinearOpMode {
             else if (!goToBounceShoot) {
                 double curTime = Math.min(time.seconds(), goToBounceShootTime);
                 Pose curPose = goToBounceShootPath.getRobotPose(curTime);
-                robot.setTargetPoint(curPose.x, curPose.y, curPose.theta + PI);
+                double theta = goToBounceShootThPath.getRobotPose(curTime).x;
+                robot.setTargetPoint(new Target(curPose).theta(theta));
 
                 if (time.seconds() > goToBounceBackTime / 2) {
                     robot.intake.off();

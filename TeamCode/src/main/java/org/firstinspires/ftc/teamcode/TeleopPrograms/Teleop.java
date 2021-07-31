@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.TeleopPrograms;
 
+import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.HIGH_GOAL;
+import static java.lang.Math.PI;
+
 import android.util.Log;
 
 import com.acmerobotics.dashboard.config.Config;
@@ -10,9 +13,6 @@ import org.firstinspires.ftc.teamcode.Debug.Logger;
 import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import java.util.Arrays;
-
-import static java.lang.Math.PI;
-import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.HIGH_GOAL;
 
 @TeleOp(name = "1 Teleop")
 @SuppressWarnings("FieldCanBeLocal")
@@ -42,12 +42,16 @@ public class Teleop extends LinearOpMode {
     // Toggles
     private boolean downToggle = false, armDown = false;
     private boolean clampToggle = false, clamped = true;
-    private boolean inToggle = false, armIn = true;
+    private boolean armIn = true;
+    private boolean blockerToggle = false, blockerUp = false;
+    private boolean bumperToggle = false;
+    private boolean bumperIsReversed = false;
 
     /*
     Controller Button Mappings:
     Gamepad 1
     Left stick/Right Stick - Drivetrain Controls
+    B - Bumper Toggle
     X - Reset Odo
     Dpad Up - High Goal 1
     Dpad Down - High Goal 2
@@ -57,13 +61,14 @@ public class Teleop extends LinearOpMode {
     Right Trigger - Intake On
 
     Gamepad 2
+    A - Blocker Toggle
     B - Cancel Shoot
     X- Move Turret to Reset
     Y - Pre-Rev Flywheel for High Goal
     Dpad Left - Decrease Theta Offset
     Dpad Right - Increase Theta Offset
-    Dpad Up - Increase Flap Angle
-    Dpad Down - Decrease Flap Angle
+    Dpad Up - Increase Velocity Scale
+    Dpad Down - Decrease Velocity Scale
     Left Bumper - Wobble Clamp/Unclamp
     Right Bumper - Wobble Up/Down
     Left Trigger - Slow Mode
@@ -84,13 +89,8 @@ public class Teleop extends LinearOpMode {
         }
 
         robot.setLockMode(Robot.TurretMode.HIGH_GOAL);
-        robot.velocityFactor = 0.96;
 
-        double startTime = System.currentTimeMillis();
-        while (!opModeIsActive()) {
-            telemetry.addData("Init Time", (System.currentTimeMillis() - startTime) / 1000);
-            telemetry.update();
-        }
+        waitForStart();
 
         robot.drivetrain.updateThetaError();
 
@@ -150,17 +150,44 @@ public class Teleop extends LinearOpMode {
                 downToggle = false;
             }
 
+            if (gamepad1.b && !bumperToggle) {
+                bumperToggle = true;
+                bumperIsReversed = !bumperIsReversed;
+            } else if (!gamepad1.b && bumperToggle) {
+                bumperToggle = false;
+            }
+
             if (armIn) {
-                robot.intake.autoBumpers(robot.x, robot.y, robot.theta, 12);
+                robot.intake.autoBumpers(robot.x, robot.y, robot.theta, 12, bumperIsReversed);
             } else {
                 if (armDown) {
-                    robot.intake.bumpersOut();
+                    if (bumperIsReversed) {
+                        robot.intake.bumpersHome();
+                    } else {
+                        robot.intake.bumpersOut();
+                    }
                 } else {
-                    robot.intake.bumpersHome();
+                    if (bumperIsReversed) {
+                        robot.intake.bumpersOut();
+                    } else {
+                        robot.intake.bumpersHome();
+                    }
                 }
             }
 
-            robot.intake.autoBlocker(robot.x, robot.y, robot.theta, 18);
+//            robot.intake.autoBlocker(robot.x, robot.y, robot.theta, 18);
+
+            if (gamepad2.a && !blockerToggle) {
+                blockerToggle = true;
+                if (blockerUp) {
+                    robot.intake.blockerHome();
+                } else {
+                    robot.intake.blockerVert();
+                }
+                blockerUp = !blockerUp;
+            } else if (!gamepad2.a && blockerToggle) {
+                blockerToggle = false;
+            }
 
             // Wobble Clamp / Unclamp
             if (gamepad2.left_bumper && !clampToggle) {
@@ -208,9 +235,9 @@ public class Teleop extends LinearOpMode {
 
             // Change Velocity Scaling
             if (gamepad2.dpad_up) {
-                robot.velocityFactor += 0.0025;
+                robot.velocityFactor += 0.001;
             } else if (gamepad2.dpad_down) {
-                robot.velocityFactor -= 0.0025;
+                robot.velocityFactor -= 0.001;
             }
 
             // Drivetrain Controls

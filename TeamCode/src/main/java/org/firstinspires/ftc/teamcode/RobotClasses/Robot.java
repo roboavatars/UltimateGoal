@@ -1,5 +1,24 @@
 package org.firstinspires.ftc.teamcode.RobotClasses;
 
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawDrivetrain;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawField;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawLine;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRing;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
+import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.HIGH_GOAL;
+import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.MID_GOAL;
+import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.NONE;
+import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.PS_C;
+import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.PS_L;
+import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.PS_R;
+import static java.lang.Math.PI;
+import static java.lang.Math.abs;
+import static java.lang.Math.cos;
+import static java.lang.Math.hypot;
+import static java.lang.Math.sin;
+
 import android.annotation.SuppressLint;
 import android.util.Log;
 
@@ -16,25 +35,6 @@ import org.firstinspires.ftc.teamcode.Pathing.Target;
 
 import java.util.ArrayList;
 import java.util.List;
-
-import static java.lang.Math.PI;
-import static java.lang.Math.abs;
-import static java.lang.Math.cos;
-import static java.lang.Math.hypot;
-import static java.lang.Math.sin;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawDrivetrain;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawField;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawLine;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRing;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.drawRobot;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.sendPacket;
-import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.HIGH_GOAL;
-import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.MID_GOAL;
-import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.NONE;
-import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.PS_C;
-import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.PS_L;
-import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.PS_R;
 
 @Config
 @SuppressWarnings("FieldCanBeLocal")
@@ -230,7 +230,7 @@ public class Robot {
             if (highGoal) {
                 int v = (int) (flywheelVelocitySetting * velocityFactor);
                 shooter.setFlywheelVelocity(v);
-                vThresh = v - 100;
+                vThresh = v - (isAuto ? 50 : 100);
             } else {
                 shooter.flywheelPS();
                 vThresh = Constants.POWERSHOT_VELOCITY - 30;
@@ -291,7 +291,7 @@ public class Robot {
                     lastTarget = 3;
                     int v = (int) (flywheelVelocitySetting * velocityFactor);
                     shooter.setFlywheelVelocity(v);
-                    vThresh = v - 100;
+                    vThresh = v - (isAuto ? 50 : 100);
                 } else if (numRings == 3 || curTime - flickTime > flickDelay) {
                     setLockMode(numRings - 1);
                     lastTarget = numRings - 1;

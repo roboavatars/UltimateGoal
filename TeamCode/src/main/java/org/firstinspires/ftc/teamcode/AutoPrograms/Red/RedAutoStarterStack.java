@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.AutoPrograms.Red;
 
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
+import static java.lang.Math.PI;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -16,9 +19,6 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import static java.lang.Math.PI;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 
 @Autonomous(name = "Red Auto Starter Stack", preselectTeleOp = "1 Teleop", group = "Red")
 public class RedAutoStarterStack extends LinearOpMode {
@@ -99,7 +99,7 @@ public class RedAutoStarterStack extends LinearOpMode {
             intakeStack2 = true;
             goToStackWaypoints = new Waypoint[] {
                     new Waypoint(114, 17, PI/2, 30, 30, 0, 0),
-                    new Waypoint(118, 45, PI/2, 5, -30, 0, goToStackTime),
+                    new Waypoint(118, 60, PI/2, 5, -30, 0, goToStackTime),
             };
             goToStackPath = new Path(new ArrayList<>(Arrays.asList(goToStackWaypoints)));
         } else if (ringCase == RingCase.One) {
@@ -138,13 +138,13 @@ public class RedAutoStarterStack extends LinearOpMode {
                 robot.setTargetPoint(new Target(curPose).thetaKp(3.5));
 
                 if (ringCase == RingCase.Four || time.seconds() > goToStackTime + 3.5) {
-                    robot.shooter.setFlywheelVelocity(1640);
+                    robot.shooter.setFlywheelVelocity(ringCase == RingCase.Zero ? 1570 : 1640);
                 }
 
-                if (((ringCase == RingCase.Four && time.seconds() > goToStackTime) || (ringCase != RingCase.Four && time.seconds() > goToStackTime + 5))
-                        && robot.isAtPose(110, 32, PI/2, 20, 20, PI/35) && robot.notMoving()) {
-                    robot.shootYOverride = 32;
-                    robot.highGoalShoot(4, 1640);
+                if (((ringCase == RingCase.Four && time.seconds() > goToStackTime) || (ringCase != RingCase.Four && time.seconds() > goToStackTime + 4))
+                        && robot.isAtPose(110, ringCase == RingCase.Zero ? 60 : 32, PI/2, 20, 20, PI/35) && robot.notMoving()) {
+                    robot.shootYOverride = ringCase == RingCase.Zero ? 60 : 32;
+                    robot.highGoalShoot(ringCase == RingCase.One ? 2 : 4, ringCase == RingCase.Zero ? 1570 : 1640);
 
                     if (ringCase == RingCase.Zero) {
                         robot.intake.bumpersOut();
@@ -185,12 +185,12 @@ public class RedAutoStarterStack extends LinearOpMode {
                     }
                 } else {
                     robot.intake.on();
-                    robot.setTargetPoint(108, 42, PI/2);
+                    robot.setTargetPoint(108, 60, PI/2);
                 }
 
                 if (time.seconds() > intakeStackTime) {
                     robot.shootYOverride = robot.y;
-                    robot.highGoalShoot(2, 1640);
+                    robot.highGoalShoot(ringCase == RingCase.One ? 4 : 2, 1640);
 
                     intakeStack = true;
                     time.reset();

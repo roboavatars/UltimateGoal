@@ -109,7 +109,7 @@ public class Intake {
         return buffer <= x && x <= 144 - buffer && buffer <= y && y <= 144 - buffer;
     }
 
-    public void autoBumpers(double x, double y, double theta, double buffer) {
+    public void autoBumpers(double x, double y, double theta, double buffer, boolean reverse) {
         double[] leftFrontPos = calculateCoordinates(x, y, theta, -15, 9);
         double[] leftBackPos = calculateCoordinates(x, y, theta, -15, -9);
         double[] rightFrontPos = calculateCoordinates(x, y, theta, 15, 6);
@@ -120,10 +120,18 @@ public class Intake {
         boolean rightFront = !inRange(rightFrontPos[0], rightFrontPos[1], buffer);
         boolean rightBack = !inRange(rightBackPos[0], rightBackPos[1], buffer);
 
-        if (leftFront || leftBack || rightFront || rightBack) {
-            bumpersLR(Constants.BUMPER_OUT_POS);
+        if (!leftFront || !leftBack || !rightFront || !rightBack) {
+            if (reverse) {
+                bumpersLR(Constants.BUMPER_OUT_POS);
+            } else {
+                bumpersLR(Constants.BUMPER_HOME_POS);
+            }
         } else {
-            bumpersLR(Constants.BUMPER_HOME_POS);
+            if (reverse) {
+                bumpersLR(Constants.BUMPER_HOME_POS);
+            } else {
+                bumpersLR(Constants.BUMPER_OUT_POS);
+            }
         }
     }
 
@@ -134,10 +142,10 @@ public class Intake {
         boolean frontLeft = !inRange(frontLeftPos[0], frontLeftPos[1], buffer);
         boolean frontRight = !inRange(frontBackPos[0], frontBackPos[1], buffer);
 
-        if (frontLeft || frontRight) {
-            blockerHome();
-        } else {
+        if (!frontLeft || !frontRight) {
             blockerVert();
+        } else {
+            blockerHome();
         }
     }
 
