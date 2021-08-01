@@ -91,7 +91,7 @@ public class BlueAutoStarterStack extends LinearOpMode {
         Robot.log("Ring case: " + ringCase);
 
         // Customize Pathing Depending on Ring Case
-        double[][] wobbleDelivery = {{11, 60, PI}, {14, 100, PI/2}, {13, 107, PI}};
+        double[][] wobbleDelivery = {{11, 60, PI}, {11, 100, PI/2}, {13, 107, PI}};
         double[] wobbleCor;
         if (ringCase == RingCase.Zero) {
             wobbleCor = wobbleDelivery[0];
@@ -139,13 +139,13 @@ public class BlueAutoStarterStack extends LinearOpMode {
                 robot.setTargetPoint(new Target(curPose).thetaKp(3.5));
 
                 if (ringCase == RingCase.Four || time.seconds() > goToStackTime + 3.5) {
-                    robot.shooter.setFlywheelVelocity(ringCase == RingCase.Zero ? 1570 : 1640);
+                    robot.shooter.setFlywheelVelocity(ringCase == RingCase.Zero ? 1570 : 1630);
                 }
 
                 if (((ringCase == RingCase.Four && time.seconds() > goToStackTime) || (ringCase != RingCase.Four && time.seconds() > goToStackTime + 5))
                         && robot.isAtPose(36, ringCase == RingCase.Zero ? 60 : 32, PI/2, 20, 20, PI/35) && robot.notMoving()) {
                     robot.shootYOverride = ringCase == RingCase.Zero ? 60 : 32;
-                    robot.highGoalShoot(ringCase == RingCase.One ? 2 : 4, ringCase == RingCase.Zero ? 1570 : 1640);
+                    robot.highGoalShoot(ringCase == RingCase.One ? 2 : 4, ringCase == RingCase.Zero ? 1570 : 1630);
 
                     if (ringCase == RingCase.Zero) {
                         robot.intake.bumpersOut();
@@ -162,7 +162,7 @@ public class BlueAutoStarterStack extends LinearOpMode {
             else if (!shootHighGoal1) {
                 if (!robot.preShoot && !robot.shoot && robot.numRings == 0) {
                     if (ringCase != RingCase.Zero) {
-                        robot.shooter.setFlywheelVelocity(1640);
+                        robot.shooter.setFlywheelVelocity(1630);
                     }
 
                     shootHighGoal1 = true;
@@ -191,7 +191,7 @@ public class BlueAutoStarterStack extends LinearOpMode {
 
                 if (time.seconds() > intakeStackTime) {
                     robot.shootYOverride = robot.y;
-                    robot.highGoalShoot(ringCase == RingCase.One ? 4 : 2, 1640);
+                    robot.highGoalShoot(ringCase == RingCase.One ? 4 : 2, 1630);
 
                     intakeStack = true;
                     time.reset();
@@ -241,7 +241,7 @@ public class BlueAutoStarterStack extends LinearOpMode {
                     };
                     deliverWobblePath = new Path(new ArrayList<>(Arrays.asList(deliverWobbleWaypoints)));
 
-                    robot.intake.setBlocker(0.45);
+                    robot.intake.setBlockerPos(0.45);
 
                     shootHighGoal2 = true;
                     time.reset();

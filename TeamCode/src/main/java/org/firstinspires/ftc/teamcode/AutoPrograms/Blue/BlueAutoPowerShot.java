@@ -1,5 +1,8 @@
 package org.firstinspires.ftc.teamcode.AutoPrograms.Blue;
 
+import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
+import static java.lang.Math.PI;
+
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.util.ElapsedTime;
@@ -15,9 +18,6 @@ import org.firstinspires.ftc.teamcode.RobotClasses.Robot;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import static java.lang.Math.PI;
-import static org.firstinspires.ftc.teamcode.Debug.Dashboard.addPacket;
 
 @Autonomous(name = "Blue Auto Power Shot", preselectTeleOp = "1 Teleop", group = "Blue")
 public class BlueAutoPowerShot extends LinearOpMode {
@@ -94,7 +94,7 @@ public class BlueAutoPowerShot extends LinearOpMode {
         double[][] wobbleDelivery = {{17, 68, PI}, {19, 104, PI/2}, {15, 116, PI}};
         double[] wobbleCor = wobbleDelivery[0];
 
-        robot.setLockMode(Robot.TurretMode.PS_R);
+        robot.setLockMode(Robot.TurretMode.HIGH_GOAL);
 
         ElapsedTime time = new ElapsedTime();
 
@@ -137,11 +137,10 @@ public class BlueAutoPowerShot extends LinearOpMode {
                 Pose curPose = goToPowerShotsPath.getRobotPose(curTime);
                 robot.setTargetPoint(curPose);
 
-                robot.shooter.flywheelPS();
-                robot.setLockMode(Robot.TurretMode.PS_L);
+                robot.shooter.setFlywheelVelocity(1550);
 
-                if (time.seconds() > goToPowerShotsTime && robot.isAtPoseXY(57, 63, 0.5) && robot.notMoving()) {
-                    robot.powerShotShoot();
+                if (time.seconds() > goToPowerShotsTime && robot.isAtPose(57, 63) && robot.notMoving()) {
+                    robot.highGoalShoot(3, 1550);
 
                     goToPowerShots = true;
                     time.reset();
@@ -258,7 +257,6 @@ public class BlueAutoPowerShot extends LinearOpMode {
                 robot.setTargetPoint(new Target(curPose).theta(theta));
 
                 if (time.seconds() > bounceBackTime) {
-                    robot.setLockMode(Robot.TurretMode.HIGH_GOAL);
                     robot.intake.blockerHome();
 
                     Waypoint[] goToBounceShootWaypoints = new Waypoint[] {

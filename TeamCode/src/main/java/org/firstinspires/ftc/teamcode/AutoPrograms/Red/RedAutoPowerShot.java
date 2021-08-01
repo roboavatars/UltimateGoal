@@ -103,7 +103,7 @@ public class RedAutoPowerShot extends LinearOpMode {
         }
 
         detector.setPipeline(Vision.Pipeline.RingLocator);
-        robot.setLockMode(Robot.TurretMode.PS_R);
+        robot.setLockMode(Robot.TurretMode.HIGH_GOAL);
 
         ElapsedTime time = new ElapsedTime();
 
@@ -131,10 +131,10 @@ public class RedAutoPowerShot extends LinearOpMode {
                 Pose curPose = goToPowerShotsPath.getRobotPose(curTime);
                 robot.setTargetPoint(curPose);
 
-                robot.shooter.flywheelPS();
+                robot.shooter.setFlywheelVelocity(1550);
 
                 if (time.seconds() > goToPowerShotsTime && robot.isAtPose(87, 63) && robot.notMoving()) {
-                    robot.powerShotShoot();
+                    robot.highGoalShoot(3, 1550);
 
                     goToPowerShots = true;
                     time.reset();
@@ -259,8 +259,6 @@ public class RedAutoPowerShot extends LinearOpMode {
                 robot.setTargetPoint(new Target(curPose).theta(theta));
 
                 if (time.seconds() > bounceBackTime) {
-                    robot.setLockMode(Robot.TurretMode.HIGH_GOAL);
-
                     Waypoint[] goToBounceShootWaypoints;
                     Waypoint[] goToBounceShootThWaypoints;
                     if (ringCase == RingCase.One) {

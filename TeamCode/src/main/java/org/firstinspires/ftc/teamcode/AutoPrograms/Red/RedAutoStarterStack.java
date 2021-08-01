@@ -241,7 +241,7 @@ public class RedAutoStarterStack extends LinearOpMode {
                     deliverWobblePath = new Path(new ArrayList<>(Arrays.asList(deliverWobbleWaypoints)));
                     deliverWobbleTh = new Spline(robot.theta, 0, 0, wobbleCor[2], 0, 0, deliverWobbleTime);
 
-                    robot.intake.setBlocker(0.45);
+                    robot.intake.setBlockerPos(0.45);
 
                     shootHighGoal2 = true;
                     time.reset();

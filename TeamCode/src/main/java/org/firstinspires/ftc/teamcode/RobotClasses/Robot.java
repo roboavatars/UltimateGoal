@@ -118,7 +118,7 @@ public class Robot {
 
     // Powershot Debug Variables
     public static double theta0R = 1.671;
-    public static double theta1R = 1.590;
+    public static double theta1R = 1.595;
     public static double theta2R = 1.498;
     public static double[] thetaPositionsR = {theta0R, theta1R, theta2R};
     public static double theta0B = 1.385;
@@ -377,7 +377,6 @@ public class Robot {
 
         // Update Position
         drivetrain.updatePose();
-        intake.updateBumpers();
 
         turretGlobalTheta = shooter.getTheta() + theta - PI/2;
 
@@ -702,11 +701,6 @@ public class Robot {
     }
     public boolean isAtPose(double targetX, double targetY, double targetTheta, double xTolerance, double yTolerance, double thetaTolerance) {
         return abs(x - targetX) < xTolerance && abs(y - targetY) < yTolerance && abs(theta - targetTheta) < thetaTolerance;
-    }
-
-    // Check if robot x/y is at a certain point
-    public boolean isAtPoseXY(double targetX, double targetY, double xyTolerance) {
-        return abs(x - targetX) < xyTolerance && abs(y - targetY) < xyTolerance;
     }
 
     public boolean isAtPoseTurret(double turretTheta, double turretTolerance) {

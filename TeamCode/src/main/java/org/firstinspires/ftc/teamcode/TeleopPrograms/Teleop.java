@@ -45,16 +45,15 @@ public class Teleop extends LinearOpMode {
     private boolean armIn = true;
     private boolean blockerToggle = false, blockerUp = false;
     private boolean bumperToggle = false;
-    private boolean bumperIsReversed = false;
 
     /*
     Controller Button Mappings:
     Gamepad 1
-    Left stick/Right Stick - Drivetrain Controls
+    Left Stick/Right Stick - Drivetrain Controls
     B - Bumper Toggle
     X - Reset Odo
-    Dpad Up - High Goal 1
-    Dpad Down - High Goal 2
+    Dpad Up - High Goal Close
+    Dpad Down - High Goal Far
     Left Bumper - High Goal Shoot
     Right Bumper - Powershot Shoot
     Left Trigger - Intake Reverse
@@ -63,7 +62,7 @@ public class Teleop extends LinearOpMode {
     Gamepad 2
     A - Blocker Toggle
     B - Cancel Shoot
-    X- Move Turret to Reset
+    X - Move Turret to Reset
     Y - Pre-Rev Flywheel for High Goal
     Dpad Left - Decrease Theta Offset
     Dpad Right - Increase Theta Offset
@@ -152,30 +151,18 @@ public class Teleop extends LinearOpMode {
 
             if (gamepad1.b && !bumperToggle) {
                 bumperToggle = true;
-                bumperIsReversed = !bumperIsReversed;
+                robot.intake.bumperReverse = !robot.intake.bumperReverse;
             } else if (!gamepad1.b && bumperToggle) {
                 bumperToggle = false;
             }
 
             if (armIn) {
-                robot.intake.autoBumpers(robot.x, robot.y, robot.theta, 12, bumperIsReversed);
+                robot.intake.autoBumpers(robot.x, robot.y, robot.theta, 12);
+            } else if (armDown) {
+                robot.intake.bumpersOut();
             } else {
-                if (armDown) {
-                    if (bumperIsReversed) {
-                        robot.intake.bumpersHome();
-                    } else {
-                        robot.intake.bumpersOut();
-                    }
-                } else {
-                    if (bumperIsReversed) {
-                        robot.intake.bumpersOut();
-                    } else {
-                        robot.intake.bumpersHome();
-                    }
-                }
+                robot.intake.bumpersHome();
             }
-
-//            robot.intake.autoBlocker(robot.x, robot.y, robot.theta, 18);
 
             if (gamepad2.a && !blockerToggle) {
                 blockerToggle = true;

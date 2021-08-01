@@ -131,7 +131,7 @@ public class Regression extends LinearOpMode {
             }
 
             if (!armDown) {
-                robot.intake.autoBumpers(robot.x, robot.y, robot.theta, 12, false);
+                robot.intake.autoBumpers(robot.x, robot.y, robot.theta, 12);
             } else {
                 robot.intake.bumpersOut();
             }

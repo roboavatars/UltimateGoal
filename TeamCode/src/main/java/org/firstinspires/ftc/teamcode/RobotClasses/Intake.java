@@ -7,17 +7,16 @@ import com.qualcomm.robotcore.hardware.Servo;
 
 @SuppressWarnings("FieldCanBeLocal")
 public class Intake {
-
-    public DcMotorEx intakeMotor;
-    public DcMotorEx transferMotor;
+    private DcMotorEx intakeMotor;
+    private DcMotorEx transferMotor;
     private Servo blockerServo;
-    private Servo bumperLR;
+    private Servo bumperServo;
 
-    private double lastIntakePow = 0;
-    private double lastTransferPow = 0;
-    private double lastBlocker = 0;
-
-    private double bumperLRPos;
+    private double lastIntakePow = 10;
+    private double lastTransferPow = 10;
+    private double lastBlockerPos = 10;
+    private double lastBumperPos = 10;
+    public boolean bumperReverse = false;
 
     public Intake(LinearOpMode op, boolean isAuto) {
         intakeMotor = op.hardwareMap.get(DcMotorEx.class, "intake");
@@ -25,7 +24,7 @@ public class Intake {
         intakeMotor.setDirection(DcMotorSimple.Direction.REVERSE);
 
         blockerServo = op.hardwareMap.get(Servo.class, "blocker");
-        bumperLR = op.hardwareMap.get(Servo.class, "bumpers");
+        bumperServo = op.hardwareMap.get(Servo.class, "bumpers");
 
         if (!isAuto) {
             bumpersOut();
@@ -34,7 +33,6 @@ public class Intake {
             bumpersHome();
             blockerHome();
         }
-        updateBumpers();
 
         op.telemetry.addData("Status", "Intake initialized");
     }
@@ -42,10 +40,6 @@ public class Intake {
     // Intake Motors
     public void on() {
         setPower(Constants.INTAKE_POWER, Constants.TRANSFER_POWER);
-    }
-
-    public void verticalOn() {
-        setPower(0, 1);
     }
 
     public void reverse() {
@@ -74,31 +68,42 @@ public class Intake {
 
     // Blocker
     public void blockerHome() {
-        setBlocker(Constants.BLOCKER_HOME_POS);
+        setBlockerPos(Constants.BLOCKER_HOME_POS);
     }
 
     public void blockerVert() {
-        setBlocker(Constants.BLOCKER_VERTICAL_POS);
+        setBlockerPos(Constants.BLOCKER_VERTICAL_POS);
     }
 
-    public void setBlocker(double position) {
-        if (position != lastBlocker) {
+    public void setBlockerPos(double position) {
+        if (position != lastBlockerPos) {
             blockerServo.setPosition(position);
-            lastBlocker = position;
+            lastBlockerPos = position;
         }
     }
 
     // Bumpers
-    public void bumpersLR(double position) {
-        bumperLRPos = position;
+    public void setBumperPos(double position) {
+        if (position != lastBumperPos) {
+            lastBumperPos = position;
+            bumperServo.setPosition(lastBumperPos);
+        }
     }
 
     public void bumpersHome() {
-        bumpersLR(Constants.BUMPER_HOME_POS);
+        if (bumperReverse) {
+            setBumperPos(Constants.BUMPER_OUT_POS);
+        } else {
+            setBumperPos(Constants.BUMPER_HOME_POS);
+        }
     }
 
     public void bumpersOut() {
-        bumpersLR(Constants.BUMPER_OUT_POS);
+        if (bumperReverse) {
+            setBumperPos(Constants.BUMPER_HOME_POS);
+        } else {
+            setBumperPos(Constants.BUMPER_OUT_POS);
+        }
     }
 
     private double[] calculateCoordinates(double x, double y, double theta, double dx, double dy) {
@@ -109,7 +114,7 @@ public class Intake {
         return buffer <= x && x <= 144 - buffer && buffer <= y && y <= 144 - buffer;
     }
 
-    public void autoBumpers(double x, double y, double theta, double buffer, boolean reverse) {
+    public void autoBumpers(double x, double y, double theta, double buffer) {
         double[] leftFrontPos = calculateCoordinates(x, y, theta, -15, 9);
         double[] leftBackPos = calculateCoordinates(x, y, theta, -15, -9);
         double[] rightFrontPos = calculateCoordinates(x, y, theta, 15, 6);
@@ -121,39 +126,9 @@ public class Intake {
         boolean rightBack = !inRange(rightBackPos[0], rightBackPos[1], buffer);
 
         if (!leftFront || !leftBack || !rightFront || !rightBack) {
-            if (reverse) {
-                bumpersLR(Constants.BUMPER_OUT_POS);
-            } else {
-                bumpersLR(Constants.BUMPER_HOME_POS);
-            }
+            bumpersHome();
         } else {
-            if (reverse) {
-                bumpersLR(Constants.BUMPER_HOME_POS);
-            } else {
-                bumpersLR(Constants.BUMPER_OUT_POS);
-            }
+            bumpersOut();
         }
-    }
-
-    public void autoBlocker(double x, double y, double theta, double buffer) {
-        double[] frontLeftPos = calculateCoordinates(x, y, theta, -9, 15);
-        double[] frontBackPos = calculateCoordinates(x, y, theta, 9, 15);
-
-        boolean frontLeft = !inRange(frontLeftPos[0], frontLeftPos[1], buffer);
-        boolean frontRight = !inRange(frontBackPos[0], frontBackPos[1], buffer);
-
-        if (!frontLeft || !frontRight) {
-            blockerVert();
-        } else {
-            blockerHome();
-        }
-    }
-
-    public void updateLRBumpers() {
-        bumperLR.setPosition(bumperLRPos);
-    }
-
-    public void updateBumpers() {
-        updateLRBumpers();
     }
 }
