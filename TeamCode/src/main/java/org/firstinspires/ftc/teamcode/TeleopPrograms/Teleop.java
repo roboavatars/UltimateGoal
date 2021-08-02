@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.TeleopPrograms;
 
-import static org.firstinspires.ftc.teamcode.RobotClasses.Robot.TurretMode.HIGH_GOAL;
 import static java.lang.Math.PI;
 
 import android.util.Log;
@@ -26,8 +25,6 @@ public class Teleop extends LinearOpMode {
 
     public static int highGoalClose = 1570;
     public static int highGoalFar = 1640;
-    public static int midGoalClose = 1450;
-    public static int midGoalFar = 1550;
 
     private Robot robot;
 
@@ -109,9 +106,9 @@ public class Teleop extends LinearOpMode {
             } else if (gamepad1.right_bumper) {
                 robot.powerShotShoot();
             } else if (gamepad1.dpad_up) {
-                robot.highGoalShoot(3, robot.turretMode == HIGH_GOAL ? highGoalClose : midGoalClose);
+                robot.highGoalShoot(3, highGoalClose);
             } else if (gamepad1.dpad_down) {
-                robot.highGoalShoot(3, robot.turretMode == HIGH_GOAL ? highGoalFar : midGoalFar);
+                robot.highGoalShoot(3, highGoalFar);
             }
 
             // Stop Shoot Sequence
@@ -243,7 +240,7 @@ public class Teleop extends LinearOpMode {
             telemetry.addData("Theta", robot.theta);
             telemetry.addData("# Rings", robot.numRings);
             telemetry.addData("Theta Offset", robot.thetaOffset);
-            telemetry.addData("Shooter Velocity", robot.shooter.getFlywheelVelocity());
+//            telemetry.addData("Shooter Velocity", robot.shooter.getFlywheelVelocity());
             telemetry.addData("# Cycles", robot.cycles);
             telemetry.addData("Average Cycle Time", (robot.cycleTotal / robot.cycles) + "s");
             telemetry.update();

@@ -71,6 +71,7 @@ public class BlueAutoPowerShot extends LinearOpMode {
         Path deliverWobblePath = null;
         Path wobbleBackPath = null;
         Path goToBounceBackPath = null;
+        double[] targetPoint = null;
         Path bounceBackPath = null;
         Path bounceBackThPath = null;
         Path goToBounceShootPath = null;
@@ -91,7 +92,7 @@ public class BlueAutoPowerShot extends LinearOpMode {
         RingCase ringCase = RingCase.Zero;
 
         // Customize Pathing Depending on Ring Case
-        double[][] wobbleDelivery = {{17, 68, PI}, {19, 104, PI/2}, {15, 116, PI}};
+        double[][] wobbleDelivery = {{30, 84, 3*PI/2}, {55, 104, PI/2}, {15, 114, 7*PI/6}};
         double[] wobbleCor = wobbleDelivery[0];
 
         robot.setLockMode(Robot.TurretMode.HIGH_GOAL);
@@ -166,7 +167,11 @@ public class BlueAutoPowerShot extends LinearOpMode {
             // Deliver Wobble Goal
             else if (!deliverWobble) {
                 double curTime = Math.min(time.seconds(), deliverWobbleTime);
-                robot.setTargetPoint(deliverWobblePath.getRobotPose(curTime));
+                if (ringCase == RingCase.Four) {
+                    robot.setTargetPoint(deliverWobblePath.getRobotPose(curTime));
+                } else {
+                    robot.setTargetPoint(new Target(deliverWobblePath.getRobotPose(curTime)).theta(3*PI/2));
+                }
 
                 if (depositState == 0 && (robot.isAtPose(wobbleCor[0], wobbleCor[1], wobbleCor[2]) && robot.notMoving() || time.seconds() > deliverWobbleTime + 1)) {
                     robot.wobbleArm.armDown();
@@ -193,31 +198,15 @@ public class BlueAutoPowerShot extends LinearOpMode {
                     robot.intake.blockerHome();
                     robot.moveWobbleOut = 0;
 
-                    Waypoint[] wobbleBackWaypoints = new Waypoint[] {
-                            new Waypoint(robot.x, robot.y, robot.theta,  -20, -10, 0, 0),
-                            new Waypoint(robot.x + (ringCase == RingCase.Zero ? 25 : 10), robot.y + (ringCase == RingCase.Zero ? -5 : -1), robot.theta, -10, -10, 0, wobbleBackTime),
-                    };
-                    wobbleBackPath = new Path(new ArrayList<>(Arrays.asList(wobbleBackWaypoints)));
+                    if (ringCase != RingCase.Four) {
+                        goToBounceBacks = true;
+                        intakeBounceBacks = true;
+                        goToBounceShoot = true;
+                    }
+
+                    targetPoint = new double[] {robot.x, robot.y};
 
                     deliverWobble = true;
-                    time.reset();
-                }
-            }
-
-            else if (!wobbleBack) {
-                double curTime = Math.min(time.seconds(), wobbleBackTime);
-                Pose curPose = wobbleBackPath.getRobotPose(curTime);
-                robot.setTargetPoint(curPose.x, curPose.y, curPose.theta + PI);
-
-                if (time.seconds() > wobbleBackTime || ringCase == RingCase.One) {
-                    Waypoint[] goToBounceBackWaypoints = new Waypoint[] {
-                            new Waypoint(robot.x, robot.y, robot.theta,  10, 5, 0, 0),
-                            new Waypoint(robot.x, robot.y + 10, robot.theta, 10, 5, 0, 0.5),
-                            new Waypoint(wobbleDelivery[2][0] + 5, wobbleDelivery[2][1], PI/4, 5, 5, 0, goToBounceBackTime),
-                    };
-                    goToBounceBackPath = new Path(new ArrayList<>(Arrays.asList(goToBounceBackWaypoints)));
-
-                    wobbleBack = true;
                     time.reset();
                 }
             }
@@ -225,15 +214,19 @@ public class BlueAutoPowerShot extends LinearOpMode {
             // Go to Bounce Backs
             else if (!goToBounceBacks) {
                 double curTime = Math.min(time.seconds(), goToBounceBackTime);
-                robot.setTargetPoint(goToBounceBackPath.getRobotPose(curTime));
+                if (curTime < (ringCase == RingCase.Zero ? 1 : 0.5)) {
+                    robot.setTargetPoint(targetPoint[0] + 10, targetPoint[1], PI/2);
+                } else {
+                    robot.setTargetPoint(25, 129, PI/4);
+                }
 
                 robot.intake.on();
 
                 if (time.seconds() > goToBounceBackTime || ringCase == RingCase.Four) {
                     Waypoint[] bounceBackWaypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, 0, 60, 60, 0, 0),
-                            new Waypoint(35, 129, 0, 30, 20, 0, 3.0),
-                            new Waypoint(62, 129, 0, 20, 5, 0, bounceBackTime),
+                            new Waypoint(35, 130, 0, 30, 20, 0, 3.0),
+                            new Waypoint(62, 130, 0, 20, 5, 0, bounceBackTime),
                     };
                     bounceBackPath = new Path(new ArrayList<>(Arrays.asList(bounceBackWaypoints)));
 
@@ -261,7 +254,7 @@ public class BlueAutoPowerShot extends LinearOpMode {
 
                     Waypoint[] goToBounceShootWaypoints = new Waypoint[] {
                             new Waypoint(robot.x, robot.y, robot.theta, -40, -30, 0, 0),
-                            new Waypoint(59, 63, PI/2, -5, 20, 0, goToBounceShootTime),
+                            new Waypoint(60, 63, PI/2, -5, 20, 0, goToBounceShootTime),
                     };
                     goToBounceShootPath = new Path(new ArrayList<>(Arrays.asList(goToBounceShootWaypoints)));
 
@@ -309,7 +302,11 @@ public class BlueAutoPowerShot extends LinearOpMode {
             // Park
             else if (!park) {
                 double curTime = Math.min(time.seconds(), parkTime);
-                robot.setTargetPoint(parkPath.getRobotPose(curTime));
+                if (ringCase == RingCase.One) {
+                    robot.setTargetPoint(new Target(parkPath.getRobotPose(curTime)).theta(PI/2));
+                } else {
+                    robot.setTargetPoint(parkPath.getRobotPose(curTime));
+                }
 
                 if (time.seconds() > parkTime) {
                     Robot.log("Auto finished in " + ((System.currentTimeMillis() - robot.startTime) / 1000) + " seconds");

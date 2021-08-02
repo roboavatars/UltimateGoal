@@ -272,7 +272,7 @@ public class Robot {
             }
 
             // If robot does not converge or mag gets stuck
-            if (curTime - startShootTime > preShootTimeBackup && y < 72) {
+            if (curTime - startShootTime > preShootTimeBackup) {
                 if (highGoal) {
                     log("PS: vel: " + (vThresh <= shooter.getFlywheelVelocity())  + ", pose: " + isAtPoseTurret(shootTargetTheta));
                     preShootOverride = true;
@@ -302,8 +302,8 @@ public class Robot {
             if (curTime - shootTime > shootDelay) {
                 if (numRings > 0) {
                     // Shoot ring only if robot at position and velocity low enough
-                    if (((highGoal && (shootOverride || (shooter.getFlywheelVelocity() >= vThresh && isAtPoseTurret(shootTargetTheta) && y < 72)))
-                            || (!highGoal && isAtPoseTurret(shootTargetTheta, PI/100) && turretNotMoving() && y < 72))
+                    if (((highGoal && (shootOverride || (shooter.getFlywheelVelocity() >= vThresh && isAtPoseTurret(shootTargetTheta))))
+                            || (!highGoal && isAtPoseTurret(shootTargetTheta, PI/100) && turretNotMoving()))
                             || (isAuto && curTime - flickTime > flickTimeBackup) || !shooter.feedHome) {
 
                         if (shooter.feedHome) {
@@ -341,9 +341,6 @@ public class Robot {
                         }
                         if (!highGoal && !turretNotMoving()) {
                             log("Shoot waiting for turret v: " + shooter.getTurretVelocity());
-                        }
-                        if (y >= 72) {
-                            log("y >= 72");
                         }
                     }
                 } else {
@@ -444,6 +441,8 @@ public class Robot {
         addPacket("3 Theta", round(theta));
         addPacket("4 Turret Theta", round(turretGlobalTheta) + " " + round(shootTargetTheta) + " " + round(shooter.getTheta()) + " " + shooter.getTurretVelocity());
         addPacket("5 Shooter Velocity", shooter.getFlywheelVelocity() + " " + vThresh);
+        op.telemetry.addData("SHOOTER VELOCITY / V THRESH", shooter.getFlywheelVelocity() + " " + vThresh);
+        op.telemetry.addData("TURRET MODE", turretMode.name());
         addPacket("6 numRings", numRings);
         addPacket("7 shoot", preShoot  + " " + shoot + " " + highGoal + " " + turretMode.name() + " " + round(shootTargetTheta));
         addPacket("8 Run Time", (curTime - startTime) / 1000);
